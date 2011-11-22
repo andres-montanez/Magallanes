@@ -1,0 +1,8 @@
+#production
+user: prod_example
+deploy-from: application
+deploy-to: /var/www/vhosts/example.com/www
+hosts:
+  - s01.example.com
+  - s02.example.com
+  - s03.example.com
