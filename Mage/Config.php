@@ -6,7 +6,9 @@ class Mage_Config
     
     public function loadEnvironment($environment)
     {
-        $this->_environment = yaml_parse_file('.mage/config/environment/' . $environment . '.yaml');
+        if ($environment != '') {
+            $this->_environment = yaml_parse_file('.mage/config/environment/' . $environment . '.yaml');            
+        }
     }
     
     public function loadSCM()
@@ -36,7 +38,7 @@ class Mage_Config
         return $config['tasks'];
     }
     
-    public function getConfig($host)
+    public function getConfig($host = false)
     {
         $taskConfig = array();
         $taskConfig['deploy'] = $this->getEnvironment();

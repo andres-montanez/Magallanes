@@ -7,4 +7,10 @@ class Mage_Autoload
         $classFile = $baseDir . '/' . str_replace('_', '/', $className . '.php');
         require_once $classFile;
     }
+    
+    public static function loadUserTask($taskName)
+    {
+        $classFile = '.mage/tasks/' . ucfirst($taskName) . '.php';
+        require_once $classFile;
+    }
 }

@@ -6,6 +6,8 @@ hosts:
   - s01.example.com
   - s02.example.com
   - s03.example.com
+  - s05.example.com
 tasks:
   - scm/update
   - deployment/rsync
+  - privileges

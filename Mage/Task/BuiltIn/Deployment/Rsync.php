@@ -4,10 +4,10 @@ class Mage_Task_BuiltIn_Deployment_Rsync
 {
     public function getName()
     {
-        return 'Rsync (built-in)';
+        return 'Rsync [built-in]';
     }
 
-    public function run($config)
+    public function run()
     {
         $ignores = array(
             '--exclude .git',
@@ -18,8 +18,8 @@ class Mage_Task_BuiltIn_Deployment_Rsync
 
         $command = 'rsync -avz '
                  . implode(' ', $ignores) .' '
-                 . $config['deploy']['deploy-from'] . ' '
-                 . $config['deploy']['user'] . '@' . $config['deploy']['host'] . ':' . $config['deploy']['deploy-to'];
+                 . $this->_config['deploy']['deploy-from'] . ' '
+                 . $this->_config['deploy']['user'] . '@' . $this->_config['deploy']['host'] . ':' . $this->_config['deploy']['deploy-to'];
 
         $result = $this->_runLocalCommand($command);
         

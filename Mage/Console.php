@@ -37,9 +37,13 @@ class Mage_Console
         return $this->_environment;
     }
     
-    public static function output($message)
+    public static function output($message, $tabs = 1, $newLine = true)
     {
-        echo $message;
+        $output = str_repeat("\t", $tabs)
+                . Mage_Console_Colors::color($message)
+                . ($newLine ? PHP_EOL : '');
+
+        echo $output;
     }
     
     public static function executeCommand($command)
@@ -52,7 +56,7 @@ class Mage_Console
     }
     
     public function run()
-    {
+    {       
         $config = new Mage_Config;
         $config->loadEnvironment($this->getEnvironment());
         $config->loadSCM();
@@ -64,12 +68,9 @@ class Mage_Console
                 break;
 
             case 'update';
-                $config->loadCSM();
                 $task = new Mage_Task_Update;
-                        $task->run($config);
+                $task->run($config);
                 break;
         }
     }
 }
-
-define('PHP_TAB', "\t");
