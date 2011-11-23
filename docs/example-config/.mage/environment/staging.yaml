@@ -1,6 +1,0 @@
-#staging
-user: stg_example
-deploy-from: application
-deploy-to: /var/www/vhosts/example.com/staging
-hosts:
-  - staging.example.com
