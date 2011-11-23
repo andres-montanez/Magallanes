@@ -1,5 +1,5 @@
 <?php
-class Magallanes_Console
+class Mage_Console
 {
     private $_args;
     private $_action;
@@ -42,23 +42,33 @@ class Magallanes_Console
         echo $message;
     }
     
+    public static function executeCommand($command)
+    {
+        ob_start();
+        system($command . ' 2>&1', $return);
+        $log = ob_get_clean();
+
+        return !$return;
+    }
+    
     public function run()
     {
-        $config = new Magallanes_Config;
+        $config = new Mage_Config;
+        $config->loadEnvironment($this->getEnvironment());
+        $config->loadSCM();
 
         switch ($this->getAction()) {
             case 'deploy':
-                $config->loadEnvironment($this->getEnvironment());
-                $task = new Magallanes_Task_Deploy;
+                $task = new Mage_Task_Deploy;
+                $task->run($config);
                 break;
 
             case 'update';
                 $config->loadCSM();
-                $task = new Magallanes_Task_Update;
+                $task = new Mage_Task_Update;
+                        $task->run($config);
                 break;
         }
-
-        $task->run($config);
     }
 }
 

@@ -1,5 +1,5 @@
 <?php
-class Magallanes_Autoload
+class Mage_Autoload
 {
     public static function autoload($className)
     {

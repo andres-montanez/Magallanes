@@ -1,5 +1,5 @@
 <?php
-class Magallanes_Console_Colors {
+class Mage_Console_Colors {
 	private static $foreground_colors = array ();
 	private static $background_colors = array ();
 	
