@@ -10,7 +10,7 @@ class Mage_Task_Add
         
         // Check if there is already an environment with the same name
         if (file_exists($environmentConfigFile)) {
-            Mage_Console::output('<light_red>Error!!</light_red> Already exists an environment called <dark_gray>' . $environmentName . '</dark_gray>');
+            Mage_Console::output('<light_red>Error!!</light_red> Already exists an environment called <dark_gray>' . $environmentName . '</dark_gray>', 1, 2);
         } else {
             $baseConfig = '#' . $environmentName . PHP_EOL
                         . 'user: dummy' . PHP_EOL
@@ -25,13 +25,10 @@ class Mage_Task_Add
             
             if ($result) {
                 Mage_Console::output('<light_green>Success!!</light_green> Environment config file for <dark_gray>' . $environmentName . '</dark_gray> created successfully at <blue>' . $environmentConfigFile . '</blue>');
-                Mage_Console::output('<dark_gray>So please! Review and adjust its configuration.</dark_gray>', 2);
+                Mage_Console::output('<dark_gray>So please! Review and adjust its configuration.</dark_gray>', 2, 2);
             } else {
-                Mage_Console::output('<light_red>Error!!</light_red> Unable to create config file for environment called <dark_gray>' . $environmentName . '</dark_gray>');
+                Mage_Console::output('<light_red>Error!!</light_red> Unable to create config file for environment called <dark_gray>' . $environmentName . '</dark_gray>', 1, 2);
             }
         }
-        
-        Mage_Console::output('');
     }
-
 }

@@ -22,6 +22,9 @@ class Mage_Console
 
             } else if ($this->_args[0] == 'add') {
                 $this->_action = 'add';
+
+            } else if ($this->_args[0] == 'init') {
+                $this->_action = 'init';
             } 
         
         foreach ($this->_args as $argument) {
@@ -74,6 +77,11 @@ class Mage_Console
             case 'update';
                 $task = new Mage_Task_Update;
                 $task->run($config);
+                break;
+                
+            case 'init';
+                $task = new Mage_Task_Init;
+                $task->run();
                 break;
                 
             case 'add';

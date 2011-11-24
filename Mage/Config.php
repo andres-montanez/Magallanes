@@ -6,14 +6,16 @@ class Mage_Config
     
     public function loadEnvironment($environment)
     {
-        if ($environment != '') {
-            $this->_environment = yaml_parse_file('.mage/config/environment/' . $environment . '.yaml');            
+        if (($environment != '') && file_exists('.mage/config/environment/' . $environment . '.yaml')) {
+            $this->_environment = @yaml_parse_file('.mage/config/environment/' . $environment . '.yaml');            
         }
     }
     
     public function loadSCM()
     {
-        $this->_scm = yaml_parse_file('.mage/config/scm.yaml');
+        if (file_exists('.mage/config/scm.yaml')) {
+            $this->_scm = @yaml_parse_file('.mage/config/scm.yaml');            
+        }
     }
     
     public function getEnvironment()
