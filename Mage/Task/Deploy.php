@@ -39,10 +39,10 @@ class Mage_Task_Deploy
                         $result = $task->run();
         
                         if ($result == true) {
-                            Mage_Console::output('<green>OK</green>');
+                            Mage_Console::output(' <green>OK</green>', 0);
                             $completedTasks++;
                         } else {
-                            Mage_Console::output('<red>FAIL</red>');
+                            Mage_Console::output(' <red>FAIL</red>', 0);
                         }
                     }
                     
@@ -84,10 +84,10 @@ class Mage_Task_Deploy
                 $result = $task->run();
     
                 if ($result == true) {
-                    Mage_Console::output('<green>OK</green>');
+                    Mage_Console::output(' <green>OK</green>', 0);
                     $completedTasks++;
                 } else {
-                    Mage_Console::output('<red>FAIL</red>');
+                    Mage_Console::output(' <red>FAIL</red>', 0);
                 }            
             }
     
