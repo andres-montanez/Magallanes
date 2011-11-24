@@ -32,6 +32,7 @@ Then, on that environment you can configure a set up specifing to which hosts yo
 
 ### And what spells... TASKS! What tasks has it built in? ###
 Just a few, for now...
+
   - **deployment/rsync**  This task is for deploying your code to the remote servers.
   - **scm/update** This task is for updating (git/svn) your base wokring copy.
 
