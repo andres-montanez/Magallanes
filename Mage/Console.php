@@ -14,14 +14,18 @@ class Mage_Console
     
     public function parse()
     {
-        foreach ($this->_args as $argument) {
-            if ($argument == 'deploy') {
+            if ($this->_args[0] == 'deploy') {
                 $this->_action = 'deploy';
 
-            } else if ($argument == 'update') {
+            } else if ($this->_args[0] == 'update') {
                 $this->_action = 'update';
 
-            } else if (preg_match('/to:[\w]+/i', $argument)) {
+            } else if ($this->_args[0] == 'add') {
+                $this->_action = 'add';
+            } 
+        
+        foreach ($this->_args as $argument) {
+            if (preg_match('/to:[\w]+/i', $argument)) {
                 $this->_environment = str_replace('to:', '', $argument);
             }
         }
@@ -37,11 +41,11 @@ class Mage_Console
         return $this->_environment;
     }
     
-    public static function output($message, $tabs = 1, $newLine = true)
+    public static function output($message, $tabs = 1, $newLine = 1)
     {
         $output = str_repeat("\t", $tabs)
                 . Mage_Console_Colors::color($message)
-                . ($newLine ? PHP_EOL : '');
+                . str_repeat(PHP_EOL, $newLine);
 
         echo $output;
     }
@@ -70,6 +74,15 @@ class Mage_Console
             case 'update';
                 $task = new Mage_Task_Update;
                 $task->run($config);
+                break;
+                
+            case 'add';
+                switch ($this->_args[1]) {
+                    case 'environment':
+                        $task = new Mage_Task_Add;
+                        $task->environment($this->_args[2]);
+                        break;
+                }
                 break;
         }
     }

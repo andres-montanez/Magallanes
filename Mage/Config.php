@@ -29,7 +29,13 @@ class Mage_Config
     public function getHosts()
     {
         $config = $this->getEnvironment();
-        return $config['hosts'];
+        $hosts = array();
+        
+        if (isset($config['hosts'])) {
+            $hosts = (array) $config['hosts'];
+        }
+        
+        return $hosts;
     }
     
     public function getTasks($type = 'tasks')
