@@ -7,7 +7,9 @@ hosts:
   - s02.example.com
   - s03.example.com
   - s05.example.com
-tasks:
+pre-tasks:
   - scm/update
+tasks:
   - deployment/rsync
   - privileges
+#post-tasks:

@@ -32,10 +32,31 @@ class Mage_Config
         return $config['hosts'];
     }
     
-    public function getTasks()
+    public function getTasks($type = 'tasks')
     {
+        switch ($type) {
+            case 'pre':
+                $type = 'pre-tasks';
+                break;
+                
+            case 'post':
+                $type = 'post-tasks';
+                break;
+                
+            case 'tasks':
+            default:
+                $type = 'tasks';
+                break;
+        }
+        
+        $tasks = array();
         $config = $this->getEnvironment();
-        return $config['tasks'];
+
+        if (isset($config[$type])) {
+            $tasks = (array) $config[$type];
+        }
+
+        return $tasks;
     }
     
     public function getConfig($host = false)

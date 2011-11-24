@@ -4,6 +4,8 @@ deploy-from: application
 deploy-to: /var/www/vhosts/example.com/staging
 hosts:
   - staging.example.com
-tasks:
+pre-tasks:
   - scm/update
+tasks:
   - deployment/rsync
+  - privileges
