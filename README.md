@@ -12,14 +12,13 @@ and run tasks for that freshly deployed code.
 
 ### Can you give me some examples/ideas? ###
 **Sure!**
-
 Suppose you have a checkout of your app and you have to deploy it to four servers;
 and after each deploy you have to run some boring tasks, like fixing file permissions, creating symlinks, etc.
 You can define all this on Magallanes and with *just one command* you can do all this at once!
 
 Like this:
 ```
-user:myApp$ mage deploy to:production
+$ mage deploy to:production
 ```
 
 
@@ -33,8 +32,8 @@ Then, on that environment you can configure a set up specifing to which hosts yo
 ### And what spells... TASKS! What tasks has it built in? ###
 Just a few, for now...
 
-  - **deployment/rsync**  This task is for deploying your code to the remote servers.
-  - **scm/update** This task is for updating (git/svn) your base wokring copy.
+  - **deployment/rsync** - This task is for deploying your code to the remote servers.
+  - **scm/update** - This task is for updating (git/svn) your base wokring copy.
 
 But! You can create your own taks, and execute commands on your working copy and in your deployed code!
 
