@@ -1,7 +1,7 @@
-.project
-.buildpath
 .settings
 .settings/*
+.project
+.buildpath
 
 # OS generated files # // GitHub Recommendation
 ######################
