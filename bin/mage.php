@@ -3,7 +3,7 @@
 # mage init
 
 # mage config add environment [production]
-# mage config add host prod_example@s05.example.com to:[production]
+# mage config add host prod_example@s05.example.com:/var/www/vhosts/example.com/www to:[production]
 # mage config git git://github.com/andres-montanez/Zend-Framework-Twig-example-app.git
 # mage config svn svn://example.com/repo
 
