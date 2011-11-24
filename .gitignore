@@ -3,3 +3,9 @@
 .settings
 .settings/*
 
+# OS generated files # // GitHub Recommendation
+######################
+.DS_Store*
+ehthumbs.db
+Icon?
+Thumbs.db
