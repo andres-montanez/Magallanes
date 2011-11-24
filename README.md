@@ -19,7 +19,7 @@ You can define all this on Magallanes and with *just one command* you can do all
 
 Like this:
 ```
-$ mage deploy to:production
+user:myApp$ mage deploy to:production
 ```
 
 
@@ -32,8 +32,8 @@ Then, on that environment you can configure a set up specifing to which hosts yo
 
 ### And what spells... TASKS! What tasks has it built in? ###
 Just a few, for now...
-  * **deployment/rsync**  This task is for deploying your code to the remote servers.
-  * **scm/update** This task is for updating (git/svn) your base wokring copy.
+  - **deployment/rsync**  This task is for deploying your code to the remote servers.
+  - **scm/update** This task is for updating (git/svn) your base wokring copy.
 
 But! You can create your own taks, and execute commands on your working copy and in your deployed code!
 
