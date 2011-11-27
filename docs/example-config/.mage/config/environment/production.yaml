@@ -2,11 +2,17 @@
 user: root
 deploy-from: ./
 deploy-to: /var/www/vhosts/example.com/www
+releases:
+  - enabled: true
+  - symlink: current
+  - directory: releases
 hosts:
   - s01.example.com
   - s02.example.com
   - s03.example.com
   - s05.example.com
+rsync-excludes:
+  - application/data/cache/twig/*
 pre-tasks:
   - scm/update
 tasks:
