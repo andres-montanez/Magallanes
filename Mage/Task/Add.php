@@ -16,6 +16,7 @@ class Mage_Task_Add
                         . 'user: dummy' . PHP_EOL
                         . 'deploy-from: ./' . PHP_EOL
                         . 'deploy-to: /var/www/vhosts/example.com/www' . PHP_EOL
+                        . 'rsync-excludes:' . PHP_EOL
                         . 'hosts:' . PHP_EOL
                         . 'pre-tasks:' . PHP_EOL
                         . 'tasks:' . PHP_EOL

@@ -9,20 +9,38 @@ class Mage_Task_BuiltIn_Deployment_Rsync
 
     public function run()
     {
-        $ignores = array(
-            '--exclude .git',
-            '--exclude .svn',
-            '--exclude .mage',
-            '--exclude .gitignore'
+        $excludes = array(
+            '.git',
+            '.svn',
+            '.mage',
+            '.gitignore'
         );
+        
+        // Look for User Excludes
+        if (isset($this->_config['deploy']['rsync-excludes'])) {
+            $userExcludes = (array) $this->_config['deploy']['rsync-excludes'];
+        } else {
+            $userExcludes = array();
+        }
 
         $command = 'rsync -avz '
-                 . implode(' ', $ignores) .' '
+                 . $this->_excludes($excludes + $userExcludes) . ' '
                  . $this->_config['deploy']['deploy-from'] . ' '
                  . $this->_config['deploy']['user'] . '@' . $this->_config['deploy']['host'] . ':' . $this->_config['deploy']['deploy-to'];
 
         $result = $this->_runLocalCommand($command);
         
         return $result;
+    }
+    
+    private function _excludes(Array $excludes)
+    {
+        $excludesRsync = '';
+        foreach ($excludes as $exclude) {
+            $excludesRsync .= ' --exclude ' . $exclude . ' ';
+        }
+        
+        $excludesRsync = trim($excludesRsync);
+        return $excludesRsync;
     }
 }
