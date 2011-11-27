@@ -5,6 +5,14 @@
 # mage config svn svn://example.com/repo
 # mage task:deployment/rsync to:production
 
+# mage releases list to:production
+# mage releases rollback to:production
+# mage releases rollback:-1 to:production
+# mage releases rollback:-2 to:production
+# mage releases rollback:-3 to:production
+# mage releases rollback:0 to:production
+# mage add environment production --width-releases
+
 # mage init
 # mage add environment production
 # mage deploy to:production
