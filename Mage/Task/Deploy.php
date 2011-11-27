@@ -2,6 +2,12 @@
 class Mage_Task_Deploy
 {
     private $_config = null;
+    private $_releaseId = null;
+    
+    public function __construct()
+    {
+        $this->_releaseId = date('YmdHis');
+    }
     
     public function run(Mage_Config $config)
     {
@@ -25,6 +31,14 @@ class Mage_Task_Deploy
                 Mage_Console::output('Deploying to <dark_gray>' . $host . '</dark_gray>');
                 
                 $tasksToRun = $config->getTasks();
+                if (isset($taskConfig['deploy']['releases'])) {
+                    if (isset($taskConfig['deploy']['releases']['enabled'])) {
+                        if ($taskConfig['deploy']['releases']['enabled'] == 'true') {
+                            $taskConfig['deploy']['releases']['_id'] = $this->_releaseId;
+                            array_push($tasksToRun, 'deployment/releases');
+                        }
+                    }
+                }
                 if (count($tasksToRun) == 0) {
                     Mage_Console::output('<light_purple>Warning!</light_purple> <dark_gray>No </dark_gray><light_cyan>Deployment</light_cyan> <dark_gray>tasks defined.</dark_gray>', 2);
                     Mage_Console::output('Deployment to <dark_gray>' . $host . '</dark_gray> skipped!', 1, 3);

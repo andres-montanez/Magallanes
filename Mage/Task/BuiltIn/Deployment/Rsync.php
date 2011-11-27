@@ -4,7 +4,15 @@ class Mage_Task_BuiltIn_Deployment_Rsync
 {
     public function getName()
     {
-        return 'Rsync [built-in]';
+        if (isset($this->_config['deploy']['releases']['enabled'])) {
+            if ($this->_config['deploy']['releases']['enabled'] == 'true') {
+                return 'Rsync (with Releases) [built-in]';
+            } else {
+                return 'Rsync [built-in]';
+            }
+        } else {
+            return 'Rsync [built-in]';            
+        }
     }
 
     public function run()
@@ -22,11 +30,28 @@ class Mage_Task_BuiltIn_Deployment_Rsync
         } else {
             $userExcludes = array();
         }
+        
+        // If we are working with releases
+        $deployToDirectory = $this->_config['deploy']['deploy-to'];
+        if (isset($this->_config['deploy']['releases']['enabled'])) {
+            if ($this->_config['deploy']['releases']['enabled'] == 'true') {
+                if (isset($this->_config['deploy']['releases']['directory'])) {
+                    $releasesDirectory = $this->_config['deploy']['releases']['directory'];
+                } else {
+                    $releasesDirectory = 'releases';
+                }
+
+                $deployToDirectory = rtrim($this->_config['deploy']['deploy-to'], '/')
+                                   . '/' . $releasesDirectory
+                                   . '/' . $this->_config['deploy']['releases']['_id'];
+                $this->_runRemoteCommand('mkdir -p ' . $releasesDirectory . '/' . $this->_config['deploy']['releases']['_id']);
+            }
+        }
 
         $command = 'rsync -avz '
                  . $this->_excludes(array_merge($excludes, $userExcludes)) . ' '
                  . $this->_config['deploy']['deploy-from'] . ' '
-                 . $this->_config['deploy']['user'] . '@' . $this->_config['deploy']['host'] . ':' . $this->_config['deploy']['deploy-to'];
+                 . $this->_config['deploy']['user'] . '@' . $this->_config['deploy']['host'] . ':' . $deployToDirectory;
 
         $result = $this->_runLocalCommand($command);
         

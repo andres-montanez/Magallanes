@@ -3,9 +3,9 @@ user: root
 deploy-from: ./
 deploy-to: /var/www/vhosts/example.com/www
 releases:
-  - enabled: true
-  - symlink: current
-  - directory: releases
+  enabled: true
+  symlink: current
+  directory: releases
 hosts:
   - s01.example.com
   - s02.example.com
