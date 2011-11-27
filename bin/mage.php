@@ -17,6 +17,7 @@
 # mage add environment production
 # mage deploy to:production
 
+date_default_timezone_set('UTC');
 
 $baseDir = dirname(dirname(__FILE__));
 

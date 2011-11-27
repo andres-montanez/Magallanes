@@ -24,7 +24,7 @@ class Mage_Task_BuiltIn_Deployment_Rsync
         }
 
         $command = 'rsync -avz '
-                 . $this->_excludes($excludes + $userExcludes) . ' '
+                 . $this->_excludes(array_merge($excludes, $userExcludes)) . ' '
                  . $this->_config['deploy']['deploy-from'] . ' '
                  . $this->_config['deploy']['user'] . '@' . $this->_config['deploy']['host'] . ':' . $this->_config['deploy']['deploy-to'];
 

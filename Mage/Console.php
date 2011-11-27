@@ -1,10 +1,11 @@
 <?php
 class Mage_Console
 {
-    private $_args;
-    private $_action;
-    private $_actionOptions;
-    private $_environment;
+    private $_args = null;
+    private $_action = null;
+    private $_actionOptions = null;
+    private $_environment = null;
+    private static $_log = null;
     
     public function setArgs($args)
     {
@@ -46,6 +47,8 @@ class Mage_Console
     
     public static function output($message, $tabs = 1, $newLine = 1)
     {
+        self::log(strip_tags($message));
+        
         $output = str_repeat("\t", $tabs)
                 . Mage_Console_Colors::color($message)
                 . str_repeat(PHP_EOL, $newLine);
@@ -55,9 +58,15 @@ class Mage_Console
     
     public static function executeCommand($command)
     {
+        self::log('---------------------------------');
+        self::log('---- Executing: $ ' . $command);
+        
         ob_start();
         system($command . ' 2>&1', $return);
         $log = ob_get_clean();
+        
+        self::log($log);
+        self::log('---------------------------------');
 
         return !$return;
     }
@@ -93,5 +102,15 @@ class Mage_Console
                 }
                 break;
         }
+    }
+
+    public static function log($message, $continuation = false)
+    {
+        if (self::$_log == null) {
+            self::$_log = fopen('.mage/logs/log-' . date('Ymd-His') . '.log', 'w');
+        }
+        
+        $message = date('Y-m-d H:i:s -- ') . $message;
+        fwrite(self::$_log, $message . PHP_EOL);
     }
 }
