@@ -6,7 +6,7 @@ It will get your application to a safe harbor.
 
 
 ### So, What can it do? ###
-You can instruct Magallanes to deploy your code to all the servers you want (via rsync over ssh, dah),
+You can instruct Magallanes to deploy your code to all the servers you want (via rsync over ssh),
 and run tasks for that freshly deployed code.
 
 
