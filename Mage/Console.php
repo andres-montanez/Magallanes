@@ -6,6 +6,7 @@ class Mage_Console
     private $_actionOptions = null;
     private $_environment = null;
     private static $_log = null;
+    private static $_logEnabled = true;
     
     public function setArgs($args)
     {
@@ -23,6 +24,9 @@ class Mage_Console
 
             } else if ($this->_args[0] == 'add') {
                 $this->_action = 'add';
+                
+            } else if ($this->_args[0] == 'install') {
+                $this->_action = 'install';
 
             } else if ($this->_args[0] == 'init') {
                 $this->_action = 'init';
@@ -72,7 +76,14 @@ class Mage_Console
     }
     
     public function run()
-    {       
+    {
+        // Disable Loging
+        if ($this->getAction() == 'install') {
+            self::$_logEnabled = false;
+        }
+        
+        Mage_Console::output('Starting <blue>Magallanes</blue>', 0, 2);
+        
         $config = new Mage_Config;
         $config->loadEnvironment($this->getEnvironment());
         $config->loadSCM();
@@ -86,6 +97,11 @@ class Mage_Console
             case 'update';
                 $task = new Mage_Task_Update;
                 $task->run($config);
+                break;
+
+            case 'install';
+                $task = new Mage_Task_Install;
+                $task->run();
                 break;
                 
             case 'init';
@@ -102,15 +118,19 @@ class Mage_Console
                 }
                 break;
         }
+        
+        Mage_Console::output('Finished <blue>Magallanes</blue>', 0, 2);
     }
 
     public static function log($message, $continuation = false)
     {
-        if (self::$_log == null) {
-            self::$_log = fopen('.mage/logs/log-' . date('Ymd-His') . '.log', 'w');
+        if (self::$_logEnabled) {
+            if (self::$_log == null) {
+                self::$_log = fopen('.mage/logs/log-' . date('Ymd-His') . '.log', 'w');
+            }
+            
+            $message = date('Y-m-d H:i:s -- ') . $message;
+            fwrite(self::$_log, $message . PHP_EOL);            
         }
-        
-        $message = date('Y-m-d H:i:s -- ') . $message;
-        fwrite(self::$_log, $message . PHP_EOL);
     }
 }
