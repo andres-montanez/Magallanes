@@ -25,14 +25,14 @@ class Mage_Task_BuiltIn_Deployment_Rsync
         );
         
         // Look for User Excludes
-        if (isset($this->_config['deploy']['rsync-excludes'])) {
-            $userExcludes = (array) $this->_config['deploy']['rsync-excludes'];
+        if (isset($this->_config['deploy']['deployment']['excludes'])) {
+            $userExcludes = (array) $this->_config['deploy']['deployment']['excludes'];
         } else {
             $userExcludes = array();
         }
         
         // If we are working with releases
-        $deployToDirectory = $this->_config['deploy']['deploy-to'];
+        $deployToDirectory = $this->_config['deploy']['deployment']['to'];
         if (isset($this->_config['deploy']['releases']['enabled'])) {
             if ($this->_config['deploy']['releases']['enabled'] == 'true') {
                 if (isset($this->_config['deploy']['releases']['directory'])) {
@@ -41,7 +41,7 @@ class Mage_Task_BuiltIn_Deployment_Rsync
                     $releasesDirectory = 'releases';
                 }
 
-                $deployToDirectory = rtrim($this->_config['deploy']['deploy-to'], '/')
+                $deployToDirectory = rtrim($this->_config['deploy']['deployment']['to'], '/')
                                    . '/' . $releasesDirectory
                                    . '/' . $this->_config['deploy']['releases']['_id'];
                 $this->_runRemoteCommand('mkdir -p ' . $releasesDirectory . '/' . $this->_config['deploy']['releases']['_id']);
@@ -50,8 +50,8 @@ class Mage_Task_BuiltIn_Deployment_Rsync
 
         $command = 'rsync -avz '
                  . $this->_excludes(array_merge($excludes, $userExcludes)) . ' '
-                 . $this->_config['deploy']['deploy-from'] . ' '
-                 . $this->_config['deploy']['user'] . '@' . $this->_config['deploy']['host'] . ':' . $deployToDirectory;
+                 . $this->_config['deploy']['deployment']['from'] . ' '
+                 . $this->_config['deploy']['deployment']['user'] . '@' . $this->_config['deploy']['host'] . ':' . $deployToDirectory;
 
         $result = $this->_runLocalCommand($command);
         

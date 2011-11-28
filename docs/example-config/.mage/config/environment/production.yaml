@@ -1,21 +1,24 @@
 #production
-user: root
-deploy-from: ./
-deploy-to: /var/www/vhosts/example.com/www
+deployment:
+  user: root
+  from: ./
+  to: /var/www/vhosts/example.com/www
+  excludes:
+    - application/data/cache/twig/*
 releases:
   enabled: true
   symlink: current
   directory: releases
+  tasks:
 hosts:
   - s01.example.com
   - s02.example.com
   - s03.example.com
   - s05.example.com
-rsync-excludes:
-  - application/data/cache/twig/*
-pre-tasks:
-  - scm/update
 tasks:
-  - deployment/rsync
-  - privileges
-#post-tasks:
+  pre-deploy:
+    - scm/update
+  on-deploy:
+    - deployment/rsync
+    - privileges
+  #post-deploy:

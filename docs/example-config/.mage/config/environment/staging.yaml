@@ -1,11 +1,14 @@
 #staging
-user: stg_example
-deploy-from: application
-deploy-to: /var/www/vhosts/example.com/staging
+deployment:
+  user: stg_user
+  from: ./
+  to: /var/www/vhosts/example.com/staging
 hosts:
   - staging.example.com
-pre-tasks:
-  - scm/update
 tasks:
-  - deployment/rsync
-  - privileges
+  pre-deploy:
+    - scm/update
+  on-deploy:
+    - deployment/rsync
+    - privileges
+  #post-deploy:

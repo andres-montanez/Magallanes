@@ -14,7 +14,7 @@ class Mage_Task_Deploy
         $this->_config = $config;
         
         // Run Pre-Deployment Tasks
-        $this->_runNonDeploymentTasks('pre', $config);
+        $this->_runNonDeploymentTasks('pre-deploy', $config, 'Pre-Deployment');
         
         // Run Tasks for Deployment
         $hosts = $config->getHosts();
@@ -60,6 +60,8 @@ class Mage_Task_Deploy
                         }
                     }
                     
+                    // Run Post-Deployment Tasks
+                    
                     if ($completedTasks == $tasks) {
                         $tasksColor = 'green';                
                     } else {
@@ -72,18 +74,18 @@ class Mage_Task_Deploy
         }
 
         // Run Post-Deployment Tasks
-        $this->_runNonDeploymentTasks('post', $config);
+        $this->_runNonDeploymentTasks('post-deploy', $config, 'Post-Deployment');
     }
 
-    private function _runNonDeploymentTasks($type, Mage_Config $config)
+    private function _runNonDeploymentTasks($stage, Mage_Config $config, $title)
     {
-        $tasksToRun = $config->getTasks($type);
+        $tasksToRun = $config->getTasks($stage);
         
         if (count($tasksToRun) == 0) {
-            Mage_Console::output('<dark_gray>No </dark_gray><light_cyan>' . ucfirst($type) . '-Deployment</light_cyan> <dark_gray>tasks defined.</dark_gray>', 1, 3);
+            Mage_Console::output('<dark_gray>No </dark_gray><light_cyan>' . $title . '</light_cyan> <dark_gray>tasks defined.</dark_gray>', 1, 3);
             
         } else {
-            Mage_Console::output('Starting <dark_gray>' . ucfirst($type) . '-Deployment</dark_gray> tasks:');
+            Mage_Console::output('Starting <dark_gray>' . $title . '</dark_gray> tasks:');
     
             $taskConfig = $config->getConfig();
             $tasks = 0;
@@ -94,7 +96,7 @@ class Mage_Task_Deploy
                 $task = Mage_Task_Factory::get($taskName, $taskConfig);
                 $task->init();
                     
-                Mage_Console::output('Running <purple>' . $task->getName() . '</purple> ... ', 2, false);
+                Mage_Console::output('Running <purple>' . $task->getName() . '</purple> ... ', 2, 0);
                 $result = $task->run();
     
                 if ($result == true) {
@@ -111,7 +113,7 @@ class Mage_Task_Deploy
                 $tasksColor = 'red';                
             }
     
-            Mage_Console::output('Finished <dark_gray>' . ucfirst($type) . '-Deployment</dark_gray> tasks: <' . $tasksColor . '>' . $completedTasks . '/' . $tasks . '</' . $tasksColor . '> tasks done.', 1, 3);            
+            Mage_Console::output('Finished <dark_gray>' . $title . '</dark_gray> tasks: <' . $tasksColor . '>' . $completedTasks . '/' . $tasks . '</' . $tasksColor . '> tasks done.', 1, 3);            
         }
 
         

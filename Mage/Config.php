@@ -40,28 +40,36 @@ class Mage_Config
         return $hosts;
     }
     
-    public function getTasks($type = 'tasks')
+    public function getTasks($stage = 'on-deploy')
     {
-        switch ($type) {
-            case 'pre':
-                $type = 'pre-tasks';
+        switch ($stage) {
+            case 'pre-deploy':
+                $type = 'tasks';
+                $stage = 'pre-deploy';
                 break;
                 
-            case 'post':
-                $type = 'post-tasks';
+            case 'post-deploy':
+                $type = 'tasks';
+                $stage = 'post-deploy';
                 break;
                 
-            case 'tasks':
+            case 'post-release':
+                $type = 'releases';
+                $stage = 'post-release';
+                break;
+                
+            case 'on-deploy':
             default:
                 $type = 'tasks';
+                $stage = 'on-deploy';
                 break;
         }
         
         $tasks = array();
         $config = $this->getEnvironment();
 
-        if (isset($config[$type])) {
-            $tasks = (array) $config[$type];
+        if (isset($config[$type]) && isset($config[$type][$stage])) {
+            $tasks = (array) $config[$type][$stage];
         }
 
         return $tasks;
