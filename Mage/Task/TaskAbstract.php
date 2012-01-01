@@ -16,18 +16,18 @@ abstract class Mage_Task_TaskAbstract
     {
     }
     
-    protected final function _runLocalCommand($command)
+    protected final function _runLocalCommand($command, &$output = null)
     {
-        return Mage_Console::executeCommand($command);
+        return Mage_Console::executeCommand($command, $output);
     }
     
-    protected final function _runRemoteCommand($command)
+    protected final function _runRemoteCommand($command, &$output = null)
     {
         $localCommand = 'ssh '
                       . $this->_config['deploy']['deployment']['user'] . '@' . $this->_config['deploy']['host'] . ' '
                       . '"cd ' . $this->_config['deploy']['deployment']['to'] . ' && '
                       . $command . '"';
 
-        return $this->_runLocalCommand($localCommand);
+        return $this->_runLocalCommand($localCommand, $output);
     }
 }

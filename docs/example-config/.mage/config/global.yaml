@@ -1,1 +1,9 @@
 #global settings
+mail:
+  from: andresmontanez@gmail.com
+  password: xxxxxx
+  smtp: smtp.gmail.com
+  to:
+    - andresmontanez@gmail.com
+    - andres.montanez@zenreworks.com
+

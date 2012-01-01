@@ -7,6 +7,7 @@ class Mage_Console
     private $_environment = null;
     private static $_log = null;
     private static $_logEnabled = true;
+    private static $_screenBuffer = '';
     
     public function setArgs($args)
     {
@@ -19,6 +20,9 @@ class Mage_Console
             if ($this->_args[0] == 'deploy') {
                 $this->_action = 'deploy';
 
+            } else if ($this->_args[0] == 'releases') {
+                $this->_action = 'releases';
+                
             } else if ($this->_args[0] == 'update') {
                 $this->_action = 'update';
 
@@ -53,6 +57,10 @@ class Mage_Console
     {
         self::log(strip_tags($message));
         
+        self::$_screenBuffer .= str_repeat("\t", $tabs)
+                              . strip_tags($message)
+                              . str_repeat(PHP_EOL, $newLine);
+        
         $output = str_repeat("\t", $tabs)
                 . Mage_Console_Colors::color($message)
                 . str_repeat(PHP_EOL, $newLine);
@@ -60,7 +68,7 @@ class Mage_Console
         echo $output;
     }
     
-    public static function executeCommand($command)
+    public static function executeCommand($command, &$output = null)
     {
         self::log('---------------------------------');
         self::log('---- Executing: $ ' . $command);
@@ -68,6 +76,10 @@ class Mage_Console
         ob_start();
         system($command . ' 2>&1', $return);
         $log = ob_get_clean();
+        
+        if (!$return) {
+            $output = trim($log);            
+        }
         
         self::log($log);
         self::log('---------------------------------');
@@ -91,6 +103,16 @@ class Mage_Console
         switch ($this->getAction()) {
             case 'deploy':
                 $task = new Mage_Task_Deploy;
+                $task->run($config);
+                break;
+                
+            case 'releases':
+                $task = new Mage_Task_Releases;
+                switch ($this->_args[1]) {
+                    case 'list':
+                        $task->setAction($this->_args[1]);
+                        break;                        
+                }
                 $task->run($config);
                 break;
 
