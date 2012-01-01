@@ -3,6 +3,7 @@ class Mage_Task_Releases
 {
     private $_config = null;
     private $_action = null;
+    private $_release = null;
     
     public function setAction($action)
     {
@@ -13,6 +14,17 @@ class Mage_Task_Releases
     public function getAction()
     {
         return $this->_action;
+    }
+    
+    public function setRelease($releaseId)
+    {
+        $this->_release = $releaseId;
+        return $this;
+    }
+    
+    public function getRelease()
+    {
+        return $this->_release;
     }
     
     public function run(Mage_Config $config)
@@ -34,11 +46,16 @@ class Mage_Task_Releases
                         $task->init();
                         $result = $task->run();
                         break;
+                        
+                    case 'rollback':
+                        $task = Mage_Task_Factory::get('releases/rollback', $config);
+                        $task->init();
+                        $task->setRelease($this->getRelease());
+                        $result = $task->run();
+                        break;
                 }
-                Mage_Console::output('');
             }
         }
-
     }
     
     private function _listReleases()

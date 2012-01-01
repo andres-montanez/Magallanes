@@ -46,8 +46,11 @@ class Mage_Task_BuiltIn_Releases_List
                 }
             }
 
+            Mage_Console::output('');
             return $result;
+
         } else {
+            Mage_Console::output('');
             return false;
         }
     }

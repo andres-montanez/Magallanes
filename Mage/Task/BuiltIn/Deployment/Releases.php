@@ -15,7 +15,14 @@ class Mage_Task_BuiltIn_Deployment_Releases
 
             $currentCopy = $releasesDirectory . '/' . $this->_config->getReleaseId();
 
-            $result = $this->_runRemoteCommand('ln -sf ' . $currentCopy . ' ' . $symlink);
+            $userGroup = '';
+            $resultFetch = $this->_runRemoteCommand('ls -ld ' . $currentCopy . ' | awk \'{print \$3\":\"\$4}\'', $userGroup);
+            $command = 'rm -f ' . $symlink
+                     . ' && '
+                     . 'ln -sf ' . $currentCopy . ' ' . $symlink
+                     . ' && '
+                     . 'chown -h ' . $userGroup . ' ' . $symlink;
+            $result = $this->_runRemoteCommand($command);
             return $result;
 
         } else {

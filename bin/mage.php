@@ -7,10 +7,11 @@
 
 # mage releases list to:production
 # mage releases rollback to:production
-# mage releases rollback:-1 to:production
-# mage releases rollback:-2 to:production
-# mage releases rollback:-3 to:production
-# mage releases rollback:0 to:production
+# mage releases rollback -1 to:production
+# mage releases rollback -2 to:production
+# mage releases rollback -3 to:production
+# mage releases rollback 0 to:production
+# mage releases rollback 20120101172148 to:production
 # mage add environment production --width-releases
 
 # mage init

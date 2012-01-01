@@ -31,6 +31,8 @@ class Mage_Task_Deploy
                 Mage_Console::output('Deploying to <dark_gray>' . $host . '</dark_gray>');
                 
                 $tasksToRun = $config->getTasks();
+                array_unshift($tasksToRun, 'deployment/rsync');
+
                 if ($config->release('enabled', false) == true) {
                     $config->setReleaseId($this->_releaseId);
                     array_push($tasksToRun, 'deployment/releases');                    
@@ -56,8 +58,6 @@ class Mage_Task_Deploy
                             Mage_Console::output('<red>FAIL</red>', 0);
                         }
                     }
-                    
-                    // Run Post-Deployment Tasks
                     
                     if ($completedTasks == $tasks) {
                         $tasksColor = 'green';                

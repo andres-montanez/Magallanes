@@ -111,7 +111,12 @@ class Mage_Console
                 switch ($this->_args[1]) {
                     case 'list':
                         $task->setAction($this->_args[1]);
-                        break;                        
+                        break;
+
+                    case 'rollback':
+                        $task->setAction($this->_args[1]);
+                        $task->setRelease($this->_args[2]);
+                        break;
                 }
                 $task->run($config);
                 break;

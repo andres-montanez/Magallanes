@@ -19,6 +19,5 @@ tasks:
   pre-deploy:
     - scm/update
   on-deploy:
-    - deployment/rsync
     - privileges
   #post-deploy:
