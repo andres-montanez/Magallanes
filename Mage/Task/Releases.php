@@ -27,15 +27,15 @@ class Mage_Task_Releases
             
         } else {
             foreach ($hosts as $host) {
-                $taskConfig = $config->getConfig($host);
-
+                $config->setHost($host);
                 switch ($this->getAction()) {
                     case 'list':
-                        $task = Mage_Task_Factory::get('releases/list', $taskConfig);
+                        $task = Mage_Task_Factory::get('releases/list', $config);
                         $task->init();
                         $result = $task->run();
                         break;
                 }
+                Mage_Console::output('');
             }
         }
 

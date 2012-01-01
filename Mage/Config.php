@@ -3,6 +3,8 @@ class Mage_Config
 {
     private $_environment = null;
     private $_scm = null;
+    private $_host = null;
+    private $_releaseId = null;
     
     public function loadEnvironment($environment)
     {
@@ -38,6 +40,28 @@ class Mage_Config
         }
         
         return $hosts;
+    }
+    
+    public function setHost($host)
+    {
+        $this->_host = $host;
+        return $this;
+    }
+    
+    public function getHost()
+    {
+        return $this->_host;
+    }
+    
+    public function setReleaseId($id)
+    {
+        $this->_releaseId = $id;
+        return $this;
+    }
+    
+    public function getReleaseId()
+    {
+        return $this->_releaseId;
     }
     
     public function getTasks($stage = 'on-deploy')
@@ -86,5 +110,35 @@ class Mage_Config
         unset($taskConfig['deploy']['hosts']);
         
         return $taskConfig;
+    }
+
+    public function deployment($option, $default = false)
+    {
+        $options = $this->getEnvironment();
+        if (isset($options['deployment'][$option])) {
+            return $options['deployment'][$option];
+        } else {
+            return $default;
+        }
+    }
+    
+    public function release($option, $default = false)
+    {
+        $options = $this->getEnvironment();
+        if (isset($options['releases'][$option])) {
+            return $options['releases'][$option];
+        } else {
+            return $default;
+        }
+    }
+    
+    public function scm($option, $default = false)
+    {
+        $options = $this->_scm;
+        if (isset($options[$option])) {
+            return $options[$option];
+        } else {
+            return $default;
+        }
     }
 }

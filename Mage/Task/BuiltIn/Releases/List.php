@@ -9,39 +9,44 @@ class Mage_Task_BuiltIn_Releases_List
 
     public function run()
     {
-        if (isset($this->_config['deploy']['releases']['enabled'])) {
-            if ($this->_config['deploy']['releases']['enabled'] == 'true') {
-                if (isset($this->_config['deploy']['releases']['directory'])) {
-                    $releasesDirectory = $this->_config['deploy']['releases']['directory'];
-                } else {
-                    $releasesDirectory = 'releases';
-                }
-                if (isset($this->_config['deploy']['releases']['symlink'])) {
-                    $symlink = $this->_config['deploy']['releases']['symlink'];
-                } else {
-                    $symlink = 'current';
-                }
+        if ($this->_config->release('enabled', false) == true) {
+            $releasesDirectory = $this->_config->release('directory', 'releases');
+            $symlink = $this->_config->release('symlink', 'current');
 
-                Mage_Console::output('Releases available on <dark_gray>' . $this->_config['deploy']['host'] . '</dark_gray>');
-                
-                $output = '';
-                $result = $this->_runRemoteCommand('ls -1 ' . $releasesDirectory, $output);
-                $releases = ($output == '') ? array() : explode(PHP_EOL, $output);
-                
-                if (count($releases) == 0) {
-                    Mage_Console::output('<dark_gray>No releases available</dark_gray> ... ', 2);
-                } else {
-                    rsort($releases);
-                    foreach ($releases as $releaseIndex => $releaseDate) {
-                        Mage_Console::output('Index: ' . $releaseIndex . ' - <purple>' . $releaseDate . '</purple>', 2);                        
-                    }
-                }
-
-                return $result;
-
+            Mage_Console::output('Releases available on <dark_gray>' . $this->_config->getHost() . '</dark_gray>');
+            
+            $output = '';
+            $result = $this->_runRemoteCommand('ls -1 ' . $releasesDirectory, $output);
+            $releases = ($output == '') ? array() : explode(PHP_EOL, $output);
+            
+            if (count($releases) == 0) {
+                Mage_Console::output('<dark_gray>No releases available</dark_gray> ... ', 2);
             } else {
-                return false;
+                rsort($releases);
+                $releases  = array_slice($releases, 0, 10);
+
+                foreach ($releases as $releaseIndex => $release) {
+                    $releaseIndex = str_pad($releaseIndex * -1, 2, ' ', STR_PAD_LEFT);
+                    $releaseDate = $release[0] . $release[1] . $release[2] .$release[3]
+                                 . '-'
+                                 . $release[4] . $release[5]
+                                 . '-'
+                                 . $release[6] . $release[7]
+                                 . ' '
+                                 . $release[8] . $release[9]
+                                 . ':'
+                                 . $release[10] . $release[11]
+                                 . ':'
+                                 . $release[12] . $release[13];
+                    
+                    Mage_Console::output(
+                        'Release: <purple>' . $release . '</purple> '
+                      . '- Date: <dark_gray>' . $releaseDate . '</dark_gray> '
+                      . '- Index: <dark_gray>' . $releaseIndex . '</dark_gray>', 2);                        
+                }
             }
+
+            return $result;
         } else {
             return false;
         }

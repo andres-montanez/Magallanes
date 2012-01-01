@@ -7,7 +7,7 @@ class Mage_Task_Factory
      * @param string $taskName
      * @return Mage_Task_TaskAbstract
      */
-    public static function get($taskName, $taskConfig)
+    public static function get($taskName, Mage_Config $taskConfig)
     {
         $instance = null;
         

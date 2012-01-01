@@ -7,7 +7,7 @@ abstract class Mage_Task_TaskAbstract
     
     public abstract function run();
     
-    public final function __construct($config)
+    public final function __construct(Mage_Config $config)
     {
         $this->_config = $config;
     }
@@ -24,8 +24,8 @@ abstract class Mage_Task_TaskAbstract
     protected final function _runRemoteCommand($command, &$output = null)
     {
         $localCommand = 'ssh '
-                      . $this->_config['deploy']['deployment']['user'] . '@' . $this->_config['deploy']['host'] . ' '
-                      . '"cd ' . $this->_config['deploy']['deployment']['to'] . ' && '
+                      . $this->_config->deployment('user') . '@' . $this->_config->getHost() . ' '
+                      . '"cd ' . $this->_config->deployment('to') . ' && '
                       . $command . '"';
 
         return $this->_runLocalCommand($localCommand, $output);

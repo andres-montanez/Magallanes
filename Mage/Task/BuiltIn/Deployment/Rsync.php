@@ -4,14 +4,10 @@ class Mage_Task_BuiltIn_Deployment_Rsync
 {
     public function getName()
     {
-        if (isset($this->_config['deploy']['releases']['enabled'])) {
-            if ($this->_config['deploy']['releases']['enabled'] == 'true') {
-                return 'Rsync (with Releases) [built-in]';
-            } else {
-                return 'Rsync [built-in]';
-            }
+        if ($this->_config->release('enabled', false) == true) {
+            return 'Rsync (with Releases) [built-in]';
         } else {
-            return 'Rsync [built-in]';            
+                return 'Rsync [built-in]';
         }
     }
 
@@ -25,33 +21,23 @@ class Mage_Task_BuiltIn_Deployment_Rsync
         );
         
         // Look for User Excludes
-        if (isset($this->_config['deploy']['deployment']['excludes'])) {
-            $userExcludes = (array) $this->_config['deploy']['deployment']['excludes'];
-        } else {
-            $userExcludes = array();
-        }
+        $userExcludes = $this->_config->deployment('excludes', array());
         
         // If we are working with releases
-        $deployToDirectory = $this->_config['deploy']['deployment']['to'];
-        if (isset($this->_config['deploy']['releases']['enabled'])) {
-            if ($this->_config['deploy']['releases']['enabled'] == 'true') {
-                if (isset($this->_config['deploy']['releases']['directory'])) {
-                    $releasesDirectory = $this->_config['deploy']['releases']['directory'];
-                } else {
-                    $releasesDirectory = 'releases';
-                }
+        $deployToDirectory = $this->_config->deployment('to');
+        if ($this->_config->release('enabled', false) == true) {
+            $releasesDirectory = $this->_config->release('directory', 'releases');
 
-                $deployToDirectory = rtrim($this->_config['deploy']['deployment']['to'], '/')
-                                   . '/' . $releasesDirectory
-                                   . '/' . $this->_config['deploy']['releases']['_id'];
-                $this->_runRemoteCommand('mkdir -p ' . $releasesDirectory . '/' . $this->_config['deploy']['releases']['_id']);
-            }
+            $deployToDirectory = rtrim($this->_config->deployment('to'), '/')
+                               . '/' . $releasesDirectory
+                               . '/' . $this->_config->getReleaseId();
+            $this->_runRemoteCommand('mkdir -p ' . $releasesDirectory . '/' . $this->_config->getReleaseId());
         }
 
         $command = 'rsync -avz '
                  . $this->_excludes(array_merge($excludes, $userExcludes)) . ' '
-                 . $this->_config['deploy']['deployment']['from'] . ' '
-                 . $this->_config['deploy']['deployment']['user'] . '@' . $this->_config['deploy']['host'] . ':' . $deployToDirectory;
+                 . $this->_config->deployment('from') . ' '
+                 . $this->_config->deployment('user') . '@' . $this->_config->getHost() . ':' . $deployToDirectory;
 
         $result = $this->_runLocalCommand($command);
         

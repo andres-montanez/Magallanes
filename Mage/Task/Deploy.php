@@ -24,21 +24,18 @@ class Mage_Task_Deploy
             
         } else {
             foreach ($hosts as $host) {
-                $taskConfig = $config->getConfig($host);
+                $config->setHost($host);
                 $tasks = 0;
                 $completedTasks = 0;
     
                 Mage_Console::output('Deploying to <dark_gray>' . $host . '</dark_gray>');
                 
                 $tasksToRun = $config->getTasks();
-                if (isset($taskConfig['deploy']['releases'])) {
-                    if (isset($taskConfig['deploy']['releases']['enabled'])) {
-                        if ($taskConfig['deploy']['releases']['enabled'] == 'true') {
-                            $taskConfig['deploy']['releases']['_id'] = $this->_releaseId;
-                            array_push($tasksToRun, 'deployment/releases');
-                        }
-                    }
+                if ($config->release('enabled', false) == true) {
+                    $config->setReleaseId($this->_releaseId);
+                    array_push($tasksToRun, 'deployment/releases');                    
                 }
+
                 if (count($tasksToRun) == 0) {
                     Mage_Console::output('<light_purple>Warning!</light_purple> <dark_gray>No </dark_gray><light_cyan>Deployment</light_cyan> <dark_gray>tasks defined.</dark_gray>', 2);
                     Mage_Console::output('Deployment to <dark_gray>' . $host . '</dark_gray> skipped!', 1, 3);
@@ -46,7 +43,7 @@ class Mage_Task_Deploy
                 } else {
                     foreach ($tasksToRun as $taskName) {
                         $tasks++;
-                        $task = Mage_Task_Factory::get($taskName, $taskConfig);
+                        $task = Mage_Task_Factory::get($taskName, $config);
                         $task->init();
                         
                         Mage_Console::output('Running <purple>' . $task->getName() . '</purple> ... ', 2, false);
@@ -87,13 +84,12 @@ class Mage_Task_Deploy
         } else {
             Mage_Console::output('Starting <dark_gray>' . $title . '</dark_gray> tasks:');
     
-            $taskConfig = $config->getConfig();
             $tasks = 0;
             $completedTasks = 0;
     
             foreach ($tasksToRun as $taskName) {
                 $tasks++;
-                $task = Mage_Task_Factory::get($taskName, $taskConfig);
+                $task = Mage_Task_Factory::get($taskName, $config);
                 $task->init();
                     
                 Mage_Console::output('Running <purple>' . $task->getName() . '</purple> ... ', 2, 0);
