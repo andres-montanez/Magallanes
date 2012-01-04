@@ -57,10 +57,4 @@ class Mage_Task_Releases
             }
         }
     }
-    
-    private function _listReleases()
-    {
-        
-    }
-    
 }

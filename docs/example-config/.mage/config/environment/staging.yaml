@@ -10,4 +10,6 @@ tasks:
     - scm/update
   on-deploy:
     - privileges
+    - sampleTask
+    - sampleTaskRollbackAware
   #post-deploy:

@@ -72,24 +72,28 @@ class Mage_Task_BuiltIn_Releases_Rollback
                     
                     } else {
                         foreach ($tasksToRun as $taskName) {
-                            $tasks++;
-                            $task = Mage_Task_Factory::get($taskName, $this->_config);
+                            $task = Mage_Task_Factory::get($taskName, $this->_config, true);
                             $task->init();
-                    
                             Mage_Console::output('Running <purple>' . $task->getName() . '</purple> ... ', 2, false);
-                            $result = $task->run();
-                    
-                            if ($result == true) {
-                                Mage_Console::output('<green>OK</green>', 0);
-                                $completedTasks++;
+                            
+                            if ($task instanceOf Mage_Task_Releases_RollbackAware) {
+                                $tasks++;
+                                $result = $task->run();
+                                
+                                if ($result == true) {
+                                    Mage_Console::output('<green>OK</green>', 0);
+                                    $completedTasks++;
+                                } else {
+                                    Mage_Console::output('<red>FAIL</red>', 0);
+                                }
                             } else {
-                                Mage_Console::output('<red>FAIL</red>', 0);
+                                Mage_Console::output('<yellow>SKIPPED</yellow>', 0);                                
                             }
                         }
                     }
                     
                     // Changing Release
-                    Mage_Console::output('Releasing to <dark_gray>' . $releaseId . '</dark_gray> ... ', 2, false);
+                    Mage_Console::output('Running <purple>Rollback Release [id=' . $releaseId . ']</purple> ... ', 2, false);
                     
                     $userGroup = '';
                     $resultFetch = $this->_runRemoteCommand('ls -ld ' . $rollbackTo . ' | awk \'{print \$3\":\"\$4}\'', $userGroup);

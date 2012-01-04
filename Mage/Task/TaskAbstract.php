@@ -2,14 +2,21 @@
 abstract class Mage_Task_TaskAbstract
 {
     protected $_config = null;
+    protected $_inRollback = false;
     
     public abstract function getName();
     
     public abstract function run();
     
-    public final function __construct(Mage_Config $config)
+    public final function __construct(Mage_Config $config, $inRollback = false)
     {
         $this->_config = $config;
+        $this->_inRollback = $inRollback;
+    }
+    
+    public function inRollback()
+    {
+        return $this->_inRollback;
     }
     
     public function init()
