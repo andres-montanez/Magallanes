@@ -8,6 +8,7 @@ class Mage_Console
     private static $_log = null;
     private static $_logEnabled = true;
     private static $_screenBuffer = '';
+    private static $_commandsOutput = '';
     
     public function setArgs($args)
     {
@@ -80,6 +81,7 @@ class Mage_Console
         if (!$return) {
             $output = trim($log);            
         }
+        self::$_commandsOutput .= PHP_EOL . trim($log) . PHP_EOL; 
         
         self::log($log);
         self::log('---------------------------------');
@@ -88,17 +90,22 @@ class Mage_Console
     }
     
     public function run()
-    {
-        // Disable Loging
-        if ($this->getAction() == 'install') {
-            self::$_logEnabled = false;
-        }
-        
-        Mage_Console::output('Starting <blue>Magallanes</blue>', 0, 2);
-        
+    {               
+        // Load Config
         $config = new Mage_Config;
+        $config->loadGeneral();
         $config->loadEnvironment($this->getEnvironment());
         $config->loadSCM();
+
+        // Logging
+        if ($this->getAction() == 'install') {
+            self::$_logEnabled = false;
+        } else {
+            self::$_logEnabled = $config->general('logging', false);
+        }
+        
+        // Grettings
+        Mage_Console::output('Starting <blue>Magallanes</blue>', 0, 2);
 
         switch ($this->getAction()) {
             case 'deploy':
@@ -148,7 +155,7 @@ class Mage_Console
         
         Mage_Console::output('Finished <blue>Magallanes</blue>', 0, 2);
     }
-
+    
     public static function log($message, $continuation = false)
     {
         if (self::$_logEnabled) {

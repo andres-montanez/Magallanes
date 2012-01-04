@@ -3,6 +3,7 @@ class Mage_Config
 {
     private $_environment = null;
     private $_scm = null;
+    private $_general = null;
     private $_host = null;
     private $_releaseId = null;
     
@@ -20,6 +21,13 @@ class Mage_Config
         }
     }
     
+    public function loadGeneral()
+    {
+        if (file_exists('.mage/config/general.yaml')) {
+            $this->_general = @yaml_parse_file('.mage/config/general.yaml');
+        }
+    }
+    
     public function getEnvironment()
     {
         return $this->_environment;
@@ -30,6 +38,11 @@ class Mage_Config
         return $this->_scm;
     }
 
+    public function getGlobal()
+    {
+        return $this->_global;
+    }
+    
     public function getHosts()
     {
         $config = $this->getEnvironment();
@@ -137,6 +150,26 @@ class Mage_Config
         $options = $this->_scm;
         if (isset($options[$option])) {
             return $options[$option];
+        } else {
+            return $default;
+        }
+    }
+    
+    public function general($option, $default = false)
+    {
+        $options = $this->_general;
+        if (isset($options[$option])) {
+            return $options[$option];
+        } else {
+            return $default;
+        }
+    }
+    
+    public function mail($option, $default = false)
+    {
+        $options = $this->_general;
+        if (isset($options['mail'][$option])) {
+            return $options['mail'][$option];
         } else {
             return $default;
         }
