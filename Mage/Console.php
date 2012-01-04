@@ -32,6 +32,9 @@ class Mage_Console
                 
             } else if ($this->_args[0] == 'install') {
                 $this->_action = 'install';
+                
+            } else if ($this->_args[0] == 'version') {
+                $this->_action = 'version';
 
             } else if ($this->_args[0] == 'init') {
                 $this->_action = 'init';
@@ -98,14 +101,18 @@ class Mage_Console
         $config->loadSCM();
 
         // Logging
-        if ($this->getAction() == 'install') {
+        $showGrettings = true;
+        if (in_array($this->getAction(), array('install', 'version'))) {
             self::$_logEnabled = false;
+            $showGrettings = false;
         } else {
             self::$_logEnabled = $config->general('logging', false);
         }
         
         // Grettings
-        Mage_Console::output('Starting <blue>Magallanes</blue>', 0, 2);
+        if ($showGrettings) {
+            Mage_Console::output('Starting <blue>Magallanes</blue>', 0, 2);
+        }
 
         switch ($this->getAction()) {
             case 'deploy':
@@ -151,9 +158,20 @@ class Mage_Console
                         break;
                 }
                 break;
+                
+            case 'version';
+                $this->showVersion();
+                break;
         }
         
-        Mage_Console::output('Finished <blue>Magallanes</blue>', 0, 2);
+        if ($showGrettings) {
+            Mage_Console::output('Finished <blue>Magallanes</blue>', 0, 2);
+        }
+    }
+    
+    public function showVersion()
+    {
+        Mage_Console::output('Running <blue>Magallanes</blue> version <dark_gray>' . MAGALLANES_VERSION .'</dark_gray>', 0, 2);
     }
     
     public static function log($message, $continuation = false)

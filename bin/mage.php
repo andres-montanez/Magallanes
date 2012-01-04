@@ -1,5 +1,7 @@
 <?php
 # sudo mage install
+# mage version
+# mage upgrade
 # mage config add host s05.example.com to:[production]
 # mage config git git://github.com/andres-montanez/Zend-Framework-Twig-example-app.git
 # mage config svn svn://example.com/repo
@@ -21,6 +23,8 @@
 date_default_timezone_set('UTC');
 
 $baseDir = dirname(dirname(__FILE__));
+
+define('MAGALLANES_VERSION', '0.9');
 
 require_once $baseDir . '/Mage/Autoload.php';
 spl_autoload_register(array('Mage_Autoload', 'autoload'));

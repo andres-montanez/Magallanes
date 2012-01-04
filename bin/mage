@@ -1,4 +1,5 @@
 #!/bin/sh
+#VERSION:0.9
 
 SCRIPT=$(readlink -f $0)
 DIR=$(dirname $SCRIPT)
