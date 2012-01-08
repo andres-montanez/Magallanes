@@ -1,7 +1,7 @@
 <?php
 class Mage_Task_Add
 {
-    public function environment($environmentName)
+    public function environment($environmentName, $withRelases = false)
     {
         $environmentName = strtolower($environmentName);
         $environmentConfigFile = '.mage/config/environment/' . $environmentName . '.yaml';
@@ -12,12 +12,18 @@ class Mage_Task_Add
         if (file_exists($environmentConfigFile)) {
             Mage_Console::output('<light_red>Error!!</light_red> Already exists an environment called <dark_gray>' . $environmentName . '</dark_gray>', 1, 2);
         } else {
+            $releasesConfig = 'releases:' . PHP_EOL 
+                            . '  enabled: true' . PHP_EOL
+                            . '  symlink: current' . PHP_EOL
+                            . '  directory: releases' . PHP_EOL;
+            
             $baseConfig = '#' . $environmentName . PHP_EOL
-                        . 'deployment:'
+                        . 'deployment:' . PHP_EOL
                         . '  user: dummy' . PHP_EOL
                         . '  from: ./' . PHP_EOL
                         . '  to: /var/www/vhosts/example.com/www' . PHP_EOL
                         . '  excludes:' . PHP_EOL
+                        . ($withRelases ? $releasesConfig : '')
                         . 'hosts:' . PHP_EOL
                         . 'tasks:'
                         . '  pre-deploy:' . PHP_EOL

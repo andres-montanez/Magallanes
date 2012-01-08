@@ -153,8 +153,14 @@ class Mage_Console
             case 'add';
                 switch ($this->_args[1]) {
                     case 'environment':
+                        if (isset($this->_args[3]) && ($this->_args[3] == '--with-releases')) {
+                            $withRelases = true;
+                        } else {
+                            $withRelases = false;
+                        }
+
                         $task = new Mage_Task_Add;
-                        $task->environment($this->_args[2]);
+                        $task->environment($this->_args[2], $withRelases);
                         break;
                 }
                 break;

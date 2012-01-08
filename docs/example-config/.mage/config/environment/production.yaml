@@ -9,7 +9,6 @@ releases:
   enabled: true
   symlink: current
   directory: releases
-  tasks:
 hosts:
   - s01.example.com
   - s02.example.com
