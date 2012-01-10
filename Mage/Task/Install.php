@@ -4,11 +4,17 @@ class Mage_Task_Install
     public function run ()
     {
         Mage_Console::output('Installing <dark_gray>Magallanes</dark_gray>... ', 1, 0);
-        $this->_recursiveCopy('./', '/opt/magallanes');
+        $this->_recursiveCopy('./', '/opt/magallanes-' . MAGALLANES_VERSION);
+        
+        if (file_exists('/opt/magallanes') && is_link('/opt/magallanes')) {
+            unlink('/opt/magallanes');
+        }
+        symlink('/opt/magallanes-' . MAGALLANES_VERSION, '/opt/magallanes');
         chmod('/opt/magallanes/bin/mage', 0755);
         if (!file_exists('/usr/bin/mage')) {
-            symlink('/opt/magallanes/bin/mage', '/usr/bin/mage');            
+            symlink('/opt/magallanes/bin/mage', '/usr/bin/mage');
         }
+
         Mage_Console::output('<light_green>Success!</light_green>', 0, 2);
     }
 

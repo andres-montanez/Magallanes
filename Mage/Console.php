@@ -33,6 +33,9 @@ class Mage_Console
             } else if ($this->_args[0] == 'install') {
                 $this->_action = 'install';
                 
+            } else if ($this->_args[0] == 'upgrade') {
+                $this->_action = 'upgrade';
+                
             } else if ($this->_args[0] == 'version') {
                 $this->_action = 'version';
 
@@ -102,7 +105,7 @@ class Mage_Console
 
         // Logging
         $showGrettings = true;
-        if (in_array($this->getAction(), array('install', 'version'))) {
+        if (in_array($this->getAction(), array('install', 'upgrade', 'version'))) {
             self::$_logEnabled = false;
             $showGrettings = false;
         } else {
@@ -142,6 +145,11 @@ class Mage_Console
 
             case 'install';
                 $task = new Mage_Task_Install;
+                $task->run();
+                break;
+                
+            case 'upgrade';
+                $task = new Mage_Task_Upgrade;
                 $task->run();
                 break;
                 
