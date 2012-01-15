@@ -41,7 +41,7 @@ Also we are working on creating more built in tasks.
 
 
 ### This is awesome! Where can I learn more? ###
-You can read the whole source code (naaah!); or checkout the wiki at: http://magallanes.zenreworks.com/wiki
+You can read the whole source code (naaah!); or checkout the documentation wiki at: http://magallanes.zenreworks.com/wiki
 
 
 Enjoy your magic trip with **Magallanes** to the land of the easily deployable apps!!
