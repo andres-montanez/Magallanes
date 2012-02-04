@@ -30,9 +30,18 @@ abstract class Mage_Task_TaskAbstract
     
     protected final function _runRemoteCommand($command, &$output = null)
     {
+        if ($this->_config->release('enabled', false) == true) {
+            $releasesDirectory = '/'
+                               . $this->_config->release('directory', 'releases')
+                               . '/'
+                               . $this->_config->getReleaseId();
+        } else {
+            $releasesDirectory = '';
+        }
+        
         $localCommand = 'ssh '
                       . $this->_config->deployment('user') . '@' . $this->_config->getHost() . ' '
-                      . '"cd ' . $this->_config->deployment('to') . ' && '
+                      . '"cd ' . rtrim($this->_config->deployment('to'), '/') . $releasesDirectory . ' && '
                       . $command . '"';
 
         return $this->_runLocalCommand($localCommand, $output);
