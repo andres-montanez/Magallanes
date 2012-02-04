@@ -3,8 +3,7 @@ deployment:
   user: stg_user
   from: ./
   to: /var/www/vhosts/example.com/staging
-hosts:
-  - staging.example.com
+hosts: /tmp/current-staging-hosts.txt
 tasks:
   pre-deploy:
     - scm/update

@@ -49,7 +49,14 @@ class Mage_Config
         $hosts = array();
         
         if (isset($config['hosts'])) {
-            $hosts = (array) $config['hosts'];
+            if (is_array($config['hosts'])) {
+                $hosts = (array) $config['hosts'];                
+            } else if (is_string($config['hosts'])) {
+                $fileContent = fopen($config['hosts'], 'r');
+                while (($host = fgets($fileContent)) == true) {
+                    $hosts[] = trim($host);
+                }
+            }
         }
         
         return $hosts;
