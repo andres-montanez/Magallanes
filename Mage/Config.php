@@ -54,7 +54,10 @@ class Mage_Config
             } else if (is_string($config['hosts'])) {
                 $fileContent = fopen($config['hosts'], 'r');
                 while (($host = fgets($fileContent)) == true) {
-                    $hosts[] = trim($host);
+                    $host = trim($host);
+                    if ($host != '') {
+                        $hosts[] = $host;                        
+                    }
                 }
             }
         }
