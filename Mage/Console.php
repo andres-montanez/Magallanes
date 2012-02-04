@@ -18,30 +18,34 @@ class Mage_Console
     
     public function parse()
     {
-            if ($this->_args[0] == 'deploy') {
-                $this->_action = 'deploy';
+        if (count($this->_args) == 0) {
+            return false;
+        }
 
-            } else if ($this->_args[0] == 'releases') {
-                $this->_action = 'releases';
-                
-            } else if ($this->_args[0] == 'update') {
-                $this->_action = 'update';
+        if ($this->_args[0] == 'deploy') {
+            $this->_action = 'deploy';
 
-            } else if ($this->_args[0] == 'add') {
-                $this->_action = 'add';
+        } else if ($this->_args[0] == 'releases') {
+            $this->_action = 'releases';
                 
-            } else if ($this->_args[0] == 'install') {
-                $this->_action = 'install';
-                
-            } else if ($this->_args[0] == 'upgrade') {
-                $this->_action = 'upgrade';
-                
-            } else if ($this->_args[0] == 'version') {
-                $this->_action = 'version';
+        } else if ($this->_args[0] == 'update') {
+            $this->_action = 'update';
 
-            } else if ($this->_args[0] == 'init') {
-                $this->_action = 'init';
-            } 
+        } else if ($this->_args[0] == 'add') {
+            $this->_action = 'add';
+                
+        } else if ($this->_args[0] == 'install') {
+            $this->_action = 'install';
+                
+        } else if ($this->_args[0] == 'upgrade') {
+            $this->_action = 'upgrade';
+                
+        } else if ($this->_args[0] == 'version') {
+            $this->_action = 'version';
+
+        } else if ($this->_args[0] == 'init') {
+            $this->_action = 'init';
+        } 
         
         foreach ($this->_args as $argument) {
             if (preg_match('/to:[\w]+/i', $argument)) {
@@ -175,6 +179,10 @@ class Mage_Console
                 
             case 'version';
                 $this->showVersion();
+                break;
+                
+            default:
+                Mage_Console::output('<red>Invalid action</red>', 0, 2);
                 break;
         }
         
