@@ -31,10 +31,16 @@ abstract class Mage_Task_TaskAbstract
     protected final function _runRemoteCommand($command, &$output = null)
     {
         if ($this->_config->release('enabled', false) == true) {
-            $releasesDirectory = '/'
-                               . $this->_config->release('directory', 'releases')
-                               . '/'
-                               . $this->_config->getReleaseId();
+            if ($this instanceOf Mage_Task_Releases_BuiltIn) {
+                $releasesDirectory = '';
+
+            } else {
+                $releasesDirectory = '/'
+                                   . $this->_config->release('directory', 'releases')
+                                   . '/'
+                                   . $this->_config->getReleaseId();
+            }
+
         } else {
             $releasesDirectory = '';
         }

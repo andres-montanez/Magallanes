@@ -1,6 +1,7 @@
 <?php
 class Mage_Task_BuiltIn_Releases_Rollback
     extends Mage_Task_TaskAbstract
+    implements Mage_Task_Releases_BuiltIn
 {
     private $_release = null;
     

@@ -1,6 +1,7 @@
 <?php
 class Mage_Task_BuiltIn_Releases_List
     extends Mage_Task_TaskAbstract
+    implements Mage_Task_Releases_BuiltIn
 {
     public function getName()
     {
