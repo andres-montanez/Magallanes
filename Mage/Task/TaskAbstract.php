@@ -45,7 +45,7 @@ abstract class Mage_Task_TaskAbstract
             $releasesDirectory = '';
         }
         
-        $localCommand = 'ssh '
+        $localCommand = 'ssh -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no '
                       . $this->_config->deployment('user') . '@' . $this->_config->getHost() . ' '
                       . '"cd ' . rtrim($this->_config->deployment('to'), '/') . $releasesDirectory . ' && '
                       . $command . '"';
