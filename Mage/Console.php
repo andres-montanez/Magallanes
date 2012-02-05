@@ -85,8 +85,10 @@ class Mage_Console
         self::log('---- Executing: $ ' . $command);
         
         ob_start();
-        system($command . ' 2>&1', $return);
-        $log = ob_get_clean();
+        $return = 1;
+        $log = array();
+        exec($command . ' 2>&1', $log, $return);
+        $log = implode(PHP_EOL, $log);
         
         if (!$return) {
             $output = trim($log);            

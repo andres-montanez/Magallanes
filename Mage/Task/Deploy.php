@@ -12,7 +12,7 @@ class Mage_Task_Deploy
     public function run(Mage_Config $config)
     {
         $this->_config = $config;
-        
+
         // Run Pre-Deployment Tasks
         $this->_runNonDeploymentTasks('pre-deploy', $config, 'Pre-Deployment');
         
@@ -72,12 +72,24 @@ class Mage_Task_Deploy
 
         // Run Post-Deployment Tasks
         $this->_runNonDeploymentTasks('post-deploy', $config, 'Post-Deployment');
+        
     }
 
     private function _runNonDeploymentTasks($stage, Mage_Config $config, $title)
     {
         $tasksToRun = $config->getTasks($stage);
         
+        // Look for Remote Source
+        if ($this->_config->deployment('from', false) == false) {
+            if (is_array($this->_config->deployment('source', null))) {
+                if ($stage == 'pre-deploy') {
+                    array_unshift($tasksToRun, 'scm/clone');                    
+                } elseif ($stage == 'post-deploy') {
+                    array_unshift($tasksToRun, 'scm/remove-clone');
+                }
+            }
+        }
+
         if (count($tasksToRun) == 0) {
             Mage_Console::output('<dark_gray>No </dark_gray><light_cyan>' . $title . '</light_cyan> <dark_gray>tasks defined.</dark_gray>', 1, 3);
             

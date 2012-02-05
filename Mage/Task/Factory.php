@@ -11,7 +11,9 @@ class Mage_Task_Factory
     public static function get($taskName, Mage_Config $taskConfig, $inRollback = false)
     {
         $instance = null;
-        
+        $taskName = ucwords(str_replace('-', ' ', $taskName));
+        $taskName = str_replace(' ', '', $taskName);
+                
         if (strpos($taskName, '/') === false) {
             Mage_Autoload::loadUserTask($taskName);
             $className = 'Task_' . ucfirst($taskName);

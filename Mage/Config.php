@@ -135,6 +135,12 @@ class Mage_Config
         return $taskConfig;
     }
 
+    public function setFrom($from)
+    {
+        $options['deployment']['from'] = $from;
+        return $this;
+    }
+    
     public function deployment($option, $default = false)
     {
         $options = $this->getEnvironment();

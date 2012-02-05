@@ -1,7 +1,12 @@
 #production
 deployment:
   user: root
-  from: ./
+#  from: ./
+  source:
+    type: git
+    repository: git://github.com/andres-montanez/Zend-Framework-Twig-example-app.git
+    from: production
+    temporal: /tmp/myAppClone
   to: /var/www/vhosts/example.com/www
   excludes:
     - application/data/cache/twig/*
@@ -12,8 +17,6 @@ releases:
 hosts:
   - s01.example.com
   - s02.example.com
-  - s03.example.com
-  - s05.example.com
 tasks:
   pre-deploy:
     - scm/update
