@@ -22,7 +22,7 @@ class Mage_Task_BuiltIn_Deployment_Releases
                      . ' && '
                      . 'ln -sf ' . $currentCopy . ' ' . $symlink
                      . ' && '
-                     . 'chown -h ' . $userGroup . ' ' . $symlink;
+                     . 'chown -h ' . $userGroup . ' ' . $symlink; 
             $result = $this->_runRemoteCommand($command);
             return $result;
 

@@ -83,8 +83,7 @@ class Mage_Console
     {
         self::log('---------------------------------');
         self::log('---- Executing: $ ' . $command);
-        
-        ob_start();
+
         $return = 1;
         $log = array();
         exec($command . ' 2>&1', $log, $return);

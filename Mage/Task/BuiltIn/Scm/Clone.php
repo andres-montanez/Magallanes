@@ -29,11 +29,16 @@ class Mage_Task_BuiltIn_Scm_Clone
         $this->_runLocalCommand('mkdir -p ' . $this->_source['temporal']);
         switch ($this->_source['type']) {
             case 'git':
-                $command = 'cd ' . $this->_source['temporal']
-                         . ' && '
-                         . 'git clone ' . $this->_source['repository'] . ' . '
-                         . ' && '
+                // Clone Repo
+                $command = 'cd ' . $this->_source['temporal'] . ' ; '
+                         . 'git clone ' . $this->_source['repository'] . ' . ';
+                $result = $this->_runLocalCommand($command);
+
+                // Checkout Branch
+                $command = 'cd ' . $this->_source['temporal'] . ' ; '
                          . 'git checkout ' . $this->_source['from'];
+                $result = $result && $this->_runLocalCommand($command);
+
                 $this->_config->setFrom($this->_source['temporal']);
                 break;
 
@@ -41,8 +46,6 @@ class Mage_Task_BuiltIn_Scm_Clone
                 return false;
                 break;
         }
-
-        $result = $this->_runLocalCommand($command);
         
         return $result;
     }
