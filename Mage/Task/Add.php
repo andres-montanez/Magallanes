@@ -4,7 +4,7 @@ class Mage_Task_Add
     public function environment($environmentName, $withRelases = false)
     {
         $environmentName = strtolower($environmentName);
-        $environmentConfigFile = '.mage/config/environment/' . $environmentName . '.yaml';
+        $environmentConfigFile = '.mage/config/environment/' . $environmentName . '.yml';
         
         Mage_Console::output('Adding new environment: <dark_gray>' . $environmentName . '</dark_gray>');
         

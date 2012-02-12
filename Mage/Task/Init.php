@@ -17,8 +17,8 @@ class Mage_Task_Init
             $results[] = mkdir($configDir . '/tasks');
             $results[] = mkdir($configDir . '/config');
             $results[] = mkdir($configDir . '/config/environment');
-            $results[] = file_put_contents($configDir . '/config/global.yaml', '#global settings' . PHP_EOL . PHP_EOL);
-            $results[] = file_put_contents($configDir . '/config/scm.yaml', '#scm settings' . PHP_EOL . PHP_EOL);
+            $results[] = file_put_contents($configDir . '/config/global.yml', '#global settings' . PHP_EOL . PHP_EOL);
+            $results[] = file_put_contents($configDir . '/config/scm.yml', '#scm settings' . PHP_EOL . PHP_EOL);
             
             if (!in_array(false, $results)) {
                 Mage_Console::output('<light_green>Success!!</light_green> The configuration for <dark_gray>Magallanes</dark_gray> has been generated at <blue>.mage</blue> directory.');

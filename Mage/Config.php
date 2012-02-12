@@ -9,22 +9,22 @@ class Mage_Config
     
     public function loadEnvironment($environment)
     {
-        if (($environment != '') && file_exists('.mage/config/environment/' . $environment . '.yaml')) {
-            $this->_environment = @yaml_parse_file('.mage/config/environment/' . $environment . '.yaml');            
+        if (($environment != '') && file_exists('.mage/config/environment/' . $environment . '.yml')) {
+            $this->_environment = @yaml_parse_file('.mage/config/environment/' . $environment . '.yml');            
         }
     }
     
     public function loadSCM()
     {
-        if (file_exists('.mage/config/scm.yaml')) {
-            $this->_scm = @yaml_parse_file('.mage/config/scm.yaml');            
+        if (file_exists('.mage/config/scm.yml')) {
+            $this->_scm = @yaml_parse_file('.mage/config/scm.yml');            
         }
     }
     
     public function loadGeneral()
     {
-        if (file_exists('.mage/config/general.yaml')) {
-            $this->_general = @yaml_parse_file('.mage/config/general.yaml');
+        if (file_exists('.mage/config/general.yml')) {
+            $this->_general = @yaml_parse_file('.mage/config/general.yml');
         }
     }
     
