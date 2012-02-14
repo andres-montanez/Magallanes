@@ -10,21 +10,21 @@ class Mage_Config
     public function loadEnvironment($environment)
     {
         if (($environment != '') && file_exists('.mage/config/environment/' . $environment . '.yml')) {
-            $this->_environment = @yaml_parse_file('.mage/config/environment/' . $environment . '.yml');            
+            $this->_environment = spyc_load_file('.mage/config/environment/' . $environment . '.yml');            
         }
     }
     
     public function loadSCM()
     {
         if (file_exists('.mage/config/scm.yml')) {
-            $this->_scm = @yaml_parse_file('.mage/config/scm.yml');            
+            $this->_scm = spyc_load_file('.mage/config/scm.yml');            
         }
     }
     
     public function loadGeneral()
     {
         if (file_exists('.mage/config/general.yml')) {
-            $this->_general = @yaml_parse_file('.mage/config/general.yml');
+            $this->_general = spyc_load_file('.mage/config/general.yml');
         }
     }
     

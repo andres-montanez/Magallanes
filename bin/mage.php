@@ -26,6 +26,7 @@ $baseDir = dirname(dirname(__FILE__));
 
 define('MAGALLANES_VERSION', '0.9.2');
 
+require_once $baseDir . '/Mage/spyc.php';
 require_once $baseDir . '/Mage/Autoload.php';
 spl_autoload_register(array('Mage_Autoload', 'autoload'));
 
