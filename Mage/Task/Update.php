@@ -16,7 +16,7 @@ class Mage_Task_Update
         if ($result == true) {
             Mage_Console::output('OK' . PHP_EOL, 0);
         } else {
-            Mage_Console::output( 'FAIL' . PHP_EOL, 0);
+            Mage_Console::output('FAIL' . PHP_EOL, 0);
         }
     }
 

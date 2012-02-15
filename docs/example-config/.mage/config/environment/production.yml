@@ -15,7 +15,7 @@ releases:
   symlink: current
   directory: releases
 hosts:
-  - s01.example.com
+  - s01.example.com:22
   - s02.example.com
 tasks:
   pre-deploy:

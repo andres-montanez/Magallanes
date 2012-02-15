@@ -71,6 +71,19 @@ class Mage_Config
         return $this;
     }
     
+    public function getHostName()
+    {
+        $info = explode(':', $this->_host);
+        return $info[0];
+    }
+    
+    public function getHostPort()
+    {
+        $info = explode(':', $this->_host);
+        $info[] = $this->deployment('port', '22');
+        return $info[1];
+    }
+    
     public function getHost()
     {
         return $this->_host;
