@@ -158,7 +158,11 @@ class Mage_Config
     {
         $options = $this->getEnvironment();
         if (isset($options['deployment'][$option])) {
-            return $options['deployment'][$option];
+            if (is_array($default) && ($options['deployment'][$option] == '')) {
+                return $default;
+            } else {
+                return $options['deployment'][$option];                
+            }
         } else {
             return $default;
         }
@@ -168,7 +172,11 @@ class Mage_Config
     {
         $options = $this->getEnvironment();
         if (isset($options['releases'][$option])) {
-            return $options['releases'][$option];
+            if (is_array($default) && ($options['releases'][$option] == '')) {
+                return $default;
+            } else {
+                return $options['releases'][$option];
+            }
         } else {
             return $default;
         }
@@ -178,6 +186,11 @@ class Mage_Config
     {
         $options = $this->_scm;
         if (isset($options[$option])) {
+            if (is_array($default) && ($options[$option] == '')) {
+                return $default;
+            } else {
+                return $options[$option];
+            }
             return $options[$option];
         } else {
             return $default;
@@ -188,7 +201,11 @@ class Mage_Config
     {
         $options = $this->_general;
         if (isset($options[$option])) {
-            return $options[$option];
+            if (is_array($default) && ($options[$option] == '')) {
+                return $default;
+            } else {
+                return $options[$option];
+            }
         } else {
             return $default;
         }
@@ -198,7 +215,11 @@ class Mage_Config
     {
         $options = $this->_general;
         if (isset($options['mail'][$option])) {
-            return $options['mail'][$option];
+            if (is_array($default) && ($options['mail'][$option] == '')) {
+                return $default;
+            } else {
+                return $options['mail'][$option];
+            }
         } else {
             return $default;
         }
