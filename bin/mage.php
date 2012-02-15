@@ -24,7 +24,7 @@ date_default_timezone_set('UTC');
 
 $baseDir = dirname(dirname(__FILE__));
 
-define('MAGALLANES_VERSION', '0.9.2');
+define('MAGALLANES_VERSION', '0.9.3');
 
 require_once $baseDir . '/Mage/spyc.php';
 require_once $baseDir . '/Mage/Autoload.php';
