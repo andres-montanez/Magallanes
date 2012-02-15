@@ -116,7 +116,7 @@ class Mage_Config
         $config = $this->getEnvironment();
 
         if (isset($config[$type]) && isset($config[$type][$stage])) {
-            $tasks = (array) $config[$type][$stage];
+            $tasks = ($config[$type][$stage] ? (array) $config[$type][$stage] : array());
         }
 
         return $tasks;
