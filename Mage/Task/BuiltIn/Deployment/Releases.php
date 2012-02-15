@@ -17,12 +17,14 @@ class Mage_Task_BuiltIn_Deployment_Releases
             $currentCopy = $releasesDirectory . '/' . $this->_config->getReleaseId();
 
             $userGroup = '';
-            $resultFetch = $this->_runRemoteCommand('ls -ld ' . $currentCopy . ' | awk \'{print \$3\":\"\$4}\'', $userGroup);
+            $resultFetch = $this->_runRemoteCommand('ls -ld ' . $symlink . ' | awk \'{print \$3\":\"\$4}\'', $userGroup);
             $command = 'rm -f ' . $symlink
                      . ' && '
                      . 'ln -sf ' . $currentCopy . ' ' . $symlink
                      . ' && '
-                     . 'chown -h ' . $userGroup . ' ' . $symlink; 
+                     . 'chown -h ' . $userGroup . ' ' . $symlink
+                     . ' && '
+                     . 'chown -R ' . $userGroup . ' ' . $currentCopy; 
             $result = $this->_runRemoteCommand($command);
             return $result;
 
