@@ -39,7 +39,7 @@ class Mage_Task_BuiltIn_Deployment_Rsync
                  . '--rsh="ssh -p' . $this->_config->getHostPort() . '" '
                  . $this->_excludes(array_merge($excludes, $userExcludes)) . ' '
                  . $this->_config->deployment('from') . ' '
-                 . $this->_config->deployment('user') . '@' . $this->_config->getHost() . ':' . $deployToDirectory;
+                 . $this->_config->deployment('user') . '@' . $this->_config->getHostName() . ':' . $deployToDirectory;
 
         $result = $this->_runLocalCommand($command);
         
