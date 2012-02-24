@@ -17,7 +17,7 @@ class Mage_Task_Init
             $results[] = mkdir($configDir . '/tasks');
             $results[] = mkdir($configDir . '/config');
             $results[] = mkdir($configDir . '/config/environment');
-            $results[] = file_put_contents($configDir . '/config/global.yml', '#global settings' . PHP_EOL . PHP_EOL);
+            $results[] = file_put_contents($configDir . '/config/general.yml', '#global settings' . PHP_EOL . PHP_EOL);
             $results[] = file_put_contents($configDir . '/config/scm.yml', '#scm settings' . PHP_EOL . PHP_EOL);
             
             if (!in_array(false, $results)) {

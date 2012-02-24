@@ -73,7 +73,7 @@ class Mage_Task_BuiltIn_Releases_Rollback
                     
                     } else {
                         foreach ($tasksToRun as $taskName) {
-                            $task = Mage_Task_Factory::get($taskName, $this->_config, true);
+                            $task = Mage_Task_Factory::get($taskName, $this->_config, true, 'deploy');
                             $task->init();
                             Mage_Console::output('Running <purple>' . $task->getName() . '</purple> ... ', 2, false);
                             

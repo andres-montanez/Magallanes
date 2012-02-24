@@ -28,7 +28,7 @@ class Mage_Task_Deploy
                 $tasks = 0;
                 $completedTasks = 0;
     
-                Mage_Console::output('Deploying to <dark_gray>' . $config->getHostName() . '</dark_gray>');
+                Mage_Console::output('Deploying to <dark_gray>' . $config->getHost() . '</dark_gray>');
                 
                 $tasksToRun = $config->getTasks();
                 array_unshift($tasksToRun, 'deployment/rsync');
@@ -40,12 +40,12 @@ class Mage_Task_Deploy
 
                 if (count($tasksToRun) == 0) {
                     Mage_Console::output('<light_purple>Warning!</light_purple> <dark_gray>No </dark_gray><light_cyan>Deployment</light_cyan> <dark_gray>tasks defined.</dark_gray>', 2);
-                    Mage_Console::output('Deployment to <dark_gray>' . $config->getHostName() . '</dark_gray> skipped!', 1, 3);
+                    Mage_Console::output('Deployment to <dark_gray>' . $config->getHost() . '</dark_gray> skipped!', 1, 3);
 
                 } else {
                     foreach ($tasksToRun as $taskName) {
                         $tasks++;
-                        $task = Mage_Task_Factory::get($taskName, $config);
+                        $task = Mage_Task_Factory::get($taskName, $config, false, 'deploy');
                         $task->init();
                         
                         Mage_Console::output('Running <purple>' . $task->getName() . '</purple> ... ', 2, false);
@@ -65,7 +65,7 @@ class Mage_Task_Deploy
                         $tasksColor = 'red';                
                     }
         
-                    Mage_Console::output('Deployment to <dark_gray>' . $config->getHostName() . '</dark_gray> compted: <' . $tasksColor . '>' . $completedTasks . '/' . $tasks . '</' . $tasksColor . '> tasks done.', 1, 3);
+                    Mage_Console::output('Deployment to <dark_gray>' . $config->getHost() . '</dark_gray> compted: <' . $tasksColor . '>' . $completedTasks . '/' . $tasks . '</' . $tasksColor . '> tasks done.', 1, 3);
                 }
             }
         }
@@ -101,7 +101,7 @@ class Mage_Task_Deploy
     
             foreach ($tasksToRun as $taskName) {
                 $tasks++;
-                $task = Mage_Task_Factory::get($taskName, $config);
+                $task = Mage_Task_Factory::get($taskName, $config, false, $stage);
                 $task->init();
                     
                 Mage_Console::output('Running <purple>' . $task->getName() . '</purple> ... ', 2, 0);

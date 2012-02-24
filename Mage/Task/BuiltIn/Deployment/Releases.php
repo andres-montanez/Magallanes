@@ -16,10 +16,13 @@ class Mage_Task_BuiltIn_Deployment_Releases
 
             $currentCopy = $releasesDirectory . '/' . $this->_config->getReleaseId();
 
-            $userGroup = '';
-            $resultFetch = $this->_runRemoteCommand('ls -ld ' . $symlink . ' | awk \'{print \$3\":\"\$4}\'', $userGroup);
+            // Fetch the user and group from base directory
+            $userGroup = '33:33';
+            $resultFetch = $this->_runRemoteCommand('ls -ld . | awk \'{print \$3\":\"\$4}\'', $userGroup);
+            
+            // Remove symlink if exists; create new symlink and change owners
             $command = 'rm -f ' . $symlink
-                     . ' && '
+                     . ' ; '
                      . 'ln -sf ' . $currentCopy . ' ' . $symlink
                      . ' && '
                      . 'chown -h ' . $userGroup . ' ' . $symlink

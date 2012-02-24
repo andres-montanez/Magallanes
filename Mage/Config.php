@@ -1,6 +1,7 @@
 <?php
 class Mage_Config
 {
+    private $_environmentName = null;
     private $_environment = null;
     private $_scm = null;
     private $_general = null;
@@ -10,7 +11,8 @@ class Mage_Config
     public function loadEnvironment($environment)
     {
         if (($environment != '') && file_exists('.mage/config/environment/' . $environment . '.yml')) {
-            $this->_environment = spyc_load_file('.mage/config/environment/' . $environment . '.yml');            
+            $this->_environment = spyc_load_file('.mage/config/environment/' . $environment . '.yml');
+            $this->_environmentName = $environment;            
         }
     }
     
@@ -31,6 +33,11 @@ class Mage_Config
     public function getEnvironment()
     {
         return $this->_environment;
+    }
+    
+    public function getEnvironmentName()
+    {
+        return $this->_environmentName;
     }
     
     public function getSCM()
