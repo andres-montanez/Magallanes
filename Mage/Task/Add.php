@@ -14,6 +14,7 @@ class Mage_Task_Add
         } else {
             $releasesConfig = 'releases:' . PHP_EOL 
                             . '  enabled: true' . PHP_EOL
+                            . '  max: 10' . PHP_EOL
                             . '  symlink: current' . PHP_EOL
                             . '  directory: releases' . PHP_EOL;
             

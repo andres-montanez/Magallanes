@@ -3,6 +3,10 @@ class Mage_Task_Deploy
 {
     private $_config = null;
     private $_releaseId = null;
+    private $_startTime = null;
+    private $_startTimeHosts = null;
+    private $_endTimeHosts = null;
+    private $_hostsCount = 0;
     
     public function __construct()
     {
@@ -11,6 +15,7 @@ class Mage_Task_Deploy
     
     public function run(Mage_Config $config)
     {
+        $this->_startTime = time();
         $this->_config = $config;
 
         // Run Pre-Deployment Tasks
@@ -23,7 +28,9 @@ class Mage_Task_Deploy
             Mage_Console::output('<light_purple>Warning!</light_purple> <dark_gray>No hosts defined, skipping deployment tasks.</dark_gray>', 1, 3);
             
         } else {
+            $this->_startTimeHosts = time();
             foreach ($hosts as $host) {
+                $this->_hostsCount++;
                 $config->setHost($host);
                 $tasks = 0;
                 $completedTasks = 0;
@@ -68,11 +75,21 @@ class Mage_Task_Deploy
                     Mage_Console::output('Deployment to <dark_gray>' . $config->getHost() . '</dark_gray> compted: <' . $tasksColor . '>' . $completedTasks . '/' . $tasks . '</' . $tasksColor . '> tasks done.', 1, 3);
                 }
             }
+            $this->_endTimeHosts = time();
         }
 
         // Run Post-Deployment Tasks
         $this->_runNonDeploymentTasks('post-deploy', $config, 'Post-Deployment');
         
+        // Time Information General
+        $timeText = $this->_transcurredTime(time() - $this->_startTime);
+        Mage_Console::output('Total time: <dark_gray>' . $timeText . '</dark_gray>.');
+
+        // Time Information Hosts
+        if ($this->_hostsCount > 0) {
+            $timeTextPerHost = $this->_transcurredTime(round(($this->_endTimeHosts - $this->_startTimeHosts) / $this->_hostsCount));
+            Mage_Console::output('Average time per host: <dark_gray>' . $timeTextPerHost . '</dark_gray>.');            
+        }
     }
 
     private function _runNonDeploymentTasks($stage, Mage_Config $config, $title)
@@ -127,5 +144,25 @@ class Mage_Task_Deploy
         
     }
     
-    
+    private function _transcurredTime($time)
+    {
+        $hours = floor($time / 3600);
+        $minutes = floor(($time - ($hours * 3600)) / 60);
+        $seconds = $time - ($minutes * 60) - ($hours * 3600);
+        $timeText = array();
+        
+        if ($hours > 0) {
+            $timeText[] = $hours . ' hours';
+        }
+        
+        if ($minutes > 0) {
+            $timeText[] = $minutes . ' minutes';
+        }
+        
+        if ($seconds > 0) {
+            $timeText[] = $seconds . ' seconds';
+        }
+        
+        return implode(' ', $timeText);
+    }
 }
