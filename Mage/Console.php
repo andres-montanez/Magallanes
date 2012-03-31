@@ -1,9 +1,9 @@
 <?php
 class Mage_Console
 {
-    private $_args = null;
+    private $_args = array();
     private $_action = null;
-    private $_actionOptions = null;
+    private static $_actionOptions = array();
     private $_environment = null;
     private static $_log = null;
     private static $_logEnabled = true;
@@ -50,6 +50,14 @@ class Mage_Console
         foreach ($this->_args as $argument) {
             if (preg_match('/to:[\w]+/i', $argument)) {
                 $this->_environment = str_replace('to:', '', $argument);
+
+            } else if (preg_match('/--[\w]+/i', $argument)) {
+                $optionValue = explode('=', substr($argument, 2));
+                if (count($optionValue) == 1) {
+                    self::$_actionOptions[$optionValue[0]] = true;
+                } else if (count($optionValue) == 2) {
+                    self::$_actionOptions[$optionValue[0]] = $optionValue[1];
+                }
             }
         }
     }
@@ -62,6 +70,15 @@ class Mage_Console
     public function getEnvironment()
     {
         return $this->_environment;
+    }
+    
+    public static function getActionOption($name, $default = false)
+    {
+        if (isset(self::$_actionOptions[$name])) {
+            return self::$_actionOptions[$name];
+        } else {
+            return $default;
+        }
     }
     
     public static function output($message, $tabs = 1, $newLine = 1)

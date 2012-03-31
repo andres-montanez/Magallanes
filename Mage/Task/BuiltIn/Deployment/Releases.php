@@ -10,7 +10,7 @@ class Mage_Task_BuiltIn_Deployment_Releases
 
     public function run()
     {
-        if ($this->_config->release('enabled', false) == true) {
+        if ($this->_config->release('enabled', false) == true) {            
             $releasesDirectory = $this->_config->release('directory', 'releases');
             $symlink = $this->_config->release('symlink', 'current');
 

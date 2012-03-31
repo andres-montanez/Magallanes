@@ -100,13 +100,11 @@ class Mage_Task_Deploy
         $tasksToRun = $config->getTasks($stage);
         
         // Look for Remote Source
-        if ($this->_config->deployment('from', false) == false) {
-            if (is_array($this->_config->deployment('source', null))) {
-                if ($stage == 'pre-deploy') {
-                    array_unshift($tasksToRun, 'scm/clone');                    
-                } elseif ($stage == 'post-deploy') {
-                    array_unshift($tasksToRun, 'scm/remove-clone');
-                }
+        if (is_array($this->_config->deployment('source', null))) {
+            if ($stage == 'pre-deploy') {
+                array_unshift($tasksToRun, 'scm/clone');                    
+            } elseif ($stage == 'post-deploy') {
+                array_unshift($tasksToRun, 'scm/remove-clone');
             }
         }
 

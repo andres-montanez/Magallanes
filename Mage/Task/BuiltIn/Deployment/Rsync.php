@@ -6,7 +6,11 @@ class Mage_Task_BuiltIn_Deployment_Rsync
     public function getName()
     {
         if ($this->_config->release('enabled', false) == true) {
-            return 'Rsync (with Releases) [built-in]';
+            if ($this->getActionOption('overrideRelease', false) == true) {
+                return 'Rsync (with Releases override) [built-in]';
+            } else {
+                return 'Rsync (with Releases) [built-in]';                
+            }
         } else {
                 return 'Rsync [built-in]';
         }
@@ -14,6 +18,16 @@ class Mage_Task_BuiltIn_Deployment_Rsync
 
     public function run()
     {
+        $overrideRelease = $this->getActionOption('overrideRelease', false);
+        
+        if ($overrideRelease == true) {
+            $releaseToOverride = false;
+            $resultFetch = $this->_runRemoteCommand('ls -ld current | cut -d\"/\" -f2', $releaseToOverride);
+            if (is_numeric($releaseToOverride)) {
+                $this->_config->setReleaseId($releaseToOverride);
+            }
+        }
+
         $excludes = array(
             '.git',
             '.svn',

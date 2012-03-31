@@ -31,6 +31,11 @@ abstract class Mage_Task_TaskAbstract
         return $this->_config;
     }
     
+    public function getActionOption($name, $value = false)
+    {
+        return Mage_Console::getActionOption($name, $value);
+    }
+    
     public function init()
     {
     }

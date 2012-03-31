@@ -12,7 +12,12 @@ class Mage_Config
     {
         if (($environment != '') && file_exists('.mage/config/environment/' . $environment . '.yml')) {
             $this->_environment = spyc_load_file('.mage/config/environment/' . $environment . '.yml');
-            $this->_environmentName = $environment;            
+            $this->_environmentName = $environment;
+            if (is_array($this->_environment['deployment']['source'])) {
+                $newTemporal = $this->_environment['deployment']['source']['temporal']
+                             . md5(microtime()) . '/';
+                $this->_environment['deployment']['source']['temporal'] = $newTemporal;
+            }            
         }
     }
     
@@ -157,7 +162,7 @@ class Mage_Config
 
     public function setFrom($from)
     {
-        $options['deployment']['from'] = $from;
+        $this->_environment['deployment']['from'] = $from;
         return $this;
     }
     
