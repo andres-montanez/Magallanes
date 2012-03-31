@@ -12,6 +12,7 @@ deployment:
     - application/data/cache/twig/*
 releases:
   enabled: true
+  max: 5
   symlink: current
   directory: releases
 hosts:

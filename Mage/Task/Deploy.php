@@ -42,7 +42,7 @@ class Mage_Task_Deploy
 
                 if ($config->release('enabled', false) == true) {
                     $config->setReleaseId($this->_releaseId);
-                    array_push($tasksToRun, 'deployment/releases');                    
+                    array_push($tasksToRun, 'deployment/releases');
                 }
 
                 if (count($tasksToRun) == 0) {
@@ -80,18 +80,21 @@ class Mage_Task_Deploy
 
         // Run Post-Deployment Tasks
         $this->_runNonDeploymentTasks('post-deploy', $config, 'Post-Deployment');
-        
-        // Time Information General
-        $timeText = $this->_transcurredTime(time() - $this->_startTime);
-        Mage_Console::output('Total time: <dark_gray>' . $timeText . '</dark_gray>.');
 
         // Time Information Hosts
         if ($this->_hostsCount > 0) {
+            $timeTextHost = $this->_transcurredTime($this->_endTimeHosts - $this->_startTimeHosts);
+            Mage_Console::output('Average time for deployment: <dark_gray>' . $timeTextHost . '</dark_gray>.');
+            
             $timeTextPerHost = $this->_transcurredTime(round(($this->_endTimeHosts - $this->_startTimeHosts) / $this->_hostsCount));
             Mage_Console::output('Average time per host: <dark_gray>' . $timeTextPerHost . '</dark_gray>.');            
         }
+        
+        // Time Information General
+        $timeText = $this->_transcurredTime(time() - $this->_startTime);
+        Mage_Console::output('Total time: <dark_gray>' . $timeText . '</dark_gray>.', 1, 2);
     }
-
+    
     private function _runNonDeploymentTasks($stage, Mage_Config $config, $title)
     {
         $tasksToRun = $config->getTasks($stage);
