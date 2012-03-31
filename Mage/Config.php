@@ -13,9 +13,14 @@ class Mage_Config
         if (($environment != '') && file_exists('.mage/config/environment/' . $environment . '.yml')) {
             $this->_environment = spyc_load_file('.mage/config/environment/' . $environment . '.yml');
             $this->_environmentName = $environment;
+            
+            // Create temporal directory for clone
             if (is_array($this->_environment['deployment']['source'])) {
-                $newTemporal = $this->_environment['deployment']['source']['temporal']
-                             . md5(microtime()) . '/';
+                if (trim($this->_environment['deployment']['source']['temporal']) == '') {
+                    $this->_environment['deployment']['source']['temporal'] = '/tmp';
+                }
+                $newTemporal = rtrim($this->_environment['deployment']['source']['temporal'], '/')
+                             . '/' . md5(microtime()) . '/';
                 $this->_environment['deployment']['source']['temporal'] = $newTemporal;
             }            
         }
