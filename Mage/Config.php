@@ -15,7 +15,7 @@ class Mage_Config
             $this->_environmentName = $environment;
             
             // Create temporal directory for clone
-            if (is_array($this->_environment['deployment']['source'])) {
+            if (isset($this->_environment['deployment']['source']) && is_array($this->_environment['deployment']['source'])) {
                 if (trim($this->_environment['deployment']['source']['temporal']) == '') {
                     $this->_environment['deployment']['source']['temporal'] = '/tmp';
                 }

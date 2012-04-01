@@ -84,7 +84,7 @@ class Mage_Task_Deploy
         // Time Information Hosts
         if ($this->_hostsCount > 0) {
             $timeTextHost = $this->_transcurredTime($this->_endTimeHosts - $this->_startTimeHosts);
-            Mage_Console::output('Average time for deployment: <dark_gray>' . $timeTextHost . '</dark_gray>.');
+            Mage_Console::output('Time for deployment: <dark_gray>' . $timeTextHost . '</dark_gray>.');
             
             $timeTextPerHost = $this->_transcurredTime(round(($this->_endTimeHosts - $this->_startTimeHosts) / $this->_hostsCount));
             Mage_Console::output('Average time per host: <dark_gray>' . $timeTextPerHost . '</dark_gray>.');            
