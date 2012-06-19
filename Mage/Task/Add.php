@@ -26,7 +26,7 @@ class Mage_Task_Add
                         . '  excludes:' . PHP_EOL
                         . ($withRelases ? $releasesConfig : '')
                         . 'hosts:' . PHP_EOL
-                        . 'tasks:'
+                        . 'tasks:' . PHP_EOL
                         . '  pre-deploy:' . PHP_EOL
                         . '  on-deploy:' . PHP_EOL
                         . '    - deployment/rsync' . PHP_EOL
