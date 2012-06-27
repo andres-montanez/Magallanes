@@ -31,6 +31,9 @@ class Mage_Console
         } else if ($this->_args[0] == 'update') {
             $this->_action = 'update';
 
+        } else if ($this->_args[0] == 'compile') {
+            $this->_action = 'compile';
+
         } else if ($this->_args[0] == 'add') {
             $this->_action = 'add';
                 
@@ -162,6 +165,11 @@ class Mage_Console
 
             case 'update';
                 $task = new Mage_Task_Update;
+                $task->run($config);
+                break;
+
+            case 'compile';
+                $task = new Mage_Task_Compile;
                 $task->run($config);
                 break;
 
