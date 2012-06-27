@@ -46,5 +46,7 @@ class Mage_Compiler
         $phar->stopBuffering();
 
         unset($phar);
+
+        chmod($file, 0755);
     }
 }
