@@ -8,6 +8,13 @@ class Mage_Config
     private $_host = null;
     private $_releaseId = null;
 
+    public function reloadConfig()
+    {
+        $this->loadGeneral();
+        $this->loadSCM();
+        $this->loadEnvironment($this->getEnvironmentName());
+    }
+
     public function loadEnvironment($environment)
     {
         if (($environment != '') && file_exists('.mage/config/environment/' . $environment . '.yml')) {

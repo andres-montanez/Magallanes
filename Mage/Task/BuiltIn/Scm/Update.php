@@ -3,12 +3,12 @@ class Mage_Task_BuiltIn_Scm_Update
     extends Mage_Task_TaskAbstract
 {
     private $_name = 'SCM Update [built-in]';
-    
+
     public function getName()
     {
         return $this->_name;
     }
-    
+
     public function init()
     {
         switch ($this->_config->scm('type')) {
@@ -21,7 +21,7 @@ class Mage_Task_BuiltIn_Scm_Update
                 break;
         }
     }
-    
+
     public function run()
     {
         switch ($this->_config->scm('type')) {
@@ -35,7 +35,8 @@ class Mage_Task_BuiltIn_Scm_Update
         }
 
         $result = $this->_runLocalCommand($command);
-        
+        $this->_config->reloadConfig();
+
         return $result;
     }
 }
