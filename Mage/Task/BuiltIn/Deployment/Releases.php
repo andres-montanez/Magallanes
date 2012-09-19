@@ -10,16 +10,20 @@ class Mage_Task_BuiltIn_Deployment_Releases
 
     public function run()
     {
-        if ($this->_config->release('enabled', false) == true) {            
+        if ($this->_config->release('enabled', false) == true) {
             $releasesDirectory = $this->_config->release('directory', 'releases');
             $symlink = $this->_config->release('symlink', 'current');
+
+            if (substr($symlink, 0, 1) == '/') {
+                $releasesDirectory = rtrim($this->_config->deployment('to'), '/') . '/' . $releasesDirectory;
+            }
 
             $currentCopy = $releasesDirectory . '/' . $this->_config->getReleaseId();
 
             // Fetch the user and group from base directory
             $userGroup = '33:33';
             $resultFetch = $this->_runRemoteCommand('ls -ld . | awk \'{print \$3\":\"\$4}\'', $userGroup);
-            
+
             // Remove symlink if exists; create new symlink and change owners
             $command = 'rm -f ' . $symlink
                      . ' ; '
@@ -55,7 +59,7 @@ class Mage_Task_BuiltIn_Deployment_Releases
                     }
                 }
             }
-            
+
             return $result;
 
         } else {
