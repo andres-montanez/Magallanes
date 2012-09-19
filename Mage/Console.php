@@ -9,13 +9,13 @@ class Mage_Console
     private static $_logEnabled = true;
     private static $_screenBuffer = '';
     private static $_commandsOutput = '';
-    
+
     public function setArgs($args)
     {
         $this->_args = $args;
         array_shift($this->_args);
     }
-    
+
     public function parse()
     {
         if (count($this->_args) == 0) {
@@ -27,7 +27,7 @@ class Mage_Console
 
         } else if ($this->_args[0] == 'releases') {
             $this->_action = 'releases';
-                
+
         } else if ($this->_args[0] == 'update') {
             $this->_action = 'update';
 
@@ -36,20 +36,20 @@ class Mage_Console
 
         } else if ($this->_args[0] == 'add') {
             $this->_action = 'add';
-                
+
         } else if ($this->_args[0] == 'install') {
             $this->_action = 'install';
-                
+
         } else if ($this->_args[0] == 'upgrade') {
             $this->_action = 'upgrade';
-                
+
         } else if ($this->_args[0] == 'version') {
             $this->_action = 'version';
 
         } else if ($this->_args[0] == 'init') {
             $this->_action = 'init';
-        } 
-        
+        }
+
         foreach ($this->_args as $argument) {
             if (preg_match('/to:[\w]+/i', $argument)) {
                 $this->_environment = str_replace('to:', '', $argument);
@@ -64,17 +64,17 @@ class Mage_Console
             }
         }
     }
-    
+
     public function getAction()
     {
         return $this->_action;
     }
-    
+
     public function getEnvironment()
     {
         return $this->_environment;
     }
-    
+
     public static function getActionOption($name, $default = false)
     {
         if (isset(self::$_actionOptions[$name])) {
@@ -83,22 +83,22 @@ class Mage_Console
             return $default;
         }
     }
-    
+
     public static function output($message, $tabs = 1, $newLine = 1)
     {
         self::log(strip_tags($message));
-        
+
         self::$_screenBuffer .= str_repeat("\t", $tabs)
                               . strip_tags($message)
                               . str_repeat(PHP_EOL, $newLine);
-        
+
         $output = str_repeat("\t", $tabs)
                 . Mage_Console_Colors::color($message)
                 . str_repeat(PHP_EOL, $newLine);
 
         echo $output;
     }
-    
+
     public static function executeCommand($command, &$output = null)
     {
         self::log('---------------------------------');
@@ -108,24 +108,24 @@ class Mage_Console
         $log = array();
         exec($command . ' 2>&1', $log, $return);
         $log = implode(PHP_EOL, $log);
-        
+
         if (!$return) {
-            $output = trim($log);            
+            $output = trim($log);
         }
-        self::$_commandsOutput .= PHP_EOL . trim($log) . PHP_EOL; 
-        
+        self::$_commandsOutput .= PHP_EOL . trim($log) . PHP_EOL;
+
         self::log($log);
         self::log('---------------------------------');
 
         return !$return;
     }
-    
+
     public function run()
-    {               
+    {
         // Load Config
         $config = new Mage_Config;
         $config->loadGeneral();
-        $config->loadEnvironment($this->getEnvironment());
+        $environmentOk = $config->loadEnvironment($this->getEnvironment());
         $config->loadSCM();
 
         // Logging
@@ -136,59 +136,72 @@ class Mage_Console
         } else {
             self::$_logEnabled = $config->general('logging', false);
         }
-        
+
         // Grettings
         if ($showGrettings) {
             Mage_Console::output('Starting <blue>Magallanes</blue>', 0, 2);
         }
 
-        switch ($this->getAction()) {
-            case 'deploy':
-                $task = new Mage_Task_Deploy;
-                $task->run($config);
-                break;
-                
-            case 'releases':
-                $task = new Mage_Task_Releases;
-                switch ($this->_args[1]) {
-                    case 'list':
-                        $task->setAction($this->_args[1]);
-                        break;
+        if (!$environmentOk) {
+            Mage_Console::output('<red>You have selected an invalid environment</red>', 0, 2);
 
-                    case 'rollback':
-                        $task->setAction($this->_args[1]);
-                        $task->setRelease($this->_args[2]);
-                        break;
-                }
-                $task->run($config);
-                break;
+        } else {
+            switch ($this->getAction()) {
+                case 'deploy':
+                    $task = new Mage_Task_Deploy;
+                    $task->run($config);
+                    break;
 
-            case 'update';
+                case 'releases':
+                    $task = new Mage_Task_Releases;
+                    if (!isset($this->_args[1])) {
+                        Mage_Console::output('<red>You must indicate a task</red>', 0, 2);
+                        break;
+                    }
+                    switch ($this->_args[1]) {
+                        case 'list':
+                            $task->setAction($this->_args[1]);
+                            break;
+
+                        case 'rollback':
+                            if (!isset($this->_args[2])) {
+                                Mage_Console::output('<red>You must indicate a release point</red>', 0, 2);
+                                break 2;
+                            }
+
+                            $task->setAction($this->_args[1]);
+                            $task->setRelease($this->_args[2]);
+                            break;
+                    }
+                    $task->run($config);
+                    break;
+
+                case 'update';
                 $task = new Mage_Task_Update;
                 $task->run($config);
                 break;
 
-            case 'compile';
+                case 'compile';
                 $task = new Mage_Task_Compile;
                 $task->run($config);
                 break;
 
-            case 'install';
+                case 'install';
                 $task = new Mage_Task_Install;
                 $task->run();
                 break;
-                
-            case 'upgrade';
+
+                case 'upgrade';
                 $task = new Mage_Task_Upgrade;
                 $task->run();
                 break;
-                
-            case 'init';
+
+                case 'init';
                 $task = new Mage_Task_Init;
                 $task->run();
                 break;
-                
-            case 'add';
+
+                case 'add';
                 switch ($this->_args[1]) {
                     case 'environment':
                         if (isset($this->_args[3]) && ($this->_args[3] == '--with-releases')) {
@@ -202,35 +215,36 @@ class Mage_Console
                         break;
                 }
                 break;
-                
-            case 'version';
+
+                case 'version';
                 $this->showVersion();
                 break;
-                
-            default:
-                Mage_Console::output('<red>Invalid action</red>', 0, 2);
-                break;
+
+                default:
+                    Mage_Console::output('<red>Invalid action</red>', 0, 2);
+                    break;
+            }
         }
-        
+
         if ($showGrettings) {
             Mage_Console::output('Finished <blue>Magallanes</blue>', 0, 2);
         }
     }
-    
+
     public function showVersion()
     {
         Mage_Console::output('Running <blue>Magallanes</blue> version <dark_gray>' . MAGALLANES_VERSION .'</dark_gray>', 0, 2);
     }
-    
+
     public static function log($message, $continuation = false)
     {
         if (self::$_logEnabled) {
             if (self::$_log == null) {
                 self::$_log = fopen('.mage/logs/log-' . date('Ymd-His') . '.log', 'w');
             }
-            
+
             $message = date('Y-m-d H:i:s -- ') . $message;
-            fwrite(self::$_log, $message . PHP_EOL);            
+            fwrite(self::$_log, $message . PHP_EOL);
         }
     }
 }
