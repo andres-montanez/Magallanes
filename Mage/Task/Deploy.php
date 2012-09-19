@@ -18,8 +18,14 @@ class Mage_Task_Deploy
         $this->_startTime = time();
         $this->_config = $config;
 
-        if ($config->getEnvironment() == '') {
+        if ($config->getEnvironmentName() == '') {
             Mage_Console::output('<red>You must specify an environment</red>', 0, 2);
+            return;
+        }
+
+        $lockFile = '.mage/' . $config->getEnvironmentName() . '.lock';
+        if (file_exists($lockFile)) {
+            Mage_Console::output('<red>This environment is locked!</red>', 0, 2);
             return;
         }
 

@@ -48,6 +48,12 @@ class Mage_Console
 
         } else if ($this->_args[0] == 'init') {
             $this->_action = 'init';
+
+        } else if ($this->_args[0] == 'lock') {
+            $this->_action = 'lock';
+
+        } else if ($this->_args[0] == 'unlock') {
+                $this->_action = 'unlock';
         }
 
         foreach ($this->_args as $argument) {
@@ -158,67 +164,79 @@ class Mage_Console
                         Mage_Console::output('<red>You must indicate a task</red>', 0, 2);
                         break;
                     }
-                    switch ($this->_args[1]) {
-                        case 'list':
-                            $task->setAction($this->_args[1]);
-                            break;
 
-                        case 'rollback':
-                            if (!isset($this->_args[2])) {
-                                Mage_Console::output('<red>You must indicate a release point</red>', 0, 2);
-                                break 2;
-                            }
+                    if ($this->_args[1] == 'list') {
+                            $task->setAction('list');
 
-                            $task->setAction($this->_args[1]);
-                            $task->setRelease($this->_args[2]);
+                    } else if ($this->_args[1] == 'rollback') {
+                        if (!isset($this->_args[2])) {
+                            Mage_Console::output('<red>You must indicate a release point</red>', 0, 2);
                             break;
+                        }
+
+                        $task->setAction($this->_args[1]);
+                        $task->setRelease($this->_args[2]);
+
+                    } else {
+                        Mage_Console::output('<red>Invalid Releases task</red>', 0, 2);
+                        break;
                     }
                     $task->run($config);
                     break;
 
                 case 'update';
-                $task = new Mage_Task_Update;
-                $task->run($config);
-                break;
+                    $task = new Mage_Task_Update;
+                    $task->run($config);
+                    break;
 
                 case 'compile';
-                $task = new Mage_Task_Compile;
-                $task->run($config);
-                break;
+                    $task = new Mage_Task_Compile;
+                    $task->run($config);
+                    break;
 
                 case 'install';
-                $task = new Mage_Task_Install;
-                $task->run();
-                break;
+                    $task = new Mage_Task_Install;
+                    $task->run();
+                    break;
+
+                case 'lock';
+                    $task = new Mage_Task_Lock;
+                    $task->run($config);
+                    break;
+
+                case 'unlock';
+                    $task = new Mage_Task_Lock;
+                    $task->run($config, true);
+                    break;
 
                 case 'upgrade';
-                $task = new Mage_Task_Upgrade;
-                $task->run();
-                break;
+                    $task = new Mage_Task_Upgrade;
+                    $task->run();
+                    break;
 
                 case 'init';
-                $task = new Mage_Task_Init;
-                $task->run();
-                break;
+                    $task = new Mage_Task_Init;
+                    $task->run();
+                    break;
 
                 case 'add';
-                switch ($this->_args[1]) {
-                    case 'environment':
-                        if (isset($this->_args[3]) && ($this->_args[3] == '--with-releases')) {
-                            $withRelases = true;
-                        } else {
-                            $withRelases = false;
-                        }
+                    switch ($this->_args[1]) {
+                        case 'environment':
+                            if (isset($this->_args[3]) && ($this->_args[3] == '--with-releases')) {
+                                $withRelases = true;
+                            } else {
+                                $withRelases = false;
+                            }
 
-                        $task = new Mage_Task_Add;
-                        $task->environment($this->_args[2], $withRelases);
-                        break;
-                }
-                break;
+                            $task = new Mage_Task_Add;
+                            $task->environment($this->_args[2], $withRelases);
+                            break;
+                    }
+                    break;
 
                 case 'version';
-                $this->showVersion();
-                break;
+                    $this->showVersion();
+                    break;
 
                 default:
                     Mage_Console::output('<red>Invalid action</red>', 0, 2);
