@@ -1,23 +1,14 @@
 <?php
-class Mage_Task_Lock
+class Mage_Command_BuiltIn_Lock
+    extends Mage_Command_CommandAbstract
+    implements Mage_Command_RequiresEnvironment
 {
-    private $_config = null;
-
-    public function run(Mage_Config $config, $unlock = false)
+    public function run()
     {
-        $this->_config = $config;
+        $lockFile = '.mage/' . $this->getConfig()->getEnvironment() . '.lock';
+        file_put_contents($lockFile, 'Locked environment at date: ' . date('Y-m-d H:i:s'));
 
-        if ($config->getEnvironmentName() == '') {
-            Mage_Console::output('<red>You must specify an environment</red>', 0, 2);
-            return;
-        }
-
-        $lockFile = '.mage/' . $config->getEnvironmentName() . '.lock';
-        if (file_exists($lockFile)) {
-            @unlink($lockFile);
-        }
-
-        Mage_Console::output('Unlocked deployment to <light_purple>' . $config->getEnvironmentName() . '</light_purple> environment', 1, 2);
+        Mage_Console::output('Locked deployment to <light_purple>' . $this->getConfig()->getEnvironment() . '</light_purple> environment', 1, 2);
     }
 
 }

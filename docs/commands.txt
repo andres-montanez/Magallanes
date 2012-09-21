@@ -1,0 +1,59 @@
+### List of Commands ###
+
+# Installs Magallanes on the system
+sudo mage install
+
+# Displays Magallanes version
+mage version
+
+# Creats a Magallanes instance configuration
+mage init
+
+# Creates a compiled version of Magallanes using phar
+mage compile
+
+# Upgrades Magallanes itself
+mage upgrade
+
+# Add a new Environment configuration
+mage add environment --name=production
+
+# Add a new Environment configuration with releases enabled
+mage add environment --name=production --enableReleases
+
+# Performs a SCM Update, if configured
+mage update
+
+# Deploys Application to Production environment
+mage deploy to:production
+
+# Deploys Application to Production environment, overriding the current release
+mage deploy to:production --overrideRelease
+
+# Locks deployment to Production environment
+mage lock to:production
+
+# Unlocks deployment to Production environment
+mage unlock to:production
+
+# Lists all Releases on the Production environment
+mage releases list to:production
+
+# Rollback to the last Release on the Production environment
+mage releases rollback to:production
+mage releases rollback --release=0 to:production
+
+# Rollback to the first, second, or thrith Release before the current Release on the Production environment
+mage releases rollback --release=-1 to:production
+mage releases rollback --release=-2 to:production
+mage releases rollback --release=-3 to:production
+
+# Rollback to a specific Release on the Production environment
+# mage releases rollback --release=20120101172148 to:production
+
+
+### List of UPCOMING Commands ###
+# mage config add host s05.example.com to:[production]
+# mage config git git://github.com/andres-montanez/Zend-Framework-Twig-example-app.git
+# mage config svn svn://example.com/repo
+# mage task:deployment/rsync to:production

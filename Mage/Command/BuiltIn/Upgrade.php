@@ -1,19 +1,20 @@
 <?php
-class Mage_Task_Upgrade
+class Mage_Command_BuiltIn_Upgrade
+    extends Mage_Command_CommandAbstract
 {
     const DOWNLOAD = 'https://github.com/andres-montanez/Magallanes/tarball/stable';
-    
+
     public function run ()
     {
         Mage_Console::output('Upgrading <dark_gray>Magallanes</dark_gray> ... ', 1, 0);
-        
+
         $user = '';
         // Check if user is root
         Mage_Console::executeCommand('whoami', $user);
         if ($user != 'root') {
             Mage_Console::output('<red>FAIL</red>', 0, 1);
             Mage_Console::output('You need to be the <dark_gray>root</dark_gray> user to perform the upgrade.', 2);
-            
+
         } else {
             // Download Package
             $tarball = file_get_contents(self::DOWNLOAD);
@@ -21,7 +22,7 @@ class Mage_Task_Upgrade
             rename($tarballFile, $tarballFile . '.tar.gz');
             $tarballFile .= '.tar.gz';
             file_put_contents($tarballFile, $tarball);
-            
+
             // Unpackage
             if (file_exists('/tmp/__magallanesDownload')) {
                 Mage_Console::executeCommand('rm -rf /tmp/__magallanesDownload');
@@ -29,7 +30,7 @@ class Mage_Task_Upgrade
             Mage_Console::executeCommand('mkdir /tmp/__magallanesDownload');
             Mage_Console::executeCommand('cd /tmp/__magallanesDownload && tar xfz ' . $tarballFile);
             Mage_Console::executeCommand('rm -f ' . $tarballFile);
-            
+
             // Find Package
             $tarballDir = opendir('/tmp/__magallanesDownload');
             while (($file = readdir($tarballDir)) == true) {
@@ -40,14 +41,14 @@ class Mage_Task_Upgrade
                     break;
                 }
             }
-            
+
             // Get Version
             $version = false;
             if (file_exists('/tmp/__magallanesDownload/' . $packageDir . '/bin/mage')) {
                 list(, $version) = file('/tmp/__magallanesDownload/' . $packageDir . '/bin/mage');
                 $version = trim(str_replace('#VERSION:', '', $version));
             }
-            
+
             if ($version != false) {
                 $versionCompare = version_compare(MAGALLANES_VERSION, $version);
                 if ($versionCompare == 0) {
@@ -66,13 +67,13 @@ class Mage_Task_Upgrade
 
                     Mage_Console::output('<green>OK</green>', 0, 1);
                 }
-                
+
             } else {
                 Mage_Console::output('<red>FAIL</red>', 0, 1);
                 Mage_Console::output('Corrupted download.', 2);
             }
         }
-        
+
 
     }
 
@@ -96,7 +97,7 @@ class Mage_Task_Upgrade
 
                     } else {
                         copy(
-                            $from . DIRECTORY_SEPARATOR . $file, 
+                            $from . DIRECTORY_SEPARATOR . $file,
                             $to . DIRECTORY_SEPARATOR . $file
                         );
                     }

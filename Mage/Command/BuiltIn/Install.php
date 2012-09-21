@@ -1,11 +1,12 @@
 <?php
-class Mage_Task_Install
+class Mage_Command_BuiltIn_Install
+    extends Mage_Command_CommandAbstract
 {
-    public function run ()
+    public function run()
     {
         Mage_Console::output('Installing <dark_gray>Magallanes</dark_gray>... ', 1, 0);
         $this->_recursiveCopy('./', '/opt/magallanes-' . MAGALLANES_VERSION);
-        
+
         if (file_exists('/opt/magallanes') && is_link('/opt/magallanes')) {
             unlink('/opt/magallanes');
         }
@@ -18,7 +19,7 @@ class Mage_Task_Install
         Mage_Console::output('<light_green>Success!</light_green>', 0, 2);
     }
 
-    private function _recursiveCopy ($from, $to)
+    private function _recursiveCopy($from, $to)
     {
         if (is_dir($from)) {
             mkdir($to);
@@ -38,7 +39,7 @@ class Mage_Task_Install
 
                     } else {
                         copy(
-                            $from . DIRECTORY_SEPARATOR . $file, 
+                            $from . DIRECTORY_SEPARATOR . $file,
                             $to . DIRECTORY_SEPARATOR . $file
                         );
                     }

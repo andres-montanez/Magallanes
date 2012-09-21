@@ -1,8 +1,8 @@
 <?php
-class Mage_Task_Deploy
+class Mage_Command_BuiltIn_Deploy
+    extends Mage_Command_CommandAbstract
+    implements Mage_Command_RequiresEnvironment
 {
-    private $_config = null;
-    private $_releaseId = null;
     private $_startTime = null;
     private $_startTimeHosts = null;
     private $_endTimeHosts = null;
@@ -13,27 +13,21 @@ class Mage_Task_Deploy
         $this->_releaseId = date('YmdHis');
     }
 
-    public function run(Mage_Config $config)
+    public function run()
     {
         $this->_startTime = time();
-        $this->_config = $config;
 
-        if ($config->getEnvironmentName() == '') {
-            Mage_Console::output('<red>You must specify an environment</red>', 0, 2);
-            return;
-        }
-
-        $lockFile = '.mage/' . $config->getEnvironmentName() . '.lock';
+        $lockFile = '.mage/' . $this->getConfig()->getEnvironment() . '.lock';
         if (file_exists($lockFile)) {
-            Mage_Console::output('<red>This environment is locked!</red>', 0, 2);
+            Mage_Console::output('<red>This environment is locked!</red>', 1, 2);
             return;
         }
 
         // Run Pre-Deployment Tasks
-        $this->_runNonDeploymentTasks('pre-deploy', $config, 'Pre-Deployment');
+        $this->_runNonDeploymentTasks('pre-deploy', $this->getConfig(), 'Pre-Deployment');
 
         // Run Tasks for Deployment
-        $hosts = $config->getHosts();
+        $hosts = $this->getConfig()->getHosts();
 
         if (count($hosts) == 0) {
             Mage_Console::output('<light_purple>Warning!</light_purple> <dark_gray>No hosts defined, skipping deployment tasks.</dark_gray>', 1, 3);
@@ -42,19 +36,21 @@ class Mage_Task_Deploy
             $this->_startTimeHosts = time();
             foreach ($hosts as $host) {
                 $this->_hostsCount++;
-                $config->setHost($host);
+                $this->getConfig()->setHost($host);
                 $tasks = 0;
                 $completedTasks = 0;
 
-                Mage_Console::output('Deploying to <dark_gray>' . $config->getHost() . '</dark_gray>');
+                Mage_Console::output('Deploying to <dark_gray>' . $this->getConfig()->getHost() . '</dark_gray>');
 
-                $tasksToRun = $config->getTasks();
+                $tasksToRun = $this->getConfig()->getTasks();
                 array_unshift($tasksToRun, 'deployment/rsync');
 
-                if ($config->release('enabled', false) == true) {
-                    $config->setReleaseId($this->_releaseId);
+                if ($this->getConfig()->release('enabled', false) == true) {
+                    $this->getConfig()->setReleaseId($this->_releaseId);
                     array_push($tasksToRun, 'deployment/releases');
                 }
+
+                $tasksToRun = $tasksToRun + $this->getConfig()->getTasks('post-release');
 
                 if (count($tasksToRun) == 0) {
                     Mage_Console::output('<light_purple>Warning!</light_purple> <dark_gray>No </dark_gray><light_cyan>Deployment</light_cyan> <dark_gray>tasks defined.</dark_gray>', 2);
@@ -63,17 +59,27 @@ class Mage_Task_Deploy
                 } else {
                     foreach ($tasksToRun as $taskName) {
                         $tasks++;
-                        $task = Mage_Task_Factory::get($taskName, $config, false, 'deploy');
+                        $task = Mage_Task_Factory::get($taskName, $this->getConfig(), false, 'deploy');
                         $task->init();
 
+                        $runTask = true;
                         Mage_Console::output('Running <purple>' . $task->getName() . '</purple> ... ', 2, false);
-                        $result = $task->run();
 
-                        if ($result == true) {
-                            Mage_Console::output('<green>OK</green>', 0);
-                            $completedTasks++;
+                        if (($task instanceOf Mage_Task_Releases_SkipOnOverride) && $this->getConfig()->getParameter('overrideRelease', false)) {
+                            $runTask == false;
+                        }
+
+                        if ($runTask == true) {
+                            $result = $task->run();
+
+                            if ($result == true) {
+                                Mage_Console::output('<green>OK</green>', 0);
+                                $completedTasks++;
+                            } else {
+                                Mage_Console::output('<red>FAIL</red>', 0);
+                            }
                         } else {
-                            Mage_Console::output('<red>FAIL</red>', 0);
+                            Mage_Console::output('<yellow>SKIPPED</yellow>', 0);
                         }
                     }
 
@@ -83,14 +89,14 @@ class Mage_Task_Deploy
                         $tasksColor = 'red';
                     }
 
-                    Mage_Console::output('Deployment to <dark_gray>' . $config->getHost() . '</dark_gray> compted: <' . $tasksColor . '>' . $completedTasks . '/' . $tasks . '</' . $tasksColor . '> tasks done.', 1, 3);
+                    Mage_Console::output('Deployment to <dark_gray>' . $this->getConfig()->getHost() . '</dark_gray> compted: <' . $tasksColor . '>' . $completedTasks . '/' . $tasks . '</' . $tasksColor . '> tasks done.', 1, 3);
                 }
             }
             $this->_endTimeHosts = time();
         }
 
         // Run Post-Deployment Tasks
-        $this->_runNonDeploymentTasks('post-deploy', $config, 'Post-Deployment');
+        $this->_runNonDeploymentTasks('post-deploy', $this->getConfig(), 'Post-Deployment');
 
         // Time Information Hosts
         if ($this->_hostsCount > 0) {
@@ -106,6 +112,13 @@ class Mage_Task_Deploy
         Mage_Console::output('Total time: <dark_gray>' . $timeText . '</dark_gray>.', 1, 2);
     }
 
+    /**
+     * Execute Pre and Post Deployment Tasks
+     *
+     * @param string $stage
+     * @param Mage_Config $config
+     * @param string $title
+     */
     private function _runNonDeploymentTasks($stage, Mage_Config $config, $title)
     {
         $tasksToRun = $config->getTasks($stage);
@@ -156,6 +169,11 @@ class Mage_Task_Deploy
 
     }
 
+    /**
+     * Humanize Transcurred time
+     * @param integer $time
+     * @return string
+     */
     private function _transcurredTime($time)
     {
         $hours = floor($time / 3600);

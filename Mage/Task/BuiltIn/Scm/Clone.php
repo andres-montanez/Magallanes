@@ -4,15 +4,15 @@ class Mage_Task_BuiltIn_Scm_Clone
 {
     private $_name = 'SCM Clone [built-in]';
     private $_source = null;
-    
+
     public function getName()
     {
         return $this->_name;
     }
-    
+
     public function init()
     {
-        $this->_source = $this->_config->deployment('source');
+        $this->_source = $this->getConfig()->deployment('source');
         switch ($this->_source['type']) {
             case 'git':
                 $this->_name = 'SCM Clone (GIT) [built-in]';
@@ -23,7 +23,7 @@ class Mage_Task_BuiltIn_Scm_Clone
                 break;
         }
     }
-    
+
     public function run()
     {
         $this->_runLocalCommand('mkdir -p ' . $this->_source['temporal']);
@@ -39,14 +39,14 @@ class Mage_Task_BuiltIn_Scm_Clone
                          . 'git checkout ' . $this->_source['from'];
                 $result = $result && $this->_runLocalCommand($command);
 
-                $this->_config->setFrom($this->_source['temporal']);
+                $this->getConfig()->setFrom($this->_source['temporal']);
                 break;
 
             case 'svn':
                 return false;
                 break;
         }
-        
+
         return $result;
     }
 }

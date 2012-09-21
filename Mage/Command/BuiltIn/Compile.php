@@ -1,11 +1,11 @@
 <?php
-
 /**
- * Class Mage_Task_Compile
+ * Class Mage_Command_BuiltIn_Compile
  *
  * @author Ismael Ambrosi<ismaambrosi@gmail.com>
  */
-class Mage_Task_Compile
+class Mage_Command_BuiltIn_Compile
+    extends Mage_Command_CommandAbstract
 {
     /**
      * @see Mage_Compile::compile()

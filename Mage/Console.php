@@ -1,95 +1,77 @@
 <?php
 class Mage_Console
 {
-    private $_args = array();
-    private $_action = null;
-    private static $_actionOptions = array();
-    private $_environment = null;
     private static $_log = null;
     private static $_logEnabled = true;
     private static $_screenBuffer = '';
     private static $_commandsOutput = '';
 
-    public function setArgs($args)
+    /**
+     * Runns a Magallanes Command
+     * @throws Exception
+     */
+    public function run($arguments)
     {
-        $this->_args = $args;
-        array_shift($this->_args);
-    }
+        $configError = false;
+        try {
+            // Load Config
+            $config = new Mage_Config;
+            $config->load($arguments);
+            $configLoadedOk = true;
 
-    public function parse()
-    {
-        if (count($this->_args) == 0) {
-            return false;
+        } catch (Exception $e) {
+            $configError = $e->getMessage();
         }
 
-        if ($this->_args[0] == 'deploy') {
-            $this->_action = 'deploy';
+        // Command Option
+        $commandName = $config->getArgument(0);
 
-        } else if ($this->_args[0] == 'releases') {
-            $this->_action = 'releases';
-
-        } else if ($this->_args[0] == 'update') {
-            $this->_action = 'update';
-
-        } else if ($this->_args[0] == 'compile') {
-            $this->_action = 'compile';
-
-        } else if ($this->_args[0] == 'add') {
-            $this->_action = 'add';
-
-        } else if ($this->_args[0] == 'install') {
-            $this->_action = 'install';
-
-        } else if ($this->_args[0] == 'upgrade') {
-            $this->_action = 'upgrade';
-
-        } else if ($this->_args[0] == 'version') {
-            $this->_action = 'version';
-
-        } else if ($this->_args[0] == 'init') {
-            $this->_action = 'init';
-
-        } else if ($this->_args[0] == 'lock') {
-            $this->_action = 'lock';
-
-        } else if ($this->_args[0] == 'unlock') {
-                $this->_action = 'unlock';
+        // Logging
+        $showGrettings = true;
+        if (in_array($commandName, array('install', 'upgrade', 'version'))) {
+            self::$_logEnabled = false;
+            $showGrettings = false;
+        } else {
+            self::$_logEnabled = $config->general('logging', false);
         }
 
-        foreach ($this->_args as $argument) {
-            if (preg_match('/to:[\w]+/i', $argument)) {
-                $this->_environment = str_replace('to:', '', $argument);
+        // Grettings
+        if ($showGrettings) {
+            Mage_Console::output('Starting <blue>Magallanes</blue>', 0, 2);
+        }
 
-            } else if (preg_match('/--[\w]+/i', $argument)) {
-                $optionValue = explode('=', substr($argument, 2));
-                if (count($optionValue) == 1) {
-                    self::$_actionOptions[$optionValue[0]] = true;
-                } else if (count($optionValue) == 2) {
-                    self::$_actionOptions[$optionValue[0]] = $optionValue[1];
+        // Run Command
+        if ($configError !== false) {
+            Mage_Console::output('<red>' . $configError . '</red>', 1, 2);
+
+        } else {
+            try {
+                $command = Mage_Command_Factory::get($commandName, $config);
+
+                if ($command instanceOf Mage_Command_RequiresEnvironment) {
+                    if ($config->getEnvironment() == false) {
+                        throw new Exception('You must specify an environment for this command.');
+                    }
                 }
+                $command->run();
+
+            } catch (Exception $e) {
+                Mage_Console::output('<red>' . $e->getMessage() . '</red>', 1, 2);
             }
         }
-    }
 
-    public function getAction()
-    {
-        return $this->_action;
-    }
-
-    public function getEnvironment()
-    {
-        return $this->_environment;
-    }
-
-    public static function getActionOption($name, $default = false)
-    {
-        if (isset(self::$_actionOptions[$name])) {
-            return self::$_actionOptions[$name];
-        } else {
-            return $default;
+        if ($showGrettings) {
+            Mage_Console::output('Finished <blue>Magallanes</blue>', 0, 2);
         }
     }
 
+    /**
+     * Outputs a message to the user screen
+     *
+     * @param string $message
+     * @param integer $tabs
+     * @param integer $newLine
+     */
     public static function output($message, $tabs = 1, $newLine = 1)
     {
         self::log(strip_tags($message));
@@ -105,6 +87,13 @@ class Mage_Console
         echo $output;
     }
 
+    /**
+     * Executes a Command on the Shell
+     *
+     * @param string $command
+     * @param string $output
+     * @return boolean
+     */
     public static function executeCommand($command, &$output = null)
     {
         self::log('---------------------------------');
@@ -126,134 +115,12 @@ class Mage_Console
         return !$return;
     }
 
-    public function run()
-    {
-        // Load Config
-        $config = new Mage_Config;
-        $config->loadGeneral();
-        $environmentOk = $config->loadEnvironment($this->getEnvironment());
-        $config->loadSCM();
-
-        // Logging
-        $showGrettings = true;
-        if (in_array($this->getAction(), array('install', 'upgrade', 'version'))) {
-            self::$_logEnabled = false;
-            $showGrettings = false;
-        } else {
-            self::$_logEnabled = $config->general('logging', false);
-        }
-
-        // Grettings
-        if ($showGrettings) {
-            Mage_Console::output('Starting <blue>Magallanes</blue>', 0, 2);
-        }
-
-        if (!$environmentOk) {
-            Mage_Console::output('<red>You have selected an invalid environment</red>', 0, 2);
-
-        } else {
-            switch ($this->getAction()) {
-                case 'deploy':
-                    $task = new Mage_Task_Deploy;
-                    $task->run($config);
-                    break;
-
-                case 'releases':
-                    $task = new Mage_Task_Releases;
-                    if (!isset($this->_args[1])) {
-                        Mage_Console::output('<red>You must indicate a task</red>', 0, 2);
-                        break;
-                    }
-
-                    if ($this->_args[1] == 'list') {
-                            $task->setAction('list');
-
-                    } else if ($this->_args[1] == 'rollback') {
-                        if (!isset($this->_args[2])) {
-                            Mage_Console::output('<red>You must indicate a release point</red>', 0, 2);
-                            break;
-                        }
-
-                        $task->setAction($this->_args[1]);
-                        $task->setRelease($this->_args[2]);
-
-                    } else {
-                        Mage_Console::output('<red>Invalid Releases task</red>', 0, 2);
-                        break;
-                    }
-                    $task->run($config);
-                    break;
-
-                case 'update';
-                    $task = new Mage_Task_Update;
-                    $task->run($config);
-                    break;
-
-                case 'compile';
-                    $task = new Mage_Task_Compile;
-                    $task->run($config);
-                    break;
-
-                case 'install';
-                    $task = new Mage_Task_Install;
-                    $task->run();
-                    break;
-
-                case 'lock';
-                    $task = new Mage_Task_Lock;
-                    $task->run($config);
-                    break;
-
-                case 'unlock';
-                    $task = new Mage_Task_Lock;
-                    $task->run($config, true);
-                    break;
-
-                case 'upgrade';
-                    $task = new Mage_Task_Upgrade;
-                    $task->run();
-                    break;
-
-                case 'init';
-                    $task = new Mage_Task_Init;
-                    $task->run();
-                    break;
-
-                case 'add';
-                    switch ($this->_args[1]) {
-                        case 'environment':
-                            if (isset($this->_args[3]) && ($this->_args[3] == '--with-releases')) {
-                                $withRelases = true;
-                            } else {
-                                $withRelases = false;
-                            }
-
-                            $task = new Mage_Task_Add;
-                            $task->environment($this->_args[2], $withRelases);
-                            break;
-                    }
-                    break;
-
-                case 'version';
-                    $this->showVersion();
-                    break;
-
-                default:
-                    Mage_Console::output('<red>Invalid action</red>', 0, 2);
-                    break;
-            }
-        }
-
-        if ($showGrettings) {
-            Mage_Console::output('Finished <blue>Magallanes</blue>', 0, 2);
-        }
-    }
-
-    public function showVersion()
-    {
-        Mage_Console::output('Running <blue>Magallanes</blue> version <dark_gray>' . MAGALLANES_VERSION .'</dark_gray>', 0, 2);
-    }
-
+    /**
+     * Log a message to the logfile.
+     *
+     * @param string $message
+     * @param boolean $continuation
+     */
     public static function log($message, $continuation = false)
     {
         if (self::$_logEnabled) {

@@ -10,16 +10,22 @@ class Mage_Task_BuiltIn_Releases_List
 
     public function run()
     {
-        if ($this->_config->release('enabled', false) == true) {
-            $releasesDirectory = $this->_config->release('directory', 'releases');
-            $symlink = $this->_config->release('symlink', 'current');
+        if ($this->getConfig()->release('enabled', false) == true) {
+            $releasesDirectory = $this->getConfig()->release('directory', 'releases');
+            $symlink = $this->getConfig()->release('symlink', 'current');
 
-            Mage_Console::output('Releases available on <dark_gray>' . $this->_config->getHost() . '</dark_gray>');
-            
+            Mage_Console::output('Releases available on <dark_gray>' . $this->getConfig()->getHost() . '</dark_gray>');
+
+            // Get Releases
             $output = '';
             $result = $this->_runRemoteCommand('ls -1 ' . $releasesDirectory, $output);
             $releases = ($output == '') ? array() : explode(PHP_EOL, $output);
-            
+
+            // Get Current
+            $result = $this->_runRemoteCommand('ls -l ' . $symlink, $output);
+            $currentRelease = explode('/', $output);
+            $currentRelease = trim(array_pop($currentRelease));
+
             if (count($releases) == 0) {
                 Mage_Console::output('<dark_gray>No releases available</dark_gray> ... ', 2);
             } else {
@@ -27,6 +33,7 @@ class Mage_Task_BuiltIn_Releases_List
                 $releases  = array_slice($releases, 0, 10);
 
                 foreach ($releases as $releaseIndex => $release) {
+                    $release = trim($release);
                     $releaseIndex = str_pad($releaseIndex * -1, 2, ' ', STR_PAD_LEFT);
                     $releaseDate = $release[0] . $release[1] . $release[2] .$release[3]
                                  . '-'
@@ -39,11 +46,16 @@ class Mage_Task_BuiltIn_Releases_List
                                  . $release[10] . $release[11]
                                  . ':'
                                  . $release[12] . $release[13];
-                    
+
+                    $isCurrent = '';
+                    if ($currentRelease == $release) {
+                        $isCurrent = ' <- current';
+                    }
+
                     Mage_Console::output(
                         'Release: <purple>' . $release . '</purple> '
                       . '- Date: <dark_gray>' . $releaseDate . '</dark_gray> '
-                      . '- Index: <dark_gray>' . $releaseIndex . '</dark_gray>', 2);                        
+                      . '- Index: <dark_gray>' . $releaseIndex . '</dark_gray>' . $isCurrent, 2);
                 }
             }
 

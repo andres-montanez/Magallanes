@@ -11,7 +11,7 @@ class Mage_Task_BuiltIn_Scm_Update
 
     public function init()
     {
-        switch ($this->_config->scm('type')) {
+        switch ($this->getConfig()->scm('type')) {
             case 'git':
                 $this->_name = 'SCM Update (GIT) [built-in]';
                 break;
@@ -24,7 +24,7 @@ class Mage_Task_BuiltIn_Scm_Update
 
     public function run()
     {
-        switch ($this->_config->scm('type')) {
+        switch ($this->getConfig()->scm('type')) {
             case 'git':
                 $command = 'git pull';
                 break;
@@ -32,10 +32,14 @@ class Mage_Task_BuiltIn_Scm_Update
             case 'svn':
                 $command = 'svn update';
                 break;
+
+            default:
+                return false;
+                break;
         }
 
         $result = $this->_runLocalCommand($command);
-        $this->_config->reloadConfig();
+        $this->getConfig()->reload();
 
         return $result;
     }

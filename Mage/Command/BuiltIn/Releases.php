@@ -1,67 +1,41 @@
 <?php
-class Mage_Task_Releases
+class Mage_Command_BuiltIn_Releases
+    extends Mage_Command_CommandAbstract
+    implements Mage_Command_RequiresEnvironment
 {
-    private $_config = null;
-    private $_action = null;
     private $_release = null;
 
-    public function setAction($action)
+    public function run()
     {
-        $this->_action = $action;
-        return $this;
-    }
-
-    public function getAction()
-    {
-        return $this->_action;
-    }
-
-    public function setRelease($releaseId)
-    {
-        $this->_release = $releaseId;
-        return $this;
-    }
-
-    public function getRelease()
-    {
-        return $this->_release;
-    }
-
-    public function run(Mage_Config $config)
-    {
-        $this->_config = $config;
-
-        if ($config->getEnvironmentName() == '') {
-            Mage_Console::output('<red>You must specify an environment</red>', 0, 2);
-            return;
-        }
-
-        $lockFile = '.mage/' . $config->getEnvironmentName() . '.lock';
-        if (file_exists($lockFile)) {
+        $subcommand = $this->getConfig()->getArgument(1);
+        $lockFile = '.mage/' . $this->getConfig()->getEnvironment() . '.lock';
+        if (file_exists($lockFile) && ($subcommand == 'rollback')) {
             Mage_Console::output('<red>This environment is locked!</red>', 0, 2);
             return;
         }
 
         // Run Tasks for Deployment
-        $hosts = $config->getHosts();
+        $hosts = $this->getConfig()->getHosts();
 
         if (count($hosts) == 0) {
             Mage_Console::output('<light_purple>Warning!</light_purple> <dark_gray>No hosts defined, unable to get releases.</dark_gray>', 1, 3);
 
         } else {
             foreach ($hosts as $host) {
-                $config->setHost($host);
-                switch ($this->getAction()) {
+                $this->getConfig()->setHost($host);
+
+                switch ($subcommand) {
                     case 'list':
-                        $task = Mage_Task_Factory::get('releases/list', $config);
+                        $task = Mage_Task_Factory::get('releases/list', $this->getConfig());
                         $task->init();
                         $result = $task->run();
                         break;
 
                     case 'rollback':
-                        $task = Mage_Task_Factory::get('releases/rollback', $config);
+                        $releaseId = $this->getConfig()->getParameter('release', '');
+                        $task = Mage_Task_Factory::get('releases/rollback', $this->getConfig());
                         $task->init();
-                        $task->setRelease($this->getRelease());
+                        $task->setRelease($releaseId);
                         $result = $task->run();
                         break;
                 }

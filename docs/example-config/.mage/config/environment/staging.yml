@@ -2,11 +2,14 @@
 deployment:
   user: root
   from: ./
-  to: /var/www/vhosts/example.com/staging
-#hosts: /tmp/current-staging-hosts.txt
+  to: /var/www/
+releases:
+  enabled: true
+  max: 5
+  symlink: current
+  directory: releases
 hosts:
-  - s01.example.com:22
-  - s02.example.com
+  - localhost
 tasks:
   pre-deploy:
     - scm/update
@@ -14,4 +17,5 @@ tasks:
     - privileges
     - sampleTask
     - sampleTaskRollbackAware
+  #post-release
   #post-deploy:

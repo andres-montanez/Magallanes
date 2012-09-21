@@ -10,15 +10,15 @@ class Mage_Task_BuiltIn_Deployment_Releases
 
     public function run()
     {
-        if ($this->_config->release('enabled', false) == true) {
-            $releasesDirectory = $this->_config->release('directory', 'releases');
-            $symlink = $this->_config->release('symlink', 'current');
+        if ($this->getConfig()->release('enabled', false) == true) {
+            $releasesDirectory = $this->getConfig()->release('directory', 'releases');
+            $symlink = $this->getConfig()->release('symlink', 'current');
 
             if (substr($symlink, 0, 1) == '/') {
-                $releasesDirectory = rtrim($this->_config->deployment('to'), '/') . '/' . $releasesDirectory;
+                $releasesDirectory = rtrim($this->getConfig()->deployment('to'), '/') . '/' . $releasesDirectory;
             }
 
-            $currentCopy = $releasesDirectory . '/' . $this->_config->getReleaseId();
+            $currentCopy = $releasesDirectory . '/' . $this->getConfig()->getReleaseId();
 
             // Fetch the user and group from base directory
             $userGroup = '33:33';
@@ -35,7 +35,7 @@ class Mage_Task_BuiltIn_Deployment_Releases
             $result = $this->_runRemoteCommand($command);
 
             // Count Releases
-            $maxReleases = $this->_config->release('max', false);
+            $maxReleases = $this->getConfig()->release('max', false);
             if (($maxReleases !== false) && ($maxReleases > 0)) {
                 $releasesList = '';
                 $countReleasesFetch = $this->_runRemoteCommand('ls -1 ' . $releasesDirectory, $releasesList);
@@ -44,7 +44,7 @@ class Mage_Task_BuiltIn_Deployment_Releases
                 if ($releasesList != '') {
                     $releasesList = explode(PHP_EOL, $releasesList);
                     if (count($releasesList) > $maxReleases) {
-                        $releasesToDelete = array_diff($releasesList, array($this->_config->getReleaseId()));
+                        $releasesToDelete = array_diff($releasesList, array($this->getConfig()->getReleaseId()));
                         sort($releasesToDelete);
                         $releasesToDeleteCount = count($releasesToDelete) - $maxReleases;
                         $releasesToDelete = array_slice($releasesToDelete, 0, $releasesToDeleteCount + 1);
