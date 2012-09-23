@@ -17,5 +17,8 @@ tasks:
     - privileges
     - sampleTask
     - sampleTaskRollbackAware
+    - taskWithParameters:
+        booleanOption: true
+    - taskWithParameters
   #post-release
   #post-deploy:

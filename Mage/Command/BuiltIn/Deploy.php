@@ -57,9 +57,9 @@ class Mage_Command_BuiltIn_Deploy
                     Mage_Console::output('Deployment to <dark_gray>' . $config->getHost() . '</dark_gray> skipped!', 1, 3);
 
                 } else {
-                    foreach ($tasksToRun as $taskName) {
+                    foreach ($tasksToRun as $taskData) {
                         $tasks++;
-                        $task = Mage_Task_Factory::get($taskName, $this->getConfig(), false, 'deploy');
+                        $task = Mage_Task_Factory::get($taskData, $this->getConfig(), false, 'deploy');
                         $task->init();
 
                         $runTask = true;
@@ -141,9 +141,9 @@ class Mage_Command_BuiltIn_Deploy
             $tasks = 0;
             $completedTasks = 0;
 
-            foreach ($tasksToRun as $taskName) {
+            foreach ($tasksToRun as $taskData) {
                 $tasks++;
-                $task = Mage_Task_Factory::get($taskName, $config, false, $stage);
+                $task = Mage_Task_Factory::get($taskData, $config, false, $stage);
                 $task->init();
 
                 Mage_Console::output('Running <purple>' . $task->getName() . '</purple> ... ', 2, 0);

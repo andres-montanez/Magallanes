@@ -57,10 +57,12 @@ class Mage_Config
      * @param string $name
      * @return mixed
      */
-    public function getParameter($name, $default = null)
+    public function getParameter($name, $default = null, $extraParameters = array())
     {
         if (isset($this->_parameters[$name])) {
             return $this->_parameters[$name];
+        } else if (isset($extraParameters[$name])) {
+            return $extraParameters[$name];
         } else {
             return $default;
         }
@@ -107,7 +109,18 @@ class Mage_Config
         $tasks = array();
         $config = $this->_getEnvironmentOption('tasks', array());
         if (isset($config[$stage])) {
-            $tasks = ($config[$stage] ? (array) $config[$stage] : array());
+            $tasksData = ($config[$stage] ? (array) $config[$stage] : array());
+            foreach ($tasksData as $taskName => $taskData) {
+                if (is_array($taskData)) {
+                    ;
+                    $tasks[] = array(
+                        'name' => key($taskData),
+                        'parameters' => current($taskData),
+                    );
+                } else {
+                    $tasks[] = $taskData;
+                }
+            }
         }
 
         return $tasks;
@@ -317,7 +330,13 @@ class Mage_Config
                 if (count($optionValue) == 1) {
                     $this->_parameters[$optionValue[0]] = true;
                 } else if (count($optionValue) == 2) {
-                    $this->_parameters[$optionValue[0]] = $optionValue[1];
+                    if (strtolower($optionValue[1]) == 'true') {
+                        $this->_parameters[$optionValue[0]] = true;
+                    } else if (strtolower($optionValue[1]) == 'false') {
+                        $this->_parameters[$optionValue[0]] = false;
+                    } else {
+                        $this->_parameters[$optionValue[0]] = $optionValue[1];
+                    }
                 }
             } else {
                 $this->_arguments[] = $argument;

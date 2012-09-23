@@ -8,7 +8,7 @@ class Task_SampleTask
     }
 
     public function run()
-    {       
+    {
         return true;
     }
 }

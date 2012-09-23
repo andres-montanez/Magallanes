@@ -73,8 +73,8 @@ class Mage_Task_BuiltIn_Releases_Rollback
                         Mage_Console::output('Deployment to <dark_gray>' . $this->getConfig()->getHost() . '</dark_gray> skipped!', 1, 3);
 
                     } else {
-                        foreach ($tasksToRun as $taskName) {
-                            $task = Mage_Task_Factory::get($taskName, $this->getConfig(), true, 'deploy');
+                        foreach ($tasksToRun as $taskData) {
+                            $task = Mage_Task_Factory::get($taskData, $this->getConfig(), true, 'deploy');
                             $task->init();
                             Mage_Console::output('Running <purple>' . $task->getName() . '</purple> ... ', 2, false);
 

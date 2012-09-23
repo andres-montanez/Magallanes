@@ -4,16 +4,18 @@ abstract class Mage_Task_TaskAbstract
     protected $_config = null;
     protected $_inRollback = false;
     protected $_stage = null;
+    protected $_parameters = array();
 
     public abstract function getName();
 
     public abstract function run();
 
-    public final function __construct(Mage_Config $config, $inRollback = false, $stage = null)
+    public final function __construct(Mage_Config $config, $inRollback = false, $stage = null, $parameters = array())
     {
         $this->_config = $config;
         $this->_inRollback = $inRollback;
         $this->_stage = $stage;
+        $this->_parameters = $parameters;
     }
 
     public function inRollback()
@@ -33,6 +35,17 @@ abstract class Mage_Task_TaskAbstract
 
     public function init()
     {
+    }
+
+    /**
+     * Return the a parameter
+     *
+     * @param string $name
+     * @return mixed
+     */
+    public function getParameter($name, $default = null)
+    {
+        return $this->getConfig()->getParameter($name, $default, $this->_parameters);
     }
 
     protected final function _runLocalCommand($command, &$output = null)
