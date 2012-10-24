@@ -34,32 +34,6 @@ class Mage_Task_BuiltIn_Deployment_Release
                      . 'chown -R ' . $userGroup . ' ' . $currentCopy;
             $result = $this->_runRemoteCommand($command);
 
-            // Count Releases
-            $maxReleases = $this->getConfig()->release('max', false);
-            if (($maxReleases !== false) && ($maxReleases > 0)) {
-                $releasesList = '';
-                $countReleasesFetch = $this->_runRemoteCommand('ls -1 ' . $releasesDirectory, $releasesList);
-                $releasesList = trim($releasesList);
-
-                if ($releasesList != '') {
-                    $releasesList = explode(PHP_EOL, $releasesList);
-                    if (count($releasesList) > $maxReleases) {
-                        $releasesToDelete = array_diff($releasesList, array($this->getConfig()->getReleaseId()));
-                        sort($releasesToDelete);
-                        $releasesToDeleteCount = count($releasesToDelete) - $maxReleases;
-                        $releasesToDelete = array_slice($releasesToDelete, 0, $releasesToDeleteCount + 1);
-
-                        foreach ($releasesToDelete as $releaseIdToDelete) {
-                            $directoryToDelete = $releasesDirectory . '/' . $releaseIdToDelete;
-                            if ($directoryToDelete != '/') {
-                                $command = 'rm -rf ' . $directoryToDelete;
-                                $result = $result && $this->_runRemoteCommand($command);
-                            }
-                        }
-                    }
-                }
-            }
-
             return $result;
 
         } else {
