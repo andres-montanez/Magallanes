@@ -3,7 +3,7 @@ date_default_timezone_set('UTC');
 
 $baseDir = dirname(dirname(__FILE__));
 
-define('MAGALLANES_VERSION', '0.9.11');
+define('MAGALLANES_VERSION', '0.9.12');
 
 // Preload
 require_once $baseDir . '/Mage/spyc.php';
