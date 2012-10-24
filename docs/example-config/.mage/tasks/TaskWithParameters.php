@@ -15,6 +15,7 @@ class Task_TaskWithParameters
 
     public function run()
     {
+        throw new Mage_Task_SkipException;
         return true;
     }
 }

@@ -10,11 +10,12 @@ class Mage_Command_BuiltIn_Deploy
 
     public function __construct()
     {
-        $this->_releaseId = date('YmdHis');
     }
 
     public function run()
     {
+        $this->getConfig()->setReleaseId(date('YmdHis'));
+        
         $this->_startTime = time();
 
         $lockFile = '.mage/' . $this->getConfig()->getEnvironment() . '.lock';
@@ -28,14 +29,14 @@ class Mage_Command_BuiltIn_Deploy
 
         // Run Tasks for Deployment
         $hosts = $this->getConfig()->getHosts();
+        $this->_hostsCount = count($hosts);
 
-        if (count($hosts) == 0) {
+        if ($this->_hostsCount == 0) {
             Mage_Console::output('<light_purple>Warning!</light_purple> <dark_gray>No hosts defined, skipping deployment tasks.</dark_gray>', 1, 3);
 
         } else {
             $this->_startTimeHosts = time();
             foreach ($hosts as $host) {
-                $this->_hostsCount++;
                 $this->getConfig()->setHost($host);
                 $tasks = 0;
                 $completedTasks = 0;
@@ -45,13 +46,6 @@ class Mage_Command_BuiltIn_Deploy
                 $tasksToRun = $this->getConfig()->getTasks();
                 array_unshift($tasksToRun, 'deployment/rsync');
 
-                if ($this->getConfig()->release('enabled', false) == true) {
-                    $this->getConfig()->setReleaseId($this->_releaseId);
-                    array_push($tasksToRun, 'deployment/releases');
-                }
-
-                $tasksToRun = $tasksToRun + $this->getConfig()->getTasks('post-release');
-
                 if (count($tasksToRun) == 0) {
                     Mage_Console::output('<light_purple>Warning!</light_purple> <dark_gray>No </dark_gray><light_cyan>Deployment</light_cyan> <dark_gray>tasks defined.</dark_gray>', 2);
                     Mage_Console::output('Deployment to <dark_gray>' . $config->getHost() . '</dark_gray> skipped!', 1, 3);
@@ -60,26 +54,9 @@ class Mage_Command_BuiltIn_Deploy
                     foreach ($tasksToRun as $taskData) {
                         $tasks++;
                         $task = Mage_Task_Factory::get($taskData, $this->getConfig(), false, 'deploy');
-                        $task->init();
 
-                        $runTask = true;
-                        Mage_Console::output('Running <purple>' . $task->getName() . '</purple> ... ', 2, false);
-
-                        if (($task instanceOf Mage_Task_Releases_SkipOnOverride) && $this->getConfig()->getParameter('overrideRelease', false)) {
-                            $runTask == false;
-                        }
-
-                        if ($runTask == true) {
-                            $result = $task->run();
-
-                            if ($result == true) {
-                                Mage_Console::output('<green>OK</green>', 0);
-                                $completedTasks++;
-                            } else {
-                                Mage_Console::output('<red>FAIL</red>', 0);
-                            }
-                        } else {
-                            Mage_Console::output('<yellow>SKIPPED</yellow>', 0);
+                        if ($this->_runTask($task)) {
+                            $completedTasks++;
                         }
                     }
 
@@ -93,6 +70,45 @@ class Mage_Command_BuiltIn_Deploy
                 }
             }
             $this->_endTimeHosts = time();
+            
+            // Releasing
+            if ($this->getConfig()->release('enabled', false) == true) {
+                // Execute the Releases
+                Mage_Console::output('Starting the <dark_gray>Releaseing</dark_gray>');
+                foreach ($hosts as $host) {
+                    $this->getConfig()->setHost($host);
+                    $task = Mage_Task_Factory::get('deployment/release', $this->getConfig(), false, 'deploy');
+                    
+                    if ($this->_runTask($task, 'Releasing on host <purple>' . $host . '</purple> ... ')) {
+                        $completedTasks++;
+                    }
+                }
+                Mage_Console::output('Finished the <dark_gray>Releaseing</dark_gray>', 1, 3);
+
+                // Execute the Post-Release Tasks
+                foreach ($hosts as $host) {
+                    Mage_Console::output('Starting <dark_gray>Post-Release</dark_gray> tasks for <dark_gray>' . $host . '</dark_gray>:');
+                    $this->getConfig()->setHost($host);
+                    $tasksToRun = $this->getConfig()->getTasks('post-release');
+                    $tasks = count($tasksToRun);
+                    $completedTasks = 0;
+                
+                    foreach ($tasksToRun as $task) {
+                        $task = Mage_Task_Factory::get($task, $this->getConfig(), false, 'post-release');
+
+                        if ($this->_runTask($task)) {
+                            $completedTasks++;
+                        }                        
+                    }
+                    
+                    if ($completedTasks == $tasks) {
+                        $tasksColor = 'green';
+                    } else {
+                        $tasksColor = 'red';
+                    }
+                    Mage_Console::output('Finished <dark_gray>Post-Release</dark_gray> tasks for <dark_gray>' . $host . '</dark_gray>: <' . $tasksColor . '>' . $completedTasks . '/' . $tasks . '</' . $tasksColor . '> tasks done.', 1, 3);
+                }
+            }
         }
 
         // Run Post-Deployment Tasks
@@ -144,16 +160,9 @@ class Mage_Command_BuiltIn_Deploy
             foreach ($tasksToRun as $taskData) {
                 $tasks++;
                 $task = Mage_Task_Factory::get($taskData, $config, false, $stage);
-                $task->init();
-
-                Mage_Console::output('Running <purple>' . $task->getName() . '</purple> ... ', 2, 0);
-                $result = $task->run();
-
-                if ($result == true) {
-                    Mage_Console::output('<green>OK</green>', 0);
+                
+                if ($this->_runTask($task)) {
                     $completedTasks++;
-                } else {
-                    Mage_Console::output('<red>FAIL</red>', 0);
                 }
             }
 
@@ -165,8 +174,49 @@ class Mage_Command_BuiltIn_Deploy
 
             Mage_Console::output('Finished <dark_gray>' . $title . '</dark_gray> tasks: <' . $tasksColor . '>' . $completedTasks . '/' . $tasks . '</' . $tasksColor . '> tasks done.', 1, 3);
         }
+    }
+    
+    private function _runTask($task, $title = null)
+    {
+        $task->init();
 
+        if ($title == null) {
+            $title = 'Running <purple>' . $task->getName() . '</purple> ... ';
+        }
+        Mage_Console::output($title, 2, 0);
+        
+        $runTask = true;
+        if (($task instanceOf Mage_Task_Releases_SkipOnOverride) && $this->getConfig()->getParameter('overrideRelease', false)) {
+            $runTask == false;
+        }
+        
+        $result = false;
+        if ($runTask == true) {
+            try {
+                $result = $task->run();
+        
+                if ($result == true) {
+                    Mage_Console::output('<green>OK</green>', 0);
+                    $result = true;
 
+                } else {
+                    Mage_Console::output('<red>FAIL</red>', 0);
+                    $result = true;
+                }
+            } catch (Mage_Task_SkipException $e) {
+                Mage_Console::output('<yellow>SKIPPED</yellow>', 0);
+                $result = true;
+
+            } catch (Exception $e) {
+                Mage_Console::output('<red>FAIL</red>', 0);
+                $result = false;
+            }
+        } else {
+            Mage_Console::output('<yellow>SKIPPED</yellow>', 0);
+            $result = true;
+        }
+        
+        return $result;
     }
 
     /**

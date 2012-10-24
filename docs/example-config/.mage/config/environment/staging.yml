@@ -10,9 +10,11 @@ releases:
   directory: releases
 hosts:
   - localhost
+  - dbserver
 tasks:
   pre-deploy:
-    - scm/update
+    - sampleTask
+#    - scm/update
   on-deploy:
     - privileges
     - sampleTask
@@ -20,5 +22,7 @@ tasks:
     - taskWithParameters:
         booleanOption: true
     - taskWithParameters
-  #post-release
-  #post-deploy:
+  post-release:
+    - sampleTask
+  post-deploy:
+    - sampleTask

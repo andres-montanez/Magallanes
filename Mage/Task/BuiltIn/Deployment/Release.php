@@ -1,7 +1,7 @@
 <?php
-class Mage_Task_BuiltIn_Deployment_Releases
+class Mage_Task_BuiltIn_Deployment_Release
     extends Mage_Task_TaskAbstract
-    implements Mage_Task_Releases_BuiltIn
+    implements Mage_Task_Releases_BuiltIn, Mage_Task_Releases_SkipOnOverride
 {
     public function getName()
     {
