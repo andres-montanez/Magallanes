@@ -98,7 +98,7 @@ class Mage_Task_BuiltIn_Releases_Rollback
                     Mage_Console::output('Running <purple>Rollback Release [id=' . $releaseId . ']</purple> ... ', 2, false);
 
                     $userGroup = '';
-                    $resultFetch = $this->_runRemoteCommand('ls -ld ' . $rollbackTo . ' | awk \'{print \$3\":\"\$4}\'', $userGroup);
+                    $resultFetch = $this->_runRemoteCommand('ls -ld ' . $rollbackTo . ' | awk \'{print \$3":"\$4}\'', $userGroup);
                     $command = 'rm -f ' . $symlink
                              . ' && '
                              . 'ln -sf ' . $rollbackTo . ' ' . $symlink

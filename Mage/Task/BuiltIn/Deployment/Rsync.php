@@ -22,7 +22,7 @@ class Mage_Task_BuiltIn_Deployment_Rsync
 
         if ($overrideRelease == true) {
             $releaseToOverride = false;
-            $resultFetch = $this->_runRemoteCommand('ls -ld current | cut -d\"/\" -f2', $releaseToOverride);
+            $resultFetch = $this->_runRemoteCommand('ls -ld current | cut -d"/" -f2', $releaseToOverride);
             if (is_numeric($releaseToOverride)) {
                 $this->getConfig()->setReleaseId($releaseToOverride);
             }

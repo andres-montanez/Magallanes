@@ -22,7 +22,7 @@ class Mage_Task_BuiltIn_Deployment_Release
 
             // Fetch the user and group from base directory
             $userGroup = '33:33';
-            $resultFetch = $this->_runRemoteCommand('ls -ld . | awk \'{print \$3\":\"\$4}\'', $userGroup);
+            $resultFetch = $this->_runRemoteCommand('ls -ld . | awk \'{print \$3":"\$4}\'', $userGroup);
 
             // Remove symlink if exists; create new symlink and change owners
             $command = 'rm -f ' . $symlink

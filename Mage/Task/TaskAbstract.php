@@ -74,7 +74,7 @@ abstract class Mage_Task_TaskAbstract
                       . '-q -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no '
                       . $this->_config->deployment('user') . '@' . $this->_config->getHostName() . ' '
                       . '"cd ' . rtrim($this->_config->deployment('to'), '/') . $releasesDirectory . ' && '
-                      . $command . '"';
+                      . str_replace('"', '\"', $command) . '"';
 
         return $this->_runLocalCommand($localCommand, $output);
     }
