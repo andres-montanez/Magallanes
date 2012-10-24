@@ -15,6 +15,7 @@ class Mage_Command_BuiltIn_Deploy
     public function run()
     {
         $this->getConfig()->setReleaseId(date('YmdHis'));
+        $failedTasks = 0;
         
         $this->_startTime = time();
 
@@ -57,6 +58,8 @@ class Mage_Command_BuiltIn_Deploy
 
                         if ($this->_runTask($task)) {
                             $completedTasks++;
+                        } else {
+                            $failedTasks++;
                         }
                     }
 
@@ -70,6 +73,11 @@ class Mage_Command_BuiltIn_Deploy
                 }
             }
             $this->_endTimeHosts = time();
+            
+            if ($failedTasks > 0) {
+                Mage_Console::output('A total of <dark_gray>' . $failedTasks . '</dark_gray> deployment tasks failed: <red>ABORTING</red>', 1, 2);
+                return;
+            }
             
             // Releasing
             if ($this->getConfig()->release('enabled', false) == true) {
@@ -201,7 +209,7 @@ class Mage_Command_BuiltIn_Deploy
 
                 } else {
                     Mage_Console::output('<red>FAIL</red>', 0);
-                    $result = true;
+                    $result = false;
                 }
             } catch (Mage_Task_SkipException $e) {
                 Mage_Console::output('<yellow>SKIPPED</yellow>', 0);
