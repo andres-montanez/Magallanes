@@ -95,12 +95,12 @@ class Mage_Command_BuiltIn_Deploy
 
                 // Execute the Post-Release Tasks
                 foreach ($hosts as $host) {
-                    if (count($tasksToRun) > 0) {
-                        $this->getConfig()->setHost($host);
-                        $tasksToRun = $this->getConfig()->getTasks('post-release');
-                        $tasks = count($tasksToRun);
-                        $completedTasks = 0;
+                    $this->getConfig()->setHost($host);
+                    $tasksToRun = $this->getConfig()->getTasks('post-release');
+                    $tasks = count($tasksToRun);
+                    $completedTasks = 0;
 
+                    if (count($tasksToRun) > 0) {
                         Mage_Console::output('Starting <dark_gray>Post-Release</dark_gray> tasks for <dark_gray>' . $host . '</dark_gray>:');
 
                         foreach ($tasksToRun as $task) {

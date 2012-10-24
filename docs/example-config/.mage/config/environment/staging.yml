@@ -23,6 +23,6 @@ tasks:
         booleanOption: true
     - taskWithParameters
   post-release:
-    - sampleTask
+#    - sampleTask
   post-deploy:
     - sampleTask
