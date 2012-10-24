@@ -51,11 +51,13 @@ class Mage_Task_BuiltIn_Releases_List
                     if ($currentRelease == $release) {
                         $isCurrent = ' <- current';
                     }
+                    
+                    $dateDiff = $this->_dateDiff($releaseDate);
 
                     Mage_Console::output(
                         'Release: <purple>' . $release . '</purple> '
                       . '- Date: <dark_gray>' . $releaseDate . '</dark_gray> '
-                      . '- Index: <dark_gray>' . $releaseIndex . '</dark_gray>' . $isCurrent, 2);
+                      . '- Index: <dark_gray>' . $releaseIndex . '</dark_gray>' . $dateDiff . $isCurrent, 2);
                 }
             }
 
@@ -66,6 +68,54 @@ class Mage_Task_BuiltIn_Releases_List
             Mage_Console::output('');
             return false;
         }
+    }
+    
+    private function _dateDiff($releaseDate)
+    {
+        $textDiff = '';
+        $releaseDate = new DateTime($releaseDate);
+        $now = new DateTime();
+        $diff = $now->diff($releaseDate);
+
+        if ($diff->format('%a') <= 7) {
+            if ($diff->format('%d') == 7) {
+                $textDiff = ' [a week ago] ';
+                
+            } else if ($diff->format('%d') > 0 && $diff->format('%d') < 7) {
+                $days = $diff->format('%d');
+                if ($days <= 1) {
+                    $textDiff = ' [one day ago] ';
+                } else {
+                    $textDiff = ' [' . $days . ' days ago] ';
+                }
+                
+            } else if ($diff->format('%d') == 0 && $diff->format('%h') > 0) {
+                $hours = $diff->format('%h');
+                if ($hours <= 1) {
+                    $textDiff = ' [one hour ago] ';
+                } else {
+                    $textDiff = ' [' . $hours . ' hours ago] ';
+                }
+                
+            } else if ($diff->format('%d') == 0 && $diff->format('%h') == 0) {
+                $minutes = $diff->format('%i');
+                if ($minutes <= 1) {
+                    $textDiff = ' [one minute ago] ';
+                } else {
+                    $textDiff = ' [' . $minutes . ' minutes ago] ';
+                }
+                
+            } else if ($diff->format('%d') == 0 && $diff->format('%h') == 0 && $diff->format('%i') == 0) {
+                $seconds = $diff->format('%s');
+                if ($seconds < 10) {
+                    $textDiff = ' [just now!] ';
+                } else {
+                    $textDiff = ' [' . $seconds . ' seconds ago] ';
+                }
+            }
+        }
+
+        return $textDiff;
     }
 
 }
