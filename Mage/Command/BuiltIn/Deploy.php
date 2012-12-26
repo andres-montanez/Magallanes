@@ -49,7 +49,7 @@ class Mage_Command_BuiltIn_Deploy
 
                 if (count($tasksToRun) == 0) {
                     Mage_Console::output('<light_purple>Warning!</light_purple> <dark_gray>No </dark_gray><light_cyan>Deployment</light_cyan> <dark_gray>tasks defined.</dark_gray>', 2);
-                    Mage_Console::output('Deployment to <dark_gray>' . $config->getHost() . '</dark_gray> skipped!', 1, 3);
+                    Mage_Console::output('Deployment to <dark_gray>' . $host . '</dark_gray> skipped!', 1, 3);
 
                 } else {
                     foreach ($tasksToRun as $taskData) {
@@ -150,12 +150,29 @@ class Mage_Command_BuiltIn_Deploy
     {
         $tasksToRun = $config->getTasks($stage);
 
-        // Look for Remote Source
-        if (is_array($this->_config->deployment('source', null))) {
-            if ($stage == 'pre-deploy') {
-                array_unshift($tasksToRun, 'scm/clone');
-            } elseif ($stage == 'post-deploy') {
-                array_unshift($tasksToRun, 'scm/remove-clone');
+        // PreDeployment Hook
+        if ($stage == 'pre-deploy') {
+        	// Look for Remote Source
+        	if (is_array($this->_config->deployment('source', null))) {
+        		array_unshift($tasksToRun, 'scm/clone');
+        	}
+
+        	// Change Branch
+        	if ($this->getConfig()->deployment('scm', false)) {
+        		array_unshift($tasksToRun, 'scm/change-branch');
+        	}
+        }
+
+        // PostDeployment Hook
+        if ($stage == 'post-deploy') {
+        	// Change Branch Back
+        	if ($this->getConfig()->deployment('scm', false)) {
+        		array_unshift($tasksToRun, 'scm/change-branch-back');
+        	}
+
+        	// Remove Remote Source
+        	if (is_array($this->_config->deployment('source', null))) {
+        		 array_push($tasksToRun, 'scm/remove-clone');
             }
         }
 
