@@ -69,7 +69,7 @@ class Mage_Command_BuiltIn_Deploy
                         $tasksColor = 'red';
                     }
 
-                    Mage_Console::output('Deployment to <dark_gray>' . $this->getConfig()->getHost() . '</dark_gray> compted: <' . $tasksColor . '>' . $completedTasks . '/' . $tasks . '</' . $tasksColor . '> tasks done.', 1, 3);
+                    Mage_Console::output('Deployment to <dark_gray>' . $this->getConfig()->getHost() . '</dark_gray> completed: <' . $tasksColor . '>' . $completedTasks . '/' . $tasks . '</' . $tasksColor . '> tasks done.', 1, 3);
                 }
             }
             $this->_endTimeHosts = time();
