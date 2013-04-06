@@ -37,7 +37,7 @@ class Mage_Console
 
         // Grettings
         if ($showGrettings) {
-            Mage_Console::output('Starting <blue>Magallanes</blue>', 0, 2);
+            Mage_Console::output('Starting <blue>Magallanes</blue> at ' . date("Y-m-d H:i:s"), 0, 2);
         }
 
         // Run Command
