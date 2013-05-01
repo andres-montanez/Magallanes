@@ -36,7 +36,7 @@ Just a few, for now...
   - **deployment/rsync** - This task is for deploying your code to the remote servers.
   - **scm/update** - This task is for updating (git/svn) your base working copy.
 
-But that's not all! You can create your own taks, and execute commands on your working copy and in your deployed code!
+But that's not all! You can create your own tasks, and execute commands on your working copy and in your deployed code!
 Also we are working on creating more built in tasks.
 
 
