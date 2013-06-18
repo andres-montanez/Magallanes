@@ -1,9 +1,19 @@
-#!/bin/sh
-#VERSION:0.9.14
+#!/usr/bin/env php
+<?php
+date_default_timezone_set('UTC');
 
-SCRIPT=$(readlink -f $0)
-DIR=$(dirname $SCRIPT)
-PHP_BIN=$(which php) 
+$baseDir = dirname(dirname(__FILE__));
 
-$PHP_BIN -d safe_mode=Off -f $DIR/mage.php -- $@
+define('MAGALLANES_VERSION', '0.9.14');
 
+// Preload
+require_once $baseDir . '/Mage/spyc.php';
+require_once $baseDir . '/Mage/Autoload.php';
+spl_autoload_register(array('Mage_Autoload', 'autoload'));
+
+// Clean arguments
+array_shift($argv);
+
+// Run Magallanes
+$console = new Mage_Console;
+$console->run($argv);

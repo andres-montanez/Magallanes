@@ -4,19 +4,54 @@ class Mage_Command_BuiltIn_Install
 {
     public function run()
     {
-        Mage_Console::output('Installing <dark_gray>Magallanes</dark_gray>... ', 1, 0);
-        $this->_recursiveCopy('./', '/opt/magallanes-' . MAGALLANES_VERSION);
+    	Mage_Console::output('Installing <dark_gray>Magallanes</dark_gray>... ', 1, 0);
 
-        if (file_exists('/opt/magallanes') && is_link('/opt/magallanes')) {
-            unlink('/opt/magallanes');
-        }
-        symlink('/opt/magallanes-' . MAGALLANES_VERSION, '/opt/magallanes');
-        chmod('/opt/magallanes/bin/mage', 0755);
-        if (!file_exists('/usr/bin/mage')) {
-            symlink('/opt/magallanes/bin/mage', '/usr/bin/mage');
-        }
+    	// Vars
+    	$installDir = $this->getConfig()->getParameter('installDir', '/opt/magallanes');
+    	$systemWide = $this->getConfig()->getParameter('systemWide', false);
 
-        Mage_Console::output('<light_green>Success!</light_green>', 0, 2);
+    	// Clean vars
+    	$baseDir = realpath(dirname($installDir));
+    	$installDir = basename($installDir);
+
+    	// Check if install dir is available
+    	if (!is_dir($baseDir) || !is_writable($baseDir)) {
+    		Mage_Console::output('<red>Failure: install directory is invalid.</red>', 0, 2);
+
+		// Chck if it is a system wide install the user is root
+    	} else if ($systemWide && (getenv('LOGNAME') != 'root')) {
+    			Mage_Console::output('<red>Failure: you have to be root to perform a system wide install.</red>', 0, 2);
+
+    	} else {
+    		$destinationDir = $baseDir . '/' . $installDir;
+    		if (!is_dir($destinationDir)) {
+    			mkdir($destinationDir);
+    		}
+
+    		// Copy
+    		$this->_recursiveCopy('./', $destinationDir . '/' . MAGALLANES_VERSION);
+
+    		// Check if there is already a symlink
+    		if (file_exists($destinationDir . '/' . 'latest')
+				    && is_link($destinationDir . '/' . 'latest')) {
+    			unlink($destinationDir . '/' . 'latest');
+    		}
+
+    		// Create "latest" symlink
+    		symlink(
+    		    $destinationDir . '/' . MAGALLANES_VERSION,
+    		    $destinationDir . '/' . 'latest'
+    		);
+    		chmod($destinationDir . '/' . MAGALLANES_VERSION . '/bin/mage', 0755);
+
+    		if ($systemWide) {
+    			if (!file_exists('/usr/bin/mage')) {
+    				symlink($destinationDir . '/latest/bin/mage', '/usr/bin/mage');
+    			}
+    		}
+
+    		Mage_Console::output('<light_green>Success!</light_green>', 0, 2);
+    	}
     }
 
     private function _recursiveCopy($from, $to)
