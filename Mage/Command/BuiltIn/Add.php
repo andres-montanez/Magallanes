@@ -52,7 +52,9 @@ class Mage_Command_BuiltIn_Add
                     . '  pre-deploy:' . PHP_EOL
                     . '  on-deploy:' . PHP_EOL
                     . '    - deployment/rsync' . PHP_EOL
+                    . ($withReleases ? ('  post-release:' . PHP_EOL) : '')
                     . '  post-deploy:' . PHP_EOL;
+
         $result = file_put_contents($environmentConfigFile, $baseConfig);
 
         if ($result) {
