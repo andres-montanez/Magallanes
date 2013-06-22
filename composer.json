@@ -1,0 +1,12 @@
+{
+    "name": "andres-montanez/magallanes",
+    "description": "A Deployment Tool for PHP Applications",
+    "homepage": "http://magephp.com",
+    "license", "MIT",
+    "type": "library",
+    "keywords": "deployment",
+    "version": "0.9.14",
+    "require": {
+        "php": ">=5.3.*"
+    }
+}
