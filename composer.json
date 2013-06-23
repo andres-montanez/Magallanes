@@ -5,7 +5,6 @@
     "license": "MIT",
     "type": "library",
     "keywords": "deployment",
-    "version": "0.9.14",
     "require": {
         "php": ">=5.3"
     }
