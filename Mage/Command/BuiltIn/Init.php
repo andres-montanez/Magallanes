@@ -2,6 +2,15 @@
 class Mage_Command_BuiltIn_Init
     extends Mage_Command_CommandAbstract
 {
+	protected $generalTemplate = <<<'YML'
+# global settings
+name: %projectName%
+email: %notificationEmail%
+notifications: %notificationEnabled%
+logging: %loggingEnabled%
+maxlogs: %maxlogs%
+YML;
+
     public function run()
     {
         $configDir = '.mage';
@@ -15,11 +24,13 @@ class Mage_Command_BuiltIn_Init
             $results = array();
             $results[] = mkdir($configDir);
             $results[] = mkdir($configDir . '/logs');
+            $results[] = file_put_contents($configDir . '/logs/.gitignore', "*\n!.gitignore");
             $results[] = mkdir($configDir . '/tasks');
+            $results[] = touch($configDir . '/tasks/.gitignore');
             $results[] = mkdir($configDir . '/config');
             $results[] = mkdir($configDir . '/config/environment');
-            $results[] = file_put_contents($configDir . '/config/general.yml', '#global settings' . PHP_EOL . PHP_EOL);
-            $results[] = file_put_contents($configDir . '/config/scm.yml', '#scm settings' . PHP_EOL . PHP_EOL);
+            $results[] = touch($configDir . '/config/environment/.gitignore');
+            $results[] = file_put_contents($configDir . '/config/general.yml', $this->getGeneralConfig());
 
             if (!in_array(false, $results)) {
                 Mage_Console::output('<light_green>Success!!</light_green> The configuration for <dark_gray>Magallanes</dark_gray> has been generated at <blue>.mage</blue> directory.');
@@ -28,5 +39,33 @@ class Mage_Command_BuiltIn_Init
                 Mage_Console::output('<light_red>Error!!</light_red> Unable to generate the configuration.', 1, 2);
             }
         }
+    }
+
+    protected function getGeneralConfig()
+    {
+    	// Assamble Global Settings
+    	$projectName = $this->getConfig()->getParameter('name', '');
+    	$notificationEmail = $this->getConfig()->getParameter('email', '');
+    	$notificationEnabled = ($notificationEmail != '') ? 'true' : 'false';
+
+    	$globalSettings = str_replace(
+			array(
+				'%projectName%',
+				'%notificationEmail%',
+				'%notificationEnabled%',
+				'%loggingEnabled%',
+				'%maxlogs%',
+			),
+			array(
+				$projectName,
+				$notificationEmail,
+				$notificationEnabled,
+				'true',
+				30
+			),
+			$this->generalTemplate
+    	);
+
+    	return $globalSettings;
     }
 }
