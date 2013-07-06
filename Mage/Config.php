@@ -20,7 +20,6 @@ class Mage_Config
     {
         $this->_parse($arguments);
         $this->_loadGeneral();
-        $this->_loadSCM();
         $this->_loadEnvironment();
     }
 
@@ -103,7 +102,6 @@ class Mage_Config
     public function reload()
     {
         $this->_loadGeneral();
-        $this->_loadSCM();
         $this->_loadEnvironment();
     }
 
