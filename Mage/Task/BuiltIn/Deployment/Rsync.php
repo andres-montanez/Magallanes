@@ -18,7 +18,7 @@ class Mage_Task_BuiltIn_Deployment_Rsync
 
     public function run()
     {
-        $overrideRelease = $this->getConfig()->getParameter('overrideRelease', false);
+        $overrideRelease = $this->getParameter('overrideRelease', false);
 
         if ($overrideRelease == true) {
             $releaseToOverride = false;
@@ -56,22 +56,22 @@ class Mage_Task_BuiltIn_Deployment_Rsync
                  . $this->getConfig()->deployment('user') . '@' . $this->getConfig()->getHostName() . ':' . $deployToDirectory;
 
         $result = $this->_runLocalCommand($command);
-        
+
         // Count Releases
         if ($this->getConfig()->release('enabled', false) == true) {
             $releasesDirectory = $this->getConfig()->release('directory', 'releases');
             $symlink = $this->getConfig()->release('symlink', 'current');
-            
+
             if (substr($symlink, 0, 1) == '/') {
                 $releasesDirectory = rtrim($this->getConfig()->deployment('to'), '/') . '/' . $releasesDirectory;
             }
-            
+
             $maxReleases = $this->getConfig()->release('max', false);
             if (($maxReleases !== false) && ($maxReleases > 0)) {
                 $releasesList = '';
                 $countReleasesFetch = $this->_runRemoteCommand('ls -1 ' . $releasesDirectory, $releasesList);
                 $releasesList = trim($releasesList);
-            
+
                 if ($releasesList != '') {
                     $releasesList = explode(PHP_EOL, $releasesList);
                     if (count($releasesList) > $maxReleases) {
@@ -79,7 +79,7 @@ class Mage_Task_BuiltIn_Deployment_Rsync
                         sort($releasesToDelete);
                         $releasesToDeleteCount = count($releasesToDelete) - $maxReleases;
                         $releasesToDelete = array_slice($releasesToDelete, 0, $releasesToDeleteCount + 1);
-            
+
                         foreach ($releasesToDelete as $releaseIdToDelete) {
                             $directoryToDelete = $releasesDirectory . '/' . $releaseIdToDelete;
                             if ($directoryToDelete != '/') {

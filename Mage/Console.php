@@ -63,6 +63,8 @@ class Mage_Console
         if ($showGrettings) {
             Mage_Console::output('Finished <blue>Magallanes</blue>', 0, 2);
         }
+
+        self::_checkLogs($config);
     }
 
     /**
@@ -130,6 +132,32 @@ class Mage_Console
 
             $message = date('Y-m-d H:i:s -- ') . $message;
             fwrite(self::$_log, $message . PHP_EOL);
+        }
+    }
+
+    /**
+     * Check Logs
+     * @param Mage_Config $config
+     */
+    private static function _checkLogs(Mage_Config $config)
+    {
+        if (self::$_logEnabled) {
+        	$maxLogs = $config->general('maxlogs', 30);
+
+        	$logs = array();
+        	foreach (new RecursiveDirectoryIterator('.mage/logs', RecursiveDirectoryIterator::SKIP_DOTS) as $log) {
+        		if (strpos($log->getFilename(), 'log-') === 0) {
+        			$logs[] = $log->getFilename();
+        		}
+        	}
+
+        	sort($logs);
+        	if (count($logs) > $maxLogs) {
+                $logsToDelete = array_slice($logs, 0, count($logs) - $maxLogs);
+                foreach ($logsToDelete as $logToDeelte) {
+                	unlink('.mage/logs/' . $logToDeelte);
+                }
+        	}
         }
     }
 }
