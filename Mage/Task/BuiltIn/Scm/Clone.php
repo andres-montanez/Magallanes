@@ -43,7 +43,7 @@ class Mage_Task_BuiltIn_Scm_Clone
                 break;
 
             case 'svn':
-                return false;
+                throw new Mage_Task_SkipException;
                 break;
         }
 

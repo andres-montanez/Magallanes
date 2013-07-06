@@ -167,7 +167,8 @@ class Mage_Command_BuiltIn_Deploy
         if ($stage == 'post-deploy') {
         	// Change Branch Back
         	if ($this->getConfig()->deployment('scm', false)) {
-        		array_unshift($tasksToRun, 'scm/change-branch-back');
+        		array_unshift($tasksToRun, 'scm/change-branch');
+        		$config->addParameter('_changeBranchRevert');
         	}
 
         	// Remove Remote Source

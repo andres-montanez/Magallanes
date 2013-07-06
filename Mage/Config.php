@@ -8,7 +8,6 @@ class Mage_Config
     private $_releaseId = null;
     private $_config = array(
         'general'     => array(),
-        'scm'         => array(),
         'environment' => array(),
     );
 
@@ -76,6 +75,16 @@ class Mage_Config
     public function getParameters()
     {
         return $this->_parameters;
+    }
+
+    /**
+     * Adds (or replaces) a parameter
+     * @param string $name
+     * @param mixed $value
+     */
+    public function addParameter($name, $value = true)
+    {
+    	$this->_parameters[$name] = $value;
     }
 
     /**
@@ -219,27 +228,6 @@ class Mage_Config
     }
 
     /**
-     * Gets SCM Configuration
-     *
-     * @param string $option
-     * @param string $default
-     * @return mixed
-     */
-    public function scm($option, $default = false)
-    {
-        $config = $this->_config['scm'];
-        if (isset($config[$option])) {
-            if (is_array($default) && ($config[$option] == '')) {
-                return $default;
-            } else {
-                return $config[$option];
-            }
-        } else {
-            return $default;
-        }
-    }
-
-    /**
      * Get deployment configuration
      *
      * @param string $option
@@ -351,16 +339,6 @@ class Mage_Config
     {
         if (file_exists('.mage/config/general.yml')) {
             $this->_config['general'] = spyc_load_file('.mage/config/general.yml');
-        }
-    }
-
-    /**
-     * Loads the SCM Configuration
-     */
-    private function _loadSCM()
-    {
-        if (file_exists('.mage/config/scm.yml')) {
-            $this->_config['scm'] = spyc_load_file('.mage/config/scm.yml');
         }
     }
 
