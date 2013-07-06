@@ -24,7 +24,7 @@ class Mage_Task_BuiltIn_Scm_Update
 
     public function run()
     {
-        switch ($this->getConfig()->scm('type')) {
+        switch ($this->getConfig()->general('scm')) {
             case 'git':
                 $command = 'git pull';
                 break;
