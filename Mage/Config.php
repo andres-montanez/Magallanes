@@ -5,6 +5,7 @@ class Mage_Config
     private $_parameters  = array();
     private $_environment = false;
     private $_host = null;
+    private $_hostConfig = null;
     private $_releaseId = null;
     private $_config = array(
         'general'     => array(),
@@ -115,6 +116,14 @@ class Mage_Config
     {
         $tasks = array();
         $config = $this->_getEnvironmentOption('tasks', array());
+
+        // Host Config
+        if (is_array($this->_hostConfig) && isset($this->_hostConfig['tasks'])) {
+        	if (isset($this->_hostConfig['tasks'][$stage])) {
+        		$config[$stage] = $this->_hostConfig['tasks'][$stage];
+        	}
+        }
+
         if (isset($config[$stage])) {
             $tasksData = ($config[$stage] ? (array) $config[$stage] : array());
             foreach ($tasksData as $taskName => $taskData) {
@@ -169,6 +178,18 @@ class Mage_Config
     {
         $this->_host = $host;
         return $this;
+    }
+
+    /**
+     * Set the host specific configuration
+     *
+     * @param array $hostConfig
+     * @return Mage_Config
+     */
+    public function setHostConfig($hostConfig = null)
+    {
+    	$this->_hostConfig = $hostConfig;
+    	return $this;
     }
 
     /**
@@ -234,6 +255,14 @@ class Mage_Config
      */
     public function deployment($option, $default = false)
     {
+    	// Host Config
+    	if (is_array($this->_hostConfig) && isset($this->_hostConfig['deployment'])) {
+    		if (isset($this->_hostConfig['deployment'][$option])) {
+    			return $this->_hostConfig['deployment'][$option];
+    		}
+    	}
+
+    	// Global Config
         $config = $this->_getEnvironmentOption('deployment', array());
         if (isset($config[$option])) {
             if (is_array($default) && ($config[$option] == '')) {
@@ -255,6 +284,13 @@ class Mage_Config
      */
     public function release($option, $default = false)
     {
+    	// Host Config
+    	if (is_array($this->_hostConfig) && isset($this->_hostConfig['releases'])) {
+    		if (isset($this->_hostConfig['releases'][$option])) {
+    			return $this->_hostConfig['releases'][$option];
+    		}
+    	}
+
         $config = $this->_getEnvironmentOption('releases', array());
         if (isset($config[$option])) {
             if (is_array($default) && ($config[$option] == '')) {

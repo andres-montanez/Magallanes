@@ -37,8 +37,20 @@ class Mage_Command_BuiltIn_Deploy
 
         } else {
             $this->_startTimeHosts = time();
-            foreach ($hosts as $host) {
+            foreach ($hosts as $_hostKey => $host) {
+
+            	// Check if Host has specific configuration
+            	$hostConfig = null;
+            	if (is_array($host)) {
+            		$hostConfig = $host;
+                    $host = $_hostKey;
+            	}
+
+            	// Set Host and Host Specific Config
                 $this->getConfig()->setHost($host);
+                $this->getConfig()->setHostConfig($hostConfig);
+
+                // Prepare Tasks
                 $tasks = 0;
                 $completedTasks = 0;
 
@@ -71,6 +83,9 @@ class Mage_Command_BuiltIn_Deploy
 
                     Mage_Console::output('Deployment to <dark_gray>' . $this->getConfig()->getHost() . '</dark_gray> completed: <' . $tasksColor . '>' . $completedTasks . '/' . $tasks . '</' . $tasksColor . '> tasks done.', 1, 3);
                 }
+
+                // Reset Host Config
+                $this->getConfig()->setHostConfig(null);
             }
             $this->_endTimeHosts = time();
 

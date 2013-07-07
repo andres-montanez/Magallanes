@@ -1,12 +1,12 @@
 #production
 deployment:
   user: root
-#  from: ./
-  source:
-    type: git
-    repository: git://github.com/andres-montanez/Zend-Framework-Twig-example-app.git
-    from: production
-    temporal: /tmp/myAppClone
+  from: ./
+#  source:
+#    type: git
+#    repository: git://github.com/andres-montanez/Zend-Framework-Twig-example-app.git
+#    from: production
+#    temporal: /tmp/myAppClone
   to: /var/www/vhosts/example.com/www
   excludes:
     - application/data/cache/twig/*
@@ -16,8 +16,19 @@ releases:
   symlink: current
   directory: releases
 hosts:
-  - s01.example.com:22
-  - s02.example.com
+  s01.example.com:22:
+    deployment:
+      user: nobody
+  s02.example.com:
+    deployment:
+      user: toor
+      to: /home/web/public
+    releases:
+      max: 10
+    tasks:
+      on-deploy:
+        - privileges
+  - s03.example.com
 tasks:
   pre-deploy:
     - scm/update
