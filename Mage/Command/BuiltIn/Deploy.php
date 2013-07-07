@@ -3,13 +3,24 @@ class Mage_Command_BuiltIn_Deploy
     extends Mage_Command_CommandAbstract
     implements Mage_Command_RequiresEnvironment
 {
+	const FAILED      = 'failed';
+	const SUCCEDED    = 'succeded';
+	const IN_PROGRESS = 'in_progress';
+
     private $_startTime = null;
     private $_startTimeHosts = null;
     private $_endTimeHosts = null;
     private $_hostsCount = 0;
 
+    private static $_deployStatus = 'in_progress';
+
     public function __construct()
     {
+    }
+
+    public static function getStatus()
+    {
+    	return self::$_deployStatus;
     }
 
     public function run()
@@ -90,12 +101,14 @@ class Mage_Command_BuiltIn_Deploy
             $this->_endTimeHosts = time();
 
             if ($failedTasks > 0) {
+            	self::$_deployStatus = self::FAILED;
                 Mage_Console::output('A total of <dark_gray>' . $failedTasks . '</dark_gray> deployment tasks failed: <red>ABORTING</red>', 1, 2);
-                return;
+            } else {
+            	self::$_deployStatus = self::SUCCEDED;
             }
 
             // Releasing
-            if ($this->getConfig()->release('enabled', false) == true) {
+            if (self::$_deployStatus == self::SUCCEDED && $this->getConfig()->release('enabled', false) == true) {
                 // Execute the Releases
                 Mage_Console::output('Starting the <dark_gray>Releaseing</dark_gray>');
                 foreach ($hosts as $host) {
@@ -137,8 +150,8 @@ class Mage_Command_BuiltIn_Deploy
             }
         }
 
-        // Run Post-Deployment Tasks
-        $this->_runNonDeploymentTasks('post-deploy', $this->getConfig(), 'Post-Deployment');
+    	// Run Post-Deployment Tasks
+    	$this->_runNonDeploymentTasks('post-deploy', $this->getConfig(), 'Post-Deployment');
 
         // Time Information Hosts
         if ($this->_hostsCount > 0) {
@@ -152,6 +165,9 @@ class Mage_Command_BuiltIn_Deploy
         // Time Information General
         $timeText = $this->_transcurredTime(time() - $this->_startTime);
         Mage_Console::output('Total time: <dark_gray>' . $timeText . '</dark_gray>.', 1, 2);
+
+        // Send Notifications
+        $this->_sendNotification();
     }
 
     /**
@@ -180,6 +196,11 @@ class Mage_Command_BuiltIn_Deploy
 
         // PostDeployment Hook
         if ($stage == 'post-deploy') {
+        	// If Deploy failed, clear post deploy tasks
+        	if (self::$_deployStatus == self::FAILED) {
+        		$tasksToRun = array();
+        	}
+
         	// Change Branch Back
         	if ($this->getConfig()->deployment('scm', false)) {
         		array_unshift($tasksToRun, 'scm/change-branch');
@@ -288,5 +309,20 @@ class Mage_Command_BuiltIn_Deploy
         }
 
         return implode(' ', $timeText);
+    }
+
+    /**
+     * Send Email Notification if enabled
+     */
+    private function _sendNotification()
+    {
+    	$projectName = $this->getConfig()->general('name', false);
+    	$projectEmail = $this->getConfig()->general('email', false);
+    	$notificationsEnabled = $this->getConfig()->general('notifications', false);
+
+    	// We need notifications enabled, and a project name and email to send the notification
+        if (!$projectName || !$projectEmail || !$notificationsEnabled) {
+            return false;
+        }
     }
 }
