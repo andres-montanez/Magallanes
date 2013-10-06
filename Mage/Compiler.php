@@ -38,7 +38,7 @@ class Mage_Compiler
         $phar->addFromString('mage', str_replace(
             '$baseDir = dirname(dirname(__FILE__));',
             '$baseDir = __DIR__;',
-            file_get_contents(__DIR__.'/../bin/mage.php')
+            file_get_contents(__DIR__.'/../bin/mage')
         ));
 
         $phar->setStub("#!/usr/bin/env php\n<?php Phar::mapPhar('mage.phar'); require 'phar://mage.phar/mage'; __HALT_COMPILER();");
