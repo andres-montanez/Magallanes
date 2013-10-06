@@ -9,6 +9,22 @@ It will get your application to a safe harbor.
 You can instruct Magallanes to deploy your code to all the servers you want (via rsync over ssh),
 and run tasks for that freshly deployed code.
 
+### How can I install it via composer? ###
+
+Simply add the following dependency to your project’s composer.json file:
+
+```js
+    "require": {
+        // ...
+        "andres-montanez/magallanes": "dev-master"
+        // ...
+    }
+```
+Now tell composer to download the bundle by running the command:
+
+```bash
+$ php composer.phar update andres-montanez/magallanes
+```
 
 ### Can you give me some examples/ideas? ###
 **Sure!**
