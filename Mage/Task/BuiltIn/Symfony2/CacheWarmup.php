@@ -9,8 +9,11 @@ class Mage_Task_BuiltIn_Symfony2_CacheWarmup
 
     public function run()
     {
-        $command = 'app/console cache:warmup';
-        $result = $this->_runLocalCommand($command);
+    	// Options
+    	$env = $this->getParameter('env', 'dev');
+
+        $command = 'app/console cache:warmup --env=' . $env;
+        $result = $this->runCommand($command);
 
         return $result;
     }

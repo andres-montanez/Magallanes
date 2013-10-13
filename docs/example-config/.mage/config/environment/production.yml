@@ -33,6 +33,7 @@ tasks:
   pre-deploy:
     - scm/update
   on-deploy:
+#    - symfony2/cache-warmup: {env: prod}
     - privileges
     - sampleTask
     - sampleTaskRollbackAware

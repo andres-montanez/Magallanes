@@ -1,10 +1,10 @@
 <?php
-class Mage_Task_BuiltIn_Symfony2_CacheClear
+class Mage_Task_BuiltIn_Symfony2_AsseticDump
     extends Mage_Task_TaskAbstract
 {
     public function getName()
     {
-        return 'Symfony v2 - Cache Clear [built-in]';
+        return 'Symfony v2 - Assetic Dump [built-in]';
     }
 
     public function run()
@@ -12,7 +12,7 @@ class Mage_Task_BuiltIn_Symfony2_CacheClear
     	// Options
     	$env = $this->getParameter('env', 'dev');
 
-        $command = 'app/console cache:clear --env=' . $env;
+        $command = 'app/console assetic:dump --env=' . $env;
         $result = $this->_runLocalCommand($command);
 
         return $result;
