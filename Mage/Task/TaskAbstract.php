@@ -48,6 +48,15 @@ abstract class Mage_Task_TaskAbstract
         return $this->getConfig()->getParameter($name, $default, $this->_parameters);
     }
 
+    protected final function runCommand($command, &$output = null)
+    {
+        if ($this->getStage() == 'deploy') {
+        	return $this->_runRemoteCommand($command, $output);
+        } else {
+        	return $this->_runLocalCommand($command, $output);
+        }
+    }
+
     protected final function _runLocalCommand($command, &$output = null)
     {
         return Mage_Console::executeCommand($command, $output);
