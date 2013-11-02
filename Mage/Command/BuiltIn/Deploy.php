@@ -305,6 +305,10 @@ class Mage_Command_BuiltIn_Deploy
                     Mage_Console::output('<red>FAIL</red>', 0);
                     $result = false;
                 }
+            } catch (Mage_Task_ErrorWithMessageException $e) {
+            	Mage_Console::output('<red>FAIL</red> [Message: ' . $e->getMessage() . ']', 0);
+            	$result = false;
+
             } catch (Mage_Task_SkipException $e) {
                 Mage_Console::output('<yellow>SKIPPED</yellow>', 0);
                 $result = true;
