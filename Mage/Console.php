@@ -12,6 +12,15 @@ class Mage_Console
      */
     public function run($arguments)
     {
+    	register_shutdown_function(function() {
+    		// Only Unlock if there was an error
+            if (error_get_last() !== null) {
+            	if (file_exists('.mage/~working.lock')) {
+            		unlink('.mage/~working.lock');
+            	}
+            }
+    	});
+
         $configError = false;
         try {
             // Load Config

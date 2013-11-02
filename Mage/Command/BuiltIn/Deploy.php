@@ -25,16 +25,48 @@ class Mage_Command_BuiltIn_Deploy
 
     public function run()
     {
+        // Check if Environment is not Locked
+    	$lockFile = '.mage/' . $this->getConfig()->getEnvironment() . '.lock';
+    	if (file_exists($lockFile)) {
+    		Mage_Console::output('<red>This environment is locked!</red>', 1, 2);
+    		return;
+    	}
+
+    	// Check for running instance and Lock
+    	if (file_exists('.mage/~working.lock')) {
+    		Mage_Console::output('<red>There is already an instance of Magallanes running!</red>', 1, 2);
+    		return;
+    	} else {
+    		touch('.mage/~working.lock');
+    	}
+
+        // Release ID
         $this->getConfig()->setReleaseId(date('YmdHis'));
         $failedTasks = 0;
 
-        $this->_startTime = time();
+        // Deploy Summary
+        Mage_Console::output('<dark_gray>Deploy summary</dark_gray>', 1, 1);
 
-        $lockFile = '.mage/' . $this->getConfig()->getEnvironment() . '.lock';
-        if (file_exists($lockFile)) {
-            Mage_Console::output('<red>This environment is locked!</red>', 1, 2);
-            return;
+        // Deploy Summary - Environment
+        Mage_Console::output('<dark_gray>Environment:</dark_gray> <purple>' . $this->getConfig()->getEnvironment() . '</purple>', 2, 1);
+
+        // Deploy Summary - Releases
+        if ($this->getConfig()->release('enabled', false)) {
+        	Mage_Console::output('<dark_gray>Release ID:</dark_gray>  <purple>' . $this->getConfig()->getReleaseId() . '</purple>', 2, 1);
         }
+
+        // Deploy Summary - SCM
+        if ($this->getConfig()->deployment('scm', false)) {
+        	$scmConfig = $this->getConfig()->deployment('scm');
+        	if (isset($scmConfig['branch'])) {
+        		Mage_Console::output('<dark_gray>SCM Branch:</dark_gray>  <purple>' . $scmConfig['branch'] . '</purple>', 2, 1);
+        	}
+        }
+
+        // Deploy Summary - Separator Line
+        Mage_Console::output('', 0, 1);
+
+        $this->_startTime = time();
 
         // Run Pre-Deployment Tasks
         $this->_runNonDeploymentTasks('pre-deploy', $this->getConfig(), 'Pre-Deployment');
@@ -168,6 +200,11 @@ class Mage_Command_BuiltIn_Deploy
 
         // Send Notifications
         $this->_sendNotification();
+
+        // Unlock
+        if (file_exists('.mage/~working.lock')) {
+        	unlink('.mage/~working.lock');
+        }
     }
 
     /**
