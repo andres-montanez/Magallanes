@@ -1,4 +1,13 @@
 <?php
+/*
+ * This file is part of the Magallanes package.
+*
+* (c) Andrés Montañez <andres@andresmontanez.com>
+*
+* For the full copyright and license information, please view the LICENSE
+* file that was distributed with this source code.
+*/
+
 class Mage_Task_BuiltIn_Releases_List
     extends Mage_Task_TaskAbstract
     implements Mage_Task_Releases_BuiltIn
@@ -51,7 +60,7 @@ class Mage_Task_BuiltIn_Releases_List
                     if ($currentRelease == $release) {
                         $isCurrent = ' <- current';
                     }
-                    
+
                     $dateDiff = $this->_dateDiff($releaseDate);
 
                     Mage_Console::output(
@@ -69,7 +78,7 @@ class Mage_Task_BuiltIn_Releases_List
             return false;
         }
     }
-    
+
     private function _dateDiff($releaseDate)
     {
         $textDiff = '';
@@ -80,7 +89,7 @@ class Mage_Task_BuiltIn_Releases_List
         if ($diff->format('%a') <= 7) {
             if ($diff->format('%d') == 7) {
                 $textDiff = ' [a week ago] ';
-                
+
             } else if ($diff->format('%d') > 0 && $diff->format('%d') < 7) {
                 $days = $diff->format('%d');
                 if ($days <= 1) {
@@ -88,7 +97,7 @@ class Mage_Task_BuiltIn_Releases_List
                 } else {
                     $textDiff = ' [' . $days . ' days ago] ';
                 }
-                
+
             } else if ($diff->format('%d') == 0 && $diff->format('%h') > 0) {
                 $hours = $diff->format('%h');
                 if ($hours <= 1) {
@@ -96,7 +105,7 @@ class Mage_Task_BuiltIn_Releases_List
                 } else {
                     $textDiff = ' [' . $hours . ' hours ago] ';
                 }
-                
+
             } else if ($diff->format('%d') == 0 && $diff->format('%h') == 0) {
                 $minutes = $diff->format('%i');
                 if ($minutes <= 1) {
@@ -104,7 +113,7 @@ class Mage_Task_BuiltIn_Releases_List
                 } else {
                     $textDiff = ' [' . $minutes . ' minutes ago] ';
                 }
-                
+
             } else if ($diff->format('%d') == 0 && $diff->format('%h') == 0 && $diff->format('%i') == 0) {
                 $seconds = $diff->format('%s');
                 if ($seconds < 10) {

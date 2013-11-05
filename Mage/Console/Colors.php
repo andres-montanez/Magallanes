@@ -1,4 +1,13 @@
 <?php
+/*
+ * This file is part of the Magallanes package.
+*
+* (c) Andrés Montañez <andres@andresmontanez.com>
+*
+* For the full copyright and license information, please view the LICENSE
+* file that was distributed with this source code.
+*/
+
 class Mage_Console_Colors
 {
     private static $foreground_colors = array(
@@ -18,7 +27,7 @@ class Mage_Console_Colors
         'yellow' => '1;33',
         'light_gray' => '0;37',
         'white' => '1;37'
-    
+
     );
 
     // Returns colored string
@@ -33,7 +42,7 @@ class Mage_Console_Colors
                 "\033[" . $code . 'm',
                 "\033[0m"
             );
-            
+
             $string = str_replace($replaceFrom, $replaceTo, $string);
         }
 

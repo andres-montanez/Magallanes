@@ -1,4 +1,13 @@
 <?php
+/*
+ * This file is part of the Magallanes package.
+*
+* (c) Andrés Montañez <andres@andresmontanez.com>
+*
+* For the full copyright and license information, please view the LICENSE
+* file that was distributed with this source code.
+*/
+
 class Mage_Task_BuiltIn_Scm_RemoveClone
     extends Mage_Task_TaskAbstract
 {
