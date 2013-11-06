@@ -8,6 +8,13 @@
 * file that was distributed with this source code.
 */
 
-interface Mage_Command_RequiresEnvironment
+namespace Mage\Command;
+
+/**
+ * Indicates that a Command depends of an Environment.
+ *
+ * @author Andrés Montañez <andres@andresmontanez.com>
+ */
+interface RequiresEnvironment
 {
 }

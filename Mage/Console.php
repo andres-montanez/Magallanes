@@ -8,12 +8,41 @@
 * file that was distributed with this source code.
 */
 
-class Mage_Console
+namespace Mage;
+
+use Exception;
+use RecursiveDirectoryIterator;
+
+/**
+ * Magallanes interface between the Tasks and Commands and the User's Console.
+ *
+ * @author Andrés Montañez <andres@andresmontanez.com>
+ */
+class Console
 {
-    private static $_log = null;
-    private static $_logEnabled = true;
-    private static $_screenBuffer = '';
-    private static $_commandsOutput = '';
+	/**
+	 * Handler to the current Log File.
+	 * @var handler
+	 */
+    private static $log = null;
+
+    /**
+     * Enables or Disables Logging
+     * @var boolean
+     */
+    private static $logEnabled = true;
+
+    /**
+     * String Buffer for the screen output
+     * @var string
+     */
+    private static $screenBuffer = '';
+
+    /**
+     * Output of executed commands
+     * @var string
+     */
+    private static $commandsOutput = '';
 
     /**
      * Runns a Magallanes Command
@@ -21,6 +50,7 @@ class Mage_Console
      */
     public function run($arguments)
     {
+    	// Declare a Shutdown Closure
     	register_shutdown_function(function() {
     		// Only Unlock if there was an error
             if (error_get_last() !== null) {
@@ -30,15 +60,16 @@ class Mage_Console
             }
     	});
 
+    	// Load configuration
         $configError = false;
         try {
             // Load Config
-            $config = new Mage_Config;
+            $config = new Config;
             $config->load($arguments);
             $configLoadedOk = true;
 
-        } catch (Exception $e) {
-            $configError = $e->getMessage();
+        } catch (Exception $exception) {
+            $configError = $exception->getMessage();
         }
 
         // Command Option
@@ -47,46 +78,51 @@ class Mage_Console
         // Logging
         $showGrettings = true;
         if (in_array($commandName, array('install', 'upgrade', 'version'))) {
-            self::$_logEnabled = false;
+            self::$logEnabled = false;
             $showGrettings = false;
         } else {
-            self::$_logEnabled = $config->general('logging', false);
+            self::$logEnabled = $config->general('logging', false);
         }
 
         // Grettings
         if ($showGrettings) {
-            Mage_Console::output('Starting <blue>Magallanes</blue>', 0, 2);
+            self::output('Starting <blue>Magallanes</blue>', 0, 2);
         }
 
-        // Run Command
+        // Run Command - Check if there is a Configuration Error
         if ($configError !== false) {
-            Mage_Console::output('<red>' . $configError . '</red>', 1, 2);
+            self::output('<red>' . $configError . '</red>', 1, 2);
 
         } else {
+        	// Run Command and check for Command Requirements
             try {
-                $command = Mage_Command_Factory::get($commandName, $config);
+                $command = Command\Factory::get($commandName, $config);
 
-                if ($command instanceOf Mage_Command_RequiresEnvironment) {
+                if ($command instanceOf Command\RequiresEnvironment) {
                     if ($config->getEnvironment() == false) {
                         throw new Exception('You must specify an environment for this command.');
                     }
                 }
                 $command->run();
 
-            } catch (Exception $e) {
-                Mage_Console::output('<red>' . $e->getMessage() . '</red>', 1, 2);
+            } catch (Exception $exception) {
+                self::output('<red>' . $exception->getMessage() . '</red>', 1, 2);
             }
         }
 
         if ($showGrettings) {
-            Mage_Console::output('Finished <blue>Magallanes</blue>', 0, 2);
+            self::output('Finished <blue>Magallanes</blue>', 0, 2);
+            if (file_exists('.mage/~working.lock')) {
+            	unlink('.mage/~working.lock');
+            }
         }
 
-        self::_checkLogs($config);
+        // Check if logs need to be deleted
+        self::checkLogs($config);
     }
 
     /**
-     * Outputs a message to the user screen
+     * Outputs a message to the user's screen.
      *
      * @param string $message
      * @param integer $tabs
@@ -96,12 +132,12 @@ class Mage_Console
     {
         self::log(strip_tags($message));
 
-        self::$_screenBuffer .= str_repeat("\t", $tabs)
+        self::$screenBuffer .= str_repeat("\t", $tabs)
                               . strip_tags($message)
                               . str_repeat(PHP_EOL, $newLine);
 
         $output = str_repeat("\t", $tabs)
-                . Mage_Console_Colors::color($message)
+                . Console\Colors::color($message)
                 . str_repeat(PHP_EOL, $newLine);
 
         echo $output;
@@ -127,7 +163,7 @@ class Mage_Console
         if (!$return) {
             $output = trim($log);
         }
-        self::$_commandsOutput .= PHP_EOL . trim($log) . PHP_EOL;
+        self::$commandsOutput .= PHP_EOL . trim($log) . PHP_EOL;
 
         self::log($log);
         self::log('---------------------------------');
@@ -143,23 +179,23 @@ class Mage_Console
      */
     public static function log($message, $continuation = false)
     {
-        if (self::$_logEnabled) {
-            if (self::$_log == null) {
-                self::$_log = fopen('.mage/logs/log-' . date('Ymd-His') . '.log', 'w');
+        if (self::$logEnabled) {
+            if (self::$log == null) {
+                self::$log = fopen('.mage/logs/log-' . date('Ymd-His') . '.log', 'w');
             }
 
             $message = date('Y-m-d H:i:s -- ') . $message;
-            fwrite(self::$_log, $message . PHP_EOL);
+            fwrite(self::$log, $message . PHP_EOL);
         }
     }
 
     /**
      * Check Logs
-     * @param Mage_Config $config
+     * @param \Mage\Config $config
      */
-    private static function _checkLogs(Mage_Config $config)
+    private static function checkLogs(Config $config)
     {
-        if (self::$_logEnabled) {
+        if (self::$logEnabled) {
         	$maxLogs = $config->general('maxlogs', 30);
 
         	$logs = array();

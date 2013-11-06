@@ -1,6 +1,9 @@
 <?php
-class Task_SampleTask
-    extends Mage_Task_TaskAbstract
+namespace Task;
+
+use Mage\Task\AbstractTask;
+
+class SampleTask extends AbstractTask
 {
     public function getName()
     {

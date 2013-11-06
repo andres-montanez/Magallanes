@@ -8,12 +8,27 @@
 * file that was distributed with this source code.
 */
 
-class Mage_Command_BuiltIn_Install
-    extends Mage_Command_CommandAbstract
+namespace Mage\Command\BuiltIn;
+
+use Mage\Command\AbstractCommand;
+use Mage\Console;
+
+use Exception;
+
+/**
+ * Installs Magallanes in the Local System
+ *
+ * @author Andrés Montañez <andres@andresmontanez.com>
+ */
+class InstallCommand extends AbstractCommand
 {
+	/**
+	 * Installs Magallanes
+	 * @see \Mage\Command\AbstractCommand::run()
+	 */
     public function run()
     {
-    	Mage_Console::output('Installing <dark_gray>Magallanes</dark_gray>... ', 1, 0);
+    	Console::output('Installing <dark_gray>Magallanes</dark_gray>... ', 1, 0);
 
     	// Vars
     	$installDir = $this->getConfig()->getParameter('installDir', '/opt/magallanes');
@@ -25,11 +40,11 @@ class Mage_Command_BuiltIn_Install
 
     	// Check if install dir is available
     	if (!is_dir($baseDir) || !is_writable($baseDir)) {
-    		Mage_Console::output('<red>Failure: install directory is invalid.</red>', 0, 2);
+    		Console::output('<red>Failure: install directory is invalid.</red>', 0, 2);
 
 		// Chck if it is a system wide install the user is root
     	} else if ($systemWide && (getenv('LOGNAME') != 'root')) {
-    			Mage_Console::output('<red>Failure: you have to be root to perform a system wide install.</red>', 0, 2);
+    			Console::output('<red>Failure: you have to be root to perform a system wide install.</red>', 0, 2);
 
     	} else {
     		$destinationDir = $baseDir . '/' . $installDir;
@@ -38,7 +53,7 @@ class Mage_Command_BuiltIn_Install
     		}
 
     		// Copy
-    		$this->_recursiveCopy('./', $destinationDir . '/' . MAGALLANES_VERSION);
+    		$this->recursiveCopy('./', $destinationDir . '/' . MAGALLANES_VERSION);
 
     		// Check if there is already a symlink
     		if (file_exists($destinationDir . '/' . 'latest')
@@ -59,11 +74,17 @@ class Mage_Command_BuiltIn_Install
     			}
     		}
 
-    		Mage_Console::output('<light_green>Success!</light_green>', 0, 2);
+    		Console::output('<light_green>Success!</light_green>', 0, 2);
     	}
     }
 
-    private function _recursiveCopy($from, $to)
+    /**
+     * Copy Files
+     * @param string $from
+     * @param string $to
+     * @return boolean
+     */
+    protected function recursiveCopy($from, $to)
     {
         if (is_dir($from)) {
             mkdir($to);
@@ -76,7 +97,7 @@ class Mage_Command_BuiltIn_Install
                     }
 
                     if (is_dir($from . DIRECTORY_SEPARATOR . $file)) {
-                        $this->_recursiveCopy(
+                        $this->recursiveCopy(
                             $from . DIRECTORY_SEPARATOR . $file,
                             $to . DIRECTORY_SEPARATOR . $file
                         );

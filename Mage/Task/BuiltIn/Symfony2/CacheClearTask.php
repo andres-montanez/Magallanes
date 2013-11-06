@@ -8,21 +8,39 @@
 * file that was distributed with this source code.
 */
 
-class Mage_Task_BuiltIn_Symfony2_CacheClear
-    extends Mage_Task_TaskAbstract
+namespace Mage\Task\BuiltIn\Symfony2;
+
+use Mage\Task\AbstractTask;
+
+use Exception;
+
+/**
+ * Task for Clearing the Cache
+ *
+ * @author Andrés Montañez <andres@andresmontanez.com>
+ */
+class CacheClearTask extends AbstractTask
 {
+	/**
+	 * (non-PHPdoc)
+	 * @see \Mage\Task\AbstractTask::getName()
+	 */
     public function getName()
     {
         return 'Symfony v2 - Cache Clear [built-in]';
     }
 
+    /**
+     * Clears the Cache
+     * @see \Mage\Task\AbstractTask::run()
+     */
     public function run()
     {
     	// Options
     	$env = $this->getParameter('env', 'dev');
 
         $command = 'app/console cache:clear --env=' . $env;
-        $result = $this->_runLocalCommand($command);
+        $result = $this->runCommandLocal($command);
 
         return $result;
     }

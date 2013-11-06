@@ -8,6 +8,13 @@
 * file that was distributed with this source code.
 */
 
-interface Mage_Task_Releases_RollbackAware
+namespace Mage\Task\Releases;
+
+/**
+ * Indicates that the Task is Aware of Rollbacks
+ *
+ * @author Andrés Montañez <andres@andresmontanez.com>
+ */
+interface RollbackAware
 {
 }

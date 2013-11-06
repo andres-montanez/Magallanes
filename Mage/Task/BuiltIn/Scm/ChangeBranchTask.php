@@ -8,30 +8,61 @@
 * file that was distributed with this source code.
 */
 
-class Mage_Task_BuiltIn_Scm_ChangeBranch
-    extends Mage_Task_TaskAbstract
-{
-	protected static $startingBranch = 'master';
-    private $_name = 'SCM Changing branch [built-in]';
+namespace Mage\Task\BuiltIn\Scm;
 
+use Mage\Task\AbstractTask;
+use Mage\Task\SkipException;
+use Mage\Task\ErrorWithMessageException;
+
+use Exception;
+
+/**
+ * Task for Changing the Branch of the SCM
+ *
+ * @author Andrés Montañez <andres@andresmontanez.com>
+ */
+class ChangeBranchTask extends AbstractTask
+{
+	/**
+	 * Branch the executiong began with
+	 * @var string
+	 */
+	protected static $startingBranch = 'master';
+
+	/**
+	 * Name of the Task
+	 * @var string
+	 */
+    private $name = 'SCM Changing branch [built-in]';
+
+    /**
+     * (non-PHPdoc)
+     * @see \Mage\Task\AbstractTask::getName()
+     */
     public function getName()
     {
-        return $this->_name;
+        return $this->name;
     }
 
+    /**
+     * (non-PHPdoc)
+     * @see \Mage\Task\AbstractTask::init()
+     */
     public function init()
     {
-        switch ($this->getConfig()->general('scm')) {
-            case 'git':
-                $this->_name = 'SCM Changing branch (GIT) [built-in]';
-                break;
+    	$scmType = $this->getConfig()->general('scm');
 
-            case 'svn':
-                $this->_name = 'SCM Changing branch (Subversion) [built-in]';
+        switch ($scmType) {
+            case 'git':
+                $this->name = 'SCM Changing branch (GIT) [built-in]';
                 break;
         }
     }
 
+    /**
+     * Changes the Branch of the SCM
+     * @see \Mage\Task\AbstractTask::run()
+     */
     public function run()
     {
     	$scmConfig = $this->getConfig()->general('scm', array());
@@ -39,40 +70,39 @@ class Mage_Task_BuiltIn_Scm_ChangeBranch
             case 'git':
             	if ($this->getParameter('_changeBranchRevert', false)) {
             		$command = 'git checkout ' . self::$startingBranch;
-            		$result = $this->_runLocalCommand($command);
+            		$result = $this->runCommandLocal($command);
 
             	} else {
             		$command = 'git branch | grep \'*\' | cut -d\' \' -f 2';
             		$currentBranch = 'master';
-            		$result = $this->_runLocalCommand($command, $currentBranch);
+            		$result = $this->runCommandLocal($command, $currentBranch);
 
             		$scmData = $this->getConfig()->deployment('scm', false);
 
             		if ($result && is_array($scmData) && isset($scmData['branch']) && $scmData['branch'] != $currentBranch) {
         				$command = 'git branch | grep \'' . $scmData['branch'] . '\' | tr -s \' \' | sed \'s/^[ ]//g\'';
         				$isBranchTracked = '';
-        				$result = $this->_runLocalCommand($command, $isBranchTracked);
+        				$result = $this->runCommandLocal($command, $isBranchTracked);
 
         				if ($isBranchTracked == '') {
-        					throw new Mage_Task_ErrorWithMessageException('The branch <purple>' . $scmData['branch'] . '</purple> must be tracked.');
+        					throw new ErrorWithMessageException('The branch <purple>' . $scmData['branch'] . '</purple> must be tracked.');
         				}
 
         				$branch = $this->getParameter('branch', $scmData['branch']);
         				$command = 'git checkout ' . $branch;
-        				$result = $this->_runLocalCommand($command);
+        				$result = $this->runCommandLocal($command);
 
         				self::$startingBranch = $currentBranch;
             		} else {
-            			throw new Mage_Task_SkipException;
+            			throw new SkipException;
             		}
             	}
                 break;
 
             default:
-                throw new Mage_Task_SkipException;
+                throw new SkipException;
                 break;
         }
-
 
         $this->getConfig()->reload();
 

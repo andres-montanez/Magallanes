@@ -8,39 +8,47 @@
 * file that was distributed with this source code.
 */
 
-class Mage_Command_Factory
+namespace Mage\Command;
+
+use Mage\Config;
+use Mage\Autoload;
+
+use Exception;
+
+/**
+ * Loads a Magallanes Command.
+ *
+ * @author Andrés Montañez <andres@andresmontanez.com>
+ */
+class Factory
 {
     /**
-     *
+     * Gets an instance of a Command.
      *
      * @param string $commandName
-     * @param Mage_Config $config
-     * @return Mage_Command_CommandAbstract
+     * @param Config $config
+     * @return AbstractCommand
+     * @throws Exception
      */
-    public static function get($commandName, Mage_Config $config)
+    public static function get($commandName, Config $config)
     {
         $instance = null;
         $commandName = ucwords(str_replace('-', ' ', $commandName));
         $commandName = str_replace(' ', '', $commandName);
 
-//        if (strpos($commandName, '/') === false) {
-//            Mage_Autoload::loadUserTask($taskName);
-//            $className = 'Task_' . ucfirst($taskName);
-//            $instance = new $className($taskConfig, $inRollback, $stage);
+        $commandName = str_replace(' ', '_', ucwords(str_replace('/', ' ', $commandName)));
+        $className = 'Mage\\Command\\BuiltIn\\' . $commandName . 'Command';
+        if (Autoload::isLoadable($className)) {
+            $instance = new $className;
+            $instance->setConfig($config);
+        } else {
+            throw new Exception('Command not found.');
+        }
 
-//        } else {
-            $commandName = str_replace(' ', '_', ucwords(str_replace('/', ' ', $commandName)));
-            $className = 'Mage_Command_BuiltIn_' . $commandName;
-            if (Mage_Autoload::isLoadable($className)) {
-                $instance = new $className;
-                $instance->setConfig($config);
-            } else {
-                throw new Exception('Command not found.');
-            }
+        if(!($instance instanceOf AbstractCommand)) {
+            throw new Exception('The command ' . $commandName . ' must be an instance of Mage\Command\AbstractCommand.');
+        }
 
-//        }
-
-        assert($instance instanceOf Mage_Command_CommandAbstract);
         return $instance;
     }
 }

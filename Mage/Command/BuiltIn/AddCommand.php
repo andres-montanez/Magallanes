@@ -8,9 +8,27 @@
 * file that was distributed with this source code.
 */
 
-class Mage_Command_BuiltIn_Add
-    extends Mage_Command_CommandAbstract
+namespace Mage\Command\BuiltIn;
+
+use Mage\Command\AbstractCommand;
+use Mage\Console;
+
+use Exception;
+
+/**
+ * Command for Adding elements to the Configuration.
+ * Currently elements allowed to add:
+ *   - environments
+ *
+ * @author Andrés Montañez <andres@andresmontanez.com>
+ */
+class AddCommand extends AbstractCommand
 {
+	/**
+	 * Adds new Configuration Elements
+	 * @see \Mage\Command\AbstractCommand::run()
+	 * @throws Exception
+	 */
     public function run()
     {
         $subCommand = $this->getConfig()->getArgument(1);
@@ -18,15 +36,24 @@ class Mage_Command_BuiltIn_Add
         try {
             switch ($subCommand) {
                 case 'environment':
-                    $this->_environment();
+                    $this->addEnvironment();
+                    break;
+
+                default;
+                    throw new Exception('The Type of Add is needed.');
                     break;
             }
-        } catch (Exception $e) {
-            Mage_Console::output('<red>' . $e->getMessage() . '</red>', 1, 2);
+        } catch (Exception $exception) {
+            Console::output('<red>' . $exception->getMessage() . '</red>', 1, 2);
         }
     }
 
-    private function _environment()
+    /**
+     * Adds an Environment
+     *
+     * @throws Exception
+     */
+    protected function addEnvironment()
     {
         $withReleases = $this->getConfig()->getParameter('enableReleases', false);
         $environmentName = strtolower($this->getConfig()->getParameter('name'));
@@ -41,7 +68,7 @@ class Mage_Command_BuiltIn_Add
             throw new Exception('The environment already exists.');
         }
 
-        Mage_Console::output('Adding new environment: <dark_gray>' . $environmentName . '</dark_gray>');
+        Console::output('Adding new environment: <dark_gray>' . $environmentName . '</dark_gray>');
 
         $releasesConfig = 'releases:' . PHP_EOL
                         . '  enabled: true' . PHP_EOL
@@ -67,10 +94,10 @@ class Mage_Command_BuiltIn_Add
         $result = file_put_contents($environmentConfigFile, $baseConfig);
 
         if ($result) {
-            Mage_Console::output('<light_green>Success!!</light_green> Environment config file for <dark_gray>' . $environmentName . '</dark_gray> created successfully at <blue>' . $environmentConfigFile . '</blue>');
-            Mage_Console::output('<dark_gray>So please! Review and adjust its configuration.</dark_gray>', 2, 2);
+            Console::output('<light_green>Success!!</light_green> Environment config file for <dark_gray>' . $environmentName . '</dark_gray> created successfully at <blue>' . $environmentConfigFile . '</blue>');
+            Console::output('<dark_gray>So please! Review and adjust its configuration.</dark_gray>', 2, 2);
         } else {
-            Mage_Console::output('<light_red>Error!!</light_red> Unable to create config file for environment called <dark_gray>' . $environmentName . '</dark_gray>', 1, 2);
+            Console::output('<light_red>Error!!</light_red> Unable to create config file for environment called <dark_gray>' . $environmentName . '</dark_gray>', 1, 2);
         }
     }
 }

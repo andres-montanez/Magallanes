@@ -8,14 +8,32 @@
 * file that was distributed with this source code.
 */
 
-class Mage_Task_BuiltIn_Symfony2_AssetsInstall
-    extends Mage_Task_TaskAbstract
+namespace Mage\Task\BuiltIn\Symfony2;
+
+use Mage\Task\AbstractTask;
+
+use Exception;
+
+/**
+ * Task for Installing Assets
+ *
+ * @author Andrés Montañez <andres@andresmontanez.com>
+ */
+class AssetsInstallTask extends AbstractTask
 {
+	/**
+	 * (non-PHPdoc)
+	 * @see \Mage\Task\AbstractTask::getName()
+	 */
     public function getName()
     {
         return 'Symfony v2 - Assets Install [built-in]';
     }
 
+    /**
+     * Installs Assets
+     * @see \Mage\Task\AbstractTask::run()
+     */
     public function run()
     {
     	// Options
@@ -29,7 +47,7 @@ class Mage_Task_BuiltIn_Symfony2_AssetsInstall
     	}
 
         $command = 'app/console assets:install ' . ($symlink ? '--symlink' : '') .  ' ' . ($relative ? '--relative' : '') .  ' --env=' . $env . ' ' . $target;
-        $result = $this->_runLocalCommand($command);
+        $result = $this->runCommandLocal($command);
 
         return $result;
     }

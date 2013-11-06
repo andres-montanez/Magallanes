@@ -8,8 +8,15 @@
 * file that was distributed with this source code.
 */
 
-class Mage_Task_ErrorWithMessageException
-extends Exception
-{
+namespace Mage\Task;
 
+use Exception;
+
+/**
+ * Exception that indicates that the Task has an Error and also a Message indicating the Error
+ *
+ * @author Andrés Montañez <andres@andresmontanez.com>
+ */
+class ErrorWithMessageException extends Exception
+{
 }

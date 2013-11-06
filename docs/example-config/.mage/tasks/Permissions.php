@@ -1,6 +1,9 @@
 <?php
-class Task_Permissions
-    extends Mage_Task_TaskAbstract
+namespace Task;
+
+use Mage\Task\AbstractTask;
+
+class Permissions extends AbstractTask
 {
     public function getName()
     {
@@ -10,7 +13,7 @@ class Task_Permissions
     public function run()
     {
         $command = 'chmod 755 . -R';
-        $result = $this->_runRemoteCommand($command);
+        $result = $this->runCommandRemote($command);
 
         return $result;
     }

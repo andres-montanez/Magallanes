@@ -8,6 +8,13 @@
 * file that was distributed with this source code.
 */
 
-interface Mage_Task_Releases_BuiltIn
+namespace Mage\Task\Releases;
+
+/**
+ * Indicates that the Task is Relase Aware/Dependant
+ *
+ * @author Andrés Montañez <andres@andresmontanez.com>
+ */
+interface IsReleaseAware
 {
 }

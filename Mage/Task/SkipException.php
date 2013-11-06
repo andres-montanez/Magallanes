@@ -8,8 +8,15 @@
 * file that was distributed with this source code.
 */
 
-class Mage_Task_SkipException
-extends Exception
-{
+namespace Mage\Task;
 
+use Exception;
+
+/**
+ * Exception that indicates that the Task was Skipped
+ *
+ * @author Andrés Montañez <andres@andresmontanez.com>
+ */
+class SkipException extends Exception
+{
 }

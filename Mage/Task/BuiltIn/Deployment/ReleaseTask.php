@@ -8,15 +8,34 @@
 * file that was distributed with this source code.
 */
 
-class Mage_Task_BuiltIn_Deployment_Release
-    extends Mage_Task_TaskAbstract
-    implements Mage_Task_Releases_BuiltIn, Mage_Task_Releases_SkipOnOverride
+namespace Mage\Task\BuiltIn\Deployment;
+
+use Mage\Task\AbstractTask;
+use Mage\Task\Releases\IsReleaseAware;
+use Mage\Task\Releases\SkipOnOverride;
+
+use Exception;
+
+/**
+ * Task for Releasing a Deploy
+ *
+ * @author Andrés Montañez <andres@andresmontanez.com>
+ */
+class ReleaseTask extends AbstractTask implements IsReleaseAware, SkipOnOverride
 {
+	/**
+	 * (non-PHPdoc)
+	 * @see \Mage\Task\AbstractTask::getName()
+	 */
     public function getName()
     {
         return 'Releasing [built-in]';
     }
 
+    /**
+     * Releases a Deployment: points the current symbolic link to the release directory
+     * @see \Mage\Task\AbstractTask::run()
+     */
     public function run()
     {
         if ($this->getConfig()->release('enabled', false) == true) {
@@ -29,9 +48,9 @@ class Mage_Task_BuiltIn_Deployment_Release
 
             $currentCopy = $releasesDirectory . '/' . $this->getConfig()->getReleaseId();
 
-            // Fetch the user and group from base directory
+            // Fetch the user and group from base directory; defaults usergroup to 33:33
             $userGroup = '33:33';
-            $resultFetch = $this->_runRemoteCommand('ls -ld . | awk \'{print \$3":"\$4}\'', $userGroup);
+            $resultFetch = $this->runCommandRemote('ls -ld . | awk \'{print \$3":"\$4}\'', $userGroup);
 
             // Remove symlink if exists; create new symlink and change owners
             $command = 'rm -f ' . $symlink
@@ -41,7 +60,10 @@ class Mage_Task_BuiltIn_Deployment_Release
                      . 'chown -h ' . $userGroup . ' ' . $symlink
                      . ' && '
                      . 'chown -R ' . $userGroup . ' ' . $currentCopy;
-            $result = $this->_runRemoteCommand($command);
+            $result = $this->runCommandRemote($command);
+
+            // Set Directory Releases to same owner
+            $result = $this->runCommandRemote('chown ' . $userGroup . ' ' . $releasesDirectory);
 
             return $result;
 

@@ -8,35 +8,52 @@
 * file that was distributed with this source code.
 */
 
-class Mage_Task_BuiltIn_Releases_List
-    extends Mage_Task_TaskAbstract
-    implements Mage_Task_Releases_BuiltIn
+namespace Mage\Task\BuiltIn\Releases;
+
+use Mage\Console;
+use Mage\Task\AbstractTask;
+use Mage\Task\Releases\IsReleaseAware;
+
+use DateTime;
+
+use Exception;
+
+/**
+ * Task for Listing Available Releases on an Environment
+ *
+ * @author Andrés Montañez <andres@andresmontanez.com>
+ */
+class ListTask extends AbstractTask implements IsReleaseAware
 {
     public function getName()
     {
         return 'Listing releases [built-in]';
     }
 
+    /**
+     * List the Available Releases on an Environment
+     * @see \Mage\Task\AbstractTask::run()
+     */
     public function run()
     {
         if ($this->getConfig()->release('enabled', false) == true) {
             $releasesDirectory = $this->getConfig()->release('directory', 'releases');
             $symlink = $this->getConfig()->release('symlink', 'current');
 
-            Mage_Console::output('Releases available on <dark_gray>' . $this->getConfig()->getHost() . '</dark_gray>');
+            Console::output('Releases available on <dark_gray>' . $this->getConfig()->getHost() . '</dark_gray>');
 
             // Get Releases
             $output = '';
-            $result = $this->_runRemoteCommand('ls -1 ' . $releasesDirectory, $output);
+            $result = $this->runCommandRemote('ls -1 ' . $releasesDirectory, $output);
             $releases = ($output == '') ? array() : explode(PHP_EOL, $output);
 
             // Get Current
-            $result = $this->_runRemoteCommand('ls -l ' . $symlink, $output);
+            $result = $this->runCommandRemote('ls -l ' . $symlink, $output);
             $currentRelease = explode('/', $output);
             $currentRelease = trim(array_pop($currentRelease));
 
             if (count($releases) == 0) {
-                Mage_Console::output('<dark_gray>No releases available</dark_gray> ... ', 2);
+                Console::output('<dark_gray>No releases available</dark_gray> ... ', 2);
             } else {
                 rsort($releases);
                 $releases  = array_slice($releases, 0, 10);
@@ -61,25 +78,30 @@ class Mage_Task_BuiltIn_Releases_List
                         $isCurrent = ' <- current';
                     }
 
-                    $dateDiff = $this->_dateDiff($releaseDate);
+                    $dateDiff = $this->dateDiff($releaseDate);
 
-                    Mage_Console::output(
+                    Console::output(
                         'Release: <purple>' . $release . '</purple> '
                       . '- Date: <dark_gray>' . $releaseDate . '</dark_gray> '
                       . '- Index: <dark_gray>' . $releaseIndex . '</dark_gray>' . $dateDiff . $isCurrent, 2);
                 }
             }
 
-            Mage_Console::output('');
+            Console::output('');
             return $result;
 
         } else {
-            Mage_Console::output('');
+            Console::output('');
             return false;
         }
     }
 
-    private function _dateDiff($releaseDate)
+    /**
+     * Calculates a Human Readable Time Difference
+     * @param string $releaseDate
+     * @return string
+     */
+    protected function dateDiff($releaseDate)
     {
         $textDiff = '';
         $releaseDate = new DateTime($releaseDate);

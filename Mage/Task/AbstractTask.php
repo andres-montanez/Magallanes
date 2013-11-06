@@ -1,0 +1,175 @@
+<?php
+/*
+ * This file is part of the Magallanes package.
+*
+* (c) Andrés Montañez <andres@andresmontanez.com>
+*
+* For the full copyright and license information, please view the LICENSE
+* file that was distributed with this source code.
+*/
+
+namespace Mage\Task;
+
+use Mage\Console;
+use Mage\Config;
+use Mage\Task\ErrorWithMessageException;
+use Mage\Task\SkipException;
+use Mage\Task\Releases\IsReleaseAware;
+
+use Exception;
+
+/**
+ * Abstract Class for a Magallanes Task
+ *
+ * @author Andrés Montañez <andres@andresmontanez.com>
+ */
+abstract class AbstractTask
+{
+	/**
+	 * Configuration
+	 * @var Config;
+	 */
+    protected $config = null;
+
+    /**
+     * Indicates if the Task is running in a Rollback
+     * @var boolean
+     */
+    protected $inRollback = false;
+
+    /**
+     * Indicates the Stage the Task is running ing
+     * @var string
+     */
+    protected $stage = null;
+
+    /**
+     * Extra parameters
+     * @var array
+     */
+    protected $parameters = array();
+
+    /**
+     * Returns the Title of the Task
+     * @return string
+     */
+    public abstract function getName();
+
+    /**
+     * Runs the task
+     *
+     * @return boolean
+     * @throws Exception
+     * @throws ErrorWithMessageException
+     * @throws SkipException
+     */
+    public abstract function run();
+
+    /**
+     * Task Constructor
+     *
+     * @param Config $config
+     * @param boolean $inRollback
+     * @param string $stage
+     * @param array $parameters
+     */
+    public final function __construct(Config $config, $inRollback = false, $stage = null, $parameters = array())
+    {
+        $this->config     = $config;
+        $this->inRollback = $inRollback;
+        $this->stage      = $stage;
+        $this->parameters = $parameters;
+    }
+
+    /**
+     * Indicates if the Task is running in a Rollback operation
+     * @return boolean
+     */
+    public function inRollback()
+    {
+        return $this->inRollback;
+    }
+
+    /**
+     * Gets the Stage of the Deployment:
+     *     - pre-deploy
+     *     - deploy
+     *     - post-deploy
+     *     - post-release
+     * @return string
+     */
+    public function getStage()
+    {
+        return $this->stage;
+    }
+
+    /**
+     * Gets the Configuration
+     * @return Config;
+     */
+    public function getConfig()
+    {
+        return $this->config;
+    }
+
+    /**
+     * Initializes the Task, optional to implement
+     */
+    public function init()
+    {
+    }
+
+    /**
+     * Returns a Parameter, or a default if not found
+     *
+     * @param string $name
+     * @return mixed
+     */
+    public function getParameter($name, $default = null)
+    {
+        return $this->getConfig()->getParameter($name, $default, $this->parameters);
+    }
+
+    /**
+     * Runs a Shell Command Locally
+     * @param string $command
+     * @param string $output
+     * @return boolean
+     */
+    protected final function runCommandLocal($command, &$output = null)
+    {
+        return Console::executeCommand($command, $output);
+    }
+
+    /**
+     * Runs a Shell Command on the Remote Host
+     * @param string $command
+     * @param string $output
+     * @return boolean
+     */
+    protected final function runCommandRemote($command, &$output = null)
+    {
+        if ($this->getConfig()->release('enabled', false) == true) {
+            if ($this instanceOf IsReleaseAware) {
+                $releasesDirectory = '';
+
+            } else {
+                $releasesDirectory = '/'
+                                   . $this->getConfig()->release('directory', 'releases')
+                                   . '/'
+                                   . $this->getConfig()->getReleaseId();
+            }
+
+        } else {
+            $releasesDirectory = '';
+        }
+
+        $localCommand = 'ssh -p ' . $this->getConfig()->getHostPort() . ' '
+                      . '-q -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no '
+                      . $this->getConfig()->deployment('user') . '@' . $this->getConfig()->getHostName() . ' '
+                      . '"cd ' . rtrim($this->getConfig()->deployment('to'), '/') . $releasesDirectory . ' && '
+                      . str_replace('"', '\"', $command) . '"';
+
+        return $this->runCommandLocal($localCommand, $output);
+    }
+}

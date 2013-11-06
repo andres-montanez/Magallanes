@@ -8,10 +8,24 @@
 * file that was distributed with this source code.
 */
 
-class Mage_Task_BuiltIn_Deployment_Rsync
-    extends Mage_Task_TaskAbstract
-    implements Mage_Task_Releases_BuiltIn
+namespace Mage\Task\BuiltIn\Deployment;
+
+use Mage\Task\AbstractTask;
+use Mage\Task\Releases\IsReleaseAware;
+
+use Exception;
+
+/**
+ * Task for Sync the Local Code to the Remote Hosts via RSYNC
+ *
+ * @author Andrés Montañez <andres@andresmontanez.com>
+ */
+class RsyncTask extends AbstractTask implements IsReleaseAware
 {
+	/**
+	 * (non-PHPdoc)
+	 * @see \Mage\Task\AbstractTask::getName()
+	 */
     public function getName()
     {
         if ($this->getConfig()->release('enabled', false) == true) {
@@ -25,13 +39,17 @@ class Mage_Task_BuiltIn_Deployment_Rsync
         }
     }
 
+    /**
+     * Syncs the Local Code to the Remote Host
+     * @see \Mage\Task\AbstractTask::run()
+     */
     public function run()
     {
         $overrideRelease = $this->getParameter('overrideRelease', false);
 
         if ($overrideRelease == true) {
             $releaseToOverride = false;
-            $resultFetch = $this->_runRemoteCommand('ls -ld current | cut -d"/" -f2', $releaseToOverride);
+            $resultFetch = $this->runCommandRemote('ls -ld current | cut -d"/" -f2', $releaseToOverride);
             if (is_numeric($releaseToOverride)) {
                 $this->getConfig()->setReleaseId($releaseToOverride);
             }
@@ -41,7 +59,9 @@ class Mage_Task_BuiltIn_Deployment_Rsync
             '.git',
             '.svn',
             '.mage',
-            '.gitignore'
+            '.gitignore',
+    		'.gitkeep',
+    		'nohup.out'
         );
 
         // Look for User Excludes
@@ -55,16 +75,16 @@ class Mage_Task_BuiltIn_Deployment_Rsync
             $deployToDirectory = rtrim($this->getConfig()->deployment('to'), '/')
                                . '/' . $releasesDirectory
                                . '/' . $this->getConfig()->getReleaseId();
-            $this->_runRemoteCommand('mkdir -p ' . $releasesDirectory . '/' . $this->getConfig()->getReleaseId());
+            $this->runCommandRemote('mkdir -p ' . $releasesDirectory . '/' . $this->getConfig()->getReleaseId());
         }
 
         $command = 'rsync -avz '
                  . '--rsh="ssh -p' . $this->getConfig()->getHostPort() . '" '
-                 . $this->_excludes(array_merge($excludes, $userExcludes)) . ' '
+                 . $this->excludes(array_merge($excludes, $userExcludes)) . ' '
                  . $this->getConfig()->deployment('from') . ' '
                  . $this->getConfig()->deployment('user') . '@' . $this->getConfig()->getHostName() . ':' . $deployToDirectory;
 
-        $result = $this->_runLocalCommand($command);
+        $result = $this->runCommandLocal($command);
 
         // Count Releases
         if ($this->getConfig()->release('enabled', false) == true) {
@@ -78,7 +98,7 @@ class Mage_Task_BuiltIn_Deployment_Rsync
             $maxReleases = $this->getConfig()->release('max', false);
             if (($maxReleases !== false) && ($maxReleases > 0)) {
                 $releasesList = '';
-                $countReleasesFetch = $this->_runRemoteCommand('ls -1 ' . $releasesDirectory, $releasesList);
+                $countReleasesFetch = $this->runCommandRemote('ls -1 ' . $releasesDirectory, $releasesList);
                 $releasesList = trim($releasesList);
 
                 if ($releasesList != '') {
@@ -93,7 +113,7 @@ class Mage_Task_BuiltIn_Deployment_Rsync
                             $directoryToDelete = $releasesDirectory . '/' . $releaseIdToDelete;
                             if ($directoryToDelete != '/') {
                                 $command = 'rm -rf ' . $directoryToDelete;
-                                $result = $result && $this->_runRemoteCommand($command);
+                                $result = $result && $this->runCommandRemote($command);
                             }
                         }
                     }
@@ -104,7 +124,12 @@ class Mage_Task_BuiltIn_Deployment_Rsync
         return $result;
     }
 
-    private function _excludes(Array $excludes)
+    /**
+     * Generates the Excludes for rsync
+     * @param array $excludes
+     * @return string
+     */
+    protected function excludes(Array $excludes)
     {
         $excludesRsync = '';
         foreach ($excludes as $exclude) {

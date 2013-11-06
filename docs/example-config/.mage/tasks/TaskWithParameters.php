@@ -1,6 +1,9 @@
 <?php
-class Task_TaskWithParameters
-    extends Mage_Task_TaskAbstract
+namespace Task;
+
+use Mage\Task\AbstractTask;
+
+class TaskWithParameters extends AbstractTask
 {
     public function getName()
     {

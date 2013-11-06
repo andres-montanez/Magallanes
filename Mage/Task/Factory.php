@@ -8,16 +8,29 @@
 * file that was distributed with this source code.
 */
 
-class Mage_Task_Factory
+namespace Mage\Task;
+
+use Mage\Config;
+use Mage\Autoload;
+use Mage\Task\ErrorWithMessageException;
+
+use Exception;
+
+/**
+ * Task Factory
+ *
+ * @author Andrés Montañez <andres@andresmontanez.com>
+ */
+class Factory
 {
     /**
-     *
+     * Gets an instance of a Task.
      *
      * @param string|array $taskData
      * @param boolean $inRollback
-     * @return Mage_Task_TaskAbstract
+     * @return \Mage\Task\AbstractTask
      */
-    public static function get($taskData, Mage_Config $taskConfig, $inRollback = false, $stage = null)
+    public static function get($taskData, Config $taskConfig, $inRollback = false, $stage = null)
     {
         if (is_array($taskData)) {
             $taskName = $taskData['name'];
@@ -32,17 +45,25 @@ class Mage_Task_Factory
         $taskName = str_replace(' ', '', $taskName);
 
         if (strpos($taskName, '/') === false) {
-            Mage_Autoload::loadUserTask($taskName);
-            $className = 'Task_' . ucfirst($taskName);
-            $instance = new $className($taskConfig, $inRollback, $stage, $taskParameters);
+            Autoload::loadUserTask($taskName);
+            $className = 'Task\\' . ucfirst($taskName);
 
         } else {
-            $taskName = str_replace(' ', '_', ucwords(str_replace('/', ' ', $taskName)));
-            $className = 'Mage_Task_BuiltIn_' . $taskName;
-            $instance = new $className($taskConfig, $inRollback, $stage, $taskParameters);
+            $taskName = str_replace(' ', '\\', ucwords(str_replace('/', ' ', $taskName)));
+            $className = 'Mage\\Task\\BuiltIn\\' . $taskName . 'Task';
         }
 
-        assert($instance instanceOf Mage_Task_TaskAbstract);
+
+        if (class_exists($className) || Autoload::isLoadable($className)) {
+        	$instance = new $className($taskConfig, $inRollback, $stage, $taskParameters);
+        } else {
+        	throw new ErrorWithMessageException('The Task "' . $taskName . '" doesn\'t exists.');
+        }
+
+        if (!($instance instanceOf AbstractTask)) {
+        	throw new Exception('The Task ' . $taskName . ' must be an instance of Mage\Task\AbstractTask.');
+        }
+
         return $instance;
     }
 }

@@ -8,28 +8,62 @@
 * file that was distributed with this source code.
 */
 
-class Mage_Task_BuiltIn_Releases_Rollback
-    extends Mage_Task_TaskAbstract
-    implements Mage_Task_Releases_BuiltIn
-{
-    private $_release = null;
+namespace Mage\Task\BuiltIn\Releases;
 
+use Mage\Console;
+use Mage\Task\Factory;
+use Mage\Task\AbstractTask;
+use Mage\Task\Releases\BuiltIn as ReleaseTask;
+use Mage\Task\Releases\RollbackAware;
+
+use Exception;
+
+/**
+ * Task for Performing a Rollback Operation
+ *
+ * @author Andrés Montañez <andres@andresmontanez.com>
+ */
+class RollbackTask extends AbstractTask implements ReleaseTask
+{
+	/**
+	 * The Relase ID to Rollback To
+	 * @var integer
+	 */
+    protected $release = null;
+
+    /**
+     * (non-PHPdoc)
+     * @see \Mage\Task\AbstractTask::getName()
+     */
     public function getName()
     {
         return 'Rollback release [built-in]';
     }
 
+    /**
+     * Sets the Release ID to Rollback To
+     * @param integer $releaseId
+     * @return \Mage\Task\BuiltIn\Releases\RollbackTask
+     */
     public function setRelease($releaseId)
     {
-        $this->_release = $releaseId;
+        $this->release = $releaseId;
         return $this;
     }
 
+    /**
+     * Gets the Release ID to Rollback To
+     * @return integer
+     */
     public function getRelease()
     {
-        return $this->_release;
+        return $this->release;
     }
 
+    /**
+     * Performs a Rollback Operation
+     * @see \Mage\Task\AbstractTask::run()
+     */
     public function run()
     {
         if ($this->getConfig()->release('enabled', false) == true) {
@@ -37,11 +71,11 @@ class Mage_Task_BuiltIn_Releases_Rollback
             $symlink = $this->getConfig()->release('symlink', 'current');
 
             $output = '';
-            $result = $this->_runRemoteCommand('ls -1 ' . $releasesDirectory, $output);
+            $result = $this->runCommandRemote('ls -1 ' . $releasesDirectory, $output);
             $releases = ($output == '') ? array() : explode(PHP_EOL, $output);
 
             if (count($releases) == 0) {
-                Mage_Console::output('Release are not available for <dark_gray>' . $this->getConfig()->getHost() . '</dark_gray> ... <red>FAIL</red>');
+                Console::output('Release are not available for <dark_gray>' . $this->getConfig()->getHost() . '</dark_gray> ... <red>FAIL</red>');
 
             } else {
                 rsort($releases);
@@ -65,10 +99,10 @@ class Mage_Task_BuiltIn_Releases_Rollback
                 }
 
                 if (!$releaseIsAvailable) {
-                    Mage_Console::output('Release <dark_gray>' . $this->getRelease() . '</dark_gray> is invalid or unavailable for <dark_gray>' . $this->getConfig()->getHost() . '</dark_gray> ... <red>FAIL</red>');
+                    Console::output('Release <dark_gray>' . $this->getRelease() . '</dark_gray> is invalid or unavailable for <dark_gray>' . $this->getConfig()->getHost() . '</dark_gray> ... <red>FAIL</red>');
 
                 } else {
-                    Mage_Console::output('Rollback release on <dark_gray>' . $this->getConfig()->getHost() . '</dark_gray>');
+                    Console::output('Rollback release on <dark_gray>' . $this->getConfig()->getHost() . '</dark_gray>');
                     $rollbackTo = $releasesDirectory . '/' . $releaseId;
 
                     // Tasks
@@ -78,48 +112,48 @@ class Mage_Task_BuiltIn_Releases_Rollback
                     $this->getConfig()->setReleaseId($releaseId);
 
                     if (count($tasksToRun) == 0) {
-                        Mage_Console::output('<light_purple>Warning!</light_purple> <dark_gray>No </dark_gray><light_cyan>Deployment</light_cyan> <dark_gray>tasks defined.</dark_gray>', 2);
-                        Mage_Console::output('Deployment to <dark_gray>' . $this->getConfig()->getHost() . '</dark_gray> skipped!', 1, 3);
+                        Console::output('<light_purple>Warning!</light_purple> <dark_gray>No </dark_gray><light_cyan>Deployment</light_cyan> <dark_gray>tasks defined.</dark_gray>', 2);
+                        Console::output('Deployment to <dark_gray>' . $this->getConfig()->getHost() . '</dark_gray> skipped!', 1, 3);
 
                     } else {
                         foreach ($tasksToRun as $taskData) {
-                            $task = Mage_Task_Factory::get($taskData, $this->getConfig(), true, 'deploy');
+                            $task = Factory::get($taskData, $this->getConfig(), true, 'deploy');
                             $task->init();
-                            Mage_Console::output('Running <purple>' . $task->getName() . '</purple> ... ', 2, false);
+                            Console::output('Running <purple>' . $task->getName() . '</purple> ... ', 2, false);
 
-                            if ($task instanceOf Mage_Task_Releases_RollbackAware) {
+                            if ($task instanceOf RollbackAware) {
                                 $tasks++;
                                 $result = $task->run();
 
                                 if ($result == true) {
-                                    Mage_Console::output('<green>OK</green>', 0);
+                                    Console::output('<green>OK</green>', 0);
                                     $completedTasks++;
                                 } else {
-                                    Mage_Console::output('<red>FAIL</red>', 0);
+                                    Console::output('<red>FAIL</red>', 0);
                                 }
                             } else {
-                                Mage_Console::output('<yellow>SKIPPED</yellow>', 0);
+                                Console::output('<yellow>SKIPPED</yellow>', 0);
                             }
                         }
                     }
 
                     // Changing Release
-                    Mage_Console::output('Running <purple>Rollback Release [id=' . $releaseId . ']</purple> ... ', 2, false);
+                    Console::output('Running <purple>Rollback Release [id=' . $releaseId . ']</purple> ... ', 2, false);
 
                     $userGroup = '';
-                    $resultFetch = $this->_runRemoteCommand('ls -ld ' . $rollbackTo . ' | awk \'{print \$3":"\$4}\'', $userGroup);
+                    $resultFetch = $this->runCommandRemote('ls -ld ' . $rollbackTo . ' | awk \'{print \$3":"\$4}\'', $userGroup);
                     $command = 'rm -f ' . $symlink
                              . ' && '
                              . 'ln -sf ' . $rollbackTo . ' ' . $symlink
                              . ' && '
                              . 'chown -h ' . $userGroup . ' ' . $symlink;
-                    $result = $this->_runRemoteCommand($command);
+                    $result = $this->runCommandRemote($command);
 
                     if ($result) {
-                        Mage_Console::output('<green>OK</green>', 0);
+                        Console::output('<green>OK</green>', 0);
                         $completedTasks++;
                     } else {
-                        Mage_Console::output('<red>FAIL</red>', 0);
+                        Console::output('<red>FAIL</red>', 0);
                     }
 
                     if ($completedTasks == $tasks) {
@@ -128,11 +162,12 @@ class Mage_Task_BuiltIn_Releases_Rollback
                         $tasksColor = 'red';
                     }
 
-                    Mage_Console::output('Release rollback on <dark_gray>' . $this->getConfig()->getHost() . '</dark_gray> compted: <' . $tasksColor . '>' . $completedTasks . '/' . $tasks . '</' . $tasksColor . '> tasks done.', 1, 3);
+                    Console::output('Release rollback on <dark_gray>' . $this->getConfig()->getHost() . '</dark_gray> compted: <' . $tasksColor . '>' . $completedTasks . '/' . $tasks . '</' . $tasksColor . '> tasks done.', 1, 3);
                 }
             }
 
             return $result;
+
         } else {
             return false;
         }

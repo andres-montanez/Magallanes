@@ -1,6 +1,9 @@
 <?php
-class Task_Privileges
-    extends Mage_Task_TaskAbstract
+namespace Task;
+
+use Mage\Task\AbstractTask;
+
+class Privileges extends AbstractTask
 {
     public function getName()
     {
@@ -10,8 +13,8 @@ class Task_Privileges
     public function run()
     {
         $command = 'chown 33:33 . -R';
-        $result = $this->_runRemoteCommand($command);
-        
+        $result = $this->runCommandRemote($command);
+
         return $result;
     }
 }

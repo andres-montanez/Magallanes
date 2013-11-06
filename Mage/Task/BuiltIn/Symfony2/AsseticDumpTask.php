@@ -8,21 +8,39 @@
 * file that was distributed with this source code.
 */
 
-class Mage_Task_BuiltIn_Symfony2_AsseticDump
-    extends Mage_Task_TaskAbstract
+namespace Mage\Task\BuiltIn\Symfony2;
+
+use Mage\Task\AbstractTask;
+
+use Exception;
+
+/**
+ * Task for Dumping Assetics
+ *
+ * @author Andrés Montañez <andres@andresmontanez.com>
+ */
+class AsseticDumpTask extends AbstractTask
 {
+	/**
+	 * (non-PHPdoc)
+	 * @see \Mage\Task\AbstractTask::getName()
+	 */
     public function getName()
     {
         return 'Symfony v2 - Assetic Dump [built-in]';
     }
 
+    /**
+     * Dumps Assetics
+     * @see \Mage\Task\AbstractTask::run()
+     */
     public function run()
     {
     	// Options
     	$env = $this->getParameter('env', 'dev');
 
         $command = 'app/console assetic:dump --env=' . $env;
-        $result = $this->_runLocalCommand($command);
+        $result = $this->runCommandLocal($command);
 
         return $result;
     }

@@ -8,6 +8,13 @@
 * file that was distributed with this source code.
 */
 
-interface Mage_Task_Releases_SkipOnOverride
+namespace Mage\Task\Releases;
+
+/**
+ * Indicates that the Task will be Skipped on Relase Override
+ *
+ * @author Andrés Montañez <andres@andresmontanez.com>
+ */
+interface SkipOnOverride
 {
 }

@@ -8,14 +8,18 @@
 * file that was distributed with this source code.
 */
 
+namespace Mage;
+
+use Phar;
+use RecursiveIteratorIterator;
+use RecursiveDirectoryIterator;
+
 /**
- * Class Mage_Compiler
- *
  * Compiles the library into a .phar file
  *
  * @author Ismael Ambrosi<ismaambrosi@gmail.com>
  */
-class Mage_Compiler
+class Compiler
 {
 
     /**
@@ -25,7 +29,6 @@ class Mage_Compiler
      */
     public function compile($file = 'mage.phar')
     {
-
         if (file_exists($file)) {
             unlink($file);
         }

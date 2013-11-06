@@ -1,7 +1,10 @@
 <?php
-class Task_SampleTaskRollbackAware
-    extends Mage_Task_TaskAbstract
-    implements Mage_Task_Releases_RollbackAware
+namespace Task;
+
+use Mage\Task\AbstractTask;
+use Mage\Task\Releases\RollbackAware;
+
+class SampleTaskRollbackAware extends AbstractTask implements RollbackAware
 {
     public function getName()
     {
