@@ -83,7 +83,7 @@ class InitCommand extends AbstractCommand
 				'true',
 				30
 			),
-			$this->generalTemplate
+			$this->getGeneralConfigTemplate()
     	);
 
     	return $globalSettings;
