@@ -28,11 +28,14 @@ class CompileCommand extends AbstractCommand
      */
     public function run ()
     {
-        Console::output('Compiling <dark_gray>Magallanes</dark_gray>... ', 1, 0);
+    	if (ini_get('phar.readonly')) {
+	    	Console::output('The <purple>php.ini</purple> variable <light_red>phar.readonly</light_red> must be enabled.', 1, 2);
+    		return;
+    	}
 
         $compiler = new Compiler;
         $compiler->compile();
 
-        Console::output('Mage compiled successfully');
+        Console::output('<light_purple>mage.phar</light_purple> compiled <light_green>successfully</light_green>', 0, 2);
     }
 }
