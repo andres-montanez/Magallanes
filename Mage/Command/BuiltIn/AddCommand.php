@@ -87,7 +87,6 @@ class AddCommand extends AbstractCommand
                     . 'tasks:' . PHP_EOL
                     . '  pre-deploy:' . PHP_EOL
                     . '  on-deploy:' . PHP_EOL
-                    . '    - deployment/rsync' . PHP_EOL
                     . ($withReleases ? ('  post-release:' . PHP_EOL) : '')
                     . '  post-deploy:' . PHP_EOL;
 
