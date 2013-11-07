@@ -13,7 +13,7 @@ namespace Mage\Task\BuiltIn\Releases;
 use Mage\Console;
 use Mage\Task\Factory;
 use Mage\Task\AbstractTask;
-use Mage\Task\Releases\BuiltIn as ReleaseTask;
+use Mage\Task\Releases\IsReleaseAware;
 use Mage\Task\Releases\RollbackAware;
 
 use Exception;
@@ -23,7 +23,7 @@ use Exception;
  *
  * @author Andrés Montañez <andres@andresmontanez.com>
  */
-class RollbackTask extends AbstractTask implements ReleaseTask
+class RollbackTask extends AbstractTask implements IsReleaseAware
 {
 	/**
 	 * The Relase ID to Rollback To
@@ -111,29 +111,23 @@ class RollbackTask extends AbstractTask implements ReleaseTask
                     $tasksToRun = $this->getConfig()->getTasks();
                     $this->getConfig()->setReleaseId($releaseId);
 
-                    if (count($tasksToRun) == 0) {
-                        Console::output('<light_purple>Warning!</light_purple> <dark_gray>No </dark_gray><light_cyan>Deployment</light_cyan> <dark_gray>tasks defined.</dark_gray>', 2);
-                        Console::output('Deployment to <dark_gray>' . $this->getConfig()->getHost() . '</dark_gray> skipped!', 1, 3);
+                    foreach ($tasksToRun as $taskData) {
+                        $task = Factory::get($taskData, $this->getConfig(), true, 'deploy');
+                        $task->init();
+                        Console::output('Running <purple>' . $task->getName() . '</purple> ... ', 2, false);
 
-                    } else {
-                        foreach ($tasksToRun as $taskData) {
-                            $task = Factory::get($taskData, $this->getConfig(), true, 'deploy');
-                            $task->init();
-                            Console::output('Running <purple>' . $task->getName() . '</purple> ... ', 2, false);
+                        if ($task instanceOf RollbackAware) {
+                            $tasks++;
+                            $result = $task->run();
 
-                            if ($task instanceOf RollbackAware) {
-                                $tasks++;
-                                $result = $task->run();
-
-                                if ($result == true) {
-                                    Console::output('<green>OK</green>', 0);
-                                    $completedTasks++;
-                                } else {
-                                    Console::output('<red>FAIL</red>', 0);
-                                }
+                            if ($result == true) {
+                                Console::output('<green>OK</green>', 0);
+                                $completedTasks++;
                             } else {
-                                Console::output('<yellow>SKIPPED</yellow>', 0);
+                                Console::output('<red>FAIL</red>', 0);
                             }
+                        } else {
+                            Console::output('<yellow>SKIPPED</yellow>', 0);
                         }
                     }
 
