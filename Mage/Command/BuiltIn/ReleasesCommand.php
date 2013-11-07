@@ -35,7 +35,7 @@ class ReleasesCommand extends AbstractCommand implements RequiresEnvironment
         $subcommand = $this->getConfig()->getArgument(1);
         $lockFile = '.mage/' . $this->getConfig()->getEnvironment() . '.lock';
         if (file_exists($lockFile) && ($subcommand == 'rollback')) {
-            Console::output('<red>This environment is locked!</red>', 0, 2);
+            Console::output('<red>This environment is locked!</red>', 1, 2);
             return;
         }
 
