@@ -8,7 +8,7 @@
 * file that was distributed with this source code.
 */
 
-namespace Mage\Task\BuiltIn\Deployment;
+namespace Mage\Task\BuiltIn\Deployment\Strategy;
 
 use Mage\Task\AbstractTask;
 use Mage\Task\Releases\IsReleaseAware;
@@ -30,12 +30,12 @@ class RsyncTask extends AbstractTask implements IsReleaseAware
     {
         if ($this->getConfig()->release('enabled', false) == true) {
             if ($this->getConfig()->getParameter('overrideRelease', false) == true) {
-                return 'Rsync (with Releases override) [built-in]';
+                return 'Deploy via Rsync (with Releases override) [built-in]';
             } else {
-                return 'Rsync (with Releases) [built-in]';
+                return 'Deploy via Rsync (with Releases) [built-in]';
             }
         } else {
-                return 'Rsync [built-in]';
+                return 'Deploy via Rsync [built-in]';
         }
     }
 

@@ -163,7 +163,27 @@ class DeployCommand extends AbstractCommand implements RequiresEnvironment
                 Console::output('Deploying to <dark_gray>' . $this->getConfig()->getHost() . '</dark_gray>');
 
                 $tasksToRun = $this->getConfig()->getTasks();
-                array_unshift($tasksToRun, 'deployment/rsync');
+
+                // Guess a Deploy Strategy
+                switch ($this->getConfig()->deployment('strategy', 'guess')) {
+                    case 'rsync':
+                    	$deployStrategy = 'deployment/strategy/rsync';
+                    	break;
+
+                    case 'targz':
+                    	$deployStrategy = 'deployment/strategy/tar-gz';
+                    	break;
+
+                    case 'guess':
+                    default:
+                    	if ($this->getConfig()->release('enabled', false) == true) {
+                    		$deployStrategy = 'deployment/strategy/tar-gz';
+                    	} else {
+                    		$deployStrategy = 'deployment/strategy/rsync';
+                    	}
+                    	break;
+                }
+                array_unshift($tasksToRun, $deployStrategy);
 
                 if (count($tasksToRun) == 0) {
                     Console::output('<light_purple>Warning!</light_purple> <dark_gray>No </dark_gray><light_cyan>Deployment</light_cyan> <dark_gray>tasks defined.</dark_gray>', 2);
