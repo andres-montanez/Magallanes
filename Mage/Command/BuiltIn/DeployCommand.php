@@ -226,19 +226,44 @@ class DeployCommand extends AbstractCommand implements RequiresEnvironment
             if (self::$deployStatus == self::SUCCEDED && $this->getConfig()->release('enabled', false) == true) {
                 // Execute the Releases
                 Console::output('Starting the <dark_gray>Releaseing</dark_gray>');
-                foreach ($hosts as $host) {
+                foreach ($hosts as $hostKey => $host) {
+
+                	// Check if Host has specific configuration
+                	$hostConfig = null;
+                	if (is_array($host)) {
+                		$hostConfig = $host;
+                        $host = $hostKey;
+                	}
+
+                	// Set Host
                     $this->getConfig()->setHost($host);
+                    $this->getConfig()->setHostConfig($hostConfig);
+
                     $task = Factory::get('deployment/release', $this->getConfig(), false, 'deploy');
 
                     if ($this->runTask($task, 'Releasing on host <purple>' . $host . '</purple> ... ')) {
                         $completedTasks++;
                     }
+
+                    // Reset Host Config
+                    $this->getConfig()->setHostConfig(null);
                 }
                 Console::output('Finished the <dark_gray>Releaseing</dark_gray>', 1, 3);
 
                 // Execute the Post-Release Tasks
-                foreach ($hosts as $host) {
+                foreach ($hosts as $hostKey => $host) {
+
+                	// Check if Host has specific configuration
+                	$hostConfig = null;
+                	if (is_array($host)) {
+                		$hostConfig = $host;
+                        $host = $hostKey;
+                	}
+
+                	// Set Host
                     $this->getConfig()->setHost($host);
+                    $this->getConfig()->setHostConfig($hostConfig);
+
                     $tasksToRun = $this->getConfig()->getTasks('post-release');
                     $tasks = count($tasksToRun);
                     $completedTasks = 0;
@@ -261,6 +286,9 @@ class DeployCommand extends AbstractCommand implements RequiresEnvironment
                         }
                         Console::output('Finished <dark_gray>Post-Release</dark_gray> tasks for <dark_gray>' . $host . '</dark_gray>: <' . $tasksColor . '>' . $completedTasks . '/' . $tasks . '</' . $tasksColor . '> tasks done.', 1, 3);
                     }
+
+                    // Reset Host Config
+                    $this->getConfig()->setHostConfig(null);
                 }
             }
         }
