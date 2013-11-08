@@ -40,7 +40,7 @@ class CacheClearTask extends AbstractTask
     	$env = $this->getParameter('env', 'dev');
 
         $command = 'app/console cache:clear --env=' . $env;
-        $result = $this->runCommandLocal($command);
+        $result = $this->runCommand($command);
 
         return $result;
     }

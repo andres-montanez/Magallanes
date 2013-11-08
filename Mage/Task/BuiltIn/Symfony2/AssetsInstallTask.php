@@ -47,7 +47,7 @@ class AssetsInstallTask extends AbstractTask
     	}
 
         $command = 'app/console assets:install ' . ($symlink ? '--symlink' : '') .  ' ' . ($relative ? '--relative' : '') .  ' --env=' . $env . ' ' . $target;
-        $result = $this->runCommandLocal($command);
+        $result = $this->runCommand($command);
 
         return $result;
     }

@@ -40,7 +40,7 @@ class AsseticDumpTask extends AbstractTask
     	$env = $this->getParameter('env', 'dev');
 
         $command = 'app/console assetic:dump --env=' . $env;
-        $result = $this->runCommandLocal($command);
+        $result = $this->runCommand($command);
 
         return $result;
     }
