@@ -4,18 +4,19 @@ deployment:
   from: ./
   to: /var/www/
   scm:
-    branch: master2
+    branch: master
 releases:
   enabled: true
   max: 5
   symlink: current
   directory: releases
 hosts:
-#  - localhost
+  - localhost
 #  - dbserver
 tasks:
   pre-deploy:
     - sampleTask
+#    - failTask
     - scm/update
   on-deploy:
     - privileges
