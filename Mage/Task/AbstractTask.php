@@ -131,7 +131,7 @@ abstract class AbstractTask
     }
 
     /**
-     * Runs a Shell Command Locally
+     * Runs a Shell Command Localy
      * @param string $command
      * @param string $output
      * @return boolean
@@ -171,5 +171,21 @@ abstract class AbstractTask
                       . str_replace('"', '\"', $command) . '"';
 
         return $this->runCommandLocal($localCommand, $output);
+    }
+
+    /**
+     * Runs a Shell Command Localy or in the Remote Host based on the Task Stage.
+     * If the stage is "deploy" then it will be executed in the remote host.
+     * @param string $command
+     * @param string $output
+     * @return boolean
+     */
+    protected final function runCommand($command, &$output = null)
+    {
+        if ($this->getStage() == 'deploy') {
+        	return $this->runCommandRemote($command, $output);
+        } else {
+        	return $this->runCommandLocal($command, $output);
+        }
     }
 }
