@@ -37,7 +37,7 @@ class ClearFullPageCacheTask extends AbstractTask
     public function run()
     {
         $command = 'rm -rf var/full_page_cache/*';
-        $result = $this->runCommandLocal($command);
+        $result = $this->runCommand($command);
 
         return $result;
     }

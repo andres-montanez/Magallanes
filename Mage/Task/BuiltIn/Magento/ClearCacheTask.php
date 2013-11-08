@@ -37,7 +37,7 @@ class ClearCacheTask extends AbstractTask
     public function run()
     {
         $command = 'rm -rf var/cache/*';
-        $result = $this->runCommandLocal($command);
+        $result = $this->runCommand($command);
 
         return $result;
     }
