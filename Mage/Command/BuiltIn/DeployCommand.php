@@ -297,6 +297,10 @@ class DeployCommand extends AbstractCommand implements RequiresEnvironment
 
     			// Guess a Deploy Strategy
     			switch ($this->getConfig()->deployment('strategy', 'guess')) {
+    			    case 'disabled':
+    			    	$deployStrategy = 'deployment/strategy/disabled';
+    			    	break;
+
     			    case 'rsync':
     			    	$deployStrategy = 'deployment/strategy/rsync';
     			    	break;
@@ -314,7 +318,8 @@ class DeployCommand extends AbstractCommand implements RequiresEnvironment
     			    	}
     			    	break;
     			}
-    			array_unshift($tasksToRun, $deployStrategy);
+
+				array_unshift($tasksToRun, $deployStrategy);
 
     			if (count($tasksToRun) == 0) {
     				Console::output('<light_purple>Warning!</light_purple> <dark_gray>No </dark_gray><light_cyan>Deployment</light_cyan> <dark_gray>tasks defined.</dark_gray>', 2);
