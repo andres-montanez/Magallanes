@@ -65,6 +65,75 @@ class Config
     );
 
     /**
+     * Parse the Command Line options
+     * @return boolean
+     */
+    protected function parse($arguments)
+    {
+    	foreach ($arguments as $argument) {
+    		if (preg_match('/to:[\w]+/i', $argument)) {
+    			$this->environment = str_replace('to:', '', $argument);
+
+    		} else if (preg_match('/--[\w]+/i', $argument)) {
+    			$optionValue = explode('=', substr($argument, 2));
+    			if (count($optionValue) == 1) {
+    				$this->parameters[$optionValue[0]] = true;
+    			} else if (count($optionValue) == 2) {
+    				if (strtolower($optionValue[1]) == 'true') {
+    					$this->parameters[$optionValue[0]] = true;
+    				} else if (strtolower($optionValue[1]) == 'false') {
+    					$this->parameters[$optionValue[0]] = false;
+    				} else {
+    					$this->parameters[$optionValue[0]] = $optionValue[1];
+    				}
+    			}
+    		} else {
+    			$this->arguments[] = $argument;
+    		}
+    	}
+    }
+
+    /**
+     * Loads the General Configuration
+     */
+    protected function loadGeneral()
+    {
+    	if (file_exists('.mage/config/general.yml')) {
+    		$this->config['general'] = spyc_load_file('.mage/config/general.yml');
+    	}
+    }
+
+    /**
+     * Loads the Environment configuration
+     *
+     * @throws Exception
+     * @return boolean
+     */
+    protected function loadEnvironment()
+    {
+    	$environment = $this->getEnvironment();
+    	if (($environment != false) && file_exists('.mage/config/environment/' . $environment . '.yml')) {
+    		$this->config['environment'] = spyc_load_file('.mage/config/environment/' . $environment . '.yml');
+
+    		// Create temporal directory for clone
+    		if (isset($this->config['environment']['deployment']['source']) && is_array($this->config['environment']['deployment']['source'])) {
+    			if (trim($this->config['environment']['deployment']['source']['temporal']) == '') {
+    				$this->config['environment']['deployment']['source']['temporal'] = '/tmp';
+    			}
+    			$newTemporal = rtrim($this->config['environment']['deployment']['source']['temporal'], '/')
+    			. '/' . md5(microtime()) . '/';
+    			$this->config['environment']['deployment']['source']['temporal'] = $newTemporal;
+    		}
+    		return true;
+
+    	} else if (($environment != '') && !file_exists('.mage/config/environment/' . $environment . '.yml')) {
+    		throw new Exception('Environment does not exists.');
+    	}
+
+    	return false;
+    }
+
+    /**
      * Load the Configuration and parses the Arguments
      *
      * @param array $arguments
@@ -74,6 +143,15 @@ class Config
         $this->parse($arguments);
         $this->loadGeneral();
         $this->loadEnvironment();
+    }
+
+    /**
+     * Reloads the configuration
+     */
+    public function reload()
+    {
+    	$this->loadGeneral();
+    	$this->loadEnvironment();
     }
 
     /**
@@ -147,15 +225,6 @@ class Config
     public function getEnvironment()
     {
         return $this->environment;
-    }
-
-    /**
-     * Reloads the configuration
-     */
-    public function reload()
-    {
-        $this->loadGeneral();
-        $this->loadEnvironment();
     }
 
     /**
@@ -299,6 +368,18 @@ class Config
     }
 
     /**
+     * Gets Environments Full Configuration
+     *
+     * @param string $option
+     * @param string $default
+     * @return mixed
+     */
+    public function environmentConfig($option, $default = false)
+    {
+    	return $this->getEnvironmentOption($option, $default);
+    }
+
+    /**
      * Get deployment configuration
      *
      * @param string $option
@@ -387,75 +468,6 @@ class Config
     public function getReleaseId()
     {
         return $this->releaseId;
-    }
-
-    /**
-     * Parse the Command Line options
-     * @return boolean
-     */
-    protected function parse($arguments)
-    {
-        foreach ($arguments as $argument) {
-            if (preg_match('/to:[\w]+/i', $argument)) {
-                $this->environment = str_replace('to:', '', $argument);
-
-            } else if (preg_match('/--[\w]+/i', $argument)) {
-                $optionValue = explode('=', substr($argument, 2));
-                if (count($optionValue) == 1) {
-                    $this->parameters[$optionValue[0]] = true;
-                } else if (count($optionValue) == 2) {
-                    if (strtolower($optionValue[1]) == 'true') {
-                        $this->parameters[$optionValue[0]] = true;
-                    } else if (strtolower($optionValue[1]) == 'false') {
-                        $this->parameters[$optionValue[0]] = false;
-                    } else {
-                        $this->parameters[$optionValue[0]] = $optionValue[1];
-                    }
-                }
-            } else {
-                $this->arguments[] = $argument;
-            }
-        }
-    }
-
-    /**
-     * Loads the General Configuration
-     */
-    protected function loadGeneral()
-    {
-        if (file_exists('.mage/config/general.yml')) {
-            $this->config['general'] = spyc_load_file('.mage/config/general.yml');
-        }
-    }
-
-    /**
-     * Loads the Environment configuration
-     *
-     * @throws Exception
-     * @return boolean
-     */
-    protected function loadEnvironment()
-    {
-        $environment = $this->getEnvironment();
-        if (($environment != false) && file_exists('.mage/config/environment/' . $environment . '.yml')) {
-            $this->config['environment'] = spyc_load_file('.mage/config/environment/' . $environment . '.yml');
-
-            // Create temporal directory for clone
-            if (isset($this->config['environment']['deployment']['source']) && is_array($this->config['environment']['deployment']['source'])) {
-                if (trim($this->config['environment']['deployment']['source']['temporal']) == '') {
-                    $this->config['environment']['deployment']['source']['temporal'] = '/tmp';
-                }
-                $newTemporal = rtrim($this->config['environment']['deployment']['source']['temporal'], '/')
-                . '/' . md5(microtime()) . '/';
-                $this->config['environment']['deployment']['source']['temporal'] = $newTemporal;
-            }
-            return true;
-
-        } else if (($environment != '') && !file_exists('.mage/config/environment/' . $environment . '.yml')) {
-            throw new Exception('Environment does not exists.');
-        }
-
-        return false;
     }
 
     /**
