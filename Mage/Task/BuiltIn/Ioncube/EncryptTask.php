@@ -14,6 +14,9 @@
  * in rsync and other tasks to operate 
  * on the encrypted files. 
  * 
+ * IonCube PHP Encoder can be downloaded from
+ * http://www.actweb.info/ioncube.html
+ * 
  * Example enviroment.yaml file at end
  * 
  * @todo add support for creating license files.
@@ -28,10 +31,6 @@ namespace Mage\Task\BuiltIn\Ioncube;
 
 use Mage\Task\AbstractTask;
 use Mage\Console;
-use Mage\Task\ErrorWithMessageException;
-use Mage\Task\ErrorWithMessageException;
-use Mage\Task\ErrorWithMessageException;
-use Mage\Task\ErrorWithMessageException;
 use Mage\Task\ErrorWithMessageException;
 
 class EncryptTask extends AbstractTask {
@@ -126,6 +125,33 @@ class EncryptTask extends AbstractTask {
 	private $projectFile = '';
 	
 	/**
+	 * If true then run a check on
+	 * all files after encoding and
+	 * report which ones are not encoded
+	 * if any are found to not be encoded
+	 * then prompt if we should continue
+	 * with the process
+	 * If not then clean up the temp files
+	 * and exit with cancled code.
+	 * 
+	 * @var bool
+	 */
+	private $checkEncoding = false;
+	
+	/**
+	 * List of file extensions to exclude
+	 * from encrypted/encoded test
+	 * 
+	 * @var array
+	 */
+	private $ignoreExtens	= array(
+		'jpg',
+			'jpeg',
+			'png',
+			'js',
+	);
+	
+	/**
 	 * (non-PHPdoc)
 	 *
 	 * @see \Mage\Task\AbstractTask::getName()
@@ -142,6 +168,8 @@ class EncryptTask extends AbstractTask {
 	public function init() {
 		// Get any options specfic to this task
 		$this->mageConfig = $this->getConfig ()->environmentConfig( 'ioncube' );
+		var_dump($this->mageConfig);
+		exit;
 		/*
 		 * Get all our IonCube config options
 		 */
@@ -179,6 +207,22 @@ class EncryptTask extends AbstractTask {
 		 */
 		if (isset ( $this->mageConfig ['override'] )) {
 			$this->ionOverRide = $this->mageConfig ['override'];
+		}
+		/*
+		 * Check if we have been asked to
+		 * confirm all encodings
+		 */
+		if (isset ( $this->mageConfig ['checkencoding'])) {
+			$this->checkEncoding=true;
+		}
+		/*
+		 * Check if we have been passed any extra
+		 * file extensions to exclude from
+		 * encrypt/encode file check
+		 * 
+		 */
+		if (isset ( $this->mageConfig ['ignoreextens'])) {
+			$this->ignoreExtens=array_merge($this->ignoreExtens, $this->mageConfig['ignoreextens']);
 		}
 		/*
 		 * now merge all the config options together
@@ -245,9 +289,105 @@ class EncryptTask extends AbstractTask {
 		$this->switchSrcToTmp ();
 		$this->writeProjectFile ();
 		$result = $this->runIonCube ();
+		exit;
+		echo "Encoding result :".($result ? 'True' : 'False')."\n";
+		if (($this->checkEncoding) && ($this->checkEncoding())) {
+			$result=true;
+		}
 		$this->deleteTmpFiles ();
+		exit;
 		return $result;
 	}
+	
+	/**
+	 * Runs through all files in the encoded
+	 * folders and lists any that are not
+	 * encoded.  If any are found then prompt
+	 * user to continue or quit.
+	 * If user quites, then clean out encoded
+	 * files, and return true to indicate error
+	 * 
+	 * @return bool
+	 */
+	private function checkEncoding() {
+		$src = $this->source;
+		$ask=false;
+		$rit = new RecursiveDirectoryIterator ( $src );
+		foreach ( new RecursiveIteratorIterator ( $rit ) as $filename => $cur ) {
+			$exten=pathinfo($filename, PATHINFO_EXTENSION);
+			if (!array_key_exists($strtolower($exten), $this->ignoreExtens)) {
+				// ok, this extension needs to be checked
+				if ($this->checkFile($filename)) {
+					// file was encrypted/encoded
+				} else {
+					// file was not encrypted/encoded
+					echo "File :".$filename." -> Was not encrypted\n";
+					$ask=true;
+				}
+			}
+		}
+		if ($ask) {
+			// ok lets ask the user if they want to procede
+			echo "\n\nDo you wish to procede (y/N):";
+			$key=strtolower($this->inKey(array('y', 'Y', 'N', 'n', '')));
+			if ($key!='y') {
+				return true;
+			}
+		}
+		return false;
+	}
+	
+	/**
+	 * This simply wiats for a single
+	 * key press, and returns it
+	 * 
+	 * @param array $vals Array of posible key presses
+	 * 
+	 * @return string
+	 */
+	private function inKey($vals) {
+		$inKey = "";
+		While(!in_array($inKey,$vals)) {
+			$inKey = trim(`read -s -n1 valu;echo \$valu`);
+		}
+		return $inKey;
+	}
+	
+	/**
+	 * This will take the passed file and try to
+	 * work out if it is an encoded/encrypted 
+	 * ioncube file.
+	 * It dosent test the file exten, as it
+	 * expects the calling method to have done
+	 * that before.
+	 * 
+	 * @param string $filename Filename, with path, to check
+	 * 
+	 * @return boolean True if file was encoded/encrypted
+	 */
+	private function checkFileCoding($filename) {
+		// check to see if this is an encrypted file
+		$ioncube = ioncube_read_file ( $filename, $ioncubeType );
+		if (is_int ( $ioncube )) {
+			// we got an error from ioncube, so its encrypted
+			return true;
+		}
+		// read first line of file
+		$f = fopen ( $filename, 'r' );
+		$line = trim ( fgets ( $f, 32 ) );
+		fclose ( $f );
+		// if first line is longer than 30, then this isnt a php file
+		if (strlen ( $line ) > 30) {
+			return false;
+		}
+		// if first line starts '<?php //0' then we can be pretty certain its encoded
+		if (substr ( $line, 0, 9 ) == '<?php //0') {
+			return true;
+		}
+		// otherwise its most likley un-encrypted/encoded
+		return false;
+	}
+	
 	
 	/**
 	 * Deletes tempory folder and project file
@@ -388,8 +528,7 @@ class EncryptTask extends AbstractTask {
 	 * @return bool
 	 */
 	private function switchSrcToTmp() {
-		echo "Switching :" . $this->source . " -> ";
-		echo "To :" . $this->ionSource . "\n";
+		echo "\nSwitching :" . $this->source . " -> To :" . $this->ionSource."\n";
 		$ret = $this->runCommandLocal ( 'mv ' . $this->source . ' ' . $this->ionSource, $out );
 		if (! $ret) {
 			throw new ErrorWithMessageException ( 'Cant create tmp dir :' . $out, $ret );
@@ -596,6 +735,8 @@ class EncryptTask extends AbstractTask {
  * 
  * Example evirmonment YAML file :
  * 
+ */
+$example=<<<EOEXAMPLE
 #master
 deployment:
         user: marl
@@ -666,4 +807,4 @@ tasks:
                                 - unauth-included-file=Crtical Software Error
                                 - unauth-append-prepend-file=System can not be used with PHP Prepend/Append set
 
- */
+EOEXAMPLE;
