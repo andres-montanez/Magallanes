@@ -456,14 +456,12 @@ class EncryptTask extends AbstractTask {
 		if (isset ( $this->mageConfig ['keeptemp'] )) {
 			return;
 		}
-		Console::log('Deleting tempory files :', 0);
-		$ret1 = $this->runCommandLocal ( 'rm -Rf ' . $this->ionSource, $out1 );
-		$ret2 = $this->runCommandLocal ( 'rm ' . $this->projectFile, $out2 );
+		Console::log('Deleting tempory files :', 1);
+		$ret1 = Console::executeCommand ( 'rm -Rf ' . $this->ionSource, $out1 );
+		$ret2 = Console::executeCommand ( 'rm ' . $this->projectFile, $out2 );
 		if ($ret1 && $ret2) {
-			Console::log('OK',0);
 			return;
 		}
-		Console::log('Failed!', 1);
 		throw new ErrorWithMessageException ( 'Error deleting temp files :' . $out1 . ' : ' . $out2, 40 );
 	}
 	
@@ -475,7 +473,7 @@ class EncryptTask extends AbstractTask {
 	 */
 	private function runIonCube() {
 		$cli = $this->encoder . ' --project-file ' . $this->projectFile . ' ' . $this->ionSource . DIRECTORY_SEPARATOR.'*';
-		$ret = $this->runCommandLocal ( $cli, $out );
+		$ret = Console::executeCommand ( $cli, $out );
 		return $ret;
 	}
 	
@@ -586,11 +584,11 @@ class EncryptTask extends AbstractTask {
 	 */
 	private function switchSrcToTmp() {
 		//echo "\nSwitching :" . $this->source . " -> To :" . $this->ionSource."\n";
-		$ret = $this->runCommandLocal ( 'mv ' . $this->source . ' ' . $this->ionSource, $out );
+		$ret = Console::executeCommand ( 'mv ' . $this->source . ' ' . $this->ionSource, $out );
 		if (! $ret) {
 			throw new ErrorWithMessageException ( 'Cant create tmp dir :' . $out, $ret );
 		}
-		$ret = $this->runCommandLocal ( 'mkdir -p ' . $this->source, $out );
+		$ret = Console::executeCommand ( 'mkdir -p ' . $this->source, $out );
 		if (! $ret) {
 			throw new ErrorWithMessageException ( 'Cant re-create dir :' . $out, $ret );
 		}
@@ -817,51 +815,56 @@ tasks:
   on-deply:
   post-deploy:
 
-        ioncube:
-                override: dyf
-                keeptemp:
-                encoder: ioncube_encoder54
-                projfile: project.prj
-                project:
-                        replace-target:
-                        binary:
-                        ignore-deprecated-warnings:
-                        ignore-strict-warnings:
-                        ignore:
-                                - _*
-                                - templates_c/*
-                                - *~
-                                - database.md
-                                - specs/
-                                - composer.json
-                                - README.md
-                                - .git/
-                                - .project
-                                - .settings/
-                                - .buildpath
-                        message-if-no-loader: "System error No Loader"
-                        passphrase: "My really secure passphrase"
-                        encrypt:
-                                - templates/*
-                        add-comment:
-                                - 'Comment 1'
-                                - 'Comment 2'
-                                - "(c) ACTweb 2013"
-                                - "Draft Version"
+ioncube:
+	override: dyf
+	keeptemp:
+	encoder: ioncube_encoder54
+	checkencoding: true
+	checkignorepaths:
+		-/public/js/*
+		-/public/css/*
+		
+	projfile: project.prj
+	project:
+		replace-target:
+		binary:
+		ignore-deprecated-warnings:
+		ignore-strict-warnings:
+		ignore:
+			- _*
+			- templates_c/*
+			- *~
+			- database.md
+			- specs/
+			- composer.json
+			- README.md
+			- .git/
+			- .project
+			- .settings/
+			- .buildpath
+		message-if-no-loader: "System error No Loader"
+		passphrase: "My really secure passphrase"
+		encrypt:
+			- templates/*
+		add-comment:
+			- 'Comment 1'
+			- 'Comment 2'
+			- "(c) ACTweb 2013"
+			- "Draft Version"
 
-                        loader-event:
-                                - corrupt-file=Corupted files
-                                - expired-file=System needs updated
-                                - no-permissions=Not allowed on this server
-                                - clock-skew=Time incorect
-                                - license-not-found=License not installed
-                                - license-corrupt=Something wrong with your license
-                                - license-expired=Out of time
-                                - license-property-invalid=Invalid license data
-                                - license-header-invalid=Files corupted
-                                - license-server-invalid=Server problem
-                                - unauth-including-file=Sorry these files can only be used within defined software
-                                - unauth-included-file=Crtical Software Error
-                                - unauth-append-prepend-file=System can not be used with PHP Prepend/Append set
+		loader-event:
+			- corrupt-file=Corupted files
+			- expired-file=System needs updated
+			- no-permissions=Not allowed on this server
+			- clock-skew=Time incorect
+			- license-not-found=License not installed
+			- license-corrupt=Something wrong with your license
+			- license-expired=Out of time
+			- license-property-invalid=Invalid license data
+			- license-header-invalid=Files corupted
+			- license-server-invalid=Server problem
+			- unauth-including-file=Sorry these files can only be used within defined software
+			- unauth-included-file=Crtical Software Error
+			- unauth-append-prepend-file=System can not be used with PHP Prepend/Append set
 
 EOEXAMPLE;
