@@ -144,12 +144,18 @@ class EncryptTask extends AbstractTask {
 	 * 
 	 * @var array
 	 */
-	private $ignoreExtens	= array(
-		'jpg',
-			'jpeg',
-			'png',
-			'js',
-	);
+	private $checkIgnoreExtens	= array();
+	
+	/**
+	 * List of paths to exclude from
+	 * encrypted/encoded test
+	 * Paths must begin with '/'
+	 * and are all relative to the 
+	 * project root
+	 * 
+	 * @var array
+	 */
+	private $checkIgnorePaths	= array();
 	
 	/**
 	 * (non-PHPdoc)
@@ -166,10 +172,22 @@ class EncryptTask extends AbstractTask {
 	 * @see \Mage\Task\AbstractTask::init()
 	 */
 	public function init() {
+		// Set the default extensions to ignore
+		$this->checkIgnoreExtens = array (
+				'jpg',
+				'jpeg',
+				'png',
+				'js',
+				'gif',
+				'css',
+				'ttf',
+				'svg',
+				'map',
+				'ico',
+				
+		);
 		// Get any options specfic to this task
-		$this->mageConfig = $this->getConfig ()->environmentConfig( 'ioncube' );
-		var_dump($this->mageConfig);
-		exit;
+		$this->mageConfig = $this->getConfig()->environmentConfig( 'ioncube' );
 		/*
 		 * Get all our IonCube config options
 		 */
@@ -221,9 +239,21 @@ class EncryptTask extends AbstractTask {
 		 * encrypt/encode file check
 		 * 
 		 */
-		if (isset ( $this->mageConfig ['ignoreextens'])) {
-			$this->ignoreExtens=array_merge($this->ignoreExtens, $this->mageConfig['ignoreextens']);
+		if (isset ( $this->mageConfig ['checkignoreextens'])) {
+			$this->checkIgnoreExtens=array_merge($this->ignoreExtens, $this->mageConfig['ignoreextens']);
 		}
+		
+		/*
+		 * Check if we have been passed any extra
+		* file paths/files to exclude from
+		* encrypt/encode file check
+		*
+		*/
+		if (isset ( $this->mageConfig ['checkignorepaths'])) {
+			$this->checkIgnorePaths=array_merge($this->checkIgnorePaths, $this->mageConfig['checkignorepaths']);
+		}
+		
+		
 		/*
 		 * now merge all the config options together
 		 */
@@ -289,13 +319,16 @@ class EncryptTask extends AbstractTask {
 		$this->switchSrcToTmp ();
 		$this->writeProjectFile ();
 		$result = $this->runIonCube ();
-		exit;
-		echo "Encoding result :".($result ? 'True' : 'False')."\n";
-		if (($this->checkEncoding) && ($this->checkEncoding())) {
-			$result=true;
+		Console::output("Encoding result :".($result ? '<green>OK</green>' : '<red>Bad!</red>')."\n", 0, 2);
+		if (!$result) {
+			$this->deleteTmpFiles ();
+			throw new ErrorWithMessageException('Ioncube failed to encode your project :'.$result);
+		}
+		if (($this->checkEncoding) && (!$this->checkEncoding())) {
+			$this->deleteTmpFiles();
+			throw new ErrorWithMessageException('Operation canceled by user.');
 		}
 		$this->deleteTmpFiles ();
-		exit;
 		return $result;
 	}
 	
@@ -311,46 +344,67 @@ class EncryptTask extends AbstractTask {
 	 */
 	private function checkEncoding() {
 		$src = $this->source;
-		$ask=false;
-		$rit = new RecursiveDirectoryIterator ( $src );
-		foreach ( new RecursiveIteratorIterator ( $rit ) as $filename => $cur ) {
-			$exten=pathinfo($filename, PATHINFO_EXTENSION);
-			if (!array_key_exists($strtolower($exten), $this->ignoreExtens)) {
-				// ok, this extension needs to be checked
-				if ($this->checkFile($filename)) {
-					// file was encrypted/encoded
-				} else {
-					// file was not encrypted/encoded
-					echo "File :".$filename." -> Was not encrypted\n";
-					$ask=true;
+		// $ask holds flag to indicate we need to prompt the end user
+		$ask = false;
+		// scan through the directory
+		$rit = new \RecursiveDirectoryIterator ( $src );
+		foreach ( new \RecursiveIteratorIterator ( $rit ) as $filename => $cur ) {
+			// get the 'base dir' for the project, eg. relative to the temp folder
+			$srcFileName = (str_replace ( $this->source, '', $filename ));
+			/*
+			 * Scan through the ignor directorys array
+			 * and if it matches the current path/filename
+			 * then mark the file to be skipped from testing
+			 */
+			$skip = false;
+			foreach ( $this->checkIgnorePaths as $path ) {
+				if (fnmatch ( $path, $srcFileName )) {
+					$skip = true;
+				}
+			}
+			// check if we should test this file
+			if (! $skip) {
+				// get the file exten for this file and compare to our fileexten exclude array
+				$exten = pathinfo ( $filename, PATHINFO_EXTENSION );
+				if (! in_array ( strtolower ( $exten ), $this->checkIgnoreExtens )) {
+					// ok, this extension needs to be checked
+					if ($this->checkFileCoding ( $filename )) {
+						// file was encrypted/encoded
+					} else {
+						// file was not encrypted/encoded
+						Console::output("<blue>File :" . $srcFileName . "</blue> -> <red>Was not encrypted</red>", 0, 1);
+						$ask = true;
+					}
 				}
 			}
 		}
 		if ($ask) {
 			// ok lets ask the user if they want to procede
-			echo "\n\nDo you wish to procede (y/N):";
-			$key=strtolower($this->inKey(array('y', 'Y', 'N', 'n', '')));
-			if ($key!='y') {
-				return true;
+			Console::output("\n\nDo you wish to procede (y/N):", 0, 0);
+			if (! $this->promptYn ()) {
+				return false;
 			}
 		}
-		return false;
+		
+		return true;
 	}
 	
 	/**
-	 * This simply wiats for a single
-	 * key press, and returns it
+	 * This simply for user to enter
+	 * 'y' or 'Y' and press enter, if
+	 * a single 'y' is not entered then
+	 * false is returned, otherwise
+	 * true is returned.
 	 * 
-	 * @param array $vals Array of posible key presses
-	 * 
-	 * @return string
+	 * @return bool True if 'y' pressed
 	 */
-	private function inKey($vals) {
-		$inKey = "";
-		While(!in_array($inKey,$vals)) {
-			$inKey = trim(`read -s -n1 valu;echo \$valu`);
+	private function promptYn() {
+		$handle = fopen ("php://stdin","r");
+		$line = strtolower(fgets($handle));
+		if(trim($line) != 'y'){
+			return false;
 		}
-		return $inKey;
+		return true;
 	}
 	
 	/**
@@ -402,11 +456,14 @@ class EncryptTask extends AbstractTask {
 		if (isset ( $this->mageConfig ['keeptemp'] )) {
 			return;
 		}
+		Console::log('Deleting tempory files :', 0);
 		$ret1 = $this->runCommandLocal ( 'rm -Rf ' . $this->ionSource, $out1 );
 		$ret2 = $this->runCommandLocal ( 'rm ' . $this->projectFile, $out2 );
 		if ($ret1 && $ret2) {
+			Console::log('OK',0);
 			return;
 		}
+		Console::log('Failed!', 1);
 		throw new ErrorWithMessageException ( 'Error deleting temp files :' . $out1 . ' : ' . $out2, 40 );
 	}
 	
@@ -528,7 +585,7 @@ class EncryptTask extends AbstractTask {
 	 * @return bool
 	 */
 	private function switchSrcToTmp() {
-		echo "\nSwitching :" . $this->source . " -> To :" . $this->ionSource."\n";
+		//echo "\nSwitching :" . $this->source . " -> To :" . $this->ionSource."\n";
 		$ret = $this->runCommandLocal ( 'mv ' . $this->source . ' ' . $this->ionSource, $out );
 		if (! $ret) {
 			throw new ErrorWithMessageException ( 'Cant create tmp dir :' . $out, $ret );
