@@ -81,14 +81,14 @@ class TarGzTask extends AbstractTask implements IsReleaseAware
         // Create Tar Gz
         $localTarGz = tempnam(sys_get_temp_dir(), 'mage');
         $remoteTarGz = basename($localTarGz);
-	    $excludes = array_merge($excludes, $userExcludes);
-	    $excludeCmd = '';
-	    foreach ($excludes as $excludeFile) {
-		    $excludeCmd .= ' --exclude=' . $excludeFile;
-	    }
+        $excludes = array_merge($excludes, $userExcludes);
+        $excludeCmd = '';
+        foreach ($excludes as $excludeFile) {
+            $excludeCmd .= ' --exclude=' . $excludeFile;
+        }
 
-	    $command = 'tar cfz ' . $localTarGz . '.tar.gz ' . $excludeCmd . ' ' . $this->getConfig()->deployment('from');
-	    $result = $this->runCommandLocal($command);
+        $command = 'tar cfz ' . $localTarGz . '.tar.gz ' . $excludeCmd . ' ' . $this->getConfig()->deployment('from');
+        $result = $this->runCommandLocal($command);
 
         // Copy Tar Gz  to Remote Host
         $command = 'scp -P ' . $this->getConfig()->getHostPort() . ' ' . $localTarGz . '.tar.gz '
