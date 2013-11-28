@@ -98,6 +98,8 @@ class DeployCommand extends AbstractCommand implements RequiresEnvironment
      */
     public function run()
     {
+        $this->getConfig()->overrideConfigWithCLIArguments();
+
         // Check if Environment is not Locked
     	$lockFile = '.mage/' . $this->getConfig()->getEnvironment() . '.lock';
     	if (file_exists($lockFile)) {
