@@ -11,6 +11,7 @@
 namespace Mage\Task\BuiltIn\Deployment\Strategy;
 
 use Mage\Task\AbstractTask;
+use Mage\Task\ErrorWithMessageException;
 use Mage\Task\Releases\IsReleaseAware;
 
 use Exception;
@@ -84,7 +85,7 @@ class RsyncTask extends AbstractTask implements IsReleaseAware
                  . $this->getConfig()->deployment('from') . ' '
                  . $this->getConfig()->deployment('user') . '@' . $this->getConfig()->getHostName() . ':' . $deployToDirectory;
 
-        $result = $this->runCommandLocal($command);
+        $result = $this->runCommandLocal($command, $output);
 
         // Count Releases
         if ($this->getConfig()->release('enabled', false) == true) {
@@ -121,6 +122,10 @@ class RsyncTask extends AbstractTask implements IsReleaseAware
             }
         }
 
+        if (! $result) {
+            throw new ErrorWithMessageException($output);
+        }
+
         return $result;
     }
 
@@ -131,6 +136,7 @@ class RsyncTask extends AbstractTask implements IsReleaseAware
      */
     protected function excludes(Array $excludes)
     {
+
         $excludesRsync = '';
         foreach ($excludes as $exclude) {
             $excludesRsync .= ' --exclude ' . $exclude . ' ';
