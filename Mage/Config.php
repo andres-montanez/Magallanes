@@ -487,4 +487,18 @@ class Config
         }
     }
 
+    public function getDeployToDirectory() {
+        return rtrim($this->deployment('to'), '/') . $this->getReleasesDirectory();
+    }
+
+    public function getReleasesDirectory() {
+        if ($this->release('enabled', false) == true) {
+            return "/{$this->release('directory', 'releases')}/{$this->getReleaseId()}";
+        }
+        return '';
+    }
+
+    public function getNameAtHostnameString() {
+        return $this->deployment('user').'@'.$this->getHostName();
+    }
 }

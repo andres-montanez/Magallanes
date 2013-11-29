@@ -50,6 +50,12 @@ abstract class AbstractTask
     protected $parameters = array();
 
     /**
+     * Executed job list
+     * @var array
+     */
+    protected $jobList = [];
+
+    /**
      * Returns the Title of the Task
      * @return string
      */
@@ -149,28 +155,20 @@ abstract class AbstractTask
      */
     protected final function runCommandRemote($command, &$output = null)
     {
-        if ($this->getConfig()->release('enabled', false) == true) {
-            if ($this instanceOf IsReleaseAware) {
-                $releasesDirectory = '';
-
-            } else {
-                $releasesDirectory = '/'
-                                   . $this->getConfig()->release('directory', 'releases')
-                                   . '/'
-                                   . $this->getConfig()->getReleaseId();
-            }
-
-        } else {
-            $releasesDirectory = '';
-        }
-
-        $localCommand = 'ssh -p ' . $this->getConfig()->getHostPort() . ' '
-                      . '-q -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no '
-                      . $this->getConfig()->deployment('user') . '@' . $this->getConfig()->getHostName() . ' '
-                      . '"cd ' . rtrim($this->getConfig()->deployment('to'), '/') . $releasesDirectory . ' && '
-                      . str_replace('"', '\"', $command) . '"';
+        $localCommand = $this->generateLocalToRemoteCommand($command);
 
         return $this->runCommandLocal($localCommand, $output);
+    }
+
+    protected final function runJobLocal($command) {
+        $verbose = $this->getParameter('--verbose', false);
+        $this->jobList[] =  \Mage\Job::run($command, $this->getParameter('--show-errors',true) || $verbose, $verbose);
+        return end($this->jobList);
+    }
+
+    protected final function runJobRemote($command) {
+        $localCommand = $this->generateLocalToRemoteCommand($command);
+        return $this->runJobLocal($localCommand);
     }
 
     /**
@@ -187,5 +185,35 @@ abstract class AbstractTask
         } else {
         	return $this->runCommandLocal($command, $output);
         }
+    }
+
+    /**
+     * @param $command
+     * @return string
+     */
+    protected function generateLocalToRemoteCommand($command)
+    {
+        if (!$this instanceOf IsReleaseAware) {
+            $releasesDirectory = $this->getConfig()->getReleasesDirectory();
+        } else {
+            $releasesDirectory = '';
+        }
+
+        $localCommand = 'ssh -p ' . $this->getConfig()->getHostPort() . ' '
+            . '-q -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no '
+            . $this->getConfig()->deployment('user') . '@' . $this->getConfig()->getHostName() . ' '
+            . '"cd ' . rtrim($this->getConfig()->deployment('to'), '/') . $releasesDirectory . ' && '
+            . str_replace('"', '\"', $command) . '"';
+        return $localCommand;
+    }
+
+    public function isAllOk() {
+        /** @var $job \Mage\Job */
+        foreach ($this->jobList as $job) {
+            if ($job->status !== 0) {
+                return false;
+            }
+        }
+        return true;
     }
 }
