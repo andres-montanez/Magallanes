@@ -161,8 +161,8 @@ abstract class AbstractTask
     }
 
     protected final function runJobLocal($command) {
-        $verbose = $this->getParameter('--verbose', false);
-        $this->jobList[] =  \Mage\Job::run($command, $this->getParameter('--show-errors',true) || $verbose, $verbose);
+        $verbose = $this->getParameter('verbose', false);
+        $this->jobList[] =  \Mage\Job::run($command, $this->getParameter('show-errors', $verbose), $verbose);
         return end($this->jobList);
     }
 
@@ -194,14 +194,14 @@ abstract class AbstractTask
     protected function generateLocalToRemoteCommand($command)
     {
         if (!$this instanceOf IsReleaseAware) {
-            $releasesDirectory = $this->getConfig()->getReleasesDirectory();
+            $releasesDirectory = $this->getConfig()->getReleaseDirectory();
         } else {
             $releasesDirectory = '';
         }
 
         $localCommand = 'ssh -p ' . $this->getConfig()->getHostPort() . ' '
             . '-q -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no '
-            . $this->getConfig()->deployment('user') . '@' . $this->getConfig()->getHostName() . ' '
+            . $this->getConfig()->getNameAtHostnameString() . ' '
             . '"cd ' . rtrim($this->getConfig()->deployment('to'), '/') . $releasesDirectory . ' && '
             . str_replace('"', '\"', $command) . '"';
         return $localCommand;
@@ -210,7 +210,7 @@ abstract class AbstractTask
     public function isAllOk() {
         /** @var $job \Mage\Job */
         foreach ($this->jobList as $job) {
-            if ($job->status !== 0) {
+            if ($job->failed()) {
                 return false;
             }
         }

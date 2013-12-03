@@ -25,7 +25,8 @@ class ReleasesAbstractTask extends AbstractTask implements IsReleaseAware
 
     protected $log = [];
 
-    protected $defaultExcludes = ['.git',
+    protected $defaultExcludes = [
+            '.git',
             '.svn',
             '.mage',
             '.gitignore',
@@ -51,7 +52,7 @@ class ReleasesAbstractTask extends AbstractTask implements IsReleaseAware
     }
 
     protected function createDeployToDirectory() {
-        $this->runCommandRemote('mkdir -p '.$this->getConfig()->getDeployToDirectory());
+        $this->runJobRemote('mkdir -p '.$this->getConfig()->getDeployToDirectory());
     }
 
     protected function getExcludesCommand(array $userExcludes, $excludeKey)
@@ -85,8 +86,8 @@ class ReleasesAbstractTask extends AbstractTask implements IsReleaseAware
 
             $maxReleases = $this->getConfig()->release('max', false);
             if (($maxReleases !== false) && ($maxReleases > 0)) {
-                $job = $this->runJobRemote("ls -1t $releasesDirectory  | tail -n +".($maxReleases+1));
-                $releasesToDelete = preg_replace('/(.*)$/m', '$1 ', $job->stdout);
+                $job = $this->runJobRemote("ls -1rt $releasesDirectory  | tail -n +".($maxReleases+1));
+                $releasesToDelete = implode(' ', $job->stdout);
                 $command = "cd $releasesDirectory; rm -rf $releasesToDelete";
                 $this->runJobRemote($command);
             }

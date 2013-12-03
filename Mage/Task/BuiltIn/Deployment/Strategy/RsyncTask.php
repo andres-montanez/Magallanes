@@ -45,14 +45,12 @@ class RsyncTask extends ReleasesAbstractTask implements IsReleaseAware
      */
     public function deploy()
     {
-        // If we are working with releases
-        $deployToDirectory = $this->getConfig()->deployment('to');
-
         $command = 'rsync -avz '
                  . '--rsh="ssh -p' . $this->getConfig()->getHostPort() . '" '
-                 . $this->getExcludesCommand($this->getConfig()->deployment('excludes', []),'--exclude ') . ' '
                  . $this->getConfig()->deployment('from') . ' '
-                 . $this->getConfig()->getNameAtHostnameString() . ':' . $deployToDirectory;
+                 . $this->getConfig()->getNameAtHostnameString() . ':' . $this->getConfig()->getDeployToDirectory()
+                 . $this->getExcludesCommand($this->getConfig()->deployment('excludes', []),'--exclude ')
+        ;
 
         $this->runJobLocal($command);
     }

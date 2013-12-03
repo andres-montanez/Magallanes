@@ -488,10 +488,10 @@ class Config
     }
 
     public function getDeployToDirectory() {
-        return rtrim($this->deployment('to'), '/') . $this->getReleasesDirectory();
+        return rtrim($this->deployment('to'), '/') . $this->getReleaseDirectory();
     }
 
-    public function getReleasesDirectory() {
+    public function getReleaseDirectory() {
         if ($this->release('enabled', false) == true) {
             return "/{$this->release('directory', 'releases')}/{$this->getReleaseId()}";
         }
