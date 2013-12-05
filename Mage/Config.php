@@ -409,7 +409,7 @@ class Config
     }
 
     /**
-     * Returns Releaseing Options
+     * Returns Releasing Options
      *
      * @param string $option
      * @param string $default
@@ -470,6 +470,14 @@ class Config
         return $this->releaseId;
     }
 
+    public function getOption($option, $default=null) {
+        $currentNode = $this->config;
+        foreach (explode('.',$option) as $node) {
+            $currentNode = isset($currentNode[$node]) ? $currentNode[$node] : $default;
+        }
+        return $currentNode;
+    }
+
     /**
      * Get Environment root option
      *
@@ -479,12 +487,7 @@ class Config
      */
     protected function getEnvironmentOption($option, $default = array())
     {
-        $config = $this->config['environment'];
-        if (isset($config[$option])) {
-            return $config[$option];
-        } else {
-            return $default;
-        }
+        return $this->getOption("environment.$option", $default);
     }
 
     public function getDeployToDirectory() {

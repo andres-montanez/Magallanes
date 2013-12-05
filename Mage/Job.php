@@ -37,7 +37,7 @@ class Job {
         Console::log('---------------------------------');
 
         if ($showCommands) {
-            if ($j->exitcode=0) Console::output("<green>OK: {$j->exitcode}</green>");
+            if ($j->success()) Console::output("<green>OK: {$j->exitcode}</green>");
             else Console::output("<red>FAIL: {$j->exitcode}</red>");
         }
 
@@ -81,7 +81,11 @@ class Job {
     }
 
     public function failed() {
-        return ! in_array($this->exitcode, [0]);
+        return ! $this->success();
+    }
+
+    public function success() {
+        return in_array($this->exitcode, [0]);
     }
 
 

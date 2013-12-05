@@ -114,7 +114,7 @@ class DeployCommand extends AbstractCommand implements RequiresEnvironment
     	}
 
         // Release ID
-        $this->getConfig()->setReleaseId(date('YmdHis'));
+        $this->getConfig()->setReleaseId(date($this->getConfig()->general('releaseFolderDateFormat' ,'YmdHis')));
 
         // Deploy Summary
         Console::output('<dark_gray>Deploy summary</dark_gray>', 1, 1);
@@ -138,7 +138,7 @@ class DeployCommand extends AbstractCommand implements RequiresEnvironment
         // Deploy Summary - Separator Line
         Console::output('', 0, 1);
 
-        $this->startTime = time();
+        $this->startTime = microtime(true);
 
         // Run Pre-Deployment Tasks
         $this->runNonDeploymentTasks('pre-deploy', $this->getConfig(), 'Pre-Deployment');
@@ -172,7 +172,7 @@ class DeployCommand extends AbstractCommand implements RequiresEnvironment
         }
 
         // Time Information General
-        $timeText = $this->transcurredTime(time() - $this->startTime);
+        $timeText = $this->transcurredTime(microtime(true) - $this->startTime);
         Console::output('Total time: <dark_gray>' . $timeText . '</dark_gray>.', 1, 2);
 
         // Send Notifications
@@ -296,27 +296,17 @@ class DeployCommand extends AbstractCommand implements RequiresEnvironment
     			$tasksToRun = $this->getConfig()->getTasks();
 
     			// Guess a Deploy Strategy
-    			switch ($this->getConfig()->deployment('strategy', 'guess')) {
-    			    case 'disabled':
-    			    	$deployStrategy = 'deployment/strategy/disabled';
-    			    	break;
-
-    			    case 'rsync':
-    			    	$deployStrategy = 'deployment/strategy/rsync';
-    			    	break;
-
-    			    case 'targz':
-    			    	$deployStrategy = 'deployment/strategy/tar-gz';
-    			    	break;
-
+    			switch ($deployStrategy = $this->getConfig()->deployment('strategy', 'guess')) {
     			    case 'guess':
-    			    default:
     			    	if ($this->getConfig()->release('enabled', false) == true) {
     			    		$deployStrategy = 'deployment/strategy/tar-gz';
     			    	} else {
     			    		$deployStrategy = 'deployment/strategy/rsync';
     			    	}
     			    	break;
+                    default:
+                        $deployStrategy = "deployment/strategy/$deployStrategy";
+                        break;
     			}
 
 				array_unshift($tasksToRun, $deployStrategy);
@@ -360,7 +350,7 @@ class DeployCommand extends AbstractCommand implements RequiresEnvironment
     		// Releasing
     		if (self::$deployStatus == self::SUCCEDED && $this->getConfig()->release('enabled', false) == true) {
     			// Execute the Releases
-    			Console::output('Starting the <dark_gray>Releaseing</dark_gray>');
+    			Console::output('Starting the <dark_gray>Releasing</dark_gray>');
     			foreach ($hosts as $hostKey => $host) {
 
     				// Check if Host has specific configuration
@@ -383,7 +373,7 @@ class DeployCommand extends AbstractCommand implements RequiresEnvironment
     				// Reset Host Config
     				$this->getConfig()->setHostConfig(null);
     			}
-    			Console::output('Finished the <dark_gray>Releaseing</dark_gray>', 1, 3);
+    			Console::output('Finished the <dark_gray>Releasing</dark_gray>', 1, 3);
 
     			// Execute the Post-Release Tasks
     			foreach ($hosts as $hostKey => $host) {
