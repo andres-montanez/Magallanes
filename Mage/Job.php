@@ -16,84 +16,46 @@ class Job {
 
     const EXIT_CODE_STREAM = 3;
 
-    public static function run($command, $showErorrs=true, $verbose=false)
+    public static function run($command, $showErrors=false, $verbose=false, $showCommands=false)
     {
-        $j = new Job($command);
         if ($verbose) Console::output("\n<yellow>".$command."</yellow>\n");
-
+        if ($showCommands) Console::output("\n<yellow>".$command."</yellow>\n");
+        
+        Console::log('---------------------------------');
+        Console::log('---- Executing: $ ' . $command);
+        
+        $j = new Job($command);
         while ($j->isRunning()) {
             list($o, $e) = $j->readStreams(false);
-            if (empty($o) && empty($e)) {
-                continue;
-            }
-
-            if ($showErorrs && !empty($e)) Console::output("<red>$e</red>");
+            if ($showErrors && !empty($e)) Console::output("<red>$e</red>");
             if ($verbose && !empty($o)) Console::output("<dark_gray>$o</dark_gray>");
+        }
+
+        Console::log("\n\t----- STDOUT: \n".implode("\n", $j->stdout));
+        Console::log("\n\t----- STDERR: \n".implode("\n", $j->stderr));
+        Console::log("\n\t----- EXITCODE: {$j->exitcode}");
+        Console::log('---------------------------------');
+
+        if ($showCommands) {
+            if ($j->exitcode=0) Console::output("<green>OK: {$j->exitcode}</green>");
+            else Console::output("<red>FAIL: {$j->exitcode}</red>");
         }
 
         return  $j->close();
     }
 
-    protected function __construct($command) {
+    public function __construct($command) {
         $this->command = "($command) 3>/dev/null; code=$?; echo \$code >&3; exit \$code";
-        Console::log('---------------------------------');
-        Console::log('---- Executing: $ ' . $this->command);
-
         $this->process = proc_open($this->command, [['pipe', 'r'],['pipe', 'w'],['pipe', 'w'], ['pipe', 'w']], $this->pipes);
 
-        foreach ($this->pipes as &$pipe) {
-            stream_set_blocking($pipe, 0);
-        }
+        $this->unblockPipes();
+
     }
 
-    protected function readStreams($blocking, $close = false)
-    {
-        if (empty($this->pipes)) {
-            return array();
-        }
-        $read = [[],[]];
-
-        $r = $this->pipes;
-        $w = null;
-        $e = null;
-
-        if (! in_array(@stream_select($r, $w, $e, $blocking ? ceil(self::TIMEOUT_PRECISION * 1E6) : 0), [false, 0])) {
-            foreach ($r as $pipe) {
-                $type = array_search($pipe, $this->pipes);
-                $data = preg_replace("/\n/",' ',fread($pipe, 8192));
-
-                if (strlen($data) > 0) {
-                    if ($type == 1 ) {
-                        $this->stdout[] = $read[0] = $data;
-                    }
-                    if ($type == 2) {
-                        $this->stderr[] = $read[1] = $data;
-                    }
-                    if ($type == self::EXIT_CODE_STREAM) {
-                        $this->exitcode = (int) $data;
-                    }
-                }
-
-
-                if (false === $data || (true === $close && feof($pipe) && '' === $data)) {
-                    fclose($this->pipes[$type]);
-                    unset($this->pipes[$type]);
-                }
-            }
-        }
-
-        return $read;
-    }
-
-    protected function close() {
-        foreach ($this->pipes as &$pipe) {
-            fclose($pipe);
-        }
+    public function close() {
+        $this->closePipes();
         proc_close($this->process);
-        Console::log("\n\t----- STDOUT: \n".implode("\n", $this->stdout));
-        Console::log("\n\t----- STDERR: \n".implode("\n", $this->stderr));
-        Console::log("\n\t----- EXITCODE: {$this->exitcode}");
-        Console::log('---------------------------------');
+
         return $this;
     }
 
@@ -120,5 +82,50 @@ class Job {
 
     public function failed() {
         return ! in_array($this->exitcode, [0]);
+    }
+
+
+
+    protected function unblockPipes() {
+        foreach ($this->pipes as &$pipe) {
+            stream_set_blocking($pipe, 0);
+        }
+    }
+
+    protected function readStreams($blocking, $close = false)
+    {
+        $read = [[],[]];
+
+        $r = $this->pipes;
+        $w = null;
+        $e = null;
+
+        if (! in_array(@stream_select($r, $w, $e, $blocking ? ceil(self::TIMEOUT_PRECISION * 1E6) : 0), [false, 0])) {
+            foreach ($r as $pipe) {
+                $type = array_search($pipe, $this->pipes);
+                $data = preg_replace("/\n/",' ',fread($pipe, 8192));
+
+                if (strlen($data) > 0) {
+                    if ($type == 1 ) {
+                        $this->stdout[] = $read[0] = $data;
+                    }
+                    if ($type == 2) {
+                        $this->stderr[] = $read[1] = $data;
+                    }
+                    if ($type == self::EXIT_CODE_STREAM) {
+                        $this->exitcode = (int) $data;
+                    }
+                }
+            }
+        }
+
+        return $read;
+    }
+
+    protected function closePipes()
+    {
+        foreach ($this->pipes as &$pipe) {
+            fclose($pipe);
+        }
     }
 }

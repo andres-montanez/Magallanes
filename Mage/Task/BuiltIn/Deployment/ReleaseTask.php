@@ -49,8 +49,8 @@ class ReleaseTask extends AbstractTask implements IsReleaseAware, SkipOnOverride
             $currentCopy = $releasesDirectory . '/' . $this->getConfig()->getReleaseId();
 
             // Fetch the user and group from base directory; defaults usergroup to 33:33
-            $userGroup = '33:33';
-            $resultFetch = $this->runCommandRemote('ls -ld . | awk \'{print \$3":"\$4}\'', $userGroup);
+            $userGroup = implode('', $this->runJobRemote('ls -ld . | awk \'{print \$3":"\$4}\'')->stdout);
+            $userGroup = $userGroup ? $userGroup : "33:33";
 
             // Remove symlink if exists; create new symlink and change owners
             $command = 'rm -f ' . $symlink
@@ -60,12 +60,12 @@ class ReleaseTask extends AbstractTask implements IsReleaseAware, SkipOnOverride
                      . 'chown -h ' . $userGroup . ' ' . $symlink
                      . ' && '
                      . 'chown -R ' . $userGroup . ' ' . $currentCopy;
-            $result = $this->runCommandRemote($command);
+            $this->runJobRemote($command);
 
             // Set Directory Releases to same owner
-            $result = $this->runCommandRemote('chown ' . $userGroup . ' ' . $releasesDirectory);
+            $this->runJobRemote('chown ' . $userGroup . ' ' . $releasesDirectory);
 
-            return $result;
+            return $this->isAllOk();
 
         } else {
             return false;

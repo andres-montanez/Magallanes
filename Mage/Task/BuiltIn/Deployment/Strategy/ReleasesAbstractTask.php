@@ -35,7 +35,7 @@ class ReleasesAbstractTask extends AbstractTask implements IsReleaseAware
     ];
 
     public function getName() {
-        return 'No deploy release task';
+        return '"No deploy" release task';
     }
 
     public function run() {
@@ -64,9 +64,7 @@ class ReleasesAbstractTask extends AbstractTask implements IsReleaseAware
     }
 
     protected function overrideRelease() {
-        $overrideRelease = $this->getParameter('overrideRelease', false);
-
-        if ($overrideRelease == true) {
+        if ($this->getParameter('overrideRelease', false)) {
             $job = $this->runJobRemote('ls -ld current | cut -d"/" -f2');
             if (is_numeric($job->stdout)) {
                 $this->getConfig()->setReleaseId($job->stdout);
@@ -86,7 +84,7 @@ class ReleasesAbstractTask extends AbstractTask implements IsReleaseAware
 
             $maxReleases = $this->getConfig()->release('max', false);
             if (($maxReleases !== false) && ($maxReleases > 0)) {
-                $job = $this->runJobRemote("ls -1rt $releasesDirectory  | tail -n +".($maxReleases+1));
+                $job = $this->runJobRemote("ls -1r $releasesDirectory  | tail -n +".($maxReleases+1));
                 $releasesToDelete = implode(' ', $job->stdout);
                 $command = "cd $releasesDirectory; rm -rf $releasesToDelete";
                 $this->runJobRemote($command);

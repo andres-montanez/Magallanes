@@ -162,7 +162,9 @@ abstract class AbstractTask
 
     protected final function runJobLocal($command) {
         $verbose = $this->getParameter('verbose', false);
-        $this->jobList[] =  \Mage\Job::run($command, $this->getParameter('show-errors', $verbose), $verbose);
+        $showCommands = $this->getParameter('show-commands', $verbose);
+        $showErrors = $this->getParameter('show-errors', $verbose);
+        $this->jobList[] =  \Mage\Job::run($command, $showErrors, $verbose, $showCommands);
         return end($this->jobList);
     }
 
