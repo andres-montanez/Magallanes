@@ -52,15 +52,14 @@ class ReleasesAbstractTask extends AbstractTask implements IsReleaseAware
     }
 
     protected function createDeployToDirectory() {
-        $this->runJobRemote('mkdir -p '.$this->getConfig()->getDeployToDirectory());
+        $deployToDirectory = $this->getConfig()->getDeployToDirectory();
+        $this->runJobRemote("mkdir -p  $deployToDirectory");
     }
 
-    protected function getExcludesCommand(array $userExcludes, $excludeKey)
+    protected function getExcludesParameters(array $userExcludes, $excludeKey)
     {
-        if (count($excludes = array_merge([''], $this->defaultExcludes, $userExcludes)) > 1) {
-            return implode(" $excludeKey",$excludes);
-        }
-        return '';
+        $excludes = array_merge([''], $this->defaultExcludes, $userExcludes);
+        return implode(" $excludeKey",$excludes);
     }
 
     protected function overrideRelease() {
@@ -73,7 +72,6 @@ class ReleasesAbstractTask extends AbstractTask implements IsReleaseAware
     }
 
     protected function cleanReleases() {
-        // Count Releases
         if ($this->getConfig()->release('enabled', false) == true) {
             $releasesDirectory = $this->getConfig()->release('directory', 'releases');
             $symlink = $this->getConfig()->release('symlink', 'current');
@@ -91,6 +89,4 @@ class ReleasesAbstractTask extends AbstractTask implements IsReleaseAware
             }
         }
     }
-
-
 }

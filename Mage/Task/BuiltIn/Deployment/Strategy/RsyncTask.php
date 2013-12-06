@@ -49,7 +49,7 @@ class RsyncTask extends ReleasesAbstractTask implements IsReleaseAware
                  . '--rsh="ssh -p' . $this->getConfig()->getHostPort() . '" '
                  . $this->getConfig()->deployment('from') . ' '
                  . $this->getConfig()->getNameAtHostnameString() . ':' . $this->getConfig()->getDeployToDirectory()
-                 . $this->getExcludesCommand($this->getConfig()->deployment('excludes', []),'--exclude ')
+                 . $this->getExcludesParameters($this->getConfig()->deployment('excludes', []),'--exclude ')
         ;
 
         $this->runJobLocal($command);

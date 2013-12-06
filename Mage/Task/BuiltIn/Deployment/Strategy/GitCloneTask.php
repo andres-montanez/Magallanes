@@ -24,6 +24,7 @@ class GitCloneTask extends ReleasesAbstractTask implements IsReleaseAware
         $branch = $this->getConfig()->getOption('environment.deployment.scm.branch');
         $remote = $this->getConfig()->getOption('general.scm.url');
         $releaseDirectory = $this->getConfig()->getDeployToDirectory();
+
         $this->runJobRemote("git clone -b $branch $remote $releaseDirectory");
     }
 }

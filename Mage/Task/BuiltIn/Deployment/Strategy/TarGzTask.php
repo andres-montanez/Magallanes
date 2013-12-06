@@ -55,7 +55,7 @@ class TarGzTask extends ReleasesAbstractTask implements IsReleaseAware
     {
         $localTarGz = tempnam(sys_get_temp_dir(), 'mage');
         $remoteTarGz = basename($localTarGz);
-        $command = 'tar cfz ' . $localTarGz . '.tar.gz ' . $this->getExcludesCommand($this->getConfig()->deployment('excludes', array()), '--exclude=') . ' ' . $this->getConfig()->deployment('from');
+        $command = 'tar cfz ' . $localTarGz . '.tar.gz ' . $this->getExcludesParameters($this->getConfig()->deployment('excludes', array()), '--exclude=') . ' ' . $this->getConfig()->deployment('from');
         $this->runJobLocal($command);
         return array($localTarGz, $remoteTarGz);
     }
