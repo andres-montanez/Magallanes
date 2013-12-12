@@ -18,9 +18,8 @@ class Job {
 
     public static function run($command, $showErrors=false, $verbose=false, $showCommands=false)
     {
-        if ($verbose) Console::output("\n<yellow>".$command."</yellow>\n");
-        if ($showCommands) Console::output("\n<yellow>".$command."</yellow>\n");
-        
+        if ($verbose || $showCommands) Console::output("\n<yellow>".$command."</yellow>\n");
+
         Console::log('---------------------------------');
         Console::log('---- Executing: $ ' . $command);
         

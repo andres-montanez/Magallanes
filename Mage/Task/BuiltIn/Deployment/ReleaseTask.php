@@ -28,7 +28,7 @@ class ReleaseTask extends AbstractTask implements IsReleaseAware, SkipOnOverride
 	 * @see \Mage\Task\AbstractTask::getName()
 	 */
     public function getName()
-    {
+    {b
         return 'Releasing [built-in]';
     }
 
@@ -48,22 +48,21 @@ class ReleaseTask extends AbstractTask implements IsReleaseAware, SkipOnOverride
 
             $currentCopy = $releasesDirectory . '/' . $this->getConfig()->getReleaseId();
 
-            // Fetch the user and group from base directory; defaults usergroup to 33:33
-            $userGroup = implode('', $this->runJobRemote('ls -ld . | awk \'{print \$3":"\$4}\'')->stdout);
-            $userGroup = $userGroup ? $userGroup : "33:33";
+            if (! $releaseUser = $this->getConfig()->getEnvironmentOption('release_user', null)) {
+                // Fetch the user and group from base directory; defaults usergroup to 33:33
+                $releaseUser = implode('', $this->runJobRemote('ls -ld . | awk \'{print \$3":"\$4}\'')->stdout);
+                $releaseUser = $releaseUser ? $releaseUser : "33:33";
+            }
 
             // Remove symlink if exists; create new symlink and change owners
-            $command = 'rm -f ' . $symlink
-                     . ' ; '
-                     . 'ln -sf ' . $currentCopy . ' ' . $symlink
-                     . ' && '
-                     . 'chown -h ' . $userGroup . ' ' . $symlink
-                     . ' && '
-                     . 'chown -R ' . $userGroup . ' ' . $currentCopy;
+            $command = "rm -f $symlink;"
+                     . "ln -sf $currentCopy $symlink && "
+                     . "chown -h $releaseUser $symlink && "
+                     . "chown -R $releaseUser $currentCopy";
             $this->runJobRemote($command);
 
             // Set Directory Releases to same owner
-            $this->runJobRemote('chown ' . $userGroup . ' ' . $releasesDirectory);
+            $this->runJobRemote("chown $releaseUser $releasesDirectory");
 
             return $this->isAllOk();
 

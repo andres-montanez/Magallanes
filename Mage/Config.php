@@ -485,7 +485,7 @@ class Config
      * @param mixed $default
      * @return mixed
      */
-    protected function getEnvironmentOption($option, $default = array())
+    public function getEnvironmentOption($option, $default = array())
     {
         return $this->getOption("environment.$option", $default);
     }

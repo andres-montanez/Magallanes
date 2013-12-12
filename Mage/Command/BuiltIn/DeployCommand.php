@@ -195,39 +195,41 @@ class DeployCommand extends AbstractCommand implements RequiresEnvironment
     {
         $tasksToRun = $config->getTasks($stage);
         self::$failedTasks = 0;
+        $deployStrategy = $this->getConfig()->deployment('strategy', 'guess');
 
-        // PreDeployment Hook
-        if ($stage == 'pre-deploy') {
-        	// Look for Remote Source
-        	if (is_array($config->deployment('source', null))) {
-        		array_unshift($tasksToRun, 'scm/clone');
-        	}
+        if ($deployStrategy!='gitClone') {
+            // PreDeployment Hook
+            if ($stage == 'pre-deploy') {
+                // Look for Remote Source
+                if (is_array($config->deployment('source', null))) {
+                    array_unshift($tasksToRun, 'scm/clone');
+                }
 
-        	// Change Branch
-        	if ($config->deployment('scm', false)) {
-        		array_unshift($tasksToRun, 'scm/change-branch');
-        	}
-        }
+                // Change Branch
+                if ($config->deployment('scm', false)) {
+                    array_unshift($tasksToRun, 'scm/change-branch');
+                }
+            }
 
-        // PostDeployment Hook
-        if ($stage == 'post-deploy') {
-        	// If Deploy failed, clear post deploy tasks
-        	if (self::$deployStatus == self::FAILED) {
-        		$tasksToRun = array();
-        	}
+            // PostDeployment Hook
+            if ($stage == 'post-deploy') {
+                // If Deploy failed, clear post deploy tasks
+                if (self::$deployStatus == self::FAILED) {
+                    $tasksToRun = array();
+                }
 
-        	// Change Branch Back
-        	if ($config->deployment('scm', false)) {
-        		array_unshift($tasksToRun, 'scm/change-branch');
-        		$config->addParameter('_changeBranchRevert');
-        	}
+                // Change Branch Back
+                if ($config->deployment('scm', false)) {
+                    array_unshift($tasksToRun, 'scm/change-branch');
+                    $config->addParameter('_changeBranchRevert');
+                }
 
-        	// Remove Remote Source
-        	if (is_array($config->deployment('source', null))) {
-        		 array_push($tasksToRun, 'scm/remove-clone');
+                // Remove Remote Source
+                if (is_array($config->deployment('source', null))) {
+                     array_push($tasksToRun, 'scm/remove-clone');
+                }
             }
         }
-
         if (count($tasksToRun) == 0) {
             Console::output('<dark_gray>No </dark_gray><light_cyan>' . $title . '</light_cyan> <dark_gray>tasks defined.</dark_gray>', 1, 3);
 
