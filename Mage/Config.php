@@ -184,6 +184,8 @@ class Config
      * Return the a parameter
      *
      * @param string $name
+     * @param mixed $default
+     * @param array $extraParameters
      * @return mixed
      */
     public function getParameter($name, $default = null, $extraParameters = array())

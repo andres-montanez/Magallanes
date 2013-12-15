@@ -123,6 +123,7 @@ abstract class AbstractTask
      * Returns a Parameter, or a default if not found
      *
      * @param string $name
+     * @param mixed $default
      * @return mixed
      */
     public function getParameter($name, $default = null)
