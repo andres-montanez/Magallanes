@@ -112,7 +112,7 @@ class RollbackTask extends AbstractTask implements IsReleaseAware
                     $this->getConfig()->setReleaseId($releaseId);
 
                     foreach ($tasksToRun as $taskData) {
-                        $task = Factory::get($taskData, $this->getConfig(), true, 'deploy');
+                        $task = Factory::get($taskData, $this->getConfig(), true, self::STAGE_DEPLOY);
                         $task->init();
                         Console::output('Running <purple>' . $task->getName() . '</purple> ... ', 2, false);
 

@@ -13,6 +13,7 @@ namespace Mage\Command\BuiltIn;
 use Mage\Command\AbstractCommand;
 use Mage\Command\RequiresEnvironment;
 use Mage\Task\Factory;
+use Mage\Task\AbstractTask;
 use Mage\Task\Releases\SkipOnOverride;
 use Mage\Task\ErrorWithMessageException;
 use Mage\Task\SkipException;
@@ -141,7 +142,7 @@ class DeployCommand extends AbstractCommand implements RequiresEnvironment
         $this->startTime = time();
 
         // Run Pre-Deployment Tasks
-        $this->runNonDeploymentTasks('pre-deploy', $this->getConfig(), 'Pre-Deployment');
+        $this->runNonDeploymentTasks(AbstractTask::STAGE_PRE_DEPLOY, $this->getConfig(), 'Pre-Deployment');
 
         // Check Status
         if (self::$failedTasks > 0) {
@@ -159,7 +160,7 @@ class DeployCommand extends AbstractCommand implements RequiresEnvironment
         	}
 
         	// Run Post-Deployment Tasks
-        	$this->runNonDeploymentTasks('post-deploy', $this->getConfig(), 'Post-Deployment');
+        	$this->runNonDeploymentTasks(AbstractTask::STAGE_POST_DEPLOY, $this->getConfig(), 'Post-Deployment');
         }
 
         // Time Information Hosts
@@ -197,7 +198,7 @@ class DeployCommand extends AbstractCommand implements RequiresEnvironment
         self::$failedTasks = 0;
 
         // PreDeployment Hook
-        if ($stage == 'pre-deploy') {
+        if ($stage == AbstractTask::STAGE_PRE_DEPLOY) {
         	// Look for Remote Source
         	if (is_array($config->deployment('source', null))) {
         		array_unshift($tasksToRun, 'scm/clone');
@@ -210,7 +211,7 @@ class DeployCommand extends AbstractCommand implements RequiresEnvironment
         }
 
         // PostDeployment Hook
-        if ($stage == 'post-deploy') {
+        if ($stage == AbstractTask::STAGE_POST_DEPLOY) {
         	// If Deploy failed, clear post deploy tasks
         	if (self::$deployStatus == self::FAILED) {
         		$tasksToRun = array();
@@ -328,7 +329,7 @@ class DeployCommand extends AbstractCommand implements RequiresEnvironment
     			} else {
     				foreach ($tasksToRun as $taskData) {
     					$tasks++;
-    					$task = Factory::get($taskData, $this->getConfig(), false, 'deploy');
+    					$task = Factory::get($taskData, $this->getConfig(), false, AbstractTask::STAGE_DEPLOY);
 
     					if ($this->runTask($task)) {
     						$completedTasks++;
@@ -374,7 +375,7 @@ class DeployCommand extends AbstractCommand implements RequiresEnvironment
     				$this->getConfig()->setHost($host);
     				$this->getConfig()->setHostConfig($hostConfig);
 
-    				$task = Factory::get('deployment/release', $this->getConfig(), false, 'deploy');
+    				$task = Factory::get('deployment/release', $this->getConfig(), false, AbstractTask::STAGE_DEPLOY);
 
     				if ($this->runTask($task, 'Releasing on host <purple>' . $host . '</purple> ... ')) {
     					$completedTasks++;
@@ -399,7 +400,7 @@ class DeployCommand extends AbstractCommand implements RequiresEnvironment
     				$this->getConfig()->setHost($host);
     				$this->getConfig()->setHostConfig($hostConfig);
 
-    				$tasksToRun = $this->getConfig()->getTasks('post-release');
+    				$tasksToRun = $this->getConfig()->getTasks(AbstractTask::STAGE_POST_RELEASE);
     				$tasks = count($tasksToRun);
     				$completedTasks = 0;
 
@@ -407,7 +408,7 @@ class DeployCommand extends AbstractCommand implements RequiresEnvironment
     					Console::output('Starting <dark_gray>Post-Release</dark_gray> tasks for <dark_gray>' . $host . '</dark_gray>:');
 
     					foreach ($tasksToRun as $task) {
-    						$task = Factory::get($task, $this->getConfig(), false, 'post-release');
+    						$task = Factory::get($task, $this->getConfig(), false, AbstractTask::STAGE_POST_RELEASE);
 
     						if ($this->runTask($task)) {
     							$completedTasks++;
