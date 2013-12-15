@@ -26,6 +26,30 @@ use Exception;
 abstract class AbstractTask
 {
 	/**
+	 * Stage Constant for Pre Deployment
+	 * @var string
+	 */
+	const STAGE_PRE_DEPLOY = 'pre-deploy';
+
+	/**
+	 * Stage Constant for Deployment
+	 * @var string
+	 */
+	const STAGE_DEPLOY = 'deploy';
+
+	/**
+	 * Stage Constant for Post Deployment
+	 * @var string
+	 */
+	const STAGE_POST_DEPLOY = 'post-deploy';
+
+	/**
+	 * Stage Constant for Post Release
+	 * @var string
+	 */
+	const STAGE_POST_RELEASE = 'post-release';
+
+	/**
 	 * Configuration
 	 * @var Config;
 	 */
