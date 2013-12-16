@@ -19,6 +19,7 @@ use Mage\Task\ErrorWithMessageException;
 use Mage\Task\SkipException;
 use Mage\Console;
 use Mage\Config;
+use Mage\Mailer;
 
 use Exception;
 
@@ -177,7 +178,7 @@ class DeployCommand extends AbstractCommand implements RequiresEnvironment
         Console::output('Total time: <dark_gray>' . $timeText . '</dark_gray>.', 1, 2);
 
         // Send Notifications
-        $this->sendNotification();
+        $this->sendNotification(self::$failedTasks > 0 ? false : true);
 
         // Unlock
         if (file_exists('.mage/~working.lock')) {
@@ -514,8 +515,9 @@ class DeployCommand extends AbstractCommand implements RequiresEnvironment
 
     /**
      * Send Email Notification if enabled
+     * @param boolean $result
      */
-    protected function sendNotification()
+    protected function sendNotification($result)
     {
     	$projectName = $this->getConfig()->general('name', false);
     	$projectEmail = $this->getConfig()->general('email', false);
@@ -525,6 +527,13 @@ class DeployCommand extends AbstractCommand implements RequiresEnvironment
         if (!$projectName || !$projectEmail || !$notificationsEnabled) {
             return false;
         }
+
+        $mailer = new Mailer;
+        $mailer->setAddress($projectEmail)
+               ->setProject($projectName)
+               ->setLogFile(Console::getLogFile())
+               ->setEnvironment($this->getConfig()->getEnvironment())
+               ->send($result);
     }
 
 }

@@ -27,6 +27,12 @@ class Console
     private static $log = null;
 
     /**
+     * The current logfile
+     * @var string
+     */
+    private static $logFile = null;
+
+    /**
      * Enables or Disables Logging
      * @var boolean
      */
@@ -181,12 +187,31 @@ class Console
     {
         if (self::$logEnabled) {
             if (self::$log == null) {
-                self::$log = fopen('.mage/logs/log-' . date('Ymd-His') . '.log', 'w');
+            	self::$logFile = realpath('.mage/logs') . '/log-' . date('Ymd-His') . '.log';
+                self::$log = fopen(self::$logFile, 'w');
             }
 
             $message = date('Y-m-d H:i:s -- ') . $message;
             fwrite(self::$log, $message . PHP_EOL);
         }
+    }
+
+    /**
+     * Return the screen buffer
+     * @return string
+     */
+    public static function getOutput()
+    {
+    	return self::$screenBuffer;
+    }
+
+    /**
+     * Returns the Log File
+     * @return string
+     */
+    public static function getLogFile()
+    {
+    	return self::$logFile;
     }
 
     /**
