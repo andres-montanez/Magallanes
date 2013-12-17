@@ -81,7 +81,8 @@ class UpgradeCommand extends InstallCommand
 
         				Console::executeCommand('rm -rf ' . MAGALLANES_DIRECTORY);
         				Console::executeCommand('mkdir -p ' . MAGALLANES_DIRECTORY);
-        				Console::executeCommand('cd ' . MAGALLANES_DIRECTORY . ' && tar xfz ' . $tarballFile);
+        				Console::executeCommand('cd ' . dirname($tarballFile) . ' && tar xfz ' . $tarballFile);
+        				Console::executeCommand('mv ' . dirname($tarballFile) . '/magallanes ' . MAGALLANES_DIRECTORY);
 
         				Console::output('<green>OK</green>', 0, 1);
         			}
