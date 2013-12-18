@@ -4,7 +4,7 @@
     "homepage": "http://magephp.com",
     "license": "MIT",
     "type": "library",
-    "keywords": "deployment",
+    "keywords": ["deployment"],
     "require": {
         "php": ">=5.3"
     },
