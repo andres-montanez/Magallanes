@@ -50,7 +50,7 @@ class ReleaseTask extends AbstractTask implements IsReleaseAware, SkipOnOverride
 
             if (! $releaseUser = $this->getConfig()->getEnvironmentOption('release_user', null)) {
                 // Fetch the user and group from base directory; defaults usergroup to 33:33
-                $releaseUser = implode('', $this->runJobRemote('ls -ld . | awk \'{print \$3":"\$4}\'')->stdout);
+                $releaseUser = implode('', $this->runJobRemote('ls -ld . | awk \'{print $3":"$4}\'')->stdout);
                 $releaseUser = $releaseUser ? $releaseUser : "33:33";
             }
 
