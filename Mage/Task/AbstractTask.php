@@ -26,6 +26,30 @@ use Exception;
 abstract class AbstractTask
 {
 	/**
+	 * Stage Constant for Pre Deployment
+	 * @var string
+	 */
+	const STAGE_PRE_DEPLOY = 'pre-deploy';
+
+	/**
+	 * Stage Constant for Deployment
+	 * @var string
+	 */
+	const STAGE_DEPLOY = 'deploy';
+
+	/**
+	 * Stage Constant for Post Deployment
+	 * @var string
+	 */
+	const STAGE_POST_DEPLOY = 'post-deploy';
+
+	/**
+	 * Stage Constant for Post Release
+	 * @var string
+	 */
+	const STAGE_POST_RELEASE = 'post-release';
+
+	/**
 	 * Configuration
 	 * @var Config;
 	 */
@@ -129,6 +153,7 @@ abstract class AbstractTask
      * Returns a Parameter, or a default if not found
      *
      * @param string $name
+     * @param mixed $default
      * @return mixed
      */
     public function getParameter($name, $default = null)
@@ -182,7 +207,7 @@ abstract class AbstractTask
      */
     protected final function runCommand($command, &$output = null)
     {
-        if ($this->getStage() == 'deploy') {
+        if ($this->getStage() == self::STAGE_DEPLOY) {
         	return $this->runCommandRemote($command, $output);
         } else {
         	return $this->runCommandLocal($command, $output);
@@ -217,5 +242,9 @@ abstract class AbstractTask
             }
         }
         return true;
+    }
+
+    public function isLocalRelease() {
+       return in_array($this->getConfig()->getHostName(), ['localhost','127.0.0.1']);
     }
 }

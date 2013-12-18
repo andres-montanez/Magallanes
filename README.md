@@ -16,14 +16,20 @@ Simply add the following dependency to your project’s composer.json file:
 ```js
     "require": {
         // ...
-        "andres-montanez/magallanes": "dev-master"
+        "andres-montanez/magallanes": "1.0.*"
         // ...
     }
 ```
-Now tell composer to download the bundle by running the command:
+Now tell we update the vendors:
 
 ```bash
-$ php composer.phar update andres-montanez/magallanes
+$ php composer update
+```
+
+And finally we can use Magallanes from the vendor's bin:
+
+```bash
+$ bin/mage version
 ```
 
 ### Can you give me some examples/ideas? ###
@@ -42,22 +48,12 @@ $ mage deploy to:production
 Easy boy. It's not sorcery, just some *technomagick*!
 
 In Magallanes you define environments like *testing*, *staging*, or *production* like on the example above.
-Then, on that environment, you can configure a setup specifing to which hosts you want to deploy and what tasks to run (*after*, *on*, and *before* deploying).
+Then, on that environment, you can configure a setup specifying to which hosts you want to deploy and what tasks to run (*after*, *on*, and *before* deploying).
 And you are done!
 
 
-### And what spells... tasks! What tasks has it built in? ###
-Just a few, for now...
-
-  - **deployment/rsync** - This task is for deploying your code to the remote servers.
-  - **scm/update** - This task is for updating (git/svn) your base working copy.
-
-But that's not all! You can create your own tasks, and execute commands on your working copy and in your deployed code!
-Also we are working on creating more built in tasks.
-
-
 ### This is awesome! Where can I learn more? ###
-You can read the whole source code (naaah!); or checkout the documentation wiki at: http://magallanes.zenreworks.com/wiki
+You can read the whole source code (naaah!); or checkout the documentation at: http://magephp.com
 
 
 Enjoy your magic trip with **Magallanes** to the land of the easily deployable apps!!

@@ -27,7 +27,9 @@ class Factory
      * Gets an instance of a Task.
      *
      * @param string|array $taskData
+     * @param Mage\Config $taskConfig
      * @param boolean $inRollback
+     * @param string $stage
      * @return \Mage\Task\AbstractTask
      */
     public static function get($taskData, Config $taskConfig, $inRollback = false, $stage = null)

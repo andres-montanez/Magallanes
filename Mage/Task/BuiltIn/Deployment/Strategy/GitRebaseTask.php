@@ -70,7 +70,7 @@ class GitRebaseTask extends AbstractTask implements IsReleaseAware
 
         // If Stashed, restore.
         if ($stashed) {
-        	$command = 'git tash pop';
+        	$command = 'git stash pop';
         	$result = $this->runCommandRemote($command) && $result;
         }
 

@@ -184,6 +184,8 @@ class Config
      * Return the a parameter
      *
      * @param string $name
+     * @param mixed $default
+     * @param array $extraParameters
      * @return mixed
      */
     public function getParameter($name, $default = null, $extraParameters = array())
@@ -233,20 +235,26 @@ class Config
      * @param string $stage
      * @return array
      */
-    public function getTasks($stage = 'on-deploy')
+    public function getTasks($stage = 'deploy')
     {
+    	if ($stage == 'deploy') {
+    		$configStage = 'on-deploy';
+    	} else {
+    		$configStage = $stage;
+    	}
+
         $tasks = array();
         $config = $this->getEnvironmentOption('tasks', array());
 
         // Host Config
         if (is_array($this->hostConfig) && isset($this->hostConfig['tasks'])) {
-        	if (isset($this->hostConfig['tasks'][$stage])) {
-        		$config[$stage] = $this->hostConfig['tasks'][$stage];
+        	if (isset($this->hostConfig['tasks'][$configStage])) {
+        		$config[$configStage] = $this->hostConfig['tasks'][$configStage];
         	}
         }
 
-        if (isset($config[$stage])) {
-            $tasksData = ($config[$stage] ? (array) $config[$stage] : array());
+        if (isset($config[$configStage])) {
+            $tasksData = ($config[$configStage] ? (array) $config[$configStage] : array());
             foreach ($tasksData as $taskName => $taskData) {
                 if (is_array($taskData)) {
                     ;

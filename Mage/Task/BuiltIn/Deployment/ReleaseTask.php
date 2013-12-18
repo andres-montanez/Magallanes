@@ -28,7 +28,7 @@ class ReleaseTask extends AbstractTask implements IsReleaseAware, SkipOnOverride
 	 * @see \Mage\Task\AbstractTask::getName()
 	 */
     public function getName()
-    {b
+    {
         return 'Releasing [built-in]';
     }
 

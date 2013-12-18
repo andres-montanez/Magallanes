@@ -13,11 +13,13 @@ namespace Mage\Command\BuiltIn;
 use Mage\Command\AbstractCommand;
 use Mage\Command\RequiresEnvironment;
 use Mage\Task\Factory;
+use Mage\Task\AbstractTask;
 use Mage\Task\Releases\SkipOnOverride;
 use Mage\Task\ErrorWithMessageException;
 use Mage\Task\SkipException;
 use Mage\Console;
 use Mage\Config;
+use Mage\Mailer;
 
 use Exception;
 
@@ -141,7 +143,7 @@ class DeployCommand extends AbstractCommand implements RequiresEnvironment
         $this->startTime = microtime(true);
 
         // Run Pre-Deployment Tasks
-        $this->runNonDeploymentTasks('pre-deploy', $this->getConfig(), 'Pre-Deployment');
+        $this->runNonDeploymentTasks(AbstractTask::STAGE_PRE_DEPLOY, $this->getConfig(), 'Pre-Deployment');
 
         // Check Status
         if (self::$failedTasks > 0) {
@@ -159,7 +161,7 @@ class DeployCommand extends AbstractCommand implements RequiresEnvironment
         	}
 
         	// Run Post-Deployment Tasks
-        	$this->runNonDeploymentTasks('post-deploy', $this->getConfig(), 'Post-Deployment');
+        	$this->runNonDeploymentTasks(AbstractTask::STAGE_POST_DEPLOY, $this->getConfig(), 'Post-Deployment');
         }
 
         // Time Information Hosts
@@ -176,7 +178,7 @@ class DeployCommand extends AbstractCommand implements RequiresEnvironment
         Console::output('Total time: <dark_gray>' . $timeText . '</dark_gray>.', 1, 2);
 
         // Send Notifications
-        $this->sendNotification();
+        $this->sendNotification(self::$failedTasks > 0 ? false : true);
 
         // Unlock
         if (file_exists('.mage/~working.lock')) {
@@ -205,18 +207,25 @@ class DeployCommand extends AbstractCommand implements RequiresEnvironment
                     array_unshift($tasksToRun, 'scm/clone');
                 }
 
-                // Change Branch
-                if ($config->deployment('scm', false)) {
-                    array_unshift($tasksToRun, 'scm/change-branch');
-                }
-            }
+       // PreDeployment Hook
+        if ($stage == AbstractTask::STAGE_PRE_DEPLOY) {
+        	// Look for Remote Source
+        	if (is_array($config->deployment('source', null))) {
+        		array_unshift($tasksToRun, 'scm/clone');
+        	}
 
-            // PostDeployment Hook
-            if ($stage == 'post-deploy') {
-                // If Deploy failed, clear post deploy tasks
-                if (self::$deployStatus == self::FAILED) {
-                    $tasksToRun = array();
-                }
+        	// Change Branch
+        	if ($config->deployment('scm', false)) {
+        		array_unshift($tasksToRun, 'scm/change-branch');
+        	}
+        }
+
+        // PostDeployment Hook
+        if ($stage == AbstractTask::STAGE_POST_DEPLOY) {
+        	// If Deploy failed, clear post deploy tasks
+        	if (self::$deployStatus == self::FAILED) {
+        		$tasksToRun = array();
+        	}
 
                 // Change Branch Back
                 if ($config->deployment('scm', false)) {
@@ -257,6 +266,7 @@ class DeployCommand extends AbstractCommand implements RequiresEnvironment
             }
 
             Console::output('Finished <dark_gray>' . $title . '</dark_gray> tasks: <' . $tasksColor . '>' . $completedTasks . '/' . $tasks . '</' . $tasksColor . '> tasks done.', 1, 3);
+        }
         }
     }
 
@@ -320,7 +330,7 @@ class DeployCommand extends AbstractCommand implements RequiresEnvironment
     			} else {
     				foreach ($tasksToRun as $taskData) {
     					$tasks++;
-    					$task = Factory::get($taskData, $this->getConfig(), false, 'deploy');
+    					$task = Factory::get($taskData, $this->getConfig(), false, AbstractTask::STAGE_DEPLOY);
 
     					if ($this->runTask($task)) {
     						$completedTasks++;
@@ -366,7 +376,7 @@ class DeployCommand extends AbstractCommand implements RequiresEnvironment
     				$this->getConfig()->setHost($host);
     				$this->getConfig()->setHostConfig($hostConfig);
 
-    				$task = Factory::get('deployment/release', $this->getConfig(), false, 'deploy');
+    				$task = Factory::get('deployment/release', $this->getConfig(), false, AbstractTask::STAGE_DEPLOY);
 
     				if ($this->runTask($task, 'Releasing on host <purple>' . $host . '</purple> ... ')) {
     					$completedTasks++;
@@ -391,7 +401,7 @@ class DeployCommand extends AbstractCommand implements RequiresEnvironment
     				$this->getConfig()->setHost($host);
     				$this->getConfig()->setHostConfig($hostConfig);
 
-    				$tasksToRun = $this->getConfig()->getTasks('post-release');
+    				$tasksToRun = $this->getConfig()->getTasks(AbstractTask::STAGE_POST_RELEASE);
     				$tasks = count($tasksToRun);
     				$completedTasks = 0;
 
@@ -399,7 +409,7 @@ class DeployCommand extends AbstractCommand implements RequiresEnvironment
     					Console::output('Starting <dark_gray>Post-Release</dark_gray> tasks for <dark_gray>' . $host . '</dark_gray>:');
 
     					foreach ($tasksToRun as $task) {
-    						$task = Factory::get($task, $this->getConfig(), false, 'post-release');
+    						$task = Factory::get($task, $this->getConfig(), false, AbstractTask::STAGE_POST_RELEASE);
 
     						if ($this->runTask($task)) {
     							$completedTasks++;
@@ -505,8 +515,9 @@ class DeployCommand extends AbstractCommand implements RequiresEnvironment
 
     /**
      * Send Email Notification if enabled
+     * @param boolean $result
      */
-    protected function sendNotification()
+    protected function sendNotification($result)
     {
     	$projectName = $this->getConfig()->general('name', false);
     	$projectEmail = $this->getConfig()->general('email', false);
@@ -516,6 +527,13 @@ class DeployCommand extends AbstractCommand implements RequiresEnvironment
         if (!$projectName || !$projectEmail || !$notificationsEnabled) {
             return false;
         }
+
+        $mailer = new Mailer;
+        $mailer->setAddress($projectEmail)
+               ->setProject($projectName)
+               ->setLogFile(Console::getLogFile())
+               ->setEnvironment($this->getConfig()->getEnvironment())
+               ->send($result);
     }
 
 }
