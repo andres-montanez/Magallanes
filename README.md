@@ -16,7 +16,7 @@ Simply add the following dependency to your project’s composer.json file:
 ```js
     "require": {
         // ...
-        "andres-montanez/magallanes": "1.*"
+        "andres-montanez/magallanes": "1.0.*"
         // ...
     }
 ```
