@@ -74,6 +74,12 @@ abstract class AbstractTask
     protected $parameters = array();
 
     /**
+     * Executed job list
+     * @var array
+     */
+    protected $jobList = [];
+
+    /**
      * Returns the Title of the Task
      * @return string
      */
@@ -174,28 +180,32 @@ abstract class AbstractTask
      */
     protected final function runCommandRemote($command, &$output = null)
     {
-        if ($this->getConfig()->release('enabled', false) == true) {
-            if ($this instanceOf IsReleaseAware) {
-                $releasesDirectory = '';
+        $localCommand = $this->generateLocalToRemoteCommand($command);
 
-            } else {
-                $releasesDirectory = '/'
-                                   . $this->getConfig()->release('directory', 'releases')
-                                   . '/'
-                                   . $this->getConfig()->getReleaseId();
-            }
+        return $this->runCommandLocal($localCommand, $output);
+    }
 
+    protected final function runJobLocal($command) {
+        if (!$this instanceOf IsReleaseAware) {
+            $releasesDirectory = $this->getConfig()->getReleaseDirectory();
         } else {
             $releasesDirectory = '';
         }
 
-        $localCommand = 'ssh -p ' . $this->getConfig()->getHostPort() . ' '
-                      . '-q -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no '
-                      . $this->getConfig()->deployment('user') . '@' . $this->getConfig()->getHostName() . ' '
-                      . '"cd ' . rtrim($this->getConfig()->deployment('to'), '/') . $releasesDirectory . ' && '
-                      . str_replace('"', '\"', $command) . '"';
+        $command = 'cd ' . rtrim($this->getConfig()->deployment('to'), '/') . $releasesDirectory . ' && ' . $command;
 
-        return $this->runCommandLocal($localCommand, $output);
+        $verbose = $this->getParameter('verbose', false);
+        $showCommands = $this->getParameter('show-commands', $verbose);
+        $showErrors = $this->getParameter('show-errors', $verbose);
+        $this->jobList[] =  \Mage\Job::run($command, $showErrors, $verbose, $showCommands);
+        return end($this->jobList);
+    }
+
+    protected final function runJobRemote($command) {
+        if (! $this->isLocalRelease())  {
+            $command = $this->generateLocalToRemoteCommand($command);
+        }
+        return $this->runJobLocal($command);
     }
 
     /**
@@ -212,5 +222,31 @@ abstract class AbstractTask
         } else {
         	return $this->runCommandLocal($command, $output);
         }
+    }
+
+    /**
+     * @param $command
+     * @return string
+     */
+    protected function generateLocalToRemoteCommand($command) {
+        $localCommand = 'ssh -p ' . $this->getConfig()->getHostPort() . ' '
+            . '-q -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no '
+            . $this->getConfig()->getNameAtHostnameString()
+            . ' "' . str_replace('"', '\"', $command) . '"';
+        return $localCommand;
+    }
+
+    public function isAllOk() {
+        /** @var $job \Mage\Job */
+        foreach ($this->jobList as $job) {
+            if ($job->failed()) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    public function isLocalRelease() {
+       return in_array($this->getConfig()->getHostName(), ['localhost','127.0.0.1']);
     }
 }

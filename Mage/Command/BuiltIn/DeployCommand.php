@@ -116,7 +116,7 @@ class DeployCommand extends AbstractCommand implements RequiresEnvironment
     	}
 
         // Release ID
-        $this->getConfig()->setReleaseId(date('YmdHis'));
+        $this->getConfig()->setReleaseId(date($this->getConfig()->general('releaseFolderDateFormat' ,'YmdHis')));
 
         // Deploy Summary
         Console::output('<dark_gray>Deploy summary</dark_gray>', 1, 1);
@@ -140,7 +140,7 @@ class DeployCommand extends AbstractCommand implements RequiresEnvironment
         // Deploy Summary - Separator Line
         Console::output('', 0, 1);
 
-        $this->startTime = time();
+        $this->startTime = microtime(true);
 
         // Run Pre-Deployment Tasks
         $this->runNonDeploymentTasks(AbstractTask::STAGE_PRE_DEPLOY, $this->getConfig(), 'Pre-Deployment');
@@ -174,7 +174,7 @@ class DeployCommand extends AbstractCommand implements RequiresEnvironment
         }
 
         // Time Information General
-        $timeText = $this->transcurredTime(time() - $this->startTime);
+        $timeText = $this->transcurredTime(microtime(true) - $this->startTime);
         Console::output('Total time: <dark_gray>' . $timeText . '</dark_gray>.', 1, 2);
 
         // Send Notifications
@@ -197,8 +197,17 @@ class DeployCommand extends AbstractCommand implements RequiresEnvironment
     {
         $tasksToRun = $config->getTasks($stage);
         self::$failedTasks = 0;
+        $deployStrategy = $this->getConfig()->deployment('strategy', 'guess');
 
-        // PreDeployment Hook
+        if ($deployStrategy!='gitClone') {
+            // PreDeployment Hook
+            if ($stage == 'pre-deploy') {
+                // Look for Remote Source
+                if (is_array($config->deployment('source', null))) {
+                    array_unshift($tasksToRun, 'scm/clone');
+                }
+
+       // PreDeployment Hook
         if ($stage == AbstractTask::STAGE_PRE_DEPLOY) {
         	// Look for Remote Source
         	if (is_array($config->deployment('source', null))) {
@@ -218,18 +227,18 @@ class DeployCommand extends AbstractCommand implements RequiresEnvironment
         		$tasksToRun = array();
         	}
 
-        	// Change Branch Back
-        	if ($config->deployment('scm', false)) {
-        		array_unshift($tasksToRun, 'scm/change-branch');
-        		$config->addParameter('_changeBranchRevert');
-        	}
+                // Change Branch Back
+                if ($config->deployment('scm', false)) {
+                    array_unshift($tasksToRun, 'scm/change-branch');
+                    $config->addParameter('_changeBranchRevert');
+                }
 
-        	// Remove Remote Source
-        	if (is_array($config->deployment('source', null))) {
-        		 array_push($tasksToRun, 'scm/remove-clone');
+                // Remove Remote Source
+                if (is_array($config->deployment('source', null))) {
+                     array_push($tasksToRun, 'scm/remove-clone');
+                }
             }
         }
-
         if (count($tasksToRun) == 0) {
             Console::output('<dark_gray>No </dark_gray><light_cyan>' . $title . '</light_cyan> <dark_gray>tasks defined.</dark_gray>', 1, 3);
 
@@ -257,6 +266,7 @@ class DeployCommand extends AbstractCommand implements RequiresEnvironment
             }
 
             Console::output('Finished <dark_gray>' . $title . '</dark_gray> tasks: <' . $tasksColor . '>' . $completedTasks . '/' . $tasks . '</' . $tasksColor . '> tasks done.', 1, 3);
+        }
         }
     }
 
@@ -298,27 +308,17 @@ class DeployCommand extends AbstractCommand implements RequiresEnvironment
     			$tasksToRun = $this->getConfig()->getTasks();
 
     			// Guess a Deploy Strategy
-    			switch ($this->getConfig()->deployment('strategy', 'guess')) {
-    			    case 'disabled':
-    			    	$deployStrategy = 'deployment/strategy/disabled';
-    			    	break;
-
-    			    case 'rsync':
-    			    	$deployStrategy = 'deployment/strategy/rsync';
-    			    	break;
-
-    			    case 'targz':
-    			    	$deployStrategy = 'deployment/strategy/tar-gz';
-    			    	break;
-
+    			switch ($deployStrategy = $this->getConfig()->deployment('strategy', 'guess')) {
     			    case 'guess':
-    			    default:
     			    	if ($this->getConfig()->release('enabled', false) == true) {
     			    		$deployStrategy = 'deployment/strategy/tar-gz';
     			    	} else {
     			    		$deployStrategy = 'deployment/strategy/rsync';
     			    	}
     			    	break;
+                    default:
+                        $deployStrategy = "deployment/strategy/$deployStrategy";
+                        break;
     			}
 
 				array_unshift($tasksToRun, $deployStrategy);
@@ -362,7 +362,7 @@ class DeployCommand extends AbstractCommand implements RequiresEnvironment
     		// Releasing
     		if (self::$deployStatus == self::SUCCEDED && $this->getConfig()->release('enabled', false) == true) {
     			// Execute the Releases
-    			Console::output('Starting the <dark_gray>Releaseing</dark_gray>');
+    			Console::output('Starting the <dark_gray>Releasing</dark_gray>');
     			foreach ($hosts as $hostKey => $host) {
 
     				// Check if Host has specific configuration
@@ -385,7 +385,7 @@ class DeployCommand extends AbstractCommand implements RequiresEnvironment
     				// Reset Host Config
     				$this->getConfig()->setHostConfig(null);
     			}
-    			Console::output('Finished the <dark_gray>Releaseing</dark_gray>', 1, 3);
+    			Console::output('Finished the <dark_gray>Releasing</dark_gray>', 1, 3);
 
     			// Execute the Post-Release Tasks
     			foreach ($hosts as $hostKey => $host) {

@@ -417,7 +417,7 @@ class Config
     }
 
     /**
-     * Returns Releaseing Options
+     * Returns Releasing Options
      *
      * @param string $option
      * @param string $default
@@ -478,6 +478,14 @@ class Config
         return $this->releaseId;
     }
 
+    public function getOption($option, $default=null) {
+        $currentNode = $this->config;
+        foreach (explode('.',$option) as $node) {
+            $currentNode = isset($currentNode[$node]) ? $currentNode[$node] : $default;
+        }
+        return $currentNode;
+    }
+
     /**
      * Get Environment root option
      *
@@ -485,14 +493,23 @@ class Config
      * @param mixed $default
      * @return mixed
      */
-    protected function getEnvironmentOption($option, $default = array())
+    public function getEnvironmentOption($option, $default = array())
     {
-        $config = $this->config['environment'];
-        if (isset($config[$option])) {
-            return $config[$option];
-        } else {
-            return $default;
-        }
+        return $this->getOption("environment.$option", $default);
     }
 
+    public function getDeployToDirectory() {
+        return rtrim($this->deployment('to'), '/') . $this->getReleaseDirectory();
+    }
+
+    public function getReleaseDirectory() {
+        if ($this->release('enabled', false) == true) {
+            return "/{$this->release('directory', 'releases')}/{$this->getReleaseId()}";
+        }
+        return '';
+    }
+
+    public function getNameAtHostnameString() {
+        return $this->deployment('user').'@'.$this->getHostName();
+    }
 }

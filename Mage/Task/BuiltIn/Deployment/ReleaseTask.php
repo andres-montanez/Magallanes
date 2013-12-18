@@ -48,24 +48,23 @@ class ReleaseTask extends AbstractTask implements IsReleaseAware, SkipOnOverride
 
             $currentCopy = $releasesDirectory . '/' . $this->getConfig()->getReleaseId();
 
-            // Fetch the user and group from base directory; defaults usergroup to 33:33
-            $userGroup = '33:33';
-            $resultFetch = $this->runCommandRemote('ls -ld . | awk \'{print \$3":"\$4}\'', $userGroup);
+            if (! $releaseUser = $this->getConfig()->getEnvironmentOption('release_user', null)) {
+                // Fetch the user and group from base directory; defaults usergroup to 33:33
+                $releaseUser = implode('', $this->runJobRemote('ls -ld . | awk \'{print $3":"$4}\'')->stdout);
+                $releaseUser = $releaseUser ? $releaseUser : "33:33";
+            }
 
             // Remove symlink if exists; create new symlink and change owners
-            $command = 'rm -f ' . $symlink
-                     . ' ; '
-                     . 'ln -sf ' . $currentCopy . ' ' . $symlink
-                     . ' && '
-                     . 'chown -h ' . $userGroup . ' ' . $symlink
-                     . ' && '
-                     . 'chown -R ' . $userGroup . ' ' . $currentCopy;
-            $result = $this->runCommandRemote($command);
+            $command = "rm -f $symlink;"
+                     . "ln -sf $currentCopy $symlink && "
+                     . "chown -h $releaseUser $symlink && "
+                     . "chown -R $releaseUser $currentCopy";
+            $this->runJobRemote($command);
 
             // Set Directory Releases to same owner
-            $result = $this->runCommandRemote('chown ' . $userGroup . ' ' . $releasesDirectory);
+            $this->runJobRemote("chown $releaseUser $releasesDirectory");
 
-            return $result;
+            return $this->isAllOk();
 
         } else {
             return false;

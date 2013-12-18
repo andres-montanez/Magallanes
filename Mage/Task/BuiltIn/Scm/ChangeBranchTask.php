@@ -66,31 +66,26 @@ class ChangeBranchTask extends AbstractTask
     public function run()
     {
     	$scmConfig = $this->getConfig()->general('scm', array());
-        switch ((isset($scmConfig['type']) ? $scmConfig['type'] : false)) {
+        $type = (isset($scmConfig['type']) && $this->getConfig()->deployment('strategy') != 'gitClone')  ? $scmConfig['type'] : null;
+        switch ($type) {
             case 'git':
             	if ($this->getParameter('_changeBranchRevert', false)) {
-            		$command = 'git checkout ' . self::$startingBranch;
-            		$result = $this->runCommandLocal($command);
-
+            		$this->runJobLocal('git checkout ' . self::$startingBranch);
             	} else {
-            		$command = 'git branch | grep \'*\' | cut -d\' \' -f 2';
-            		$currentBranch = 'master';
-            		$result = $this->runCommandLocal($command, $currentBranch);
+                    $j = $this->runJobLocal('git branch | grep \'*\' | cut -d\' \' -f 2');
+                    $currentBranch = end($j->stdout);
 
-            		$scmData = $this->getConfig()->deployment('scm', false);
+                    $scmData = $this->getConfig()->deployment('scm', []);
 
-            		if ($result && is_array($scmData) && isset($scmData['branch']) && $scmData['branch'] != $currentBranch) {
+            		if ($j->success() && isset($scmData['branch']) && $scmData['branch'] != $currentBranch) {
         				$command = 'git branch | grep \'' . $scmData['branch'] . '\' | tr -s \' \' | sed \'s/^[ ]//g\'';
-        				$isBranchTracked = '';
-        				$result = $this->runCommandLocal($command, $isBranchTracked);
+        				$isBranchTracked = end($this->runJobLocal($command)->stdout);
 
-        				if ($isBranchTracked == '') {
+        				if (empty($isBranchTracked)) {
         					throw new ErrorWithMessageException('The branch <purple>' . $scmData['branch'] . '</purple> must be tracked.');
         				}
 
-        				$branch = $this->getParameter('branch', $scmData['branch']);
-        				$command = 'git checkout ' . $branch;
-        				$result = $this->runCommandLocal($command);
+        				$this->runJobLocal('git checkout ' . $scmData['branch']);
 
         				self::$startingBranch = $currentBranch;
             		} else {
@@ -106,6 +101,6 @@ class ChangeBranchTask extends AbstractTask
 
         $this->getConfig()->reload();
 
-        return $result;
+        return $this->isAllOk();
     }
 }
