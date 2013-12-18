@@ -86,7 +86,7 @@ class TarGzTask extends ReleasesAbstractTask implements IsReleaseAware
         } else {
             $command = 'tar xfz ' . $remoteTarGz . '.tar.gz';
         }
-        $this->runJob($command);
+        $this->runJobRemote($command);
     }
 
     /**
@@ -100,7 +100,7 @@ class TarGzTask extends ReleasesAbstractTask implements IsReleaseAware
         } else {
             $command = 'rm ' . $remoteTarGz . '.tar.gz';
         }
-        $this->runJob($command);
+        $this->runJobRemote($command);
     }
 
     /**

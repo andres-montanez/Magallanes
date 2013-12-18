@@ -194,8 +194,10 @@ abstract class AbstractTask
     }
 
     protected final function runJobRemote($command) {
-        $localCommand = $this->generateLocalToRemoteCommand($command);
-        return $this->runJobLocal($localCommand);
+        if (! $this->isLocalRelease())  {
+            $command = $this->generateLocalToRemoteCommand($command);
+        }
+        return $this->runJobLocal($command);
     }
 
     /**

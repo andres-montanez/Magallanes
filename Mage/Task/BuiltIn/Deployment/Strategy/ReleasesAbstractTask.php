@@ -53,7 +53,7 @@ class ReleasesAbstractTask extends AbstractTask implements IsReleaseAware
 
     protected function createDeployToDirectory() {
         $deployToDirectory = $this->getConfig()->getDeployToDirectory();
-        $this->runJob("mkdir -p  $deployToDirectory");
+        $this->runJobRemote("mkdir -p  $deployToDirectory");
     }
 
     protected function getExcludesParameters(array $userExcludes, $excludeKey)
@@ -64,7 +64,7 @@ class ReleasesAbstractTask extends AbstractTask implements IsReleaseAware
 
     protected function overrideRelease() {
         if ($this->getParameter('overrideRelease', false)) {
-            $job = $this->runJob('ls -ld current | cut -d"/" -f2');
+            $job = $this->runJobRemote('ls -ld current | cut -d"/" -f2');
             if (is_numeric($job->stdout)) {
                 $this->getConfig()->setReleaseId($job->stdout);
             }
@@ -82,18 +82,11 @@ class ReleasesAbstractTask extends AbstractTask implements IsReleaseAware
 
             $maxReleases = $this->getConfig()->release('max', false);
             if (($maxReleases !== false) && ($maxReleases > 0)) {
-                $job = $this->runJob("ls -1r $releasesDirectory  | tail -n +".($maxReleases+1));
+                $job = $this->runJobRemote("ls -1r $releasesDirectory  | tail -n +".($maxReleases+1));
                 $releasesToDelete = implode(' ', $job->stdout);
                 $command = "cd $releasesDirectory; rm -rf $releasesToDelete";
-                $this->runJob($command);
+                $this->runJobRemote($command);
             }
         }
-    }
-
-    protected function runJob($command) {
-        if (!$this->isLocalRelease()) {
-          return $this->runJobRemote($command);
-        }
-        return $this->runJobLocal($command);
     }
 }
