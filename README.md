@@ -16,14 +16,20 @@ Simply add the following dependency to your project’s composer.json file:
 ```js
     "require": {
         // ...
-        "andres-montanez/magallanes": "dev-master"
+        "andres-montanez/magallanes": "1.*"
         // ...
     }
 ```
-Now tell composer to download Magallanes by running the command:
+Now tell we update the vendors:
 
 ```bash
-$ php composer.phar update andres-montanez/magallanes
+$ php composer update
+```
+
+And finally we can use Magallanes from the vendor's bin:
+
+```bash
+$ bin/mage version
 ```
 
 ### Can you give me some examples/ideas? ###
