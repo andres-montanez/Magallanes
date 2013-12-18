@@ -28,10 +28,6 @@ class GitCloneTask extends ReleasesAbstractTask implements IsReleaseAware
 
         $command = "git clone -b $branch $remote $releaseDirectory";
 
-        if (! $this->isLocalRelease()) {
-            $this->runJobRemote($command);
-        } else {
-            $this->runJobLocal($command);
-        }
+        $this->runJob($command);
     }
 }
