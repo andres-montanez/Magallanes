@@ -186,6 +186,14 @@ abstract class AbstractTask
     }
 
     protected final function runJobLocal($command) {
+        if (!$this instanceOf IsReleaseAware) {
+            $releasesDirectory = $this->getConfig()->getReleaseDirectory();
+        } else {
+            $releasesDirectory = '';
+        }
+
+        $command = 'cd ' . rtrim($this->getConfig()->deployment('to'), '/') . $releasesDirectory . ' && ' . $command;
+
         $verbose = $this->getParameter('verbose', false);
         $showCommands = $this->getParameter('show-commands', $verbose);
         $showErrors = $this->getParameter('show-errors', $verbose);
@@ -220,19 +228,11 @@ abstract class AbstractTask
      * @param $command
      * @return string
      */
-    protected function generateLocalToRemoteCommand($command)
-    {
-        if (!$this instanceOf IsReleaseAware) {
-            $releasesDirectory = $this->getConfig()->getReleaseDirectory();
-        } else {
-            $releasesDirectory = '';
-        }
-
+    protected function generateLocalToRemoteCommand($command) {
         $localCommand = 'ssh -p ' . $this->getConfig()->getHostPort() . ' '
             . '-q -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no '
-            . $this->getConfig()->getNameAtHostnameString() . ' '
-            . '"cd ' . rtrim($this->getConfig()->deployment('to'), '/') . $releasesDirectory . ' && '
-            . str_replace('"', '\"', $command) . '"';
+            . $this->getConfig()->getNameAtHostnameString()
+            . ' "' . str_replace('"', '\"', $command) . '"';
         return $localCommand;
     }
 
