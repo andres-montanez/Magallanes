@@ -362,7 +362,7 @@ class DeployCommand extends AbstractCommand implements RequiresEnvironment
     		// Releasing
     		if (self::$deployStatus == self::SUCCEDED && $this->getConfig()->release('enabled', false) == true) {
     			// Execute the Releases
-    			Console::output('Starting the <dark_gray>Releaseing</dark_gray>');
+    			Console::output('Starting the <dark_gray>Releasing</dark_gray>');
     			foreach ($hosts as $hostKey => $host) {
 
     				// Check if Host has specific configuration
@@ -385,7 +385,7 @@ class DeployCommand extends AbstractCommand implements RequiresEnvironment
     				// Reset Host Config
     				$this->getConfig()->setHostConfig(null);
     			}
-    			Console::output('Finished the <dark_gray>Releaseing</dark_gray>', 1, 3);
+    			Console::output('Finished the <dark_gray>Releasing</dark_gray>', 1, 3);
 
     			// Execute the Post-Release Tasks
     			foreach ($hosts as $hostKey => $host) {

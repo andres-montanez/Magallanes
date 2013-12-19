@@ -417,7 +417,7 @@ class Config
     }
 
     /**
-     * Returns Releaseing Options
+     * Returns Releasing Options
      *
      * @param string $option
      * @param string $default
