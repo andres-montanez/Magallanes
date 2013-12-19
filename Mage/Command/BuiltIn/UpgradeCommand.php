@@ -20,7 +20,7 @@ use Exception;
  *
  * @author Andrés Montañez <andres@andresmontanez.com>
  */
-class UpgradeCommand extends InstallCommand
+class UpgradeCommand extends AbstractCommand
 {
 	/**
 	 * Source for downloading
