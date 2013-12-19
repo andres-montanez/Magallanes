@@ -11,6 +11,8 @@
 
 namespace Symfony\Component\Yaml;
 
+use Symfony\Component\Yaml\Parser;
+use Symfony\Component\Yaml\Dumper;
 use Symfony\Component\Yaml\Exception\ParseException;
 
 /**

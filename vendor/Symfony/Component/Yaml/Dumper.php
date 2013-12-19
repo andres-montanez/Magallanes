@@ -11,6 +11,8 @@
 
 namespace Symfony\Component\Yaml;
 
+use Symfony\Component\Yaml\Inline;
+
 /**
  * Dumper dumps PHP variables to YAML strings.
  *

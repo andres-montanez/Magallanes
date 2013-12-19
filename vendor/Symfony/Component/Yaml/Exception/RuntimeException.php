@@ -11,6 +11,8 @@
 
 namespace Symfony\Component\Yaml\Exception;
 
+use Symfony\Component\Yaml\Exception\ExceptionInterface;
+
 /**
  * Exception class thrown when an error occurs during parsing.
  *

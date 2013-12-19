@@ -11,6 +11,8 @@
 
 namespace Symfony\Component\Yaml\Exception;
 
+use Symfony\Component\Yaml\Exception\RuntimeException;
+
 if (!defined('JSON_UNESCAPED_UNICODE')) {
     define('JSON_UNESCAPED_SLASHES', 64);
     define('JSON_UNESCAPED_UNICODE', 256);

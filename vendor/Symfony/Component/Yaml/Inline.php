@@ -10,6 +10,8 @@
 
 namespace Symfony\Component\Yaml;
 
+use Symfony\Component\Yaml\Escaper;
+use Symfony\Component\Yaml\Unescaper;
 use Symfony\Component\Yaml\Exception\ParseException;
 use Symfony\Component\Yaml\Exception\DumpException;
 
