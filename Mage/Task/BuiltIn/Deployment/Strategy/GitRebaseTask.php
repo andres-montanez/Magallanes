@@ -13,8 +13,6 @@ namespace Mage\Task\BuiltIn\Deployment\Strategy;
 use Mage\Task\AbstractTask;
 use Mage\Task\Releases\IsReleaseAware;
 
-use Exception;
-
 /**
  * Task for using Git Working Copy as the Deployed Code
  *

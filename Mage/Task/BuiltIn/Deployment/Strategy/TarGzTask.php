@@ -13,8 +13,6 @@ namespace Mage\Task\BuiltIn\Deployment\Strategy;
 use Mage\Task\AbstractTask;
 use Mage\Task\Releases\IsReleaseAware;
 
-use Exception;
-
 /**
  * Task for Sync the Local Code to the Remote Hosts via Tar GZ
  *

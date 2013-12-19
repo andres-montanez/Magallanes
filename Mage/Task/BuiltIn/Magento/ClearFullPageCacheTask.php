@@ -12,8 +12,6 @@ namespace Mage\Task\BuiltIn\Magento;
 
 use Mage\Task\AbstractTask;
 
-use Exception;
-
 /**
  * Task for Clearing Full Page Cache
  *

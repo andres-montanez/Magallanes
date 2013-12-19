@@ -16,8 +16,6 @@ use Mage\Task\Releases\IsReleaseAware;
 
 use DateTime;
 
-use Exception;
-
 /**
  * Task for Listing Available Releases on an Environment
  *

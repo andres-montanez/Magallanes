@@ -16,8 +16,6 @@ use Mage\Task\AbstractTask;
 use Mage\Task\Releases\IsReleaseAware;
 use Mage\Task\Releases\RollbackAware;
 
-use Exception;
-
 /**
  * Task for Performing a Rollback Operation
  *

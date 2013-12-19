@@ -13,8 +13,6 @@ namespace Mage\Command\BuiltIn;
 use Mage\Command\AbstractCommand;
 use Mage\Console;
 
-use Exception;
-
 /**
  * Initializes a Magallanes Configuration into a Proyect
  *

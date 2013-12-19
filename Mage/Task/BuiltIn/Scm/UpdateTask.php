@@ -13,8 +13,6 @@ namespace Mage\Task\BuiltIn\Scm;
 use Mage\Task\AbstractTask;
 use Mage\Task\SkipException;
 
-use Exception;
-
 /**
  * Task for Updating a Working Copy
  *

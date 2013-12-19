@@ -14,8 +14,6 @@ use Mage\Task\AbstractTask;
 use Mage\Task\SkipException;
 use Mage\Task\ErrorWithMessageException;
 
-use Exception;
-
 /**
  * Task for Changing the Branch of the SCM
  *

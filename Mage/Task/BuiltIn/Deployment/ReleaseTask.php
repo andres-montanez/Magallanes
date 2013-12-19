@@ -14,8 +14,6 @@ use Mage\Task\AbstractTask;
 use Mage\Task\Releases\IsReleaseAware;
 use Mage\Task\Releases\SkipOnOverride;
 
-use Exception;
-
 /**
  * Task for Releasing a Deploy
  *

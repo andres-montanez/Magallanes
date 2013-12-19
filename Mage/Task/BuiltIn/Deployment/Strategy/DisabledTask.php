@@ -14,8 +14,6 @@ use Mage\Task\AbstractTask;
 use Mage\Task\Releases\IsReleaseAware;
 use Mage\Task\SkipException;
 
-use Exception;
-
 /**
  * Deployment Strategy is Disabled
  *

@@ -15,8 +15,6 @@ use Mage\Command\RequiresEnvironment;
 use Mage\Task\Factory;
 use Mage\Console;
 
-use Exception;
-
 /**
  * Command for Managing the Releases
  *

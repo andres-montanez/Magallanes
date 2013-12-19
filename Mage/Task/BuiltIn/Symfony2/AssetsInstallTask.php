@@ -12,8 +12,6 @@ namespace Mage\Task\BuiltIn\Symfony2;
 
 use Mage\Task\AbstractTask;
 
-use Exception;
-
 /**
  * Task for Installing Assets
  *

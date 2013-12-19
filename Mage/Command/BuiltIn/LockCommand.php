@@ -14,8 +14,6 @@ use Mage\Command\AbstractCommand;
 use Mage\Command\RequiresEnvironment;
 use Mage\Console;
 
-use Exception;
-
 /**
  * Command for Locking the Deployment to an Environment
  *

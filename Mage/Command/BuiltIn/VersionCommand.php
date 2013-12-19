@@ -13,8 +13,6 @@ namespace Mage\Command\BuiltIn;
 use Mage\Command\AbstractCommand;
 use Mage\Console;
 
-use Exception;
-
 /**
  * Command for displaying the Version of Magallanes
  *

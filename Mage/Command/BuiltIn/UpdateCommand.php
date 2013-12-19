@@ -14,8 +14,6 @@ use Mage\Command\AbstractCommand;
 use Mage\Task\Factory;
 use Mage\Console;
 
-use Exception;
-
 /**
  * Updates the SCM Base Code
  *

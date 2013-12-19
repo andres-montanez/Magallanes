@@ -14,8 +14,6 @@ use Mage\Command\AbstractCommand;
 use Mage\Console;
 use Mage\Compiler;
 
-use Exception;
-
 /**
  * Command for Compile Magallanes into a PHAR executable
  *

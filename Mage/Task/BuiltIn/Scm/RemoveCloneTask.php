@@ -11,9 +11,6 @@
 namespace Mage\Task\BuiltIn\Scm;
 
 use Mage\Task\AbstractTask;
-use Mage\Task\SkipException;
-
-use Exception;
 
 /**
  * Task for Removing an used Cloned Repository
