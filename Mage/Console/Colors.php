@@ -10,6 +10,8 @@
 
 namespace Mage\Console;
 
+use Mage\Config;
+
 /**
  * Parses the different colors available for the Terminal or Console.
  *
@@ -47,8 +49,15 @@ class Colors
      * @param string $string
      * @return string
      */
-    public static function color($string)
+    public static function color($string, Config $config)
     {
+    	$disabled = $config->getParameter('no-color', !$config->general('colors', true));
+
+    	if ($disabled) {
+    		$string = strip_tags($string);
+    		return $string;
+    	}
+
         foreach (self::$foregroundColors as $key => $code) {
             $replaceFrom = array(
                 '<' . $key . '>',

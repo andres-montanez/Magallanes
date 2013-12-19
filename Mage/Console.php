@@ -51,6 +51,12 @@ class Console
     private static $commandsOutput = '';
 
     /**
+     * Configuration
+     * @var Mage/Config
+     */
+    private static $config;
+
+    /**
      * Runns a Magallanes Command
      * @throws Exception
      */
@@ -70,7 +76,7 @@ class Console
         $configError = false;
         try {
             // Load Config
-            $config = new Config;
+            $config = self::$config = new Config;
             $config->load($arguments);
             $configLoadedOk = true;
 
@@ -143,7 +149,7 @@ class Console
                               . str_repeat(PHP_EOL, $newLine);
 
         $output = str_repeat("\t", $tabs)
-                . Console\Colors::color($message)
+                . Console\Colors::color($message, self::$config)
                 . str_repeat(PHP_EOL, $newLine);
 
         echo $output;
