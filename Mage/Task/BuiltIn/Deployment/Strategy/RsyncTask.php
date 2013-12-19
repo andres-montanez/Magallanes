@@ -50,7 +50,7 @@ class RsyncTask extends AbstractTask implements IsReleaseAware
         if ($overrideRelease == true) {
             $releaseToOverride = false;
             $resultFetch = $this->runCommandRemote('ls -ld current | cut -d"/" -f2', $releaseToOverride);
-            if (is_numeric($releaseToOverride)) {
+            if ($resultFetch && is_numeric($releaseToOverride)) {
                 $this->getConfig()->setReleaseId($releaseToOverride);
             }
         }
@@ -101,7 +101,7 @@ class RsyncTask extends AbstractTask implements IsReleaseAware
                 $countReleasesFetch = $this->runCommandRemote('ls -1 ' . $releasesDirectory, $releasesList);
                 $releasesList = trim($releasesList);
 
-                if ($releasesList != '') {
+                if ($countReleasesFetch && $releasesList != '') {
                     $releasesList = explode(PHP_EOL, $releasesList);
                     if (count($releasesList) > $maxReleases) {
                         $releasesToDelete = array_diff($releasesList, array($this->getConfig()->getReleaseId()));

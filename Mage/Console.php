@@ -10,6 +10,11 @@
 
 namespace Mage;
 
+use Mage\Config;
+use Mage\Command\Factory;
+use Mage\Command\RequiresEnvironment;
+use Mage\Console\Colors;
+
 use Exception;
 use RecursiveDirectoryIterator;
 
@@ -78,7 +83,6 @@ class Console
             // Load Config
             $config = self::$config = new Config;
             $config->load($arguments);
-            $configLoadedOk = true;
 
         } catch (Exception $exception) {
             $configError = $exception->getMessage();
@@ -108,9 +112,9 @@ class Console
         } else {
         	// Run Command and check for Command Requirements
             try {
-                $command = Command\Factory::get($commandName, $config);
+                $command = Factory::get($commandName, $config);
 
-                if ($command instanceOf Command\RequiresEnvironment) {
+                if ($command instanceOf RequiresEnvironment) {
                     if ($config->getEnvironment() == false) {
                         throw new Exception('You must specify an environment for this command.');
                     }
@@ -149,7 +153,7 @@ class Console
                               . str_repeat(PHP_EOL, $newLine);
 
         $output = str_repeat("\t", $tabs)
-                . Console\Colors::color($message, self::$config)
+                . Colors::color($message, self::$config)
                 . str_repeat(PHP_EOL, $newLine);
 
         echo $output;
@@ -187,9 +191,8 @@ class Console
      * Log a message to the logfile.
      *
      * @param string $message
-     * @param boolean $continuation
      */
-    public static function log($message, $continuation = false)
+    public static function log($message)
     {
         if (self::$logEnabled) {
             if (self::$log == null) {

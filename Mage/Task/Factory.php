@@ -13,6 +13,7 @@ namespace Mage\Task;
 use Mage\Config;
 use Mage\Autoload;
 use Mage\Task\ErrorWithMessageException;
+use Mage\Task\AbstractTask;
 
 use Exception;
 

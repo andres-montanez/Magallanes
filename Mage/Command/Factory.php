@@ -10,6 +10,7 @@
 
 namespace Mage\Command;
 
+use Mage\Command\AbstractCommand;
 use Mage\Config;
 use Mage\Autoload;
 

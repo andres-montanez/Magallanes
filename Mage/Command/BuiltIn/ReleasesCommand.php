@@ -24,8 +24,6 @@ use Exception;
  */
 class ReleasesCommand extends AbstractCommand implements RequiresEnvironment
 {
-    private $release = null;
-
     /**
      * List the Releases, Rollback to a Release
      * @see \Mage\Command\AbstractCommand::run()
@@ -66,5 +64,7 @@ class ReleasesCommand extends AbstractCommand implements RequiresEnvironment
                 }
             }
         }
+
+        return $result;
     }
 }
