@@ -10,12 +10,14 @@
 
 namespace Mage\Task\BuiltIn\Scm;
 
+use Mage\Task\ErrorWithMessageException;
+
 use Mage\Task\AbstractTask;
 use Mage\Task\SkipException;
 
 /**
  * Task for Updating a Working Copy
- *
+ * This class has been updated to support fallback of original task usage
  * @author Andrés Montañez <andres@andresmontanez.com>
  */
 class UpdateTask extends AbstractTask
@@ -24,7 +26,13 @@ class UpdateTask extends AbstractTask
 	 * Name of the Task
 	 * @var string
 	 */
-    private $name = 'SCM Update [built-in]';
+    public $name = 'SCM Update [built-in]';
+    
+    /**
+     * The repo specific class for updating
+     * @var object
+     */
+    private $repoClass;
 
     /**
      * (non-PHPdoc)
@@ -41,11 +49,20 @@ class UpdateTask extends AbstractTask
      */
     public function init()
     {
-        switch ($this->getConfig()->general('scm')) {
-            case 'git':
-                $this->name = 'SCM Update (GIT) [built-in]';
-                break;
-        }
+    	//Initialize the Defined Repo Type
+    	$this->scm = $this->getConfig()->general('scm');
+    	switch ($this->scm){
+    		case 'git':
+    			$this->repoClass =  new GitUpdateTask($this->getConfig(),$this->inRollback(),$this->getStage(),$this->parameters);
+    			break;
+    		case 'svn':
+    			$this->repoClass = new SvnUpdateTask($this->getConfig(),$this->inRollback(),$this->getStage(),$this->parameters);
+    			break;
+    		default:
+    			throw new ErrorWithMessageException("Unsupported Built-in Repository type: " . $this->scm);
+    			break;
+    	}
+    	$this->repoClass->init();
     }
 
     /**
@@ -54,19 +71,6 @@ class UpdateTask extends AbstractTask
      */
     public function run()
     {
-        switch ($this->getConfig()->general('scm')) {
-            case 'git':
-                $command = 'git pull';
-                break;
-
-            default:
-                throw new SkipException;
-                break;
-        }
-
-        $result = $this->runCommandLocal($command);
-        $this->getConfig()->reload();
-
-        return $result;
+        return $this->repoClass->init();
     }
 }
