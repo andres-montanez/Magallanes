@@ -1,0 +1,74 @@
+#master
+deployment:
+        user: marl
+        from: ./
+        to: /var/www/test1
+        source:
+                type: git
+                repository: git@bitbucket.org:myuser/myproject.git
+                from: master
+        ioncube: test
+
+releases:
+        enabled: true
+        symlink: current
+        directory: releases
+hosts:
+        - localhost
+tasks:
+  pre-deploy:
+    - ioncube/encrypt
+  on-deply:
+  post-deploy:
+
+ioncube:
+  override: dyf
+  keeptemp:
+  encoder: ioncube_encoder54
+  checkencoding: true
+  checkignorepaths:
+    -/public/js/*
+    -/public/css/*
+
+  projfile: project.prj
+  project:
+    replace-target:
+    binary:
+    ignore-deprecated-warnings:
+    ignore-strict-warnings:
+    ignore:
+      - _*
+      - templates_c/*
+      - *~
+      - database.md
+      - specs/
+      - composer.json
+      - README.md
+      - .git/
+      - .project
+      - .settings/
+      - .buildpath
+    message-if-no-loader: "System error No Loader"
+    passphrase: "My really secure passphrase"
+    encrypt:
+      - templates/*
+    add-comment:
+      - 'Comment 1'
+      - 'Comment 2'
+      - "(c) ACTweb 2013"
+      - "Draft Version"
+
+    loader-event:
+      - corrupt-file=Corupted files
+      - expired-file=System needs updated
+      - no-permissions=Not allowed on this server
+      - clock-skew=Time incorect
+      - license-not-found=License not installed
+      - license-corrupt=Something wrong with your license
+      - license-expired=Out of time
+      - license-property-invalid=Invalid license data
+      - license-header-invalid=Files corupted
+      - license-server-invalid=Server problem
+      - unauth-including-file=Sorry these files can only be used within defined software
+      - unauth-included-file=Crtical Software Error
+      - unauth-append-prepend-file=System can not be used with PHP Prepend/Append set

@@ -1,46 +1,55 @@
 <?php
+/*
+* This file is part of the Magallanes package.
+*
+* (c) Andrés Montañez <andres@andresmontanez.com>
+*
+* For the full copyright and license information, please view the LICENSE
+* file that was distributed with this source code.
+*/
 
-/**
- * This allows intergrating IonCube PHP 
- * encoder into deployment system 
- * It takes the source path renames 
- * it to .raw creates a fresh source 
- * path and runs ioncube encoder placing 
- * encoded files into source folder. 
- * Afterwards it removes the old .raw 
- * folder This means that we dont have 
- * to change the source path within the 
- * main scripts and allows the built 
- * in rsync and other tasks to operate 
- * on the encrypted files. 
- * 
- * IonCube PHP Encoder can be downloaded from
- * http://www.actweb.info/ioncube.html
- * 
- * Example enviroment.yaml file at end
- * 
- * @todo add support for creating license files.
- * 
- * (c) ActWeb 2013 
- * (c) Matt Lowe (marl.scot.1@googlemail.com) 
- * 
- * Extends Magallanes (c) Andrés Montañez <andres@andresmontanez.com>
- * 
- */
 namespace Mage\Task\BuiltIn\Ioncube;
 
 use Mage\Task\AbstractTask;
 use Mage\Console;
 use Mage\Task\ErrorWithMessageException;
 
-class EncryptTask extends AbstractTask {
+/**
+ * This allows intergrating IonCube PHP
+ * encoder into deployment system
+ * It takes the source path renames
+ * it to .raw creates a fresh source
+ * path and runs ioncube encoder placing
+ * encoded files into source folder.
+ * Afterwards it removes the old .raw
+ * folder This means that we dont have
+ * to change the source path within the
+ * main scripts and allows the built
+ * in rsync and other tasks to operate
+ * on the encrypted files.
+ *
+ * IonCube PHP Encoder can be downloaded from
+ * http://www.actweb.info/ioncube.html
+ *
+ * Example enviroment.yaml file at end
+ *
+ * @todo add support for creating license files.
+ *
+ * (c) ActWeb 2013
+ * (c) Matt Lowe (marl.scot.1@googlemail.com)
+ *
+ * Extends Magallanes (c) Andrés Montañez <andres@andresmontanez.com>
+ *
+ */
+class EncryptTask extends AbstractTask
+{
 	/**
 	 * Name of the task
 	 *
 	 * @var string
 	 */
 	private $name = 'IonCube Encoder';
-	
+
 	/**
 	 * Array of default Ioncube
 	 * options
@@ -48,7 +57,7 @@ class EncryptTask extends AbstractTask {
 	 * @var array
 	 */
 	private $default = array ();
-	
+
 	/**
 	 * Array of YAML Ioncube
 	 * options
@@ -56,7 +65,7 @@ class EncryptTask extends AbstractTask {
 	 * @var array
 	 */
 	private $yaml = array ();
-	
+
 	/**
 	 * Array of file Ioncube
 	 * options (taken from additional
@@ -65,7 +74,7 @@ class EncryptTask extends AbstractTask {
 	 * @var array
 	 */
 	private $file = array ();
-	
+
 	/**
 	 * Source directory as used by
 	 * main scripts
@@ -73,7 +82,7 @@ class EncryptTask extends AbstractTask {
 	 * @var string
 	 */
 	private $source = '';
-	
+
 	/**
 	 * Name of tempory folder
 	 * for source code to be moved
@@ -82,7 +91,7 @@ class EncryptTask extends AbstractTask {
 	 * @var string
 	 */
 	private $ionSource = '';
-	
+
 	/**
 	 * How the default/yaml/project
 	 * files interact with each other
@@ -90,7 +99,7 @@ class EncryptTask extends AbstractTask {
 	 * @var string
 	 */
 	private $ionOverRide = '';
-	
+
 	/**
 	 * Config options from the
 	 * enviroment config file
@@ -98,7 +107,7 @@ class EncryptTask extends AbstractTask {
 	 * @var array
 	 */
 	private $mageConfig = array ();
-	
+
 	/**
 	 * Final version of the IonCube
 	 * options, after merging all
@@ -107,7 +116,7 @@ class EncryptTask extends AbstractTask {
 	 * @var array
 	 */
 	private $ionCubeConfig = array ();
-	
+
 	/**
 	 * Default encoder version to use
 	 * for the ioncube encoder
@@ -115,7 +124,7 @@ class EncryptTask extends AbstractTask {
 	 * @var string
 	 */
 	private $encoder = 'ioncube_encoder54';
-	
+
 	/**
 	 * Name of tempory IonCube Project
 	 * file, used when running encoder
@@ -123,7 +132,7 @@ class EncryptTask extends AbstractTask {
 	 * @var string
 	 */
 	private $projectFile = '';
-	
+
 	/**
 	 * If true then run a check on
 	 * all files after encoding and
@@ -133,30 +142,30 @@ class EncryptTask extends AbstractTask {
 	 * with the process
 	 * If not then clean up the temp files
 	 * and exit with cancled code.
-	 * 
+	 *
 	 * @var bool
 	 */
 	private $checkEncoding = false;
-	
+
 	/**
 	 * List of file extensions to exclude
 	 * from encrypted/encoded test
-	 * 
+	 *
 	 * @var array
 	 */
 	private $checkIgnoreExtens	= array();
-	
+
 	/**
 	 * List of paths to exclude from
 	 * encrypted/encoded test
 	 * Paths must begin with '/'
-	 * and are all relative to the 
+	 * and are all relative to the
 	 * project root
-	 * 
+	 *
 	 * @var array
 	 */
 	private $checkIgnorePaths	= array();
-	
+
 	/**
 	 * (non-PHPdoc)
 	 *
@@ -165,7 +174,7 @@ class EncryptTask extends AbstractTask {
 	public function getName() {
 		return $this->name;
 	}
-	
+
 	/**
 	 * (non-PHPdoc)
 	 *
@@ -184,7 +193,7 @@ class EncryptTask extends AbstractTask {
 				'svg',
 				'map',
 				'ico',
-				
+
 		);
 		// Get any options specfic to this task
 		$this->mageConfig = $this->getConfig()->environmentConfig( 'ioncube' );
@@ -203,7 +212,7 @@ class EncryptTask extends AbstractTask {
 			$this->source = substr ( $this->source, 0, - 1 );
 		}
 		/*
-		 * Set the name of the folder that the un-encrypted 
+		 * Set the name of the folder that the un-encrypted
 		 * files will be moved into
 		 */
 		$this->ionSource = $this->source . '.raw';
@@ -220,7 +229,7 @@ class EncryptTask extends AbstractTask {
 		}
 		/*
 		 * Check if a differant merge type has been
-		 * supplied, this defines how the 3 differant 
+		 * supplied, this defines how the 3 differant
 		 * config files will be merged together.
 		 */
 		if (isset ( $this->mageConfig ['override'] )) {
@@ -237,12 +246,12 @@ class EncryptTask extends AbstractTask {
 		 * Check if we have been passed any extra
 		 * file extensions to exclude from
 		 * encrypt/encode file check
-		 * 
+		 *
 		 */
 		if (isset ( $this->mageConfig ['checkignoreextens'])) {
 			$this->checkIgnoreExtens=array_merge($this->ignoreExtens, $this->mageConfig['ignoreextens']);
 		}
-		
+
 		/*
 		 * Check if we have been passed any extra
 		* file paths/files to exclude from
@@ -252,20 +261,20 @@ class EncryptTask extends AbstractTask {
 		if (isset ( $this->mageConfig ['checkignorepaths'])) {
 			$this->checkIgnorePaths=array_merge($this->checkIgnorePaths, $this->mageConfig['checkignorepaths']);
 		}
-		
-		
+
+
 		/*
 		 * now merge all the config options together
 		 */
 		$this->ionCubeConfig = $this->mergeConfigFiles ();
 	}
-	
+
 	/**
 	 * This gets all the Ioncube configs
 	 * Basicly it gets the default options contianed within this script
 	 * It reads any project options from the enviroment.yaml config file
 	 * It reads any additional options from external project file if set
-	 * 
+	 *
 	 * @return void
 	 */
 	private function _getAllIonCubeConfigs()
@@ -276,7 +285,7 @@ class EncryptTask extends AbstractTask {
 		 */
 		$this->default = $this->getOptionsDefault ();
 		/*
-		 * Check if there is a 'project' section, 
+		 * Check if there is a 'project' section,
 		 * if so then get the options from there
 		 */
 		if (isset ( $this->mageConfig ['project'] )) {
@@ -300,8 +309,7 @@ class EncryptTask extends AbstractTask {
 			);
 		}
 	}
-	
-	
+
 	/**
 	 * Encrypt the project
 	 * Steps are as follows :
@@ -312,7 +320,7 @@ class EncryptTask extends AbstractTask {
 	 * Return the result of the IonCube encoder
 	 *
 	 * @see \Mage\Task\AbstractTask::run()
-	 * 
+	 *
 	 * @return bool
 	 */
 	public function run() {
@@ -331,7 +339,7 @@ class EncryptTask extends AbstractTask {
 		$this->deleteTmpFiles ();
 		return $result;
 	}
-	
+
 	/**
 	 * Runs through all files in the encoded
 	 * folders and lists any that are not
@@ -339,7 +347,7 @@ class EncryptTask extends AbstractTask {
 	 * user to continue or quit.
 	 * If user quites, then clean out encoded
 	 * files, and return true to indicate error
-	 * 
+	 *
 	 * @return bool
 	 */
 	private function checkEncoding() {
@@ -385,17 +393,17 @@ class EncryptTask extends AbstractTask {
 				return false;
 			}
 		}
-		
+
 		return true;
 	}
-	
+
 	/**
 	 * This simply for user to enter
 	 * 'y' or 'Y' and press enter, if
 	 * a single 'y' is not entered then
 	 * false is returned, otherwise
 	 * true is returned.
-	 * 
+	 *
 	 * @return bool True if 'y' pressed
 	 */
 	private function promptYn() {
@@ -406,22 +414,22 @@ class EncryptTask extends AbstractTask {
 		}
 		return true;
 	}
-	
+
 	/**
 	 * This will take the passed file and try to
-	 * work out if it is an encoded/encrypted 
+	 * work out if it is an encoded/encrypted
 	 * ioncube file.
 	 * It dosent test the file exten, as it
 	 * expects the calling method to have done
 	 * that before.
-	 * 
+	 *
 	 * @param string $filename Filename, with path, to check
-	 * 
+	 *
 	 * @return boolean True if file was encoded/encrypted
 	 */
 	private function checkFileCoding($filename) {
 		// check to see if this is an encrypted file
-		$ioncube = ioncube_read_file ( $filename, $ioncubeType );
+		$ioncube = ioncube_read_file($filename, $ioncubeType);
 		if (is_int ( $ioncube )) {
 			// we got an error from ioncube, so its encrypted
 			return true;
@@ -441,15 +449,15 @@ class EncryptTask extends AbstractTask {
 		// otherwise its most likley un-encrypted/encoded
 		return false;
 	}
-	
-	
+
+
 	/**
 	 * Deletes tempory folder and project file
 	 * if 'keeptemp' is set then skips delete
 	 * process
-	 * 
+	 *
 	 * @throws ErrorWithMessageException If there was a problem with deleting the tempory files
-	 * 
+	 *
 	 * @return void
 	 */
 	private function deleteTmpFiles() {
@@ -464,7 +472,7 @@ class EncryptTask extends AbstractTask {
 		}
 		throw new ErrorWithMessageException ( 'Error deleting temp files :' . $out1 . ' : ' . $out2, 40 );
 	}
-	
+
 	/**
 	 * Builds the ioncube command
 	 * and runs it, returning the result
@@ -476,12 +484,12 @@ class EncryptTask extends AbstractTask {
 		$ret = Console::executeCommand ( $cli, $out );
 		return $ret;
 	}
-	
+
 	/**
 	 * Write the config options into
 	 * a project file ready for use
 	 * with ioncube cli
-	 * 
+	 *
 	 * @throws ErrorWithMessageException If it cant write the project file
 	 *
 	 * @return void
@@ -519,7 +527,7 @@ class EncryptTask extends AbstractTask {
 			throw new ErrorWithMessageException ( 'Unable to create project file.', 20 );
 		}
 	}
-	
+
 	/**
 	 * This merges the 3 config arrays
 	 * depending on the 'override' option
@@ -528,14 +536,14 @@ class EncryptTask extends AbstractTask {
 	 */
 	private function mergeConfigFiles() {
 		/*
-		 * Options are the order the arrays are in 
-		 * F - Project File 
-		 * Y - YAML config options (enviroment file) 
-		 * D - Default options as stored in script 
-		 * 
+		 * Options are the order the arrays are in
+		 * F - Project File
+		 * Y - YAML config options (enviroment file)
+		 * D - Default options as stored in script
+		 *
 		 * more options could be added to make this a bit more flexable
 		 * @todo I'm sure this could be combined into a loop to make it easier and shorter
-		 * 
+		 *
 		 */
 		$s = array ();
 		$p = array ();
@@ -545,7 +553,7 @@ class EncryptTask extends AbstractTask {
 				$s = array_merge ( $this->file ['s'], $this->yaml ['s'], $this->default ['s'] );
 				$p = array_merge ( $this->file ['p'], $this->yaml ['p'], $this->default ['p'] );
 				break;
-			
+
 			case 'yfd' :
 				// YAML / FILE / DEFAULT
 				$s = array_merge ( $this->yaml ['s'], $this->file ['s'], $this->default ['s'] );
@@ -565,10 +573,10 @@ class EncryptTask extends AbstractTask {
 		}
 		return array (
 				's' => $s,
-				'p' => $p 
+				'p' => $p
 		);
 	}
-	
+
 	/**
 	 * Switches the original source
 	 * code dir to tempory name
@@ -576,10 +584,10 @@ class EncryptTask extends AbstractTask {
 	 * allows encryption to be done
 	 * into source dir, so other functions
 	 * work without changing
-	 * 
+	 *
 	 * @throws ErrorWithMessageException If source dir can't be renamed
 	 * @throws ErrorWithMessageException If original source dir cant be created
-	 * 
+	 *
 	 * @return bool
 	 */
 	private function switchSrcToTmp() {
@@ -594,7 +602,7 @@ class EncryptTask extends AbstractTask {
 		}
 		return true;
 	}
-	
+
 	/**
 	 * Reads a set of options taken from the YAML config
 	 * Compares keys against the default ioncube settings
@@ -616,10 +624,10 @@ class EncryptTask extends AbstractTask {
 		}
 		return array (
 				's' => $s,
-				'p' => $p 
+				'p' => $p
 		);
 	}
-	
+
 	/**
 	 * reads an existing ioncube project
 	 * file.
@@ -669,10 +677,10 @@ class EncryptTask extends AbstractTask {
 		}
 		return array (
 				's' => $s,
-				'p' => $p 
+				'p' => $p
 		);
 	}
-	
+
 	/**
 	 * Takes supplied line and splits it if required
 	 * into an array
@@ -681,7 +689,7 @@ class EncryptTask extends AbstractTask {
 	 * Allows options to be spread accross several lines
 	 *
 	 * @param $string String to split
-	 *        	
+	 *
 	 * @return mixed
 	 */
 	private function splitParam($string) {
@@ -696,7 +704,7 @@ class EncryptTask extends AbstractTask {
 			return $split;
 		}
 	}
-	
+
 	/**
 	 * returns an array of default ioncube options
 	 * This is also used as a 'filter' for the YAML
@@ -711,46 +719,46 @@ class EncryptTask extends AbstractTask {
 		$p = array ();
 		// Set the switches
 		$s ['allow-encoding-into-source'] = false;
-		
+
 		$s ['ascii'] = false;
 		$s ['binary'] = true;
-		
+
 		$s ['replace-target'] = true;
 		$s ['merge-target'] = false;
 		$s ['rename-target'] = false;
 		$s ['update-target'] = false;
-		
+
 		$s ['only-include-encoded-files'] = false;
-		
+
 		$s ['use-hard-links'] = false;
-		
+
 		$s ['without-keeping-file-perms'] = false;
 		$s ['without-keeping-file-times'] = false;
 		$s ['without-keeping-file-owner'] = false;
-		
+
 		$s ['no-short-open-tags'] = false;
-		
+
 		$s ['ignore-strict-warnings'] = false;
 		$s ['ignore-deprecated-warnings'] = false;
-		
+
 		$s ['without-runtime-loader-support'] = false;
 		$s ['without-loader-check'] = false;
-		
+
 		$s ['disable-auto-prepend-append'] = true;
-		
+
 		$s ['no-doc-comments'] = true;
-		
+
 		// Now set the params
 		$p ['encrypt'] [] = '*.tpl.html';
 		$p ['encode'] = array ();
 		$p ['copy'] = array ();
 		$p ['ignore'] = array (
-				'.git',
-				'.svn',
-				'.mage',
-				'.gitignore',
-				'.gitkeep',
-				'nohup.out' 
+			'.git',
+			'.svn',
+			'.mage',
+			'.gitignore',
+			'.gitkeep',
+			'nohup.out'
 		);
 		$p ['keep'] = array ();
 		$p ['obfuscate'] = '';
@@ -779,92 +787,10 @@ class EncryptTask extends AbstractTask {
 		$p ['optimise'] = 'max';
 		$p ['shell-script-line'] = '';
 		$p ['min-loader-version'] = '';
-		
+
 		return array (
-				's' => $s,
-				'p' => $p 
+			's' => $s,
+			'p' => $p
 		);
 	}
 }
-/**
- * 
- * Example evirmonment YAML file :
- * 
- */
-$example=<<<EOEXAMPLE
-#master
-deployment:
-        user: marl
-        from: ./
-        to: /var/www/test1
-        source:
-                type: git
-                repository: git@bitbucket.org:myuser/myproject.git
-                from: master
-        ioncube: test
-
-releases:
-        enabled: true
-        symlink: current
-        directory: releases
-hosts:
-        - localhost
-tasks:
-  pre-deploy:
-    - ioncube/encrypt
-  on-deply:
-  post-deploy:
-
-ioncube:
-	override: dyf
-	keeptemp:
-	encoder: ioncube_encoder54
-	checkencoding: true
-	checkignorepaths:
-		-/public/js/*
-		-/public/css/*
-		
-	projfile: project.prj
-	project:
-		replace-target:
-		binary:
-		ignore-deprecated-warnings:
-		ignore-strict-warnings:
-		ignore:
-			- _*
-			- templates_c/*
-			- *~
-			- database.md
-			- specs/
-			- composer.json
-			- README.md
-			- .git/
-			- .project
-			- .settings/
-			- .buildpath
-		message-if-no-loader: "System error No Loader"
-		passphrase: "My really secure passphrase"
-		encrypt:
-			- templates/*
-		add-comment:
-			- 'Comment 1'
-			- 'Comment 2'
-			- "(c) ACTweb 2013"
-			- "Draft Version"
-
-		loader-event:
-			- corrupt-file=Corupted files
-			- expired-file=System needs updated
-			- no-permissions=Not allowed on this server
-			- clock-skew=Time incorect
-			- license-not-found=License not installed
-			- license-corrupt=Something wrong with your license
-			- license-expired=Out of time
-			- license-property-invalid=Invalid license data
-			- license-header-invalid=Files corupted
-			- license-server-invalid=Server problem
-			- unauth-including-file=Sorry these files can only be used within defined software
-			- unauth-included-file=Crtical Software Error
-			- unauth-append-prepend-file=System can not be used with PHP Prepend/Append set
-
-EOEXAMPLE;
