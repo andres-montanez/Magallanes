@@ -100,7 +100,7 @@ class Config
     protected function loadGeneral()
     {
     	if (file_exists('.mage/config/general.yml')) {
-    		$this->config['general'] = Yaml::parse('.mage/config/general.yml');
+    		$this->config['general'] = spyc_load_file('.mage/config/general.yml');
     	}
     }
 
@@ -114,7 +114,7 @@ class Config
     {
     	$environment = $this->getEnvironment();
     	if (($environment != false) && file_exists('.mage/config/environment/' . $environment . '.yml')) {
-    		$this->config['environment'] = Yaml::parse('.mage/config/environment/' . $environment . '.yml');
+    		$this->config['environment'] = spyc_load_file('.mage/config/environment/' . $environment . '.yml');
 
     		// Create temporal directory for clone
     		if (isset($this->config['environment']['deployment']['source']) && is_array($this->config['environment']['deployment']['source'])) {

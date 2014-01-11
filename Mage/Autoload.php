@@ -23,11 +23,8 @@ class Autoload
 	 */
     public static function autoload($className)
     {
-    	$isVendor = explode('\\', $className);
-    	$isVendor = $isVendor[0] == 'Mage' ? false : true;
-
         $baseDir = dirname(dirname(__FILE__));
-        $classFile = $baseDir . '/' . ($isVendor ? 'vendor/' : '') . str_replace(array('_', '\\'), '/', $className . '.php');
+        $classFile = $baseDir . '/' . str_replace(array('_', '\\'), '/', $className . '.php');
         require_once $classFile;
     }
 
