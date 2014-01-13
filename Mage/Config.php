@@ -456,6 +456,18 @@ class Config
         $this->config['environment']['deployment']['from'] = $from;
         return $this;
     }
+    
+    /**
+     * Set To Deployment Path
+     *
+     * @param string $to
+     * @return \Mage\Config
+     */
+    public function setTo($to)
+    {
+        $this->config['environment']['deployment']['to'] = $to;
+        return $this;
+    }
 
     /**
      * Sets the Current Release ID
