@@ -8,6 +8,9 @@
     "require": {
         "php": ">=5.3"
     },
+    "require-dev": {
+        "phpunit/phpunit": "@stable"
+    },
     "bin": [
         "bin/mage"
     ]
