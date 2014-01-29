@@ -30,7 +30,12 @@ class RsyncTask extends AbstractTask implements IsReleaseAware
             if ($this->getConfig()->getParameter('overrideRelease', false) == true) {
                 return 'Deploy via Rsync (with Releases override) [built-in]';
             } else {
-                return 'Deploy via Rsync (with Releases) [built-in]';
+                $rsync_copy = $this->getConfig()->deployment("rsync");
+                if ( $rsync_copy && is_array($rsync_copy) && $rsync_copy['copy'] ) {
+                    return 'Deploy via Rsync (with Releases) [built-in, incremental]';
+                } else {
+                    return 'Deploy via Rsync (with Releases) [built-in]';
+                }
             }
         } else {
                 return 'Deploy via Rsync [built-in]';
@@ -58,8 +63,8 @@ class RsyncTask extends AbstractTask implements IsReleaseAware
             '.svn',
             '.mage',
             '.gitignore',
-    		'.gitkeep',
-    		'nohup.out'
+            '.gitkeep',
+            'nohup.out'
         );
 
         // Look for User Excludes
@@ -73,7 +78,18 @@ class RsyncTask extends AbstractTask implements IsReleaseAware
             $deployToDirectory = rtrim($this->getConfig()->deployment('to'), '/')
                                . '/' . $releasesDirectory
                                . '/' . $this->getConfig()->getReleaseId();
-            $this->runCommandRemote('mkdir -p ' . $releasesDirectory . '/' . $this->getConfig()->getReleaseId());
+            $resultFetch = $this->runCommandRemote('ls -ld current | cut -d"/" -f2', $releaseToOverride);
+            
+            if ( $resultFetch ) {
+                // If deployment configuration is rsync, include a flag to simply sync the deltas between the prior release
+                // rsync: { copy: yes }
+                $rsync_copy = $this->getConfig()->deployment("rsync");
+                if ( $rsync_copy && is_array($rsync_copy) && $rsync_copy['copy'] ) {
+                    $this->runCommandRemote('cp -R ' . $releasesDirectory . '/' . $releaseToOverride . ' ' . $releasesDirectory . '/' . $this->getConfig()->getReleaseId());
+                } else {
+                    $this->runCommandRemote('mkdir -p ' . $releasesDirectory . '/' . $this->getConfig()->getReleaseId());
+                }
+            }
         }
 
         $command = 'rsync -avz '

@@ -73,13 +73,15 @@ class InitCommand extends AbstractCommand
 				'%notificationEnabled%',
 				'%loggingEnabled%',
 				'%maxlogs%',
+				'%ssh_needs_tty%',
 			),
 			array(
 				$projectName,
 				$notificationEmail,
 				$notificationEnabled,
 				'true',
-				30
+				30,
+				'false'
 			),
 			$this->getGeneralConfigTemplate()
     	);
@@ -98,7 +100,8 @@ class InitCommand extends AbstractCommand
                   . 'email: %notificationEmail%' . PHP_EOL
                   . 'notifications: %notificationEnabled%' . PHP_EOL
                   . 'logging: %loggingEnabled%' . PHP_EOL
-                  . 'maxlogs: %maxlogs%' . PHP_EOL;
+                  . 'maxlogs: %maxlogs%' . PHP_EOL
+                  . 'ssh_needs_tty: %ssh_needs_tty%' . PHP_EOL;
 
     	return $template;
     }
