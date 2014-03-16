@@ -67,6 +67,8 @@ class Console
      */
     public function run($arguments)
     {
+    	$exitCode = 10;
+
     	// Declare a Shutdown Closure
     	register_shutdown_function(function() {
     		// Only Unlock if there was an error
@@ -120,6 +122,7 @@ class Console
                     }
                 }
                 $command->run();
+                $exitCode = 0;
 
             } catch (Exception $exception) {
                 self::output('<red>' . $exception->getMessage() . '</red>', 1, 2);
@@ -135,6 +138,8 @@ class Console
 
         // Check if logs need to be deleted
         self::checkLogs($config);
+
+        return $exitCode;
     }
 
     /**
