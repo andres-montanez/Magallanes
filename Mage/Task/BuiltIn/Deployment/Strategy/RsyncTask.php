@@ -75,17 +75,18 @@ class RsyncTask extends AbstractTask implements IsReleaseAware
         if ($this->getConfig()->release('enabled', false) == true) {
             $releasesDirectory = $this->getConfig()->release('directory', 'releases');
 
+            $currentRelease = false;
             $deployToDirectory = rtrim($this->getConfig()->deployment('to'), '/')
                                . '/' . $releasesDirectory
                                . '/' . $this->getConfig()->getReleaseId();
-            $resultFetch = $this->runCommandRemote('ls -ld current | cut -d"/" -f2', $releaseToOverride);
-            
-            if ( $resultFetch ) {
+            $resultFetch = $this->runCommandRemote('ls -ld current | cut -d"/" -f2', $currentRelease);
+
+            if ($resultFetch && $currentRelease) {
                 // If deployment configuration is rsync, include a flag to simply sync the deltas between the prior release
                 // rsync: { copy: yes }
-                $rsync_copy = $this->getConfig()->deployment("rsync");
+                $rsync_copy = $this->getConfig()->deployment('rsync');
                 if ( $rsync_copy && is_array($rsync_copy) && $rsync_copy['copy'] ) {
-                    $this->runCommandRemote('cp -R ' . $releasesDirectory . '/' . $releaseToOverride . ' ' . $releasesDirectory . '/' . $this->getConfig()->getReleaseId());
+                    $this->runCommandRemote('cp -R ' . $releasesDirectory . '/' . $currentRelease . ' ' . $releasesDirectory . '/' . $this->getConfig()->getReleaseId());
                 } else {
                     $this->runCommandRemote('mkdir -p ' . $releasesDirectory . '/' . $this->getConfig()->getReleaseId());
                 }
