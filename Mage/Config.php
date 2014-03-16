@@ -496,4 +496,14 @@ class Config
         }
     }
 
+    public function overrideConfigWithCLIArguments()
+    {
+        $filter = function(&$item, $key) {
+            if (in_array($key, array_keys($this->getParameters()))) {
+                $item = $this->getParameter($key);
+            }
+        };
+
+        array_walk_recursive($this->config, $filter);
+    }
 }
