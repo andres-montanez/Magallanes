@@ -12,15 +12,15 @@ releases:
   directory: releases
 hosts:
   - localhost
-#  - dbserver
+  - 127.0.0.1
 tasks:
   pre-deploy:
-    - sampleTask
+#    - sampleTask
 #    - failTask
     - scm/update
   on-deploy:
     - privileges
-    - sampleTask
+#    - sampleTask
     - sampleTaskRollbackAware
     - taskWithParameters:
         booleanOption: true

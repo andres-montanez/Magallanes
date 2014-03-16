@@ -109,6 +109,7 @@ class RollbackTask extends AbstractTask implements IsReleaseAware
                     $tasksToRun = $this->getConfig()->getTasks();
                     $this->getConfig()->setReleaseId($releaseId);
 
+                    // Run Deploy Tasks
                     foreach ($tasksToRun as $taskData) {
                         $task = Factory::get($taskData, $this->getConfig(), true, self::STAGE_DEPLOY);
                         $task->init();
@@ -150,6 +151,28 @@ class RollbackTask extends AbstractTask implements IsReleaseAware
                     } else {
                         Console::output('<red>FAIL</red>', 0);
                     }
+
+                    // Run Post Release Tasks
+                    $tasksToRun = $this->getConfig()->getTasks(AbstractTask::STAGE_POST_DEPLOY);
+                    foreach ($tasksToRun as $taskData) {
+                    	$task = Factory::get($taskData, $this->getConfig(), true, self::STAGE_POST_DEPLOY);
+                    	$task->init();
+                    	Console::output('Running <purple>' . $task->getName() . '</purple> ... ', 2, false);
+
+                    	if ($task instanceOf RollbackAware) {
+                    		$tasks++;
+                    		$result = $task->run();
+
+                    		if ($result == true) {
+                    			Console::output('<green>OK</green>', 0);
+                    			$completedTasks++;
+                    		} else {
+                    			Console::output('<red>FAIL</red>', 0);
+                    		}
+                    	} else {
+                    		Console::output('<yellow>SKIPPED</yellow>', 0);
+                    	}
+                	}
 
                     if ($completedTasks == $tasks) {
                         $tasksColor = 'green';
