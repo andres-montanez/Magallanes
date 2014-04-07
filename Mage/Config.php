@@ -346,6 +346,16 @@ class Config
     }
 
     /**
+     * Get the general Host Identity File Option
+     *
+     * @return string
+     */
+    public function getHostIdentityFileOption()
+    {
+        return $this->deployment('identity-file') ? '-i '.$this->deployment('identity-file').' ': '';
+    }
+    
+    /**
      * Get the current Host
      *
      * @return string

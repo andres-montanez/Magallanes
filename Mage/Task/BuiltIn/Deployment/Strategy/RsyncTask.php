@@ -94,7 +94,7 @@ class RsyncTask extends AbstractTask implements IsReleaseAware
         }
 
         $command = 'rsync -avz '
-                 . '--rsh="ssh -p' . $this->getConfig()->getHostPort() . '" '
+                 . '--rsh="ssh ' . $this->getConfig()->getHostIdentityFileOption() . '-p' . $this->getConfig()->getHostPort() . '" '
                  . $this->excludes(array_merge($excludes, $userExcludes)) . ' '
                  . $this->getConfig()->deployment('from') . ' '
                  . $this->getConfig()->deployment('user') . '@' . $this->getConfig()->getHostName() . ':' . $deployToDirectory;
