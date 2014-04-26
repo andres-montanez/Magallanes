@@ -352,7 +352,7 @@ class Config
      */
     public function getHostIdentityFileOption()
     {
-        return $this->deployment('identity-file') ? '-i '.$this->deployment('identity-file').' ': '';
+        return $this->deployment('identity-file') ? ('-i ' . $this->deployment('identity-file') . ' ') : '';
     }
     
     /**
