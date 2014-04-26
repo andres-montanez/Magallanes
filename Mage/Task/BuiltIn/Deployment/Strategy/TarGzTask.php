@@ -89,7 +89,7 @@ class TarGzTask extends AbstractTask implements IsReleaseAware
         $result = $this->runCommandLocal($command);
 
         // Copy Tar Gz  to Remote Host
-        $command = 'scp -P ' . $this->getConfig()->getHostPort() . ' ' . $localTarGz . '.tar.gz '
+        $command = 'scp ' . $this->getConfig()->getHostIdentityFileOption() . '-P ' . $this->getConfig()->getHostPort() . ' ' . $localTarGz . '.tar.gz '
                  . $this->getConfig()->deployment('user') . '@' . $this->getConfig()->getHostName() . ':' . $deployToDirectory;
         $result = $this->runCommandLocal($command) && $result;
 
