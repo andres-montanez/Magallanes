@@ -217,7 +217,7 @@ class Config
      */
     public function addParameter($name, $value = true)
     {
-    	$this->parameters[$name] = $value;
+        $this->parameters[$name] = $value;
     }
 
     /**

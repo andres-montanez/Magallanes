@@ -153,7 +153,7 @@ class EncryptTask extends AbstractTask
      *
      * @var array
      */
-    private $checkIgnoreExtens	= array();
+    private $checkIgnoreExtens = array();
 
     /**
      * List of paths to exclude from
@@ -164,7 +164,7 @@ class EncryptTask extends AbstractTask
      *
      * @var array
      */
-    private $checkIgnorePaths	= array();
+    private $checkIgnorePaths = array();
 
     /**
      * (non-PHPdoc)
