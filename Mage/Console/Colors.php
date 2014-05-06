@@ -19,10 +19,10 @@ use Mage\Config;
  */
 class Colors
 {
-	/**
-	 * List of Colors and they Terminal/Console representation.
-	 * @var array
-	 */
+    /**
+     * List of Colors and they Terminal/Console representation.
+     * @var array
+     */
     private static $foregroundColors = array(
         'black'        => '0;30',
         'dark_gray'    => '1;30',
@@ -47,21 +47,22 @@ class Colors
      * Parses a Text to represent Colors in the Terminal/Console.
      *
      * @param string $string
+     * @param Config $config
      * @return string
      */
     public static function color($string, Config $config)
     {
-    	$disabled = $config->getParameter('no-color', !$config->general('colors', true));
+        $disabled = $config->getParameter('no-color', !$config->general('colors', true));
 
-    	if ($disabled) {
-    		$string = strip_tags($string);
-    		return $string;
-    	}
+        if ($disabled) {
+            $string = strip_tags($string);
+            return $string;
+        }
 
         foreach (self::$foregroundColors as $key => $code) {
             $replaceFrom = array(
                 '<' . $key . '>',
-            	'</' . $key . '>'
+                '</' . $key . '>'
             );
 
             $replaceTo = array(

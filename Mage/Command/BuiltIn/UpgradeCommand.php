@@ -20,10 +20,10 @@ use Mage\Console;
  */
 class UpgradeCommand extends AbstractCommand
 {
-	/**
-	 * Source for downloading
-	 * @var string
-	 */
+    /**
+     * Source for downloading
+     * @var string
+     */
     const DOWNLOAD = 'http://download.magephp.com/magallanes.{version}.tar.gz';
 
     /**
@@ -51,47 +51,47 @@ class UpgradeCommand extends AbstractCommand
             Console::output('You need to be the <dark_gray>' . $owner . '</dark_gray> user to perform the upgrade, or <dark_gray>root</dark_gray>.', 2);
 
         } else {
-        	// Check version
-        	$version = json_decode(file_get_contents(self::UPGRADE));
+            // Check version
+            $version = json_decode(file_get_contents(self::UPGRADE));
 
-        	if ($version !== false) {
-        		$versionCompare = version_compare(MAGALLANES_VERSION, $version->latest);
-        		if ($versionCompare == 0) {
-        			Console::output('<yellow>SKIP</yellow>', 0, 1);
-        			Console::output('Your current version is up to date.', 2);
+            if ($version !== false) {
+                $versionCompare = version_compare(MAGALLANES_VERSION, $version->latest);
+                if ($versionCompare == 0) {
+                    Console::output('<yellow>SKIP</yellow>', 0, 1);
+                    Console::output('Your current version is up to date.', 2);
 
-        		} else if ($versionCompare == 1) {
-        			Console::output('<yellow>SKIP</yellow>', 0, 1);
-        			Console::output('Your current version is newer.', 2);
+                } else if ($versionCompare == 1) {
+                    Console::output('<yellow>SKIP</yellow>', 0, 1);
+                    Console::output('Your current version is newer.', 2);
 
-        		} else if ($versionCompare == -1) {
-        			// Download Package
-        			$tarball = file_get_contents(str_replace('{version}', $version->latest, self::DOWNLOAD));
-        			if ($tarball === false) {
-        				Console::output('<red>FAIL</red>', 0, 1);
-        				Console::output('Corrupted download.', 2);
+                } else if ($versionCompare == -1) {
+                    // Download Package
+                    $tarball = file_get_contents(str_replace('{version}', $version->latest, self::DOWNLOAD));
+                    if ($tarball === false) {
+                        Console::output('<red>FAIL</red>', 0, 1);
+                        Console::output('Corrupted download.', 2);
 
-        			} else {
-        				$tarballFile = tempnam('/tmp', 'magallanes_download');
-        				rename($tarballFile, $tarballFile . '.tar.gz');
-        				$tarballFile .= '.tar.gz';
-        				file_put_contents($tarballFile, $tarball);
+                    } else {
+                        $tarballFile = tempnam('/tmp', 'magallanes_download');
+                        rename($tarballFile, $tarballFile . '.tar.gz');
+                        $tarballFile .= '.tar.gz';
+                        file_put_contents($tarballFile, $tarball);
 
-        				Console::executeCommand('rm -rf ' . MAGALLANES_DIRECTORY);
-        				Console::executeCommand('cd ' . dirname($tarballFile) . ' && tar xfz ' . $tarballFile);
-        				Console::executeCommand('mv ' . dirname($tarballFile) . '/magallanes ' . MAGALLANES_DIRECTORY);
+                        Console::executeCommand('rm -rf ' . MAGALLANES_DIRECTORY);
+                        Console::executeCommand('cd ' . dirname($tarballFile) . ' && tar xfz ' . $tarballFile);
+                        Console::executeCommand('mv ' . dirname($tarballFile) . '/magallanes ' . MAGALLANES_DIRECTORY);
 
-        				Console::output('<green>OK</green>', 0, 1);
-        			}
+                        Console::output('<green>OK</green>', 0, 1);
+                    }
 
-        		} else {
-        			Console::output('<red>FAIL</red>', 0, 1);
-        			Console::output('Invalid version.', 2);
-        		}
-        	} else {
-        		Console::output('<red>FAIL</red>', 0, 1);
-        		Console::output('Invalid version.', 2);
-        	}
+                } else {
+                    Console::output('<red>FAIL</red>', 0, 1);
+                    Console::output('Invalid version.', 2);
+                }
+            } else {
+                Console::output('<red>FAIL</red>', 0, 1);
+                Console::output('Invalid version.', 2);
+            }
         }
     }
 }

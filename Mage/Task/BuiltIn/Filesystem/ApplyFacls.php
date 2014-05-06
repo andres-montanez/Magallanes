@@ -1,7 +1,7 @@
 <?php
-namespace Mage\Task\BuiltIn\Filesysten;
 
-use Exception;
+namespace Mage\Task\BuiltIn\Filesystem;
+
 use Mage\Task\AbstractTask;
 use Mage\Task\ErrorWithMessageException;
 use Mage\Task\SkipException;
@@ -22,7 +22,7 @@ class ApplyFacls extends AbstractTask implements IsReleaseAware
      * Runs the task
      *
      * @return boolean
-     * @throws Exception
+     * @throws \Exception
      * @throws ErrorWithMessageException
      * @throws SkipException
      */
@@ -31,7 +31,6 @@ class ApplyFacls extends AbstractTask implements IsReleaseAware
         $releasesDirectory = $this->getConfig()->release('directory', 'releases');
         $releasesDirectory = rtrim($this->getConfig()->deployment('to'), '/') . '/' . $releasesDirectory;
         $currentCopy = $releasesDirectory . '/' . $this->getConfig()->getReleaseId();
-
 
         $aclParam = $this->getParameter('acl_param', '');
         if (empty($aclParam)) {

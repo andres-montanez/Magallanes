@@ -11,7 +11,7 @@
 namespace Mage\Task\Releases;
 
 /**
- * Indicates that the Task is Relase Aware/Dependant
+ * Indicates that the Task is Release Aware/Dependant
  *
  * @author Andrés Montañez <andres@andresmontanez.com>
  */

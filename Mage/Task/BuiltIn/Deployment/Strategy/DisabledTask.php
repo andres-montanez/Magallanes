@@ -21,10 +21,10 @@ use Mage\Task\SkipException;
  */
 class DisabledTask extends AbstractTask implements IsReleaseAware
 {
-	/**
-	 * (non-PHPdoc)
-	 * @see \Mage\Task\AbstractTask::getName()
-	 */
+    /**
+     * (non-PHPdoc)
+     * @see \Mage\Task\AbstractTask::getName()
+     */
     public function getName()
     {
         return 'Disabled Deployment [built-in]';
@@ -38,5 +38,4 @@ class DisabledTask extends AbstractTask implements IsReleaseAware
     {
         throw new SkipException;
     }
-
 }

@@ -11,7 +11,7 @@
 namespace Mage\Task\Releases;
 
 /**
- * Indicates that the Task will be Skipped on Relase Override
+ * Indicates that the Task will be Skipped on Release Override
  *
  * @author Andrés Montañez <andres@andresmontanez.com>
  */

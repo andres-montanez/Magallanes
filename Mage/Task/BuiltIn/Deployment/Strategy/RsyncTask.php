@@ -20,10 +20,10 @@ use Mage\Task\Releases\IsReleaseAware;
  */
 class RsyncTask extends AbstractTask implements IsReleaseAware
 {
-	/**
-	 * (non-PHPdoc)
-	 * @see \Mage\Task\AbstractTask::getName()
-	 */
+    /**
+     * (non-PHPdoc)
+     * @see \Mage\Task\AbstractTask::getName()
+     */
     public function getName()
     {
         if ($this->getConfig()->release('enabled', false) == true) {

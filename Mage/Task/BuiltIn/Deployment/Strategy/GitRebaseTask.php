@@ -20,10 +20,10 @@ use Mage\Task\Releases\IsReleaseAware;
  */
 class GitRebaseTask extends AbstractTask implements IsReleaseAware
 {
-	/**
-	 * (non-PHPdoc)
-	 * @see \Mage\Task\AbstractTask::getName()
-	 */
+    /**
+     * (non-PHPdoc)
+     * @see \Mage\Task\AbstractTask::getName()
+     */
     public function getName()
     {
         return 'Deploy via Git Rebase [built-in]';
@@ -35,10 +35,12 @@ class GitRebaseTask extends AbstractTask implements IsReleaseAware
      */
     public function run()
     {
-    	$branch = $this->getParameter('branch');
-    	$remote = $this->getParameter('remote');
+        $branch = $this->getParameter('branch');
+        $remote = $this->getParameter('remote');
 
-    	// Fetch Remote
+        $result = true;
+
+        // Fetch Remote
         $command = 'git fetch ' . $remote;
         $result = $this->runCommandRemote($command) && $result;
 
@@ -54,10 +56,10 @@ class GitRebaseTask extends AbstractTask implements IsReleaseAware
 
         // Stash if Working Copy is not clean
         if(!$status) {
-        	$stashResult = '';
-        	$command = 'git stash';
-        	$result = $this->runCommandRemote($command, $stashResult) && $result;
-        	if($stashResult != "No local changes to save") {
+            $stashResult = '';
+            $command = 'git stash';
+            $result = $this->runCommandRemote($command, $stashResult) && $result;
+            if($stashResult != "No local changes to save") {
                 $stashed = true;
             }
         }
@@ -68,8 +70,8 @@ class GitRebaseTask extends AbstractTask implements IsReleaseAware
 
         // If Stashed, restore.
         if ($stashed) {
-        	$command = 'git stash pop';
-        	$result = $this->runCommandRemote($command) && $result;
+            $command = 'git stash pop';
+            $result = $this->runCommandRemote($command) && $result;
         }
 
         return $result;

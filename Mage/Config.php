@@ -10,7 +10,6 @@
 
 namespace Mage;
 
-use Symfony\Component\Yaml\Yaml;
 use Exception;
 
 /**
@@ -20,10 +19,10 @@ use Exception;
  */
 class Config
 {
-	/**
-	 * Arguments loaded
-	 * @var array
-	 */
+    /**
+     * Arguments loaded
+     * @var array
+     */
     private $arguments = array();
 
     /**
@@ -67,31 +66,32 @@ class Config
 
     /**
      * Parse the Command Line options
+     * @param array $arguments
      * @return boolean
      */
-    protected function parse($arguments)
+    protected function parse(array $arguments)
     {
-    	foreach ($arguments as $argument) {
-    		if (preg_match('/to:[\w]+/i', $argument)) {
-    			$this->environment = str_replace('to:', '', $argument);
+        foreach ($arguments as $argument) {
+            if (preg_match('/to:[\w]+/i', $argument)) {
+                $this->environment = str_replace('to:', '', $argument);
 
-    		} else if (preg_match('/--[\w]+/i', $argument)) {
-    			$optionValue = explode('=', substr($argument, 2));
-    			if (count($optionValue) == 1) {
-    				$this->parameters[$optionValue[0]] = true;
-    			} else if (count($optionValue) == 2) {
-    				if (strtolower($optionValue[1]) == 'true') {
-    					$this->parameters[$optionValue[0]] = true;
-    				} else if (strtolower($optionValue[1]) == 'false') {
-    					$this->parameters[$optionValue[0]] = false;
-    				} else {
-    					$this->parameters[$optionValue[0]] = $optionValue[1];
-    				}
-    			}
-    		} else {
-    			$this->arguments[] = $argument;
-    		}
-    	}
+            } else if (preg_match('/--[\w]+/i', $argument)) {
+                $optionValue = explode('=', substr($argument, 2));
+                if (count($optionValue) == 1) {
+                    $this->parameters[$optionValue[0]] = true;
+                } else if (count($optionValue) == 2) {
+                    if (strtolower($optionValue[1]) == 'true') {
+                        $this->parameters[$optionValue[0]] = true;
+                    } else if (strtolower($optionValue[1]) == 'false') {
+                        $this->parameters[$optionValue[0]] = false;
+                    } else {
+                        $this->parameters[$optionValue[0]] = $optionValue[1];
+                    }
+                }
+            } else {
+                $this->arguments[] = $argument;
+            }
+        }
     }
 
     /**
@@ -99,9 +99,9 @@ class Config
      */
     protected function loadGeneral()
     {
-    	if (file_exists('.mage/config/general.yml')) {
-    		$this->config['general'] = spyc_load_file('.mage/config/general.yml');
-    	}
+        if (file_exists('.mage/config/general.yml')) {
+            $this->config['general'] = spyc_load_file('.mage/config/general.yml');
+        }
     }
 
     /**
@@ -112,26 +112,26 @@ class Config
      */
     protected function loadEnvironment()
     {
-    	$environment = $this->getEnvironment();
-    	if (($environment != false) && file_exists('.mage/config/environment/' . $environment . '.yml')) {
-    		$this->config['environment'] = spyc_load_file('.mage/config/environment/' . $environment . '.yml');
+        $environment = $this->getEnvironment();
+        if (($environment != false) && file_exists('.mage/config/environment/' . $environment . '.yml')) {
+            $this->config['environment'] = spyc_load_file('.mage/config/environment/' . $environment . '.yml');
 
-    		// Create temporal directory for clone
-    		if (isset($this->config['environment']['deployment']['source']) && is_array($this->config['environment']['deployment']['source'])) {
-    			if (trim($this->config['environment']['deployment']['source']['temporal']) == '') {
-    				$this->config['environment']['deployment']['source']['temporal'] = '/tmp';
-    			}
-    			$newTemporal = rtrim($this->config['environment']['deployment']['source']['temporal'], '/')
-    			. '/' . md5(microtime()) . '/';
-    			$this->config['environment']['deployment']['source']['temporal'] = $newTemporal;
-    		}
-    		return true;
+            // Create temporal directory for clone
+            if (isset($this->config['environment']['deployment']['source']) && is_array($this->config['environment']['deployment']['source'])) {
+                if (trim($this->config['environment']['deployment']['source']['temporal']) == '') {
+                    $this->config['environment']['deployment']['source']['temporal'] = '/tmp';
+                }
+                $newTemporal = rtrim($this->config['environment']['deployment']['source']['temporal'], '/')
+                . '/' . md5(microtime()) . '/';
+                $this->config['environment']['deployment']['source']['temporal'] = $newTemporal;
+            }
+            return true;
 
-    	} else if (($environment != '') && !file_exists('.mage/config/environment/' . $environment . '.yml')) {
-    		throw new Exception('Environment does not exists.');
-    	}
+        } else if (($environment != '') && !file_exists('.mage/config/environment/' . $environment . '.yml')) {
+            throw new Exception('Environment does not exists.');
+        }
 
-    	return false;
+        return false;
     }
 
     /**
@@ -151,8 +151,8 @@ class Config
      */
     public function reload()
     {
-    	$this->loadGeneral();
-    	$this->loadEnvironment();
+        $this->loadGeneral();
+        $this->loadEnvironment();
     }
 
     /**
@@ -217,7 +217,7 @@ class Config
      */
     public function addParameter($name, $value = true)
     {
-    	$this->parameters[$name] = $value;
+        $this->parameters[$name] = $value;
     }
 
     /**
@@ -238,20 +238,20 @@ class Config
      */
     public function getTasks($stage = 'deploy')
     {
-    	if ($stage == 'deploy') {
-    		$configStage = 'on-deploy';
-    	} else {
-    		$configStage = $stage;
-    	}
+        if ($stage == 'deploy') {
+            $configStage = 'on-deploy';
+        } else {
+            $configStage = $stage;
+        }
 
         $tasks = array();
         $config = $this->getEnvironmentOption('tasks', array());
 
         // Host Config
         if (is_array($this->hostConfig) && isset($this->hostConfig['tasks'])) {
-        	if (isset($this->hostConfig['tasks'][$configStage])) {
-        		$config[$configStage] = $this->hostConfig['tasks'][$configStage];
-        	}
+            if (isset($this->hostConfig['tasks'][$configStage])) {
+                $config[$configStage] = $this->hostConfig['tasks'][$configStage];
+            }
         }
 
         if (isset($config[$configStage])) {
@@ -318,8 +318,8 @@ class Config
      */
     public function setHostConfig($hostConfig = null)
     {
-    	$this->hostConfig = $hostConfig;
-    	return $this;
+        $this->hostConfig = $hostConfig;
+        return $this;
     }
 
     /**
@@ -369,7 +369,7 @@ class Config
      * Gets General Configuration
      *
      * @param string $option
-     * @param string $default
+     * @param mixed $default
      * @return mixed
      */
     public function general($option, $default = false)
@@ -390,31 +390,31 @@ class Config
      * Gets Environments Full Configuration
      *
      * @param string $option
-     * @param string $default
+     * @param mixed $default
      * @return mixed
      */
     public function environmentConfig($option, $default = false)
     {
-    	return $this->getEnvironmentOption($option, $default);
+        return $this->getEnvironmentOption($option, $default);
     }
 
     /**
      * Get deployment configuration
      *
      * @param string $option
-     * @param string $default
+     * @param mixed $default
      * @return string
      */
     public function deployment($option, $default = false)
     {
-    	// Host Config
-    	if (is_array($this->hostConfig) && isset($this->hostConfig['deployment'])) {
-    		if (isset($this->hostConfig['deployment'][$option])) {
-    			return $this->hostConfig['deployment'][$option];
-    		}
-    	}
+        // Host Config
+        if (is_array($this->hostConfig) && isset($this->hostConfig['deployment'])) {
+            if (isset($this->hostConfig['deployment'][$option])) {
+                return $this->hostConfig['deployment'][$option];
+            }
+        }
 
-    	// Global Config
+        // Global Config
         $config = $this->getEnvironmentOption('deployment', array());
         if (isset($config[$option])) {
             if (is_array($default) && ($config[$option] == '')) {
@@ -431,17 +431,17 @@ class Config
      * Returns Releasing Options
      *
      * @param string $option
-     * @param string $default
+     * @param mixed $default
      * @return mixed
      */
     public function release($option, $default = false)
     {
-    	// Host Config
-    	if (is_array($this->hostConfig) && isset($this->hostConfig['releases'])) {
-    		if (isset($this->hostConfig['releases'][$option])) {
-    			return $this->hostConfig['releases'][$option];
-    		}
-    	}
+        // Host Config
+        if (is_array($this->hostConfig) && isset($this->hostConfig['releases'])) {
+            if (isset($this->hostConfig['releases'][$option])) {
+                return $this->hostConfig['releases'][$option];
+            }
+        }
 
         $config = $this->getEnvironmentOption('releases', array());
         if (isset($config[$option])) {
@@ -459,7 +459,7 @@ class Config
      * Set From Deployment Path
      *
      * @param string $from
-     * @return \Mage\Config
+     * @return Config
      */
     public function setFrom($from)
     {
@@ -471,7 +471,7 @@ class Config
      * Sets the Current Release ID
      *
      * @param integer $id
-     * @return \Mage\Config
+     * @return Config
      */
     public function setReleaseId($id)
     {
@@ -505,5 +505,4 @@ class Config
             return $default;
         }
     }
-
 }

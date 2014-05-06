@@ -21,10 +21,10 @@ use Mage\Console;
 class InitCommand extends AbstractCommand
 {
 
-	/**
-	 * Command for Initalize a new Configuration Proyect
-	 * @see \Mage\Command\AbstractCommand::run()
-	 */
+    /**
+     * Command for Initalize a new Configuration Proyect
+     * @see \Mage\Command\AbstractCommand::run()
+     */
     public function run()
     {
         $configDir = '.mage';
@@ -61,32 +61,32 @@ class InitCommand extends AbstractCommand
      */
     protected function getGeneralConfig()
     {
-    	// Assamble Global Settings
-    	$projectName = $this->getConfig()->getParameter('name', '');
-    	$notificationEmail = $this->getConfig()->getParameter('email', '');
-    	$notificationEnabled = ($notificationEmail != '') ? 'true' : 'false';
+        // Assemble Global Settings
+        $projectName = $this->getConfig()->getParameter('name', '');
+        $notificationEmail = $this->getConfig()->getParameter('email', '');
+        $notificationEnabled = ($notificationEmail != '') ? 'true' : 'false';
 
-    	$globalSettings = str_replace(
-			array(
-				'%projectName%',
-				'%notificationEmail%',
-				'%notificationEnabled%',
-				'%loggingEnabled%',
-				'%maxlogs%',
-				'%ssh_needs_tty%',
-			),
-			array(
-				$projectName,
-				$notificationEmail,
-				$notificationEnabled,
-				'true',
-				30,
-				'false'
-			),
-			$this->getGeneralConfigTemplate()
-    	);
+        $globalSettings = str_replace(
+            array(
+                '%projectName%',
+                '%notificationEmail%',
+                '%notificationEnabled%',
+                '%loggingEnabled%',
+                '%maxlogs%',
+                '%ssh_needs_tty%',
+            ),
+            array(
+                $projectName,
+                $notificationEmail,
+                $notificationEnabled,
+                'true',
+                30,
+                'false'
+            ),
+            $this->getGeneralConfigTemplate()
+        );
 
-    	return $globalSettings;
+        return $globalSettings;
     }
 
     /**
@@ -95,7 +95,7 @@ class InitCommand extends AbstractCommand
      */
     protected function getGeneralConfigTemplate()
     {
-    	$template = '# global settings' . PHP_EOL
+        $template = '# global settings' . PHP_EOL
                   . 'name: %projectName%' . PHP_EOL
                   . 'email: %notificationEmail%' . PHP_EOL
                   . 'notifications: %notificationEnabled%' . PHP_EOL
@@ -103,6 +103,6 @@ class InitCommand extends AbstractCommand
                   . 'maxlogs: %maxlogs%' . PHP_EOL
                   . 'ssh_needs_tty: %ssh_needs_tty%' . PHP_EOL;
 
-    	return $template;
+        return $template;
     }
 }

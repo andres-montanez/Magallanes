@@ -21,10 +21,10 @@ use Mage\Console;
  */
 class UpdateCommand extends AbstractCommand
 {
-	/**
-	 * Updates the SCM Base Code
-	 * @see \Mage\Command\AbstractCommand::run()
-	 */
+    /**
+     * Updates the SCM Base Code
+     * @see \Mage\Command\AbstractCommand::run()
+     */
     public function run()
     {
         $task = Factory::get('scm/update', $this->getConfig());
@@ -39,5 +39,4 @@ class UpdateCommand extends AbstractCommand
             Console::output('<red>FAIL</red>' . PHP_EOL, 0);
         }
     }
-
 }

@@ -17,10 +17,10 @@ namespace Mage;
  */
 class Autoload
 {
-	/**
-	 * Autoload a Class by it's Class Name
-	 * @param string $className
-	 */
+    /**
+     * Autoload a Class by it's Class Name
+     * @param string $className
+     */
     public static function autoload($className)
     {
         $baseDir = dirname(dirname(__FILE__));
@@ -49,5 +49,4 @@ class Autoload
         $classFile = '.mage/tasks/' . ucfirst($taskName) . '.php';
         require_once $classFile;
     }
-
 }

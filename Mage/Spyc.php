@@ -862,7 +862,7 @@ class Spyc {
       if (is_array($_))
         $lineArray[$k] = $this->revertLiteralPlaceHolder ($_, $literalBlock);
       else if (substr($_, -1 * strlen ($this->LiteralPlaceHolder)) == $this->LiteralPlaceHolder)
-	       $lineArray[$k] = rtrim ($literalBlock, " \r\n");
+        $lineArray[$k] = rtrim ($literalBlock, " \r\n");
      }
      return $lineArray;
    }

@@ -19,13 +19,12 @@ use Mage\Console;
  *
  * @author Andrés Montañez <andres@andresmontanez.com>
  */
-class UnlockCommand
-    extends AbstractCommand implements RequiresEnvironment
+class UnlockCommand extends AbstractCommand implements RequiresEnvironment
 {
-	/**
-	 * Unlocks an Environment
-	 * @see \Mage\Command\AbstractCommand::run()
-	 */
+    /**
+     * Unlocks an Environment
+     * @see \Mage\Command\AbstractCommand::run()
+     */
     public function run()
     {
         $lockFile = '.mage/' . $this->getConfig()->getEnvironment() . '.lock';
@@ -35,5 +34,4 @@ class UnlockCommand
 
         Console::output('Unlocked deployment to <light_purple>' . $this->getConfig()->getEnvironment() . '</light_purple> environment', 1, 2);
     }
-
 }
