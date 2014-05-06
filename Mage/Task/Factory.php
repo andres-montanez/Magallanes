@@ -12,8 +12,6 @@ namespace Mage\Task;
 
 use Mage\Config;
 use Mage\Autoload;
-use Mage\Task\ErrorWithMessageException;
-use Mage\Task\AbstractTask;
 
 use Exception;
 
@@ -28,10 +26,11 @@ class Factory
      * Gets an instance of a Task.
      *
      * @param string|array $taskData
-     * @param Mage\Config $taskConfig
+     * @param Config $taskConfig
      * @param boolean $inRollback
      * @param string $stage
-     * @return \Mage\Task\AbstractTask
+     * @return AbstractTask
+     * @throws Exception
      */
     public static function get($taskData, Config $taskConfig, $inRollback = false, $stage = null)
     {
@@ -58,13 +57,13 @@ class Factory
 
 
         if (class_exists($className) || Autoload::isLoadable($className)) {
-        	$instance = new $className($taskConfig, $inRollback, $stage, $taskParameters);
+            $instance = new $className($taskConfig, $inRollback, $stage, $taskParameters);
         } else {
-        	throw new ErrorWithMessageException('The Task "' . $taskName . '" doesn\'t exists.');
+            throw new ErrorWithMessageException('The Task "' . $taskName . '" doesn\'t exists.');
         }
 
         if (!($instance instanceOf AbstractTask)) {
-        	throw new Exception('The Task ' . $taskName . ' must be an instance of Mage\Task\AbstractTask.');
+            throw new Exception('The Task ' . $taskName . ' must be an instance of Mage\Task\AbstractTask.');
         }
 
         return $instance;

@@ -12,6 +12,7 @@ namespace Mage\Command\BuiltIn;
 
 use Mage\Command\AbstractCommand;
 use Mage\Command\RequiresEnvironment;
+use Mage\Task\BuiltIn\Releases\RollbackTask;
 use Mage\Task\Factory;
 use Mage\Console;
 
@@ -32,7 +33,7 @@ class ReleasesCommand extends AbstractCommand implements RequiresEnvironment
         $lockFile = '.mage/' . $this->getConfig()->getEnvironment() . '.lock';
         if (file_exists($lockFile) && ($subcommand == 'rollback')) {
             Console::output('<red>This environment is locked!</red>', 1, 2);
-            return;
+            return false;
         }
 
         // Run Tasks for Deployment
@@ -54,6 +55,7 @@ class ReleasesCommand extends AbstractCommand implements RequiresEnvironment
 
                     case 'rollback':
                         $releaseId = $this->getConfig()->getParameter('release', '');
+                        /** @var RollbackTask $task */
                         $task = Factory::get('releases/rollback', $this->getConfig());
                         $task->init();
                         $task->setRelease($releaseId);
@@ -62,6 +64,8 @@ class ReleasesCommand extends AbstractCommand implements RequiresEnvironment
                 }
             }
         }
+
+        // TODO: $result is now always overwritten by the last host and has no default value
 
         return $result;
     }

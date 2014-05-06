@@ -19,10 +19,10 @@ use Mage\Task\AbstractTask;
  */
 class CacheWarmupTask extends AbstractTask
 {
-	/**
-	 * (non-PHPdoc)
-	 * @see \Mage\Task\AbstractTask::getName()
-	 */
+    /**
+     * (non-PHPdoc)
+     * @see \Mage\Task\AbstractTask::getName()
+     */
     public function getName()
     {
         return 'Symfony v2 - Cache Warmup [built-in]';
@@ -34,8 +34,8 @@ class CacheWarmupTask extends AbstractTask
      */
     public function run()
     {
-    	// Options
-    	$env = $this->getParameter('env', 'dev');
+        // Options
+        $env = $this->getParameter('env', 'dev');
 
         $command = 'app/console cache:warmup --env=' . $env;
         $result = $this->runCommand($command);

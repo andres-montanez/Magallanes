@@ -21,7 +21,6 @@ use RecursiveDirectoryIterator;
  */
 class Compiler
 {
-
     /**
      * Compiles the library
      *
@@ -39,7 +38,7 @@ class Compiler
         $phar->startBuffering();
 
         $iterator = new RecursiveIteratorIterator(new RecursiveDirectoryIterator(__DIR__), RecursiveIteratorIterator::CHILD_FIRST);
-        /** @var $path SplFileInfo */
+        /** @var \SplFileInfo $path */
         foreach ($iterator as $path) {
             if ($path->isFile()) {
                 $phar->addFromString(str_replace(dirname(__DIR__).'/', '', $path->getPathname()), file_get_contents($path));
@@ -53,7 +52,7 @@ class Compiler
         $phar->addFromString('mage', str_replace(
             '$baseDir = dirname(dirname(__FILE__));',
             '$baseDir = __DIR__;',
-    		$binary
+            $binary
         ));
 
         $phar->setStub("#!/usr/bin/env php\n<?php Phar::mapPhar('mage.phar'); require 'phar://mage.phar/mage'; __HALT_COMPILER();");

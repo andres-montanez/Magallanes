@@ -146,5 +146,4 @@ class ListTask extends AbstractTask implements IsReleaseAware
 
         return $textDiff;
     }
-
 }

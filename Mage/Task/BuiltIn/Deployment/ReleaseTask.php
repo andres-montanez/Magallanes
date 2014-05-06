@@ -21,10 +21,10 @@ use Mage\Task\Releases\SkipOnOverride;
  */
 class ReleaseTask extends AbstractTask implements IsReleaseAware, SkipOnOverride
 {
-	/**
-	 * (non-PHPdoc)
-	 * @see \Mage\Task\AbstractTask::getName()
-	 */
+    /**
+     * (non-PHPdoc)
+     * @see \Mage\Task\AbstractTask::getName()
+     */
     public function getName()
     {
         return 'Releasing [built-in]';
@@ -56,7 +56,7 @@ class ReleaseTask extends AbstractTask implements IsReleaseAware, SkipOnOverride
                      . 'ln -sf ' . $currentCopy . ' ' . $symlink;
 
             if ($resultFetch && $userGroup != '') {
-            	$command .= ' && '
+                $command .= ' && '
                           . 'chown -h ' . $userGroup . ' ' . $symlink
                           . ' && '
                           . 'chown -R ' . $userGroup . ' ' . $currentCopy;
@@ -65,7 +65,7 @@ class ReleaseTask extends AbstractTask implements IsReleaseAware, SkipOnOverride
             $result = $this->runCommandRemote($command);
 
             // Set Directory Releases to same owner
-            $result = $this->runCommandRemote('chown ' . $userGroup . ' ' . $releasesDirectory);
+            $result = $this->runCommandRemote('chown ' . $userGroup . ' ' . $releasesDirectory) && $result;
 
             return $result;
 
@@ -73,5 +73,4 @@ class ReleaseTask extends AbstractTask implements IsReleaseAware, SkipOnOverride
             return false;
         }
     }
-
 }

@@ -10,7 +10,6 @@
 
 namespace Mage\Command;
 
-use Mage\Command\AbstractCommand;
 use Mage\Config;
 use Mage\Autoload;
 
@@ -33,6 +32,7 @@ class Factory
      */
     public static function get($commandName, Config $config)
     {
+        /** @var AbstractCommand $instance */
         $instance = null;
         $commandName = ucwords(str_replace('-', ' ', $commandName));
         $commandName = str_replace(' ', '', $commandName);

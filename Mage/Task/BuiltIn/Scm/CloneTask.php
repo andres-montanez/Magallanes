@@ -20,10 +20,10 @@ use Mage\Task\SkipException;
  */
 class CloneTask extends AbstractTask
 {
-	/**
-	 * Name of the Task
-	 * @var string
-	 */
+    /**
+     * Name of the Task
+     * @var string
+     */
     private $name = 'SCM Clone [built-in]';
 
     /**

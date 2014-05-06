@@ -21,10 +21,10 @@ use Mage\Console;
  */
 class LockCommand extends AbstractCommand implements RequiresEnvironment
 {
-	/**
-	 * Locks the Deployment to a Environment
-	 * @see \Mage\Command\AbstractCommand::run()
-	 */
+    /**
+     * Locks the Deployment to a Environment
+     * @see \Mage\Command\AbstractCommand::run()
+     */
     public function run()
     {
         $lockFile = '.mage/' . $this->getConfig()->getEnvironment() . '.lock';
@@ -32,5 +32,4 @@ class LockCommand extends AbstractCommand implements RequiresEnvironment
 
         Console::output('Locked deployment to <light_purple>' . $this->getConfig()->getEnvironment() . '</light_purple> environment', 1, 2);
     }
-
 }

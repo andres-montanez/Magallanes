@@ -19,10 +19,10 @@ use Mage\Task\AbstractTask;
  */
 class RemoveCloneTask extends AbstractTask
 {
-	/**
-	 * Name of the Task
-	 * @var string
-	 */
+    /**
+     * Name of the Task
+     * @var string
+     */
     private $name = 'SCM Remove Clone [built-in]';
 
     /**
@@ -49,8 +49,8 @@ class RemoveCloneTask extends AbstractTask
         $this->source = $this->getConfig()->deployment('source');
         switch ($this->source['type']) {
             case 'git':
-            	$this->name = 'SCM Remove Clone (GIT) [built-in]';
-            	break;
+                $this->name = 'SCM Remove Clone (GIT) [built-in]';
+                break;
         }
     }
 

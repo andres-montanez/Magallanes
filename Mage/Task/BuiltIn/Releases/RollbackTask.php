@@ -23,10 +23,10 @@ use Mage\Task\Releases\RollbackAware;
  */
 class RollbackTask extends AbstractTask implements IsReleaseAware
 {
-	/**
-	 * The Relase ID to Rollback To
-	 * @var integer
-	 */
+    /**
+     * The Relase ID to Rollback To
+     * @var integer
+     */
     protected $release = null;
 
     /**
@@ -140,7 +140,7 @@ class RollbackTask extends AbstractTask implements IsReleaseAware
                              . 'ln -sf ' . $rollbackTo . ' ' . $symlink;
 
                     if ($resultFetch) {
-                	    $command .= ' && chown -h ' . $userGroup . ' ' . $symlink;
+                       $command .= ' && chown -h ' . $userGroup . ' ' . $symlink;
                     }
 
                     $result = $this->runCommandRemote($command);
@@ -155,24 +155,24 @@ class RollbackTask extends AbstractTask implements IsReleaseAware
                     // Run Post Release Tasks
                     $tasksToRun = $this->getConfig()->getTasks(AbstractTask::STAGE_POST_DEPLOY);
                     foreach ($tasksToRun as $taskData) {
-                    	$task = Factory::get($taskData, $this->getConfig(), true, self::STAGE_POST_DEPLOY);
-                    	$task->init();
-                    	Console::output('Running <purple>' . $task->getName() . '</purple> ... ', 2, false);
+                        $task = Factory::get($taskData, $this->getConfig(), true, self::STAGE_POST_DEPLOY);
+                        $task->init();
+                        Console::output('Running <purple>' . $task->getName() . '</purple> ... ', 2, false);
 
-                    	if ($task instanceOf RollbackAware) {
-                    		$tasks++;
-                    		$result = $task->run();
+                        if ($task instanceOf RollbackAware) {
+                            $tasks++;
+                            $result = $task->run();
 
-                    		if ($result == true) {
-                    			Console::output('<green>OK</green>', 0);
-                    			$completedTasks++;
-                    		} else {
-                    			Console::output('<red>FAIL</red>', 0);
-                    		}
-                    	} else {
-                    		Console::output('<yellow>SKIPPED</yellow>', 0);
-                    	}
-                	}
+                            if ($result == true) {
+                                Console::output('<green>OK</green>', 0);
+                                $completedTasks++;
+                            } else {
+                                Console::output('<red>FAIL</red>', 0);
+                            }
+                        } else {
+                            Console::output('<yellow>SKIPPED</yellow>', 0);
+                        }
+                    }
 
                     if ($completedTasks == $tasks) {
                         $tasksColor = 'green';
@@ -190,5 +190,4 @@ class RollbackTask extends AbstractTask implements IsReleaseAware
             return false;
         }
     }
-
 }

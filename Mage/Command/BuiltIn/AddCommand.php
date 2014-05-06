@@ -24,11 +24,11 @@ use Exception;
  */
 class AddCommand extends AbstractCommand
 {
-	/**
-	 * Adds new Configuration Elements
-	 * @see \Mage\Command\AbstractCommand::run()
-	 * @throws Exception
-	 */
+    /**
+     * Adds new Configuration Elements
+     * @see \Mage\Command\AbstractCommand::run()
+     * @throws Exception
+     */
     public function run()
     {
         $subCommand = $this->getConfig()->getArgument(1);

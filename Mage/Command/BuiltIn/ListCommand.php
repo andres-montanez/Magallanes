@@ -24,11 +24,11 @@ use Exception;
  */
 class ListCommand extends AbstractCommand
 {
-	/**
-	 * Command for Listing Configuration Elements
-	 * @see \Mage\Command\AbstractCommand::run()
-	 * @throws Exception
-	 */
+    /**
+     * Command for Listing Configuration Elements
+     * @see \Mage\Command\AbstractCommand::run()
+     * @throws Exception
+     */
     public function run()
     {
         $subCommand = $this->getConfig()->getArgument(1);
@@ -53,24 +53,24 @@ class ListCommand extends AbstractCommand
      */
     protected function listEnvironments()
     {
-    	$environments = array();
+        $environments = array();
         $content = scandir('.mage/config/environment/');
         foreach ($content as $file) {
             if (strpos($file, '.yml') !== false) {
-            	$environments[] = str_replace('.yml', '', $file);
+                $environments[] = str_replace('.yml', '', $file);
             }
         }
         sort($environments);
 
         if (count($environments) > 0) {
-        	Console::output('<dark_gray>These are your configured environments:</dark_gray>', 1, 1);
-        	foreach ($environments as $environment) {
-        		Console::output('* <light_red>' . $environment . '</light_red>', 2, 1);
-        	}
-        	Console::output('', 1, 1);
+            Console::output('<dark_gray>These are your configured environments:</dark_gray>', 1, 1);
+            foreach ($environments as $environment) {
+                Console::output('* <light_red>' . $environment . '</light_red>', 2, 1);
+            }
+            Console::output('', 1, 1);
 
         } else {
-        	Console::output('<dark_gray>You don\'t have any environment configured.</dark_gray>', 1, 2);
+            Console::output('<dark_gray>You don\'t have any environment configured.</dark_gray>', 1, 2);
         }
     }
 }

@@ -1,12 +1,13 @@
 <?php
-namespace Mage\Task\BuiltIn\Filesysten;
+
+namespace Mage\Task\BuiltIn\Filesystem;
+
 use Mage\Task\AbstractTask;
 use Mage\Task\Releases\IsReleaseAware;
 use Mage\Task\SkipException;
 
 class LinkSharedFiles extends AbstractTask implements IsReleaseAware
 {
-
     /**
      * Returns the Title of the Task
      * @return string
@@ -20,7 +21,7 @@ class LinkSharedFiles extends AbstractTask implements IsReleaseAware
      * Runs the task
      *
      * @return boolean
-     * @throws Exception
+     * @throws \Exception
      * @throws \Mage\Task\ErrorWithMessageException
      * @throws SkipException
      */

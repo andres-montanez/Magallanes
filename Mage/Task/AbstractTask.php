@@ -12,8 +12,6 @@ namespace Mage\Task;
 
 use Mage\Console;
 use Mage\Config;
-use Mage\Task\ErrorWithMessageException;
-use Mage\Task\SkipException;
 use Mage\Task\Releases\IsReleaseAware;
 
 use Exception;
@@ -25,34 +23,34 @@ use Exception;
  */
 abstract class AbstractTask
 {
-	/**
-	 * Stage Constant for Pre Deployment
-	 * @var string
-	 */
-	const STAGE_PRE_DEPLOY = 'pre-deploy';
+    /**
+     * Stage Constant for Pre Deployment
+     * @var string
+     */
+    const STAGE_PRE_DEPLOY = 'pre-deploy';
 
-	/**
-	 * Stage Constant for Deployment
-	 * @var string
-	 */
-	const STAGE_DEPLOY = 'deploy';
+    /**
+     * Stage Constant for Deployment
+     * @var string
+     */
+    const STAGE_DEPLOY = 'deploy';
 
-	/**
-	 * Stage Constant for Post Deployment
-	 * @var string
-	 */
-	const STAGE_POST_DEPLOY = 'post-deploy';
+    /**
+     * Stage Constant for Post Deployment
+     * @var string
+     */
+    const STAGE_POST_DEPLOY = 'post-deploy';
 
-	/**
-	 * Stage Constant for Post Release
-	 * @var string
-	 */
-	const STAGE_POST_RELEASE = 'post-release';
+    /**
+     * Stage Constant for Post Release
+     * @var string
+     */
+    const STAGE_POST_RELEASE = 'post-release';
 
-	/**
-	 * Configuration
-	 * @var Config;
-	 */
+    /**
+     * Configuration
+     * @var Config;
+     */
     protected $config = null;
 
     /**
@@ -211,9 +209,9 @@ abstract class AbstractTask
     protected final function runCommand($command, &$output = null)
     {
         if ($this->getStage() == self::STAGE_DEPLOY) {
-        	return $this->runCommandRemote($command, $output);
+            return $this->runCommandRemote($command, $output);
         } else {
-        	return $this->runCommandLocal($command, $output);
+            return $this->runCommandLocal($command, $output);
         }
     }
 }

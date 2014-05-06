@@ -19,10 +19,10 @@ use Mage\Task\AbstractTask;
  */
 class CacheClearTask extends AbstractTask
 {
-	/**
-	 * (non-PHPdoc)
-	 * @see \Mage\Task\AbstractTask::getName()
-	 */
+    /**
+     * (non-PHPdoc)
+     * @see \Mage\Task\AbstractTask::getName()
+     */
     public function getName()
     {
         return 'Symfony v2 - Cache Clear [built-in]';
@@ -34,8 +34,8 @@ class CacheClearTask extends AbstractTask
      */
     public function run()
     {
-    	// Options
-    	$env = $this->getParameter('env', 'dev');
+        // Options
+        $env = $this->getParameter('env', 'dev');
 
         $command = 'app/console cache:clear --env=' . $env;
         $result = $this->runCommand($command);

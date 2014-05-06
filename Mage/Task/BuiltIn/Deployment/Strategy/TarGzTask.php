@@ -20,10 +20,10 @@ use Mage\Task\Releases\IsReleaseAware;
  */
 class TarGzTask extends AbstractTask implements IsReleaseAware
 {
-	/**
-	 * (non-PHPdoc)
-	 * @see \Mage\Task\AbstractTask::getName()
-	 */
+    /**
+     * (non-PHPdoc)
+     * @see \Mage\Task\AbstractTask::getName()
+     */
     public function getName()
     {
         if ($this->getConfig()->release('enabled', false) == true) {
@@ -58,8 +58,8 @@ class TarGzTask extends AbstractTask implements IsReleaseAware
             '.svn',
             '.mage',
             '.gitignore',
-    		'.gitkeep',
-    		'nohup.out'
+            '.gitkeep',
+            'nohup.out'
         );
 
         // Look for User Excludes
@@ -95,23 +95,23 @@ class TarGzTask extends AbstractTask implements IsReleaseAware
 
         // Extract Tar Gz
         if ($this->getConfig()->release('enabled', false) == true) {
-        	$releasesDirectory = $this->getConfig()->release('directory', 'releases');
+            $releasesDirectory = $this->getConfig()->release('directory', 'releases');
 
-        	$deployToDirectory = $releasesDirectory . '/' . $this->getConfig()->getReleaseId();
-        	$command = 'cd ' . $deployToDirectory . ' && tar xfz ' . $remoteTarGz . '.tar.gz';
+            $deployToDirectory = $releasesDirectory . '/' . $this->getConfig()->getReleaseId();
+            $command = 'cd ' . $deployToDirectory . ' && tar xfz ' . $remoteTarGz . '.tar.gz';
         } else {
-        	$command = 'tar xfz ' . $remoteTarGz . '.tar.gz';
+            $command = 'tar xfz ' . $remoteTarGz . '.tar.gz';
         }
         $result = $this->runCommandRemote($command) && $result;
 
         // Delete Tar Gz from Remote Host
         if ($this->getConfig()->release('enabled', false) == true) {
-        	$releasesDirectory = $this->getConfig()->release('directory', 'releases');
+            $releasesDirectory = $this->getConfig()->release('directory', 'releases');
 
-        	$deployToDirectory = $releasesDirectory . '/' . $this->getConfig()->getReleaseId();
-        	$command = 'rm ' . $deployToDirectory . '/' . $remoteTarGz . '.tar.gz';
+            $deployToDirectory = $releasesDirectory . '/' . $this->getConfig()->getReleaseId();
+            $command = 'rm ' . $deployToDirectory . '/' . $remoteTarGz . '.tar.gz';
         } else {
-        	$command = 'rm ' . $remoteTarGz . '.tar.gz';
+            $command = 'rm ' . $remoteTarGz . '.tar.gz';
         }
         $result = $this->runCommandRemote($command) && $result;
 
