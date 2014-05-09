@@ -47,7 +47,7 @@ class ReleaseTask extends AbstractTask implements IsReleaseAware, SkipOnOverride
             $currentCopy = $releasesDirectory . '/' . $this->getConfig()->getReleaseId();
 
             //Check if target user:group is specified
-            $userGroup = $this->getConfig()->deployment('chown');
+            $userGroup = $this->getConfig()->deployment('owner');
             // Fetch the user and group from base directory; defaults usergroup to 33:33
             if(empty($userGroup)){
                 $user = '33';
