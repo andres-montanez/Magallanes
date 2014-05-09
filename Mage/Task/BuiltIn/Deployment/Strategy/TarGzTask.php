@@ -69,11 +69,11 @@ class TarGzTask extends AbstractTask implements IsReleaseAware
         $deployToDirectory = $this->getConfig()->deployment('to');
         if ($this->getConfig()->release('enabled', false) == true) {
             $releasesDirectory = $this->getConfig()->release('directory', 'releases');
-
             $deployToDirectory = rtrim($this->getConfig()->deployment('to'), '/')
                                . '/' . $releasesDirectory
                                . '/' . $this->getConfig()->getReleaseId();
-            $this->runCommandRemote('mkdir -p ' . $releasesDirectory . '/' . $this->getConfig()->getReleaseId());
+            $output = null;
+            $this->runCommandRemote('mkdir -p ' . $deployToDirectory, $output , false);
         }
 
         // Create Tar Gz
