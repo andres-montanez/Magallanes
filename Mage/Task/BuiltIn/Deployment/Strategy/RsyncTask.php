@@ -85,7 +85,11 @@ class RsyncTask extends AbstractTask implements IsReleaseAware
                 // If deployment configuration is rsync, include a flag to simply sync the deltas between the prior release
                 // rsync: { copy: yes }
                 $rsync_copy = $this->getConfig()->deployment('rsync');
-                if ( $rsync_copy && is_array($rsync_copy) && $rsync_copy['copy'] ) {
+                // If copy_tool_rsync, use rsync rather than cp for finer control of what is copied
+                if ( $rsync_copy && is_array($rsync_copy) && $rsync_copy['copy'] && isset($rsync_copy['copy_tool_rsync']) ) {
+                    $this->runCommandRemote("rsync -a {$this->excludes(array_merge($excludes, $rsync_copy['rsync_excludes']))} "
+                    . "$releasesDirectory/$currentRelease/ $releasesDirectory/{$this->getConfig()->getReleaseId()}");
+                } elseif ( $rsync_copy && is_array($rsync_copy) && $rsync_copy['copy'] ) {
                     $this->runCommandRemote('cp -R ' . $releasesDirectory . '/' . $currentRelease . ' ' . $releasesDirectory . '/' . $this->getConfig()->getReleaseId());
                 } else {
                     $this->runCommandRemote('mkdir -p ' . $releasesDirectory . '/' . $this->getConfig()->getReleaseId());
