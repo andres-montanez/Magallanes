@@ -59,13 +59,12 @@ class ReleaseTask extends AbstractTask implements IsReleaseAware, SkipOnOverride
             	$command .= ' && '
                           . 'chown -h ' . $userGroup . ' ' . $symlink
                           . ' && '
-                          . 'chown -R ' . $userGroup . ' ' . $currentCopy;
+                          . 'chown -R ' . $userGroup . ' ' . $currentCopy
+                          . ' && '
+                          . 'chown ' . $userGroup . ' ' . $releasesDirectory;
             }
 
             $result = $this->runCommandRemote($command);
-
-            // Set Directory Releases to same owner
-            $result = $this->runCommandRemote('chown ' . $userGroup . ' ' . $releasesDirectory);
 
             return $result;
 
