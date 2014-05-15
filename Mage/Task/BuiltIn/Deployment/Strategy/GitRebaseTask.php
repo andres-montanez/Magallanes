@@ -34,13 +34,13 @@ class GitRebaseTask extends AbstractTask implements IsReleaseAware
      * @see \Mage\Task\AbstractTask::run()
      */
     public function run()
-    {
-    	$branch = $this->getParameter('branch');
-    	$remote = $this->getParameter('remote');
-
+    {        
+    	$branch = $this->getParameter('branch', 'master');
+    	$remote = $this->getParameter('remote', 'origin');
+                
     	// Fetch Remote
         $command = 'git fetch ' . $remote;
-        $result = $this->runCommandRemote($command) && $result;
+        $result = $this->runCommandRemote($command);
 
         // Checkout
         $command = 'git checkout ' . $branch;
