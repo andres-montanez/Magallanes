@@ -12,8 +12,6 @@ namespace Mage\Task;
 
 use Mage\Console;
 use Mage\Config;
-use Mage\Task\ErrorWithMessageException;
-use Mage\Task\SkipException;
 use Mage\Task\Releases\IsReleaseAware;
 
 use Exception;
