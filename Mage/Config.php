@@ -10,7 +10,6 @@
 
 namespace Mage;
 
-use Symfony\Component\Yaml\Yaml;
 use Exception;
 
 /**

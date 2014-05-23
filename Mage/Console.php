@@ -10,7 +10,6 @@
 
 namespace Mage;
 
-use Mage\Config;
 use Mage\Command\Factory;
 use Mage\Command\RequiresEnvironment;
 use Mage\Console\Colors;
