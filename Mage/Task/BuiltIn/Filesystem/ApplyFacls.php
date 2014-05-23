@@ -1,5 +1,5 @@
 <?php
-namespace Mage\Task\BuiltIn\Filesysten;
+namespace Mage\Task\BuiltIn\Filesystem;
 
 use Exception;
 use Mage\Task\AbstractTask;

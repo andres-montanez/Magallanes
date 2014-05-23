@@ -1,5 +1,6 @@
 <?php
-namespace Mage\Task\BuiltIn\Filesysten;
+namespace Mage\Task\BuiltIn\Filesystem;
+
 use Mage\Task\AbstractTask;
 use Mage\Task\Releases\IsReleaseAware;
 use Mage\Task\SkipException;
