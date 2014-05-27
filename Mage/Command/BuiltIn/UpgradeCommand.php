@@ -54,7 +54,7 @@ class UpgradeCommand extends AbstractCommand
         	// Check version
         	$version = json_decode(file_get_contents(self::UPGRADE));
 
-        	if ($version !== false) {
+        	if ($version !== false && $version !== null) {
         		$versionCompare = version_compare(MAGALLANES_VERSION, $version->latest);
         		if ($versionCompare == 0) {
         			Console::output('<yellow>SKIP</yellow>', 0, 1);
