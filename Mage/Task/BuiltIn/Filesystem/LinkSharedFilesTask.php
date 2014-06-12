@@ -5,7 +5,7 @@ use Mage\Task\AbstractTask;
 use Mage\Task\Releases\IsReleaseAware;
 use Mage\Task\SkipException;
 
-class LinkSharedFiles extends AbstractTask implements IsReleaseAware
+class LinkSharedFilesTask extends AbstractTask implements IsReleaseAware
 {
 
     /**
