@@ -449,7 +449,7 @@ class DeployCommand extends AbstractCommand implements RequiresEnvironment
 
         $runTask = true;
         if (($task instanceOf SkipOnOverride) && $this->getConfig()->getParameter('overrideRelease', false)) {
-            $runTask == false;
+            $runTask = false;
         }
 
         $result = false;
@@ -516,6 +516,7 @@ class DeployCommand extends AbstractCommand implements RequiresEnvironment
     /**
      * Send Email Notification if enabled
      * @param boolean $result
+     * @return boolean
      */
     protected function sendNotification($result)
     {
@@ -534,6 +535,8 @@ class DeployCommand extends AbstractCommand implements RequiresEnvironment
                ->setLogFile(Console::getLogFile())
                ->setEnvironment($this->getConfig()->getEnvironment())
                ->send($result);
+
+        return true;
     }
 
 }
