@@ -21,8 +21,6 @@ class LinkSharedFilesTask extends AbstractTask implements IsReleaseAware
      * Runs the task
      *
      * @return boolean
-     * @throws \Exception
-     * @throws \Mage\Task\ErrorWithMessageException
      * @throws SkipException
      */
     public function run()
