@@ -592,7 +592,6 @@ class EncryptTask extends AbstractTask
 	 * @return bool
 	 */
 	private function switchSrcToTmp() {
-		//echo "\nSwitching :" . $this->source . " -> To :" . $this->ionSource."\n";
 		$ret = Console::executeCommand ( 'mv ' . $this->source . ' ' . $this->ionSource, $out );
 		if (! $ret) {
 			throw new ErrorWithMessageException ( 'Cant create tmp dir :' . $out, $ret );

@@ -744,9 +744,6 @@ class Spyc {
   }
 
   private function addArray ($incoming_data, $incoming_indent) {
-
-   // print_r ($incoming_data);
-
     if (count ($incoming_data) > 1)
       return $this->addArrayInline ($incoming_data, $incoming_indent);
 
@@ -1019,7 +1016,6 @@ class Spyc {
   private function addGroup ($line, $group) {
     if ($group[0] == '&') $this->_containsGroupAnchor = substr ($group, 1);
     if ($group[0] == '*') $this->_containsGroupAlias = substr ($group, 1);
-    //print_r ($this->path);
   }
 
   private function stripGroup ($line, $group) {
