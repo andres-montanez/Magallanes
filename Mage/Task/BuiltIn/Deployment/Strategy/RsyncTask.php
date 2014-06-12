@@ -10,7 +10,7 @@
 
 namespace Mage\Task\BuiltIn\Deployment\Strategy;
 
-use Mage\Task\AbstractTask;
+use Mage\Task\BuiltIn\Deployment\Strategy\BaseStrategyTaskAbstract;
 use Mage\Task\Releases\IsReleaseAware;
 
 /**
@@ -18,7 +18,7 @@ use Mage\Task\Releases\IsReleaseAware;
  *
  * @author Andrés Montañez <andres@andresmontanez.com>
  */
-class RsyncTask extends AbstractTask implements IsReleaseAware
+class RsyncTask extends BaseStrategyTaskAbstract implements IsReleaseAware
 {
 	/**
 	 * (non-PHPdoc)
@@ -48,27 +48,9 @@ class RsyncTask extends AbstractTask implements IsReleaseAware
      */
     public function run()
     {
-        $overrideRelease = $this->getParameter('overrideRelease', false);
+        $this->checkOverrideRelease();
 
-        if ($overrideRelease == true) {
-            $releaseToOverride = false;
-            $resultFetch = $this->runCommandRemote('ls -ld current | cut -d"/" -f2', $releaseToOverride);
-            if ($resultFetch && is_numeric($releaseToOverride)) {
-                $this->getConfig()->setReleaseId($releaseToOverride);
-            }
-        }
-
-        $excludes = array(
-            '.git',
-            '.svn',
-            '.mage',
-            '.gitignore',
-            '.gitkeep',
-            'nohup.out'
-        );
-
-        // Look for User Excludes
-        $userExcludes = $this->getConfig()->deployment('excludes', array());
+        $excludes = $this->getExcludes();
 
         // If we are working with releases
         $deployToDirectory = $this->getConfig()->deployment('to');
@@ -95,7 +77,7 @@ class RsyncTask extends AbstractTask implements IsReleaseAware
 
         $command = 'rsync -avz '
                  . '--rsh="ssh ' . $this->getConfig()->getHostIdentityFileOption() . '-p' . $this->getConfig()->getHostPort() . '" '
-                 . $this->excludes(array_merge($excludes, $userExcludes)) . ' '
+                 . $this->excludes($excludes) . ' '
                  . $this->getConfig()->deployment('from') . ' '
                  . $this->getConfig()->deployment('user') . '@' . $this->getConfig()->getHostName() . ':' . $deployToDirectory;
 

@@ -2,7 +2,7 @@
 deployment:
   user: root
   from: ./
-  to: /var/www/
+  to: /var/vvv
   scm:
     branch: master
 releases:
