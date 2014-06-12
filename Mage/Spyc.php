@@ -215,13 +215,13 @@ class Spyc {
     // and options soon.  And better support for folding.
 
     // New features and options.
-    if ($indent === false or !is_numeric($indent)) {
+    if ($indent === false || !is_numeric($indent)) {
       $this->_dumpIndent = 2;
     } else {
       $this->_dumpIndent = $indent;
     }
 
-    if ($wordwrap === false or !is_numeric($wordwrap)) {
+    if ($wordwrap === false || !is_numeric($wordwrap)) {
       $this->_dumpWordWrap = 40;
     } else {
       $this->_dumpWordWrap = $wordwrap;
@@ -327,12 +327,10 @@ class Spyc {
 
     $spaces = str_repeat(' ',$indent);
 
-    //if (is_int($key) && $key - 1 == $previous_key && $first_key===0) {
     if (is_array ($source_array) && array_keys($source_array) === range(0, count($source_array) - 1)) {
       // It's a sequence
       $string = $spaces.'- '.$value."\n";
     } else {
-      // if ($first_key===0)  throw new Exception('Keys are all screwy.  The first one was zero, now it\'s "'. $key .'"');
       // It's mapped
       if (strpos($key, ":") !== false || strpos($key, "#") !== false) { $key = '"' . $key . '"'; }
       $string = rtrim ($spaces.$key.': '.$value)."\n";
@@ -1029,17 +1027,3 @@ class Spyc {
     return $line;
   }
 }
-
-// Enable use of Spyc from command line
-// The syntax is the following: php Spyc.php spyc.yaml
-
-define ('SPYC_FROM_COMMAND_LINE', false);
-
-do {
-  if (!SPYC_FROM_COMMAND_LINE) break;
-  if (empty ($_SERVER['argc']) || $_SERVER['argc'] < 2) break;
-  if (empty ($_SERVER['PHP_SELF']) || $_SERVER['PHP_SELF'] != 'Spyc.php') break;
-  $file = $argv[1];
-  printf ("Spyc loading file: %s\n", $file);
-  print_r (spyc_load_file ($file));
-} while (0);
