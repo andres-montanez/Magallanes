@@ -87,7 +87,7 @@ class ChangeBranchTask extends AbstractTask
 
         				$branch = $this->getParameter('branch', $scmData['branch']);
         				$command = 'git checkout ' . $branch;
-        				$result = $this->runCommandLocal($command);
+        				$result = $this->runCommandLocal($command) && $result;
 
         				self::$startingBranch = $currentBranch;
             		} else {

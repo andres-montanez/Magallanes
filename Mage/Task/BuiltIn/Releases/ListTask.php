@@ -46,7 +46,7 @@ class ListTask extends AbstractTask implements IsReleaseAware
             $releases = ($output == '') ? array() : explode(PHP_EOL, $output);
 
             // Get Current
-            $result = $this->runCommandRemote('ls -l ' . $symlink, $output);
+            $result = $this->runCommandRemote('ls -l ' . $symlink, $output) && $result;
             $currentRelease = explode('/', $output);
             $currentRelease = trim(array_pop($currentRelease));
 

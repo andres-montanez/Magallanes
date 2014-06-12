@@ -22,13 +22,13 @@ abstract class AbstractCommand
 	/**
 	 * Instance of the loaded Configuration.
 	 *
-	 * @var Mage\Config
+	 * @var \Mage\Config
 	 */
     protected $config = null;
 
     /**
      * Runs the Command
-     * @throws Exception
+     * @throws \Exception
      */
     public abstract function run();
 

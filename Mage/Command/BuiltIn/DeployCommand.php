@@ -456,7 +456,6 @@ class DeployCommand extends AbstractCommand implements RequiresEnvironment
             $runTask = false;
         }
 
-        $result = false;
         if ($runTask == true) {
             try {
                 $result = $task->run();

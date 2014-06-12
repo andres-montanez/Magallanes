@@ -39,7 +39,7 @@ class Compiler
         $phar->startBuffering();
 
         $iterator = new RecursiveIteratorIterator(new RecursiveDirectoryIterator(__DIR__), RecursiveIteratorIterator::CHILD_FIRST);
-        /** @var $path SplFileInfo */
+        /** @var $path \SplFileInfo */
         foreach ($iterator as $path) {
             if ($path->isFile()) {
                 $phar->addFromString(str_replace(dirname(__DIR__).'/', '', $path->getPathname()), file_get_contents($path));

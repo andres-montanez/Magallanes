@@ -255,9 +255,8 @@ class Config
 
         if (isset($config[$configStage])) {
             $tasksData = ($config[$configStage] ? (array) $config[$configStage] : array());
-            foreach ($tasksData as $taskName => $taskData) {
+            foreach ($tasksData as $taskData) {
                 if (is_array($taskData)) {
-                    ;
                     $tasks[] = array(
                         'name' => key($taskData),
                         'parameters' => current($taskData),

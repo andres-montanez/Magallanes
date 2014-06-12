@@ -321,7 +321,7 @@ class EncryptTask extends AbstractTask
 	 *
 	 * @see \Mage\Task\AbstractTask::run()
 	 *
-	 * @return boolan
+	 * @return bool
      * @throws \Mage\Task\ErrorWithMessageException
 	 */
 	public function run() {
