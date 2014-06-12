@@ -28,6 +28,11 @@ class ReleasesCommand extends AbstractCommand implements RequiresEnvironment
      */
     public function run()
     {
+        if (!is_numeric($this->getConfig()->getParameter('release', ''))) {
+            Console::output('<red>This release is mandatory.</red>', 1, 2);
+            return false;
+        }
+
         $subcommand = $this->getConfig()->getArgument(1);
         $lockFile = '.mage/' . $this->getConfig()->getEnvironment() . '.lock';
         if (file_exists($lockFile) && ($subcommand == 'rollback')) {
