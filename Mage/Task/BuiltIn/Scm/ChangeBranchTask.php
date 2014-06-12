@@ -63,8 +63,7 @@ class ChangeBranchTask extends AbstractTask
      */
     public function run()
     {
-    	$scmConfig = $this->getConfig()->general('scm', array());
-        switch ((isset($scmConfig['type']) ? $scmConfig['type'] : false)) {
+        switch ($this->getConfig()->general('scm')) {
             case 'git':
             	if ($this->getParameter('_changeBranchRevert', false)) {
             		$command = 'git checkout ' . self::$startingBranch;

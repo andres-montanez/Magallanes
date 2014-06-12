@@ -10,7 +10,6 @@
 
 namespace Mage;
 
-use Mage\Console;
 
 /**
  * Mailer Helper.

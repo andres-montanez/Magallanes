@@ -310,7 +310,11 @@ class DeployCommand extends AbstractCommand implements RequiresEnvironment
     			    case 'targz':
     			    	$deployStrategy = 'deployment/strategy/tar-gz';
     			    	break;
-
+                            
+                            case 'git-rebase':
+    			    	$deployStrategy = 'deployment/strategy/git-rebase';
+    			    	break;
+                            
     			    case 'guess':
     			    default:
     			    	if ($this->getConfig()->release('enabled', false) == true) {

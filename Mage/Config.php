@@ -10,7 +10,6 @@
 
 namespace Mage;
 
-use Symfony\Component\Yaml\Yaml;
 use Exception;
 
 /**
@@ -345,6 +344,16 @@ class Config
         return $info[1];
     }
 
+    /**
+     * Get the general Host Identity File Option
+     *
+     * @return string
+     */
+    public function getHostIdentityFileOption()
+    {
+        return $this->deployment('identity-file') ? ('-i ' . $this->deployment('identity-file') . ' ') : '';
+    }
+    
     /**
      * Get the current Host
      *
