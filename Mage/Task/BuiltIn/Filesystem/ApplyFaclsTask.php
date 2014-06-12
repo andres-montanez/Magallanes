@@ -5,7 +5,7 @@ use Mage\Task\AbstractTask;
 use Mage\Task\SkipException;
 use Mage\Task\Releases\IsReleaseAware;
 
-class ApplyFacls extends AbstractTask implements IsReleaseAware
+class ApplyFaclsTask extends AbstractTask implements IsReleaseAware
 {
     /**
      * Returns the Title of the Task
