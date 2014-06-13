@@ -40,6 +40,7 @@ class Factory
         $className = 'Mage\\Command\\BuiltIn\\' . $commandName . 'Command';
         if (Autoload::isLoadable($className)) {
             $instance = new $className;
+            assert($instance instanceOf AbstractCommand);
             $instance->setConfig($config);
         } else {
             throw new Exception('Command not found.');
