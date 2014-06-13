@@ -17,7 +17,6 @@ define('MAGALLANES_VERSION', '1.0.1');
 define('MAGALLANES_DIRECTORY', $baseDir);
 
 // Preload
-require_once $baseDir . '/Mage/Spyc.php';
 require_once $baseDir . '/Mage/Autoload.php';
 spl_autoload_register(array('Mage\\Autoload', 'autoload'));
 
