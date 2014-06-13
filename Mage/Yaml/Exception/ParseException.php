@@ -11,6 +11,8 @@
 
 namespace Mage\Yaml\Exception;
 
+use Mage\Yaml\Exception\RuntimeException;
+
 if (!defined('JSON_UNESCAPED_UNICODE')) {
     define('JSON_UNESCAPED_SLASHES', 64);
     define('JSON_UNESCAPED_UNICODE', 256);

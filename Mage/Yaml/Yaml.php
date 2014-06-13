@@ -11,6 +11,8 @@
 
 namespace Mage\Yaml;
 
+use Mage\Yaml\Parser;
+use Mage\Yaml\Dumper;
 use Mage\Yaml\Exception\ParseException;
 
 /**

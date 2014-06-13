@@ -11,6 +11,8 @@
 
 namespace Mage\Yaml\Exception;
 
+use Mage\Yaml\Exception\RuntimeException;
+
 /**
  * Exception class thrown when an error occurs during dumping.
  *
