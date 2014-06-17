@@ -56,12 +56,13 @@ class RsyncTask extends BaseStrategyTaskAbstract implements IsReleaseAware
         $deployToDirectory = $this->getConfig()->deployment('to');
         if ($this->getConfig()->release('enabled', false) == true) {
             $releasesDirectory = $this->getConfig()->release('directory', 'releases');
+            $symlink = $this->getConfig()->release('symlink', 'current');
 
             $currentRelease = false;
             $deployToDirectory = rtrim($this->getConfig()->deployment('to'), '/')
                                . '/' . $releasesDirectory
                                . '/' . $this->getConfig()->getReleaseId();
-            $resultFetch = $this->runCommandRemote('ls -ld current | cut -d"/" -f2', $currentRelease);
+            $resultFetch = $this->runCommandRemote('ls -ld ' . $symlink . ' | cut -d"/" -f2', $currentRelease);
 
             if ($resultFetch && $currentRelease) {
                 // If deployment configuration is rsync, include a flag to simply sync the deltas between the prior release
