@@ -104,6 +104,7 @@ class DeployCommand extends AbstractCommand implements RequiresEnvironment
     	$lockFile = '.mage/' . $this->getConfig()->getEnvironment() . '.lock';
     	if (file_exists($lockFile)) {
     		Console::output('<red>This environment is locked!</red>', 1, 2);
+                echo file_get_contents($lockFile);
     		return;
     	}
 

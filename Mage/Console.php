@@ -228,6 +228,18 @@ class Console
     }
 
     /**
+     * Read String From Prompt
+     */
+    public static function readInput()
+    {
+        $fp = fopen("php://stdin","r");
+        $line = '';
+        $line = fgets($fp);
+
+        return rtrim($line);
+    }
+
+    /**
      * Check Logs
      * @param \Mage\Config $config
      */
@@ -252,4 +264,5 @@ class Console
         	}
         }
     }
+
 }
