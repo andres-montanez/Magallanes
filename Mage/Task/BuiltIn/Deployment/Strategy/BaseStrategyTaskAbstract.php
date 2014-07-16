@@ -50,7 +50,7 @@ abstract class BaseStrategyTaskAbstract extends AbstractTask implements IsReleas
         $excludes = array(
             '.git',
             '.svn',
-            '.mage',
+            getcwd() . '/.mage',
             '.gitignore',
             '.gitkeep',
             'nohup.out'

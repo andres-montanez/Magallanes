@@ -99,8 +99,8 @@ class Config
      */
     protected function loadGeneral()
     {
-    	if (file_exists('.mage/config/general.yml')) {
-    		$this->config['general'] = Yaml::parse(file_get_contents('.mage/config/general.yml'));
+    	if (file_exists(getcwd() . '/.mage/config/general.yml')) {
+    		$this->config['general'] = Yaml::parse(file_get_contents(getcwd() . '/.mage/config/general.yml'));
     	}
     }
 
@@ -113,8 +113,8 @@ class Config
     protected function loadEnvironment()
     {
     	$environment = $this->getEnvironment();
-    	if (($environment != false) && file_exists('.mage/config/environment/' . $environment . '.yml')) {
-    		$this->config['environment'] = Yaml::parse(file_get_contents('.mage/config/environment/' . $environment . '.yml'));
+    	if (($environment != false) && file_exists(getcwd() . '/.mage/config/environment/' . $environment . '.yml')) {
+    		$this->config['environment'] = Yaml::parse(file_get_contents(getcwd() . '/.mage/config/environment/' . $environment . '.yml'));
 
     		// Create temporal directory for clone
     		if (isset($this->config['environment']['deployment']['source']) && is_array($this->config['environment']['deployment']['source'])) {
@@ -127,7 +127,7 @@ class Config
     		}
     		return true;
 
-    	} else if (($environment != '') && !file_exists('.mage/config/environment/' . $environment . '.yml')) {
+    	} else if (($environment != '') && !file_exists(getcwd() . '/.mage/config/environment/' . $environment . '.yml')) {
     		throw new Exception('Environment does not exists.');
     	}
 
@@ -353,7 +353,7 @@ class Config
     {
         return $this->deployment('identity-file') ? ('-i ' . $this->deployment('identity-file') . ' ') : '';
     }
-    
+
     /**
      * Get the current Host
      *

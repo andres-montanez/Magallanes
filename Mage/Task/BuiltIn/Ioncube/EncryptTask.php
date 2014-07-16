@@ -755,7 +755,7 @@ class EncryptTask extends AbstractTask
 		$p ['ignore'] = array (
 			'.git',
 			'.svn',
-			'.mage',
+			getcwd() . '/.mage',
 			'.gitignore',
 			'.gitkeep',
 			'nohup.out'

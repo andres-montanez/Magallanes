@@ -46,7 +46,7 @@ class Autoload
      */
     public static function loadUserTask($taskName)
     {
-        $classFile = '.mage/tasks/' . ucfirst($taskName) . '.php';
+        $classFile = getcwd() . '/.mage/tasks/' . ucfirst($taskName) . '.php';
         require_once $classFile;
     }
 

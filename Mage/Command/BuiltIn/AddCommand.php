@@ -62,7 +62,7 @@ class AddCommand extends AbstractCommand
             throw new Exception('You must specify a name for the environment.');
         }
 
-        $environmentConfigFile = '.mage/config/environment/' . $environmentName . '.yml';
+        $environmentConfigFile = getcwd() . '/.mage/config/environment/' . $environmentName . '.yml';
 
         if (file_exists($environmentConfigFile)) {
             throw new Exception('The environment already exists.');

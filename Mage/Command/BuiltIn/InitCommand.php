@@ -27,7 +27,7 @@ class InitCommand extends AbstractCommand
 	 */
     public function run()
     {
-        $configDir = '.mage';
+        $configDir = getcwd() . '/.mage';
 
         Console::output('Initiating managing process for application with <dark_gray>Magallanes</dark_gray>');
 
