@@ -75,25 +75,11 @@ class TarGzTask extends BaseStrategyTaskAbstract implements IsReleaseAware
         $result = $this->runCommandLocal($command) && $result;
 
         // Extract Tar Gz
-        if ($this->getConfig()->release('enabled', false) == true) {
-        	$releasesDirectory = $this->getConfig()->release('directory', 'releases');
-
-        	$deployToDirectory = $releasesDirectory . '/' . $this->getConfig()->getReleaseId();
-        	$command = 'cd ' . $deployToDirectory . ' && tar xfz ' . $remoteTarGz . '.tar.gz';
-        } else {
-        	$command = 'tar xfz ' . $remoteTarGz . '.tar.gz';
-        }
+        $this->getReleasesAwareCommand('tar xfz ' . $remoteTarGz . '.tar.gz');
         $result = $this->runCommandRemote($command) && $result;
 
         // Delete Tar Gz from Remote Host
-        if ($this->getConfig()->release('enabled', false) == true) {
-        	$releasesDirectory = $this->getConfig()->release('directory', 'releases');
-
-        	$deployToDirectory = $releasesDirectory . '/' . $this->getConfig()->getReleaseId();
-        	$command = 'rm ' . $deployToDirectory . '/' . $remoteTarGz . '.tar.gz';
-        } else {
-        	$command = 'rm ' . $remoteTarGz . '.tar.gz';
-        }
+        $this->getReleasesAwareCommand('rm ' . $remoteTarGz . '.tar.gz');
         $result = $this->runCommandRemote($command) && $result;
 
         // Delete Tar Gz from Local
