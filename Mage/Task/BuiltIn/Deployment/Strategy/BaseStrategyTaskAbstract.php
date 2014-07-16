@@ -48,12 +48,12 @@ abstract class BaseStrategyTaskAbstract extends AbstractTask implements IsReleas
     protected function getExcludes()
     {
         $excludes = array(
-            '.git',
-            '.svn',
+            getcwd() . '/.git',
+            getcwd() . '/.svn',
             getcwd() . '/.mage',
-            '.gitignore',
-            '.gitkeep',
-            'nohup.out'
+            getcwd() . '/.gitignore',
+            getcwd() . '/.gitkeep',
+            getcwd() . '/nohup.out'
         );
 
         // Look for User Excludes
