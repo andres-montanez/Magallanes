@@ -39,7 +39,7 @@ class LockCommand extends AbstractCommand implements RequiresEnvironment
         if ($email) $lockmsg .= '(' . $email . ')';
         if ($reason) $lockmsg .= PHP_EOL . $reason . PHP_EOL;
 
-        $lockFile = '.mage/' . $this->getConfig()->getEnvironment() . '.lock';
+        $lockFile = getcwd() . '/.mage/' . $this->getConfig()->getEnvironment() . '.lock';
         file_put_contents($lockFile, 'Locked environment at date: ' . date('Y-m-d H:i:s') . $lockmsg);
 
         Console::output('Locked deployment to <light_purple>' . $this->getConfig()->getEnvironment() . '</light_purple> environment', 1, 2);

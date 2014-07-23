@@ -54,7 +54,7 @@ class ListCommand extends AbstractCommand
     protected function listEnvironments()
     {
     	$environments = array();
-        $content = scandir('.mage/config/environment/');
+        $content = scandir(getcwd() . '/.mage/config/environment/');
         foreach ($content as $file) {
             if (strpos($file, '.yml') !== false) {
             	$environments[] = str_replace('.yml', '', $file);

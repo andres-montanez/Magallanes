@@ -28,7 +28,7 @@ class UnlockCommand
 	 */
     public function run()
     {
-        $lockFile = '.mage/' . $this->getConfig()->getEnvironment() . '.lock';
+        $lockFile = getcwd() . '/.mage/' . $this->getConfig()->getEnvironment() . '.lock';
         if (file_exists($lockFile)) {
             @unlink($lockFile);
         }

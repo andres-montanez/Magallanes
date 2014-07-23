@@ -34,7 +34,7 @@ class RollbackCommand extends AbstractCommand implements RequiresEnvironment
             return false;
         }
 
-        $lockFile = '.mage/' . $this->getConfig()->getEnvironment() . '.lock';
+        $lockFile = getcwd() . '/.mage/' . $this->getConfig()->getEnvironment() . '.lock';
         if (file_exists($lockFile) && ($subcommand == 'rollback')) {
             Console::output('<red>This environment is locked!</red>', 1, 2);
             echo file_get_contents($lockFile);

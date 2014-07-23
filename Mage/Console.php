@@ -72,8 +72,8 @@ class Console
     	register_shutdown_function(function() {
     		// Only Unlock if there was an error
             if (error_get_last() !== null) {
-            	if (file_exists('.mage/~working.lock')) {
-            		unlink('.mage/~working.lock');
+            	if (file_exists(getcwd() . '/.mage/~working.lock')) {
+            		unlink(getcwd() . '/.mage/~working.lock');
             	}
             }
     	});
@@ -130,8 +130,8 @@ class Console
 
         if ($showGrettings) {
             self::output('Finished <blue>Magallanes</blue>', 0, 2);
-            if (file_exists('.mage/~working.lock')) {
-            	unlink('.mage/~working.lock');
+            if (file_exists(getcwd() . '/.mage/~working.lock')) {
+            	unlink(getcwd() . '/.mage/~working.lock');
             }
         }
 
@@ -200,7 +200,7 @@ class Console
     {
         if (self::$logEnabled) {
             if (self::$log == null) {
-            	self::$logFile = realpath('.mage/logs') . '/log-' . date('Ymd-His') . '.log';
+            	self::$logFile = realpath(getcwd() . '/.mage/logs') . '/log-' . date('Ymd-His') . '.log';
                 self::$log = fopen(self::$logFile, 'w');
             }
 
@@ -249,7 +249,7 @@ class Console
         	$maxLogs = $config->general('maxlogs', 30);
 
         	$logs = array();
-        	foreach (new RecursiveDirectoryIterator('.mage/logs', RecursiveDirectoryIterator::SKIP_DOTS) as $log) {
+        	foreach (new RecursiveDirectoryIterator(getcwd() . '/.mage/logs', RecursiveDirectoryIterator::SKIP_DOTS) as $log) {
         		if (strpos($log->getFilename(), 'log-') === 0) {
         			$logs[] = $log->getFilename();
         		}
@@ -259,7 +259,7 @@ class Console
         	if (count($logs) > $maxLogs) {
                 $logsToDelete = array_slice($logs, 0, count($logs) - $maxLogs);
                 foreach ($logsToDelete as $logToDeelte) {
-                	unlink('.mage/logs/' . $logToDeelte);
+                	unlink(getcwd() . '/.mage/logs/' . $logToDeelte);
                 }
         	}
         }

@@ -101,7 +101,7 @@ class DeployCommand extends AbstractCommand implements RequiresEnvironment
     public function run()
     {
         // Check if Environment is not Locked
-    	$lockFile = '.mage/' . $this->getConfig()->getEnvironment() . '.lock';
+    	$lockFile = getcwd() . '/.mage/' . $this->getConfig()->getEnvironment() . '.lock';
     	if (file_exists($lockFile)) {
     		Console::output('<red>This environment is locked!</red>', 1, 2);
                 echo file_get_contents($lockFile);
@@ -109,11 +109,11 @@ class DeployCommand extends AbstractCommand implements RequiresEnvironment
     	}
 
     	// Check for running instance and Lock
-    	if (file_exists('.mage/~working.lock')) {
+    	if (file_exists(getcwd() . '/.mage/~working.lock')) {
     		Console::output('<red>There is already an instance of Magallanes running!</red>', 1, 2);
     		return;
     	} else {
-    		touch('.mage/~working.lock');
+    		touch(getcwd() . '/.mage/~working.lock');
     	}
 
         // Release ID
@@ -182,8 +182,8 @@ class DeployCommand extends AbstractCommand implements RequiresEnvironment
         $this->sendNotification(self::$failedTasks > 0 ? false : true);
 
         // Unlock
-        if (file_exists('.mage/~working.lock')) {
-        	unlink('.mage/~working.lock');
+        if (file_exists(getcwd() . '/.mage/~working.lock')) {
+        	unlink(getcwd() . '/.mage/~working.lock');
         }
     }
 
@@ -311,11 +311,11 @@ class DeployCommand extends AbstractCommand implements RequiresEnvironment
     			    case 'targz':
     			    	$deployStrategy = 'deployment/strategy/tar-gz';
     			    	break;
-                            
+
                             case 'git-rebase':
     			    	$deployStrategy = 'deployment/strategy/git-rebase';
     			    	break;
-                            
+
     			    case 'guess':
     			    default:
     			    	if ($this->getConfig()->release('enabled', false) == true) {
