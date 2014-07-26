@@ -10,6 +10,10 @@
 
 namespace Mage;
 
+use Mage\Config\ConfigNotFoundException;
+use Mage\Config\RequiredConfigNotFoundException;
+use Mage\Console;
+use Mage\Yaml\Exception\RuntimeException;
 use Mage\Yaml\Yaml;
 use Exception;
 
@@ -51,23 +55,20 @@ class Config
     private $hostConfig = array();
 
     /**
-     * The Relase ID
+     * The Release ID
      * @var integer
      */
     private $releaseId = null;
 
     /**
      * Magallanes Global and Environment configuration
-     * @var array
      */
-    private $config = array(
-        'general'     => array(),
-        'environment' => array(),
-    );
+    private $generalConfig = array();
+    private $environmentConfig = array();
 
     /**
      * Parse the Command Line options
-     * @return boolean
+     * @param $arguments
      */
     protected function parse($arguments)
     {
@@ -95,45 +96,115 @@ class Config
     }
 
     /**
-     * Loads the General Configuration
+     * Initializes the General Configuration
      */
-    protected function loadGeneral()
+    protected function initGeneral()
     {
-    	if (file_exists(getcwd() . '/.mage/config/general.yml')) {
-    		$this->config['general'] = Yaml::parse(file_get_contents(getcwd() . '/.mage/config/general.yml'));
-    	}
+        try {
+            $this->generalConfig =  $this->loadGeneral(getcwd() . '/.mage/config/general.yml');
+        } catch (ConfigNotFoundException $e) {
+            // normal situation
+        }
     }
 
     /**
+     * Load general config from the given file
+     *
+     * @param $filePath
+     *
+     * @return array
+     * @throws Config\ConfigNotFoundException
+     */
+    protected function loadGeneral($filePath){
+        return $this->parseConfigFile($filePath);
+    }
+
+
+    /**
+     * Obviously this method is a HACK.  It was refactored from ::loadEnvironment()
+     * TODO Please put it to SCM functionality.
+     *
+     * @param array $settings
+     *
+     * @return array
+     */
+    protected function updateSCMTempDir(array $settings)
+    {
+        // Create temporal directory for clone
+        if (isset($settings['deployment']['source']) && is_array($settings['deployment']['source'])) {
+            if (trim($settings['deployment']['source']['temporal']) == '') {
+                $settings['deployment']['source']['temporal'] = sys_get_temp_dir();
+            }
+            $settings['deployment']['source']['temporal']
+                = rtrim($settings['deployment']['source']['temporal'], '/') . '/' . md5(microtime()) . '/';
+        }
+
+        return $settings;
+    }
+    /**
      * Loads the Environment configuration
+     * @param $filePath string
      *
      * @throws Exception
      * @return boolean
      */
-    protected function loadEnvironment()
+    protected function loadEnvironment($filePath)
     {
-    	$environment = $this->getEnvironment();
-    	if (($environment != false) && file_exists(getcwd() . '/.mage/config/environment/' . $environment . '.yml')) {
-    		$this->config['environment'] = Yaml::parse(file_get_contents(getcwd() . '/.mage/config/environment/' . $environment . '.yml'));
 
-    		// Create temporal directory for clone
-    		if (isset($this->config['environment']['deployment']['source']) && is_array($this->config['environment']['deployment']['source'])) {
-    			if (trim($this->config['environment']['deployment']['source']['temporal']) == '') {
-    				$this->config['environment']['deployment']['source']['temporal'] = '/tmp';
-    			}
-    			$newTemporal = rtrim($this->config['environment']['deployment']['source']['temporal'], '/')
-    			. '/' . md5(microtime()) . '/';
-    			$this->config['environment']['deployment']['source']['temporal'] = $newTemporal;
-    		}
-    		return true;
+        $settings = $this->parseConfigFile($filePath);
 
-    	} else if (($environment != '') && !file_exists(getcwd() . '/.mage/config/environment/' . $environment . '.yml')) {
-    		throw new Exception('Environment does not exists.');
-    	}
+        //this is a HACK in the old code - no time to remove it now, so I factored it out in own method
+        $settings = $this->updateSCMTempDir($settings);
 
-    	return false;
+        return $settings;
+
     }
 
+    /**
+     * Initializes the Environment configuration
+     *
+     * @throws Exception
+     * @return boolean
+     */
+    protected function initEnvironment()
+    {
+    	$environment = $this->getEnvironment();
+
+        $configFilePath = getcwd() . '/.mage/config/environment/' . $environment . '.yml';
+
+        $parameters = $this->getParameters();
+
+        if (empty($environment) && (!empty($parameters) || !$this->isRunInSpecialMode($parameters))) {
+        		throw new RuntimeException('Environment is not set');
+        }
+
+        try {
+            $this->environmentConfig =  $this->loadEnvironment($configFilePath);
+        } catch (ConfigNotFoundException $e) {
+            throw new RequiredConfigNotFoundException("Not found required config $configFilePath for environment $environment", 0 , $e);
+        }
+
+    }
+
+    /**
+     *
+     * @param array $parameters
+     * @return boolean
+     */
+    protected function isRunInSpecialMode(array $parameters)
+    {
+        if(empty($parameters))
+            return true;
+        foreach($parameters as $parameter)
+        {
+            if(isset(Console::$paramsNotRequiringEnvironment[$parameter]))
+            {
+                return true;
+            }
+        }
+
+        return false;
+    }
     /**
      * Load the Configuration and parses the Arguments
      *
@@ -142,8 +213,8 @@ class Config
     public function load($arguments)
     {
         $this->parse($arguments);
-        $this->loadGeneral();
-        $this->loadEnvironment();
+        $this->initGeneral();
+        $this->initEnvironment();
     }
 
     /**
@@ -151,8 +222,8 @@ class Config
      */
     public function reload()
     {
-    	$this->loadGeneral();
-    	$this->loadEnvironment();
+    	$this->initGeneral();
+    	$this->initEnvironment();
     }
 
     /**
@@ -280,11 +351,12 @@ class Config
     {
         $hosts = array();
 
-        if (isset($this->config['environment']['hosts'])) {
-            if (is_array($this->config['environment']['hosts'])) {
-                $hosts = (array) $this->config['environment']['hosts'];
-            } else if (is_string($this->config['environment']['hosts']) && file_exists($this->config['environment']['hosts']) && is_readable($this->config['environment']['hosts'])) {
-                $fileContent = fopen($this->config['environment']['hosts'], 'r');
+        $envConfig = $this->getEnvironmentConfig();
+        if (isset($envConfig['hosts'])) {
+            if (is_array($envConfig['hosts'])) {
+                $hosts = (array) $envConfig['hosts'];
+            } else if (is_string($envConfig['hosts']) && file_exists($envConfig['hosts']) && is_readable($envConfig['hosts'])) {
+                $fileContent = fopen($envConfig['hosts'], 'r');
                 while (($host = fgets($fileContent)) == true) {
                     $host = trim($host);
                     if ($host != '') {
@@ -373,7 +445,7 @@ class Config
      */
     public function general($option, $default = false)
     {
-        $config = $this->config['general'];
+        $config = $this->getGeneralConfig();
         if (isset($config[$option])) {
             if (is_array($default) && ($config[$option] == '')) {
                 return $default;
@@ -462,7 +534,8 @@ class Config
      */
     public function setFrom($from)
     {
-        $this->config['environment']['deployment']['from'] = $from;
+        $envConfig = $this->getEnvironmentConfig();
+        $envConfig['deployment']['from'] = $from;
         return $this;
     }
 
@@ -497,12 +570,45 @@ class Config
      */
     protected function getEnvironmentOption($option, $default = array())
     {
-        $config = $this->config['environment'];
+        $config = $this->getEnvironmentConfig();
         if (isset($config[$option])) {
             return $config[$option];
         } else {
             return $default;
         }
+    }
+
+    /**
+     * Utility methods. TODO To be extracted into own Class
+     */
+    public function parseConfigFile($filePath)
+    {
+        if(!file_exists($filePath))
+        {
+            throw new ConfigNotFoundException("Cannot find the file at path $filePath");
+        }
+
+        return $this->parseConfigText(file_get_contents($filePath));
+    }
+    public function parseConfigText($input)
+    {
+        return Yaml::parse($input);
+    }
+
+    /**
+     * @return array
+     */
+    protected function getGeneralConfig()
+    {
+        return $this->generalConfig;
+    }
+
+    /**
+     * @return array
+     */
+    protected function getEnvironmentConfig()
+    {
+        return $this->environmentConfig;
     }
 
 }

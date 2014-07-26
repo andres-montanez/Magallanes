@@ -24,6 +24,12 @@ use RecursiveDirectoryIterator;
  */
 class Console
 {
+    /**
+     * TODO refactor into own static class
+     * @var array
+     */
+    public static $paramsNotRequiringEnvironment = array('install'=>'install', 'upgrade'=>'upgrade', 'version'=>'version');
+
 	/**
 	 * Handler to the current Log File.
 	 * @var mixed
@@ -93,16 +99,17 @@ class Console
         $commandName = $config->getArgument(0);
 
         // Logging
-        $showGrettings = true;
-        if (in_array($commandName, array('install', 'upgrade', 'version'))) {
+        $showGreetings = true;
+
+        if (in_array($commandName, self::$paramsNotRequiringEnvironment)) {
             self::$logEnabled = false;
-            $showGrettings = false;
+            $showGreetings = false;
         } else {
             self::$logEnabled = $config->general('logging', false);
         }
 
-        // Grettings
-        if ($showGrettings) {
+        // Greetings
+        if ($showGreetings) {
             self::output('Starting <blue>Magallanes</blue>', 0, 2);
         }
 
@@ -128,7 +135,7 @@ class Console
             }
         }
 
-        if ($showGrettings) {
+        if ($showGreetings) {
             self::output('Finished <blue>Magallanes</blue>', 0, 2);
             if (file_exists(getcwd() . '/.mage/~working.lock')) {
             	unlink(getcwd() . '/.mage/~working.lock');
