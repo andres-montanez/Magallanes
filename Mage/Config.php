@@ -170,20 +170,17 @@ class Config
     {
     	$environment = $this->getEnvironment();
 
-        $configFilePath = getcwd() . '/.mage/config/environment/' . $environment . '.yml';
+        if(!empty($environment))
+        {
+            $configFilePath = getcwd() . '/.mage/config/environment/' . $environment . '.yml';
 
-        $parameters = $this->getParameters();
+            try {
+                $this->environmentConfig =  $this->loadEnvironment($configFilePath);
+            } catch (ConfigNotFoundException $e) {
+                throw new RequiredConfigNotFoundException("Not found required config $configFilePath for environment $environment", 0 , $e);
+            }
 
-        if (empty($environment) && (!empty($parameters) || !$this->isRunInSpecialMode($parameters))) {
-        		throw new RuntimeException('Environment is not set');
         }
-
-        try {
-            $this->environmentConfig =  $this->loadEnvironment($configFilePath);
-        } catch (ConfigNotFoundException $e) {
-            throw new RequiredConfigNotFoundException("Not found required config $configFilePath for environment $environment", 0 , $e);
-        }
-
     }
 
     /**
