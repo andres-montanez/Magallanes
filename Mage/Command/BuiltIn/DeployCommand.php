@@ -30,7 +30,15 @@ use Exception;
  */
 class DeployCommand extends AbstractCommand implements RequiresEnvironment
 {
-	/**
+    const DEFAULT_RELEASE_IS_ENABLED = false;
+    const DEPLOY_STRATEGY_DISABLED = 'disabled';
+    const DEPLOY_STRATEGY_RSYNC = 'rsync';
+    const DEPLOY_STRATEGY_TARGZ = 'targz';
+    const DEPLOY_STRATEGY_GIT_REBASE = 'git-rebase';
+    const DEPLOY_STRATEGY_GUESS   = 'guess';
+    const DEFAULT_DEPLOY_STRATEGY = self::DEPLOY_STRATEGY_GUESS;
+
+    /**
 	 * Deploy has Failed
 	 * @var string
 	 */
@@ -523,24 +531,24 @@ class DeployCommand extends AbstractCommand implements RequiresEnvironment
     protected function chooseDeployStrategy()
     {
         // Guess a Deploy Strategy
-        switch ($this->getConfig()->deployment('strategy', 'guess')) {
-        case 'disabled':
+        switch ($this->getConfig()->deployment('strategy', self::DEFAULT_DEPLOY_STRATEGY)) {
+        case self::DEPLOY_STRATEGY_DISABLED:
             $deployStrategy = 'deployment/strategy/disabled';
             break;
 
-        case 'rsync':
+        case self::DEPLOY_STRATEGY_RSYNC:
             $deployStrategy = 'deployment/strategy/rsync';
             break;
 
-        case 'targz':
+        case self::DEPLOY_STRATEGY_TARGZ:
             $deployStrategy = 'deployment/strategy/tar-gz';
             break;
 
-        case 'git-rebase':
+        case self::DEPLOY_STRATEGY_GIT_REBASE:
             $deployStrategy = 'deployment/strategy/git-rebase';
             break;
 
-        case 'guess':
+        case self::DEPLOY_STRATEGY_GUESS:
         default:
             if ($this->getConfig()->release('enabled', false) == true) {
                 $deployStrategy = 'deployment/strategy/tar-gz';
@@ -558,10 +566,12 @@ class DeployCommand extends AbstractCommand implements RequiresEnvironment
     protected function chooseReleaseStrategy()
     {
 
-        if ($this->getConfig()->release('enabled', false) === true) {
-            $strategy = 'deployment/strategy/disabled';
-        } else {
+        if ($this->getConfig()->release('enabled', self::DEFAULT_RELEASE_IS_ENABLED)
+            && $this->getConfig()->deployment('strategy', self::DEFAULT_DEPLOY_STRATEGY) !== self::DEPLOY_STRATEGY_DISABLED
+        ) {
             $strategy = 'deployment/release';
+        } else {
+            $strategy = 'deployment/strategy/disabled';
         }
 
         return $strategy;

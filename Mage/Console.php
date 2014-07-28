@@ -106,6 +106,11 @@ class Console
             $showGreetings = false;
         } else {
             self::$logEnabled = $config->general('logging', false);
+            if(self::$logEnabled)
+            {
+                self::log("Logging enabled");
+                self::output('<red> Logging enabled: ' . self::getLogFile() . '</red>', 1, 1);
+            }
         }
 
         // Greetings
