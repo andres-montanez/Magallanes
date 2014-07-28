@@ -20,34 +20,40 @@ class Autoload
 	/**
 	 * Autoload a Class by it's Class Name
 	 * @param string $className
+     * @return boolean
 	 */
-    public static function autoload($className)
+    public function autoLoad($className)
     {
+        $className = ltrim($className, '/');
+        $postfix             = '/' . str_replace(array('_', '\\'), '/', $className . '.php');
+
+        //Try to load a normal Mage class (or Task). Think that Mage component is compiled to .phar
         $baseDir = dirname(dirname(__FILE__));
-        $classFile = $baseDir . '/' . str_replace(array('_', '\\'), '/', $className . '.php');
-        require_once $classFile;
+        $classFileWithinPhar = $baseDir . $postfix;
+        if($this->isReadable($classFileWithinPhar))
+        {
+            require_once $classFileWithinPhar;
+            return true;
+        }
+
+        //Try to load a custom Task or Class. Notice that the path is absolute to CWD
+        $classFileOutsidePhar = getcwd() . '/.mage/tasks' . $postfix;
+        if($this->isReadable($classFileOutsidePhar)){
+            require_once $classFileOutsidePhar;
+            return true;
+        }
+
+        return false;
     }
 
     /**
-     * Checks if a Class can be loaded.
-     * @param string $className
+     * Checks if a file can be read.
+     * @param string $filePath
      * @return boolean
      */
-    public static function isLoadable($className)
+    public function isReadable($filePath)
     {
-        $baseDir = dirname(dirname(__FILE__));
-        $classFile = $baseDir . '/' . str_replace(array('_', '\\'), '/', $className . '.php');
-        return (file_exists($classFile) && is_readable($classFile));
-    }
-
-    /**
-     * Loads a User's Tasks
-     * @param string $taskName
-     */
-    public static function loadUserTask($taskName)
-    {
-        $classFile = getcwd() . '/.mage/tasks/' . ucfirst($taskName) . '.php';
-        require_once $classFile;
+        return is_readable($filePath);
     }
 
 }

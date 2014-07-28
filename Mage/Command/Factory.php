@@ -38,17 +38,13 @@ class Factory
 
         $commandName = str_replace(' ', '_', ucwords(str_replace('/', ' ', $commandName)));
         $className = 'Mage\\Command\\BuiltIn\\' . $commandName . 'Command';
-        if (Autoload::isLoadable($className)) {
-            $instance = new $className;
-            assert($instance instanceOf AbstractCommand);
-            $instance->setConfig($config);
-        } else {
-            throw new Exception('Command not found.');
-        }
-
-        if(!($instance instanceOf AbstractCommand)) {
+        /** @var AbstractCommand $instance */
+        $instance = new $className;
+        if(!is_a($instance, "Mage\Command\AbstractCommand")) {
             throw new Exception('The command ' . $commandName . ' must be an instance of Mage\Command\AbstractCommand.');
         }
+
+        $instance->setConfig($config);
 
         return $instance;
     }

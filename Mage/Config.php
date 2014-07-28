@@ -24,7 +24,8 @@ use Exception;
  */
 class Config
 {
-	/**
+    const HOST_NAME_LENGTH = 1000;
+    /**
 	 * Arguments loaded
 	 * @var array
 	 */
@@ -353,13 +354,7 @@ class Config
             if (is_array($envConfig['hosts'])) {
                 $hosts = (array) $envConfig['hosts'];
             } else if (is_string($envConfig['hosts']) && file_exists($envConfig['hosts']) && is_readable($envConfig['hosts'])) {
-                $fileContent = fopen($envConfig['hosts'], 'r');
-                while (($host = fgets($fileContent)) == true) {
-                    $host = trim($host);
-                    if ($host != '') {
-                        $hosts[] = $host;
-                    }
-                }
+                $hosts = $this->getHostsFromFile($envConfig['hosts']);
             }
         }
 
@@ -565,7 +560,7 @@ class Config
      * @param mixed $default
      * @return mixed
      */
-    protected function getEnvironmentOption($option, $default = array())
+    public function getEnvironmentOption($option, $default = array())
     {
         $config = $this->getEnvironmentConfig();
         if (isset($config[$option])) {
@@ -606,6 +601,35 @@ class Config
     protected function getEnvironmentConfig()
     {
         return $this->environmentConfig;
+    }
+
+    /**
+     * @param string $filePath
+     *
+     * @return array
+     */
+    protected function getHostsFromFile($filePath)
+    {
+        $handle = fopen($filePath, 'r');
+
+        $hosts = array();
+
+        try {
+            $fileContent = stream_get_contents($handle);
+            $hosts = json_decode($fileContent);
+        } catch (Exception $e) {
+
+            rewind($handle);
+            //do it old-style: one host per line
+            while (($host = stream_get_line($handle, self::HOST_NAME_LENGTH)) !== false) {
+                $host = trim($host);
+                if (!empty($host)) {
+                    $hosts[] = $host;
+                }
+            }
+        }
+
+        return $hosts;
     }
 
 }
