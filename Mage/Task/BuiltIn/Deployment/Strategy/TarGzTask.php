@@ -66,7 +66,7 @@ class TarGzTask extends BaseStrategyTaskAbstract implements IsReleaseAware
             $excludeCmd .= ' --exclude=' . $excludeFile;
         }
 
-        $command = 'tar cfz ' . $localTarGz . '.tar.gz ' . $excludeCmd . ' ' . $this->getConfig()->deployment('from');
+        $command = 'tar cfz ' . $localTarGz . '.tar.gz ' . $excludeCmd . ' -C ' . $this->getConfig()->deployment('from') . ' .';
         $result = $this->runCommandLocal($command);
 
         // Copy Tar Gz  to Remote Host
