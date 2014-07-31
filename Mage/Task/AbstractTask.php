@@ -214,4 +214,22 @@ abstract class AbstractTask
         	return $this->runCommandLocal($command, $output);
         }
     }
+
+    /**
+     * adds a cd to the needed release if we work with releases.
+     *
+     * @param string $command
+     * @return string
+     */
+    protected function getReleasesAwareCommand($command)
+    {
+        if ($this->getConfig()->release('enabled', false) == true) {
+            $releasesDirectory = $this->getConfig()->release('directory', 'releases');
+
+            $deployToDirectory = $releasesDirectory . '/' . $this->getConfig()->getReleaseId();
+            return 'cd ' . $deployToDirectory . ' && ' . $command;
+        }
+
+        return $command;
+    }
 }
