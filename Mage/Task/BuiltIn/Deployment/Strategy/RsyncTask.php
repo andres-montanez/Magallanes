@@ -62,6 +62,8 @@ class RsyncTask extends BaseStrategyTaskAbstract implements IsReleaseAware
             $deployToDirectory = rtrim($this->getConfig()->deployment('to'), '/')
                                . '/' . $releasesDirectory
                                . '/' . $this->getConfig()->getReleaseId();
+
+            Console::log('Deploy to ' . $deployToDirectory);
             $resultFetch = $this->runCommandRemote('ls -ld ' . $symlink . ' | cut -d"/" -f2', $currentRelease);
 
             if ($resultFetch && $currentRelease) {

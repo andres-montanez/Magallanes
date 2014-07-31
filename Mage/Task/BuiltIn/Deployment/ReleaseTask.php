@@ -46,9 +46,30 @@ class ReleaseTask extends AbstractTask implements IsReleaseAware, SkipOnOverride
 
             $currentCopy = $releasesDirectory . '/' . $this->getConfig()->getReleaseId();
 
+            //Check if target user:group is specified
+            $userGroup = $this->getConfig()->deployment('owner');
             // Fetch the user and group from base directory; defaults usergroup to 33:33
-            $userGroup = '';
-            $resultFetch = $this->runCommandRemote('ls -ld . | awk \'{print \$3":"\$4}\'', $userGroup);
+            if(empty($userGroup)){
+                $user = '33';
+                $group = '33';
+                $directoryInfos = '';
+                // Get raw directory info and parse it in php.
+                // "stat" command don't behave the same on different systems, ls output format also varies
+                // and awk parameters need special care depending on the executing shell
+                $resultFetch = $this->runCommandRemote("ls -ld .", $directoryInfos);
+                if(!empty($directoryInfos)){
+                    //uniformize format as it depends on the system deployed on
+                    $directoryInfos = trim(str_replace(array("  ", "\t"), ' ', $directoryInfos));
+                    $infoArray = explode(' ', $directoryInfos);
+                    if(!empty($infoArray[2])) {
+                        $user = $infoArray[2];
+                    }
+                    if(!empty($infoArray[3])) {
+                        $group = $infoArray[3];
+                    }
+                    $userGroup = $user . ':' . $group;
+                }
+            }
 
             // Remove symlink if exists; create new symlink and change owners
             $command = 'rm -f ' . $symlink

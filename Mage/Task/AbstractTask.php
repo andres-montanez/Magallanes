@@ -176,9 +176,10 @@ abstract class AbstractTask
      * Runs a Shell Command on the Remote Host
      * @param string $command
      * @param string $output
+     * @param boolean $cdToDirectoryFirst
      * @return boolean
      */
-    protected final function runCommandRemote($command, &$output = null)
+    protected final function runCommandRemote($command, &$output = null, $cdToDirectoryFirst = true)
     {
         if ($this->getConfig()->release('enabled', false) == true) {
             if ($this instanceOf IsReleaseAware) {
@@ -200,9 +201,15 @@ abstract class AbstractTask
 
         $localCommand = 'ssh ' . $this->getConfig()->getHostIdentityFileOption() . $needs_tty . ' -p ' . $this->getConfig()->getHostPort() . ' '
                       . '-q -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no '
-                      . $this->getConfig()->deployment('user') . '@' . $this->getConfig()->getHostName() . ' '
-                      . '"cd ' . rtrim($this->getConfig()->deployment('to'), '/') . $releasesDirectory . ' && '
-                      . str_replace('"', '\"', $command) . '"';
+                      . $this->getConfig()->deployment('user') . '@' . $this->getConfig()->getHostName();
+
+        $remoteCommand = str_replace('"', '\"', $command);
+        if($cdToDirectoryFirst){
+            $remoteCommand = 'cd ' . rtrim($this->getConfig()->deployment('to'), '/') . $releasesDirectory . ' && ' . $remoteCommand;
+        }
+        $localCommand .= ' ' . '"sh -c \"' .  $remoteCommand . '\""';
+
+        Console::log('Run remote command ' . $remoteCommand);
 
         return $this->runCommandLocal($localCommand, $output);
     }
