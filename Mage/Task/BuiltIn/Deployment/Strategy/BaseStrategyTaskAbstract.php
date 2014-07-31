@@ -28,10 +28,11 @@ abstract class BaseStrategyTaskAbstract extends AbstractTask implements IsReleas
     protected function checkOverrideRelease()
     {
         $overrideRelease = $this->getParameter('overrideRelease', false);
+        $symlink = $this->getConfig()->release('symlink', 'current');
 
         if ($overrideRelease == true) {
             $releaseToOverride = false;
-            $resultFetch = $this->runCommandRemote('ls -ld current | cut -d"/" -f2', $releaseToOverride);
+            $resultFetch = $this->runCommandRemote('ls -ld '.$symlink.' | cut -d"/" -f2', $releaseToOverride);
             if ($resultFetch && is_numeric($releaseToOverride)) {
                 $this->getConfig()->setReleaseId($releaseToOverride);
             }

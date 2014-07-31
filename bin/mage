@@ -9,6 +9,8 @@
 * file that was distributed with this source code.
 */
 
+use Mage\Autoload;
+
 date_default_timezone_set('UTC');
 
 $baseDir = dirname(dirname(__FILE__));
@@ -18,7 +20,8 @@ define('MAGALLANES_DIRECTORY', $baseDir);
 
 // Preload
 require_once $baseDir . '/Mage/Autoload.php';
-spl_autoload_register(array('Mage\\Autoload', 'autoload'));
+$loader = new Autoload();
+spl_autoload_register(array($loader, 'autoLoad'));
 
 // Clean arguments
 array_shift($argv);

@@ -30,7 +30,15 @@ use Exception;
  */
 class DeployCommand extends AbstractCommand implements RequiresEnvironment
 {
-	/**
+    const DEFAULT_RELEASE_IS_ENABLED = false;
+    const DEPLOY_STRATEGY_DISABLED = 'disabled';
+    const DEPLOY_STRATEGY_RSYNC = 'rsync';
+    const DEPLOY_STRATEGY_TARGZ = 'targz';
+    const DEPLOY_STRATEGY_GIT_REBASE = 'git-rebase';
+    const DEPLOY_STRATEGY_GUESS   = 'guess';
+    const DEFAULT_DEPLOY_STRATEGY = self::DEPLOY_STRATEGY_GUESS;
+
+    /**
 	 * Deploy has Failed
 	 * @var string
 	 */
@@ -298,35 +306,9 @@ class DeployCommand extends AbstractCommand implements RequiresEnvironment
 
     			$tasksToRun = $this->getConfig()->getTasks();
 
-    			// Guess a Deploy Strategy
-    			switch ($this->getConfig()->deployment('strategy', 'guess')) {
-    			    case 'disabled':
-    			    	$deployStrategy = 'deployment/strategy/disabled';
-    			    	break;
+                $deployStrategy = $this->chooseDeployStrategy();
 
-    			    case 'rsync':
-    			    	$deployStrategy = 'deployment/strategy/rsync';
-    			    	break;
-
-    			    case 'targz':
-    			    	$deployStrategy = 'deployment/strategy/tar-gz';
-    			    	break;
-
-                            case 'git-rebase':
-    			    	$deployStrategy = 'deployment/strategy/git-rebase';
-    			    	break;
-
-    			    case 'guess':
-    			    default:
-    			    	if ($this->getConfig()->release('enabled', false) == true) {
-    			    		$deployStrategy = 'deployment/strategy/tar-gz';
-    			    	} else {
-    			    		$deployStrategy = 'deployment/strategy/rsync';
-    			    	}
-    			    	break;
-    			}
-
-				array_unshift($tasksToRun, $deployStrategy);
+                array_unshift($tasksToRun, $deployStrategy);
 
     			if (count($tasksToRun) == 0) {
     				Console::output('<light_purple>Warning!</light_purple> <dark_gray>No </dark_gray><light_cyan>Deployment</light_cyan> <dark_gray>tasks defined.</dark_gray>', 2);
@@ -381,7 +363,7 @@ class DeployCommand extends AbstractCommand implements RequiresEnvironment
     				$this->getConfig()->setHost($host);
     				$this->getConfig()->setHostConfig($hostConfig);
 
-    				$task = Factory::get('deployment/release', $this->getConfig(), false, AbstractTask::STAGE_DEPLOY);
+    				$task = Factory::get($this->chooseReleaseStrategy(), $this->getConfig(), false, AbstractTask::STAGE_DEPLOY);
 
     				if ($this->runTask($task, 'Releasing on host <purple>' . $host . '</purple> ... ')) {
     					$completedTasks++;
@@ -541,6 +523,58 @@ class DeployCommand extends AbstractCommand implements RequiresEnvironment
                ->send($result);
 
         return true;
+    }
+
+    /**
+     * @return string
+     */
+    protected function chooseDeployStrategy()
+    {
+        // Guess a Deploy Strategy
+        switch ($this->getConfig()->deployment('strategy', self::DEFAULT_DEPLOY_STRATEGY)) {
+        case self::DEPLOY_STRATEGY_DISABLED:
+            $deployStrategy = 'deployment/strategy/disabled';
+            break;
+
+        case self::DEPLOY_STRATEGY_RSYNC:
+            $deployStrategy = 'deployment/strategy/rsync';
+            break;
+
+        case self::DEPLOY_STRATEGY_TARGZ:
+            $deployStrategy = 'deployment/strategy/tar-gz';
+            break;
+
+        case self::DEPLOY_STRATEGY_GIT_REBASE:
+            $deployStrategy = 'deployment/strategy/git-rebase';
+            break;
+
+        case self::DEPLOY_STRATEGY_GUESS:
+        default:
+            if ($this->getConfig()->release('enabled', false) == true) {
+                $deployStrategy = 'deployment/strategy/tar-gz';
+            } else {
+                $deployStrategy = 'deployment/strategy/rsync';
+            }
+            break;
+        }
+        return $deployStrategy;
+    }
+
+    /**
+     * @return string
+     */
+    protected function chooseReleaseStrategy()
+    {
+
+        if ($this->getConfig()->release('enabled', self::DEFAULT_RELEASE_IS_ENABLED)
+            && $this->getConfig()->deployment('strategy', self::DEFAULT_DEPLOY_STRATEGY) !== self::DEPLOY_STRATEGY_DISABLED
+        ) {
+            $strategy = 'deployment/release';
+        } else {
+            $strategy = 'deployment/strategy/disabled';
+        }
+
+        return $strategy;
     }
 
 }

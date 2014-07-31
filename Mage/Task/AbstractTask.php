@@ -150,7 +150,15 @@ abstract class AbstractTask
      */
     public function getParameter($name, $default = null)
     {
-        return $this->getConfig()->getParameter($name, $default, $this->parameters);
+        return $this->getConfig()->getParameter($name, $default, $this->getParameters());
+    }
+
+    /**
+     * @return array
+     */
+    protected function getParameters()
+    {
+        return $this->parameters;
     }
 
     /**
