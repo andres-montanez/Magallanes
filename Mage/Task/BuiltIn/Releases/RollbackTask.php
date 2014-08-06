@@ -60,6 +60,7 @@ class RollbackTask extends AbstractTask implements IsReleaseAware
 
             } else {
                 rsort($releases);
+                $deleteCurrent = $this->getConfig()->getParameter('deleteCurrent', false);
 
                 $releaseIsAvailable = false;
                 if ($this->getReleaseId() == '') {
@@ -85,6 +86,13 @@ class RollbackTask extends AbstractTask implements IsReleaseAware
                 } else {
                     Console::output('Rollback release on <dark_gray>' . $this->getConfig()->getHost() . '</dark_gray>');
                     $rollbackTo = $releasesDirectory . '/' . $releaseId;
+
+                    // Get Current Release
+                    if ($deleteCurrent) {
+                        $result = $this->runCommandRemote('ls -l ' . $symlink, $output) && $result;
+                        $currentRelease = explode('/', $output);
+                        $currentRelease = trim(array_pop($currentRelease));
+                    }
 
                     // Tasks
                     $tasks = 1;
@@ -120,8 +128,8 @@ class RollbackTask extends AbstractTask implements IsReleaseAware
                     $userGroup = '';
                     $resultFetch = $this->runCommandRemote('ls -ld ' . $rollbackTo . ' | awk \'{print \$3":"\$4}\'', $userGroup);
                     $command = 'rm -f ' . $symlink
-                        . ' && '
-                        . 'ln -sf ' . $rollbackTo . ' ' . $symlink;
+                             . ' && '
+                             . 'ln -sf ' . $rollbackTo . ' ' . $symlink;
 
                     if ($resultFetch) {
                         $command .= ' && chown -h ' . $userGroup . ' ' . $symlink;
@@ -132,6 +140,11 @@ class RollbackTask extends AbstractTask implements IsReleaseAware
                     if ($result) {
                         Console::output('<green>OK</green>', 0);
                         $completedTasks++;
+
+                        // Delete Old Current Release
+                        if ($deleteCurrent && $currentRelease) {
+                            $this->runCommandRemote('rm -rf ' . $releasesDirectory . '/' . $currentRelease, $output);
+                        }
                     } else {
                         Console::output('<red>FAIL</red>', 0);
                     }
