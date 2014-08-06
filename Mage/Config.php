@@ -432,7 +432,7 @@ class Config
      * Gets General Configuration
      *
      * @param string $option
-     * @param string $default
+     * @param bool|string $default
      * @return mixed
      */
     public function general($option, $default = false)
@@ -453,7 +453,7 @@ class Config
      * Gets Environments Full Configuration
      *
      * @param string $option
-     * @param string $default
+     * @param bool|string $default
      * @return mixed
      */
     public function environmentConfig($option, $default = false)
@@ -465,7 +465,7 @@ class Config
      * Get deployment configuration
      *
      * @param string $option
-     * @param string $default
+     * @param bool|string $default
      * @return string
      */
     public function deployment($option, $default = false)
@@ -494,7 +494,7 @@ class Config
      * Returns Releasing Options
      *
      * @param string $option
-     * @param string $default
+     * @param bool|string $default
      * @return mixed
      */
     public function release($option, $default = false)

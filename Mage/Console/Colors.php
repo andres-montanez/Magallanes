@@ -47,6 +47,7 @@ class Colors
      * Parses a Text to represent Colors in the Terminal/Console.
      *
      * @param string $string
+     * @param Config $config
      * @return string
      */
     public static function color($string, Config $config)

@@ -65,6 +65,7 @@ class Unescaper
      *
      * @return string The unescaped character
      */
+    /** @noinspection PhpInconsistentReturnPointsInspection */
     public function unescapeCharacter($value)
     {
         switch ($value{1}) {

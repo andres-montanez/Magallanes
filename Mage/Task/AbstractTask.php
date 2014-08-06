@@ -248,11 +248,10 @@ abstract class AbstractTask
 		return $command;
 	}
 
-	/**
-	 * @param $releasesDirectory
-	 * @param $releaseId
-	 * @return bool
-	 */
+    /**
+     * @param integer $releaseId
+     * @return bool
+     */
 	protected function tarRelease($releaseId)
 	{
 		$result = true;

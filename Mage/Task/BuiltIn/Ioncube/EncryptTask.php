@@ -628,12 +628,13 @@ class EncryptTask extends AbstractTask
 		);
 	}
 
-	/**
-	 * reads an existing ioncube project
-	 * file.
-	 *
-	 * @return array
-	 */
+    /**
+     * reads an existing ioncube project
+     * file.
+     *
+     * @param $fileName
+     * @return array
+     */
 	private function getOptionsFromFile($fileName) {
 		$s = array ();
 		$p = array ();

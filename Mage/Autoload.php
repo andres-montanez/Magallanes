@@ -32,6 +32,7 @@ class Autoload
         $classFileWithinPhar = $baseDir . $postfix;
         if($this->isReadable($classFileWithinPhar))
         {
+            /** @noinspection PhpIncludeInspection */
             require_once $classFileWithinPhar;
             return true;
         }
@@ -39,6 +40,7 @@ class Autoload
         //Try to load a custom Task or Class. Notice that the path is absolute to CWD
         $classFileOutsidePhar = getcwd() . '/.mage/tasks' . $postfix;
         if($this->isReadable($classFileOutsidePhar)){
+            /** @noinspection PhpIncludeInspection */
             require_once $classFileOutsidePhar;
             return true;
         }

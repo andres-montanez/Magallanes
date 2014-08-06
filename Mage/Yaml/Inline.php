@@ -21,6 +21,8 @@ use Mage\Yaml\Exception\DumpException;
  *
  * @author Fabien Potencier <fabien@symfony.com>
  */
+
+/** @noinspection PhpUndefinedClassInspection */
 class Inline
 {
     const REGEX_QUOTED_STRING = '(?:"([^"\\\\]*(?:\\\\.[^"\\\\]*)*)"|\'([^\']*(?:\'\'[^\']*)*)\')';
@@ -409,8 +411,9 @@ class Inline
     /**
      * Evaluates scalars and replaces magic values.
      *
-     * @param string  $scalar
+     * @param string $scalar
      *
+     * @throws Exception\ParseException
      * @return string A YAML string
      */
     private static function evaluateScalar($scalar)
@@ -421,12 +424,14 @@ class Inline
             case 'null' === $scalarLower:
             case '' === $scalar:
             case '~' === $scalar:
-                return;
+                /** @noinspection PhpInconsistentReturnPointsInspection */
+            return;
             case 'true' === $scalarLower:
                 return true;
             case 'false' === $scalarLower:
                 return false;
             // Optimise for returning strings.
+            /** @noinspection PhpMissingBreakStatementInspection */
             case $scalar[0] === '+' || $scalar[0] === '-' || $scalar[0] === '.' || $scalar[0] === '!' || is_numeric($scalar[0]):
                 switch (true) {
                     case 0 === strpos($scalar, '!str'):
@@ -442,6 +447,7 @@ class Inline
                             throw new ParseException('Object support when parsing a YAML file has been disabled.');
                         }
 
+                        /** @noinspection PhpInconsistentReturnPointsInspection */
                         return;
                     case ctype_digit($scalar):
                         $raw = $scalar;
