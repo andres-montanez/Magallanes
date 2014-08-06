@@ -10,6 +10,7 @@
 
 namespace Mage\Task\BuiltIn\Deployment\Strategy;
 
+use Mage\Console;
 use Mage\Task\BuiltIn\Deployment\Strategy\BaseStrategyTaskAbstract;
 use Mage\Task\Releases\IsReleaseAware;
 
@@ -67,19 +68,19 @@ class TarGzTask extends BaseStrategyTaskAbstract implements IsReleaseAware
         }
 
         $command = 'tar cfz ' . $localTarGz . '.tar.gz ' . $excludeCmd . ' -C ' . $this->getConfig()->deployment('from') . ' .';
-        $result = $this->runCommandLocal($command);
+		$result = $this->runCommandLocal($command);
 
-        // Copy Tar Gz  to Remote Host
-        $command = 'scp ' . $this->getConfig()->getHostIdentityFileOption() . '-P ' . $this->getConfig()->getHostPort() . ' ' . $localTarGz . '.tar.gz '
+		// Copy Tar Gz  to Remote Host
+		$command = 'scp ' . $this->getConfig()->getHostIdentityFileOption() . '-P ' . $this->getConfig()->getHostPort() . ' ' . $localTarGz . '.tar.gz '
                  . $this->getConfig()->deployment('user') . '@' . $this->getConfig()->getHostName() . ':' . $deployToDirectory;
-        $result = $this->runCommandLocal($command) && $result;
+		$result = $this->runCommandLocal($command) && $result;
 
         // Extract Tar Gz
-        $this->getReleasesAwareCommand('tar xfz ' . $remoteTarGz . '.tar.gz');
+		$command = $this->getReleasesAwareCommand('tar xfz ' . $remoteTarGz . '.tar.gz');
         $result = $this->runCommandRemote($command) && $result;
 
         // Delete Tar Gz from Remote Host
-        $this->getReleasesAwareCommand('rm ' . $remoteTarGz . '.tar.gz');
+		$command = $this->getReleasesAwareCommand('rm ' . $remoteTarGz . '.tar.gz');
         $result = $this->runCommandRemote($command) && $result;
 
         // Delete Tar Gz from Local
