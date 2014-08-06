@@ -51,7 +51,7 @@ class InstallCommand extends AbstractCommand
             }
 
             // Copy
-            $this->recursiveCopy('./', $destinationDir . '/' . MAGALLANES_VERSION);
+            $this->recursiveCopy(MAGALLANES_DIRECTORY, $destinationDir . '/' . MAGALLANES_VERSION);
 
             // Check if there is already a symlink
             if (file_exists($destinationDir . '/' . 'latest')
