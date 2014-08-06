@@ -16,6 +16,7 @@ use Mage\Console\Colors;
 
 use Exception;
 use RecursiveDirectoryIterator;
+use SplFileInfo;
 
 /**
  * Magallanes interface between the Tasks and Commands and the User's Console.
@@ -265,6 +266,7 @@ class Console
 
             $logs = array();
             foreach (new RecursiveDirectoryIterator(getcwd() . '/.mage/logs', RecursiveDirectoryIterator::SKIP_DOTS) as $log) {
+                /* @var $log SplFileInfo */
                 if (strpos($log->getFilename(), 'log-') === 0) {
                     $logs[] = $log->getFilename();
                 }

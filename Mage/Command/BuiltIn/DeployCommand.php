@@ -421,11 +421,11 @@ class DeployCommand extends AbstractCommand implements RequiresEnvironment
     /**
      * Runs a Task
      *
-     * @param string $task
+     * @param AbstractTask $task
      * @param string $title
      * @return boolean
      */
-    protected function runTask($task, $title = null)
+    protected function runTask(AbstractTask $task, $title = null)
     {
         $task->init();
 

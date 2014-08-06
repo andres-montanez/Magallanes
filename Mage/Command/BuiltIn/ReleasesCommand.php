@@ -68,9 +68,9 @@ class ReleasesCommand extends AbstractCommand implements RequiresEnvironment
                     }
 
                     $releaseId = $this->getConfig()->getParameter('release', '');
+                    $this->getConfig()->setReleaseId($releaseId);
                     $task = Factory::get('releases/rollback', $this->getConfig());
                     $task->init();
-                    $task->setRelease($releaseId);
                     $result = $task->run();
                     break;
             }

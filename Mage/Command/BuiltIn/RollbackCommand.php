@@ -51,9 +51,9 @@ class RollbackCommand extends AbstractCommand implements RequiresEnvironment
             foreach ($hosts as $host) {
                 $this->getConfig()->setHost($host);
 
+                $this->getConfig()->setReleaseId($releaseId);
                 $task = Factory::get('releases/rollback', $this->getConfig());
                 $task->init();
-                $task->setRelease($releaseId);
                 $result = $task->run();
             }
         }

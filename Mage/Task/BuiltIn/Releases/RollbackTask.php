@@ -116,6 +116,7 @@ class RollbackTask extends AbstractTask implements IsReleaseAware
                         Console::output('Running <purple>' . $task->getName() . '</purple> ... ', 2, false);
 
                         if ($task instanceOf RollbackAware) {
+                            /* @var $task AbstractTask */
                             $tasks++;
                             $result = $task->run();
 
@@ -128,13 +129,6 @@ class RollbackTask extends AbstractTask implements IsReleaseAware
                         } else {
                             Console::output('<yellow>SKIPPED</yellow>', 0);
                         }
-                    }
-
-                    if ($this->getConfig()->release('compressreleases', false) == true) {
-                        // Tar the current
-                        $result = $this->tarReleases() && $result;
-                        // Untar the rollbackto
-                        $result = $this->untarRelease($releaseId) && $result;
                     }
 
                     // Changing Release
@@ -167,6 +161,7 @@ class RollbackTask extends AbstractTask implements IsReleaseAware
                         Console::output('Running <purple>' . $task->getName() . '</purple> ... ', 2, false);
 
                         if ($task instanceOf RollbackAware) {
+                            /* @var $task AbstractTask */
                             $tasks++;
                             $result = $task->run();
 

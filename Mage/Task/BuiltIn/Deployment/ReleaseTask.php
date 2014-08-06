@@ -46,13 +46,6 @@ class ReleaseTask extends AbstractTask implements IsReleaseAware, SkipOnOverride
 
             $releaseId = $this->getConfig()->getReleaseId();
 
-            if ($this->getConfig()->release('compressreleases', false) == true) {
-                // Tar.gz releases
-                $result = $this->tarReleases() && $result;
-                // Untar new release
-                $result = $this->untarRelease($releaseId) && $result;
-            }
-
             $currentCopy = $releasesDirectory . '/' . $releaseId;
 
             //Check if target user:group is specified
