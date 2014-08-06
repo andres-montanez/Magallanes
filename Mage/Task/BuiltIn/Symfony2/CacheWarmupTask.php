@@ -10,14 +10,14 @@
 
 namespace Mage\Task\BuiltIn\Symfony2;
 
-use Mage\Task\AbstractTask;
+use Mage\Task\BuiltIn\Symfony2\SymfonyAbstractTask;
 
 /**
  * Task for Warming Up the Cache
  *
  * @author Andrés Montañez <andres@andresmontanez.com>
  */
-class CacheWarmupTask extends AbstractTask
+class CacheWarmupTask extends SymfonyAbstractTask
 {
     /**
      * (non-PHPdoc)
@@ -37,7 +37,7 @@ class CacheWarmupTask extends AbstractTask
         // Options
         $env = $this->getParameter('env', 'dev');
 
-        $command = 'app/console cache:warmup --env=' . $env;
+        $command = $this->getAppPath() . ' cache:warmup --env=' . $env;
         $result = $this->runCommand($command);
 
         return $result;

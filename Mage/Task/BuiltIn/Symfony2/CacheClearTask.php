@@ -10,14 +10,14 @@
 
 namespace Mage\Task\BuiltIn\Symfony2;
 
-use Mage\Task\AbstractTask;
+use Mage\Task\BuiltIn\Symfony2\SymfonyAbstractTask;
 
 /**
  * Task for Clearing the Cache
  *
  * @author Andrés Montañez <andres@andresmontanez.com>
  */
-class CacheClearTask extends AbstractTask
+class CacheClearTask extends SymfonyAbstractTask
 {
     /**
      * (non-PHPdoc)
@@ -37,7 +37,7 @@ class CacheClearTask extends AbstractTask
         // Options
         $env = $this->getParameter('env', 'dev');
 
-        $command = 'app/console cache:clear --env=' . $env;
+        $command = $this->getAppPath() . ' cache:clear --env=' . $env;
         $result = $this->runCommand($command);
 
         return $result;

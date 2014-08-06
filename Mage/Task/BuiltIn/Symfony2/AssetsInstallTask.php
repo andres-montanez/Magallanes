@@ -10,14 +10,14 @@
 
 namespace Mage\Task\BuiltIn\Symfony2;
 
-use Mage\Task\AbstractTask;
+use Mage\Task\BuiltIn\Symfony2\SymfonyAbstractTask;
 
 /**
  * Task for Installing Assets
  *
  * @author Andrés Montañez <andres@andresmontanez.com>
  */
-class AssetsInstallTask extends AbstractTask
+class AssetsInstallTask extends SymfonyAbstractTask
 {
     /**
      * (non-PHPdoc)
@@ -44,7 +44,7 @@ class AssetsInstallTask extends AbstractTask
             $symlink = true;
         }
 
-        $command = 'app/console assets:install ' . ($symlink ? '--symlink' : '') . ' ' . ($relative ? '--relative' : '') . ' --env=' . $env . ' ' . $target;
+        $command = $this->getAppPath() . ' assets:install ' . ($symlink ? '--symlink' : '') . ' ' . ($relative ? '--relative' : '') . ' --env=' . $env . ' ' . $target;
         $result = $this->runCommand($command);
 
         return $result;

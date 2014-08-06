@@ -10,14 +10,14 @@
 
 namespace Mage\Task\BuiltIn\Symfony2;
 
-use Mage\Task\AbstractTask;
+use Mage\Task\BuiltIn\Symfony2\SymfonyAbstractTask;
 
 /**
  * Task for Dumping Assetics
  *
  * @author Andrés Montañez <andres@andresmontanez.com>
  */
-class AsseticDumpTask extends AbstractTask
+class AsseticDumpTask extends SymfonyAbstractTask
 {
     /**
      * (non-PHPdoc)
@@ -37,7 +37,7 @@ class AsseticDumpTask extends AbstractTask
         // Options
         $env = $this->getParameter('env', 'dev');
 
-        $command = 'app/console assetic:dump --env=' . $env;
+        $command = $this->getAppPath() . ' assetic:dump --env=' . $env;
         $result = $this->runCommand($command);
 
         return $result;

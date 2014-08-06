@@ -1,10 +1,10 @@
 <?php
 namespace Mage\Task\BuiltIn\Composer;
 
-use Mage\Task\AbstractTask;
+use Mage\Task\BuiltIn\Composer\ComposerAbstractTask;
 use Mage\Task\ErrorWithMessageException;
 
-class GenerateAutoloadTask extends AbstractTask
+class GenerateAutoloadTask extends ComposerAbstractTask
 {
     /**
      * Returns the Title of the Task
@@ -23,8 +23,6 @@ class GenerateAutoloadTask extends AbstractTask
      */
     public function run()
     {
-        $composerPath = $this->getConfig()->general('composer_path', 'php composer.phar');
-
-        return $this->runCommand($composerPath . ' dumpautoload --optimize');
+        return $this->runCommand($this->getComposerPath() . ' dumpautoload --optimize');
     }
 }
