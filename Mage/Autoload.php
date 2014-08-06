@@ -27,8 +27,15 @@ class Autoload
         $className = ltrim($className, '/');
         $postfix = '/' . str_replace(array('_', '\\'), '/', $className . '.php');
 
+        // Change BaseDir according to Namespace
+        if (strpos($className, 'Task\\') === 0) {
+            $baseDir = getcwd() . '/.mage/tasks';
+            $postfix = substr($postfix, 5);
+        } else {
+            $baseDir = dirname(dirname(__FILE__));
+        }
+
         //Try to load a normal Mage class (or Task). Think that Mage component is compiled to .phar
-        $baseDir = dirname(dirname(__FILE__));
         $classFileWithinPhar = $baseDir . $postfix;
         if ($this->isReadable($classFileWithinPhar)) {
             /** @noinspection PhpIncludeInspection */

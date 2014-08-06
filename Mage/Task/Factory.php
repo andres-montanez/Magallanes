@@ -48,7 +48,7 @@ class Factory
         $taskName = str_replace(' ', '', $taskName);
 
         if (strpos($taskName, '/') === false) {
-            $className = $taskName;
+            $className = 'Task\\' . $taskName;
 
         } else {
             $className = 'Mage\\Task\\BuiltIn\\' . str_replace(' ', '\\', ucwords(str_replace('/', ' ', $taskName))) . 'Task';
