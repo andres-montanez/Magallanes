@@ -21,10 +21,10 @@ use Mage\Task\Releases\IsReleaseAware;
  */
 class TarGzTask extends BaseStrategyTaskAbstract implements IsReleaseAware
 {
-	/**
-	 * (non-PHPdoc)
-	 * @see \Mage\Task\AbstractTask::getName()
-	 */
+    /**
+     * (non-PHPdoc)
+     * @see \Mage\Task\AbstractTask::getName()
+     */
     public function getName()
     {
         if ($this->getConfig()->release('enabled', false) == true) {
@@ -34,7 +34,7 @@ class TarGzTask extends BaseStrategyTaskAbstract implements IsReleaseAware
                 return 'Deploy via TarGz (with Releases) [built-in]';
             }
         } else {
-                return 'Deploy via TarGz [built-in]';
+            return 'Deploy via TarGz [built-in]';
         }
     }
 
@@ -53,10 +53,10 @@ class TarGzTask extends BaseStrategyTaskAbstract implements IsReleaseAware
         if ($this->getConfig()->release('enabled', false) == true) {
             $releasesDirectory = $this->getConfig()->release('directory', 'releases');
             $deployToDirectory = rtrim($this->getConfig()->deployment('to'), '/')
-                               . '/' . $releasesDirectory
-                               . '/' . $this->getConfig()->getReleaseId();
+                . '/' . $releasesDirectory
+                . '/' . $this->getConfig()->getReleaseId();
             $output = null;
-            $this->runCommandRemote('mkdir -p ' . $deployToDirectory, $output , false);
+            $this->runCommandRemote('mkdir -p ' . $deployToDirectory, $output, false);
         }
 
         // Create Tar Gz
@@ -68,19 +68,19 @@ class TarGzTask extends BaseStrategyTaskAbstract implements IsReleaseAware
         }
 
         $command = 'tar cfz ' . $localTarGz . '.tar.gz ' . $excludeCmd . ' -C ' . $this->getConfig()->deployment('from') . ' .';
-		$result = $this->runCommandLocal($command);
+        $result = $this->runCommandLocal($command);
 
-		// Copy Tar Gz  to Remote Host
-		$command = 'scp ' . $this->getConfig()->getHostIdentityFileOption() . '-P ' . $this->getConfig()->getHostPort() . ' ' . $localTarGz . '.tar.gz '
-                 . $this->getConfig()->deployment('user') . '@' . $this->getConfig()->getHostName() . ':' . $deployToDirectory;
-		$result = $this->runCommandLocal($command) && $result;
+        // Copy Tar Gz  to Remote Host
+        $command = 'scp ' . $this->getConfig()->getHostIdentityFileOption() . '-P ' . $this->getConfig()->getHostPort() . ' ' . $localTarGz . '.tar.gz '
+            . $this->getConfig()->deployment('user') . '@' . $this->getConfig()->getHostName() . ':' . $deployToDirectory;
+        $result = $this->runCommandLocal($command) && $result;
 
         // Extract Tar Gz
-		$command = $this->getReleasesAwareCommand('tar xfz ' . $remoteTarGz . '.tar.gz');
+        $command = $this->getReleasesAwareCommand('tar xfz ' . $remoteTarGz . '.tar.gz');
         $result = $this->runCommandRemote($command) && $result;
 
         // Delete Tar Gz from Remote Host
-		$command = $this->getReleasesAwareCommand('rm ' . $remoteTarGz . '.tar.gz');
+        $command = $this->getReleasesAwareCommand('rm ' . $remoteTarGz . '.tar.gz');
         $result = $this->runCommandRemote($command) && $result;
 
         // Delete Tar Gz from Local

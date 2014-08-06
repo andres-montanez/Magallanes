@@ -46,33 +46,33 @@ class ReleasesCommand extends AbstractCommand implements RequiresEnvironment
             $this->getConfig()->setHost($host);
 
             switch ($subCommand) {
-            case 'list':
-                $task = Factory::get('releases/list', $this->getConfig());
-                $task->init();
-                $result = $task->run();
-                break;
+                case 'list':
+                    $task = Factory::get('releases/list', $this->getConfig());
+                    $task->init();
+                    $result = $task->run();
+                    break;
 
-            case 'rollback':
-                if (!is_numeric($this->getConfig()->getParameter('release', ''))) {
-                    Console::output('<red>Missing required releaseid.</red>', 1, 2);
+                case 'rollback':
+                    if (!is_numeric($this->getConfig()->getParameter('release', ''))) {
+                        Console::output('<red>Missing required releaseid.</red>', 1, 2);
 
-                    return false;
-                }
+                        return false;
+                    }
 
-                $lockFile = getcwd() . '/.mage/' . $this->getConfig()->getEnvironment() . '.lock';
-                if (file_exists($lockFile)) {
-                    Console::output('<red>This environment is locked!</red>', 1, 2);
-                    echo file_get_contents($lockFile);
+                    $lockFile = getcwd() . '/.mage/' . $this->getConfig()->getEnvironment() . '.lock';
+                    if (file_exists($lockFile)) {
+                        Console::output('<red>This environment is locked!</red>', 1, 2);
+                        echo file_get_contents($lockFile);
 
-                    return false;
-                }
+                        return false;
+                    }
 
-                $releaseId = $this->getConfig()->getParameter('release', '');
-                $task      = Factory::get('releases/rollback', $this->getConfig());
-                $task->init();
-                $task->setRelease($releaseId);
-                $result = $task->run();
-                break;
+                    $releaseId = $this->getConfig()->getParameter('release', '');
+                    $task = Factory::get('releases/rollback', $this->getConfig());
+                    $task->init();
+                    $task->setRelease($releaseId);
+                    $result = $task->run();
+                    break;
             }
         }
 

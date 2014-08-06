@@ -20,60 +20,61 @@ use Mage\Console;
  */
 class InstallCommand extends AbstractCommand
 {
-	/**
-	 * Installs Magallanes
-	 * @see \Mage\Command\AbstractCommand::run()
-	 */
+    /**
+     * Installs Magallanes
+     * @see \Mage\Command\AbstractCommand::run()
+     */
     public function run()
     {
-    	Console::output('Installing <dark_gray>Magallanes</dark_gray>... ', 1, 0);
+        Console::output('Installing <dark_gray>Magallanes</dark_gray>... ', 1, 0);
 
-    	// Vars
-    	$installDir = $this->getConfig()->getParameter('installDir', '/opt/magallanes');
-    	$systemWide = $this->getConfig()->getParameter('systemWide', false);
+        // Vars
+        $installDir = $this->getConfig()->getParameter('installDir', '/opt/magallanes');
+        $systemWide = $this->getConfig()->getParameter('systemWide', false);
 
-    	// Clean vars
-    	$baseDir = realpath(dirname($installDir));
-    	$installDir = basename($installDir);
+        // Clean vars
+        $baseDir = realpath(dirname($installDir));
+        $installDir = basename($installDir);
 
-    	// Check if install dir is available
-    	if (!is_dir($baseDir) || !is_writable($baseDir)) {
-    		Console::output('<red>Failure: install directory is invalid.</red>', 0, 2);
+        // Check if install dir is available
+        if (!is_dir($baseDir) || !is_writable($baseDir)) {
+            Console::output('<red>Failure: install directory is invalid.</red>', 0, 2);
 
-		// Chck if it is a system wide install the user is root
-    	} else if ($systemWide && (getenv('LOGNAME') != 'root')) {
-    			Console::output('<red>Failure: you have to be root to perform a system wide install.</red>', 0, 2);
+            // Chck if it is a system wide install the user is root
+        } else if ($systemWide && (getenv('LOGNAME') != 'root')) {
+            Console::output('<red>Failure: you have to be root to perform a system wide install.</red>', 0, 2);
 
-    	} else {
-    		$destinationDir = $baseDir . '/' . $installDir;
-    		if (!is_dir($destinationDir)) {
-    			mkdir($destinationDir);
-    		}
+        } else {
+            $destinationDir = $baseDir . '/' . $installDir;
+            if (!is_dir($destinationDir)) {
+                mkdir($destinationDir);
+            }
 
-    		// Copy
-    		$this->recursiveCopy('./', $destinationDir . '/' . MAGALLANES_VERSION);
+            // Copy
+            $this->recursiveCopy('./', $destinationDir . '/' . MAGALLANES_VERSION);
 
-    		// Check if there is already a symlink
-    		if (file_exists($destinationDir . '/' . 'latest')
-				    && is_link($destinationDir . '/' . 'latest')) {
-    			unlink($destinationDir . '/' . 'latest');
-    		}
+            // Check if there is already a symlink
+            if (file_exists($destinationDir . '/' . 'latest')
+                && is_link($destinationDir . '/' . 'latest')
+            ) {
+                unlink($destinationDir . '/' . 'latest');
+            }
 
-    		// Create "latest" symlink
-    		symlink(
-    		    $destinationDir . '/' . MAGALLANES_VERSION,
-    		    $destinationDir . '/' . 'latest'
-    		);
-    		chmod($destinationDir . '/' . MAGALLANES_VERSION . '/bin/mage', 0755);
+            // Create "latest" symlink
+            symlink(
+                $destinationDir . '/' . MAGALLANES_VERSION,
+                $destinationDir . '/' . 'latest'
+            );
+            chmod($destinationDir . '/' . MAGALLANES_VERSION . '/bin/mage', 0755);
 
-    		if ($systemWide) {
-    			if (!file_exists('/usr/bin/mage')) {
-    				symlink($destinationDir . '/latest/bin/mage', '/usr/bin/mage');
-    			}
-    		}
+            if ($systemWide) {
+                if (!file_exists('/usr/bin/mage')) {
+                    symlink($destinationDir . '/latest/bin/mage', '/usr/bin/mage');
+                }
+            }
 
-    		Console::output('<light_green>Success!</light_green>', 0, 2);
-    	}
+            Console::output('<light_green>Success!</light_green>', 0, 2);
+        }
     }
 
     /**

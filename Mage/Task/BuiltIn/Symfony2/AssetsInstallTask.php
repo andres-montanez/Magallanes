@@ -19,10 +19,10 @@ use Mage\Task\AbstractTask;
  */
 class AssetsInstallTask extends AbstractTask
 {
-	/**
-	 * (non-PHPdoc)
-	 * @see \Mage\Task\AbstractTask::getName()
-	 */
+    /**
+     * (non-PHPdoc)
+     * @see \Mage\Task\AbstractTask::getName()
+     */
     public function getName()
     {
         return 'Symfony v2 - Assets Install [built-in]';
@@ -34,17 +34,17 @@ class AssetsInstallTask extends AbstractTask
      */
     public function run()
     {
-    	// Options
-    	$target = $this->getParameter('target', 'web');
-    	$symlink = $this->getParameter('symlink', false);
-    	$relative = $this->getParameter('relative', false);
-    	$env = $this->getParameter('env', 'dev');
+        // Options
+        $target = $this->getParameter('target', 'web');
+        $symlink = $this->getParameter('symlink', false);
+        $relative = $this->getParameter('relative', false);
+        $env = $this->getParameter('env', 'dev');
 
-    	if ($relative) {
-    		$symlink = true;
-    	}
+        if ($relative) {
+            $symlink = true;
+        }
 
-        $command = 'app/console assets:install ' . ($symlink ? '--symlink' : '') .  ' ' . ($relative ? '--relative' : '') .  ' --env=' . $env . ' ' . $target;
+        $command = 'app/console assets:install ' . ($symlink ? '--symlink' : '') . ' ' . ($relative ? '--relative' : '') . ' --env=' . $env . ' ' . $target;
         $result = $this->runCommand($command);
 
         return $result;

@@ -26,9 +26,9 @@ class Config
 {
     const HOST_NAME_LENGTH = 1000;
     /**
-	 * Arguments loaded
-	 * @var array
-	 */
+     * Arguments loaded
+     * @var array
+     */
     private $arguments = array();
 
     /**
@@ -73,27 +73,27 @@ class Config
      */
     protected function parse($arguments)
     {
-    	foreach ($arguments as $argument) {
-    		if (preg_match('/to:[\w]+/i', $argument)) {
-    			$this->environment = str_replace('to:', '', $argument);
+        foreach ($arguments as $argument) {
+            if (preg_match('/to:[\w]+/i', $argument)) {
+                $this->environment = str_replace('to:', '', $argument);
 
-    		} else if (preg_match('/--[\w]+/i', $argument)) {
-    			$optionValue = explode('=', substr($argument, 2));
-    			if (count($optionValue) == 1) {
-    				$this->parameters[$optionValue[0]] = true;
-    			} else if (count($optionValue) == 2) {
-    				if (strtolower($optionValue[1]) == 'true') {
-    					$this->parameters[$optionValue[0]] = true;
-    				} else if (strtolower($optionValue[1]) == 'false') {
-    					$this->parameters[$optionValue[0]] = false;
-    				} else {
-    					$this->parameters[$optionValue[0]] = $optionValue[1];
-    				}
-    			}
-    		} else {
-    			$this->arguments[] = $argument;
-    		}
-    	}
+            } else if (preg_match('/--[\w]+/i', $argument)) {
+                $optionValue = explode('=', substr($argument, 2));
+                if (count($optionValue) == 1) {
+                    $this->parameters[$optionValue[0]] = true;
+                } else if (count($optionValue) == 2) {
+                    if (strtolower($optionValue[1]) == 'true') {
+                        $this->parameters[$optionValue[0]] = true;
+                    } else if (strtolower($optionValue[1]) == 'false') {
+                        $this->parameters[$optionValue[0]] = false;
+                    } else {
+                        $this->parameters[$optionValue[0]] = $optionValue[1];
+                    }
+                }
+            } else {
+                $this->arguments[] = $argument;
+            }
+        }
     }
 
     /**
@@ -102,7 +102,7 @@ class Config
     protected function initGeneral()
     {
         try {
-            $this->generalConfig =  $this->loadGeneral(getcwd() . '/.mage/config/general.yml');
+            $this->generalConfig = $this->loadGeneral(getcwd() . '/.mage/config/general.yml');
         } catch (ConfigNotFoundException $e) {
             // normal situation
         }
@@ -116,7 +116,8 @@ class Config
      * @return array
      * @throws Config\ConfigNotFoundException
      */
-    protected function loadGeneral($filePath){
+    protected function loadGeneral($filePath)
+    {
         return $this->parseConfigFile($filePath);
     }
 
@@ -142,6 +143,7 @@ class Config
 
         return $settings;
     }
+
     /**
      * Loads the Environment configuration
      * @param $filePath string
@@ -169,16 +171,15 @@ class Config
      */
     protected function initEnvironment()
     {
-    	$environment = $this->getEnvironment();
+        $environment = $this->getEnvironment();
 
-        if(!empty($environment))
-        {
+        if (!empty($environment)) {
             $configFilePath = getcwd() . '/.mage/config/environment/' . $environment . '.yml';
 
             try {
-                $this->environmentConfig =  $this->loadEnvironment($configFilePath);
+                $this->environmentConfig = $this->loadEnvironment($configFilePath);
             } catch (ConfigNotFoundException $e) {
-                throw new RequiredConfigNotFoundException("Not found required config $configFilePath for environment $environment", 0 , $e);
+                throw new RequiredConfigNotFoundException("Not found required config $configFilePath for environment $environment", 0, $e);
             }
 
         }
@@ -191,18 +192,17 @@ class Config
      */
     protected function isRunInSpecialMode(array $parameters)
     {
-        if(empty($parameters))
+        if (empty($parameters))
             return true;
-        foreach($parameters as $parameter)
-        {
-            if(isset(Console::$paramsNotRequiringEnvironment[$parameter]))
-            {
+        foreach ($parameters as $parameter) {
+            if (isset(Console::$paramsNotRequiringEnvironment[$parameter])) {
                 return true;
             }
         }
 
         return false;
     }
+
     /**
      * Load the Configuration and parses the Arguments
      *
@@ -220,8 +220,8 @@ class Config
      */
     public function reload()
     {
-    	$this->initGeneral();
-    	$this->initEnvironment();
+        $this->initGeneral();
+        $this->initEnvironment();
     }
 
     /**
@@ -286,7 +286,7 @@ class Config
      */
     public function addParameter($name, $value = true)
     {
-    	$this->parameters[$name] = $value;
+        $this->parameters[$name] = $value;
     }
 
     /**
@@ -307,24 +307,24 @@ class Config
      */
     public function getTasks($stage = 'deploy')
     {
-    	if ($stage == 'deploy') {
-    		$configStage = 'on-deploy';
-    	} else {
-    		$configStage = $stage;
-    	}
+        if ($stage == 'deploy') {
+            $configStage = 'on-deploy';
+        } else {
+            $configStage = $stage;
+        }
 
         $tasks = array();
         $config = $this->getEnvironmentOption('tasks', array());
 
         // Host Config
         if (is_array($this->hostConfig) && isset($this->hostConfig['tasks'])) {
-        	if (isset($this->hostConfig['tasks'][$configStage])) {
-        		$config[$configStage] = $this->hostConfig['tasks'][$configStage];
-        	}
+            if (isset($this->hostConfig['tasks'][$configStage])) {
+                $config[$configStage] = $this->hostConfig['tasks'][$configStage];
+            }
         }
 
         if (isset($config[$configStage])) {
-            $tasksData = ($config[$configStage] ? (array) $config[$configStage] : array());
+            $tasksData = ($config[$configStage] ? (array)$config[$configStage] : array());
             foreach ($tasksData as $taskData) {
                 if (is_array($taskData)) {
                     $tasks[] = array(
@@ -352,7 +352,7 @@ class Config
         $envConfig = $this->getEnvironmentConfig();
         if (isset($envConfig['hosts'])) {
             if (is_array($envConfig['hosts'])) {
-                $hosts = (array) $envConfig['hosts'];
+                $hosts = (array)$envConfig['hosts'];
             } else if (is_string($envConfig['hosts']) && file_exists($envConfig['hosts']) && is_readable($envConfig['hosts'])) {
                 $hosts = $this->getHostsFromFile($envConfig['hosts']);
             }
@@ -381,8 +381,8 @@ class Config
      */
     public function setHostConfig($hostConfig = null)
     {
-    	$this->hostConfig = $hostConfig;
-    	return $this;
+        $this->hostConfig = $hostConfig;
+        return $this;
     }
 
     /**
@@ -458,7 +458,7 @@ class Config
      */
     public function environmentConfig($option, $default = false)
     {
-    	return $this->getEnvironmentOption($option, $default);
+        return $this->getEnvironmentOption($option, $default);
     }
 
     /**
@@ -470,14 +470,14 @@ class Config
      */
     public function deployment($option, $default = false)
     {
-    	// Host Config
-    	if (is_array($this->hostConfig) && isset($this->hostConfig['deployment'])) {
-    		if (isset($this->hostConfig['deployment'][$option])) {
-    			return $this->hostConfig['deployment'][$option];
-    		}
-    	}
+        // Host Config
+        if (is_array($this->hostConfig) && isset($this->hostConfig['deployment'])) {
+            if (isset($this->hostConfig['deployment'][$option])) {
+                return $this->hostConfig['deployment'][$option];
+            }
+        }
 
-    	// Global Config
+        // Global Config
         $config = $this->getEnvironmentOption('deployment', array());
         if (isset($config[$option])) {
             if (is_array($default) && ($config[$option] == '')) {
@@ -499,12 +499,12 @@ class Config
      */
     public function release($option, $default = false)
     {
-    	// Host Config
-    	if (is_array($this->hostConfig) && isset($this->hostConfig['releases'])) {
-    		if (isset($this->hostConfig['releases'][$option])) {
-    			return $this->hostConfig['releases'][$option];
-    		}
-    	}
+        // Host Config
+        if (is_array($this->hostConfig) && isset($this->hostConfig['releases'])) {
+            if (isset($this->hostConfig['releases'][$option])) {
+                return $this->hostConfig['releases'][$option];
+            }
+        }
 
         $config = $this->getEnvironmentOption('releases', array());
         if (isset($config[$option])) {
@@ -575,13 +575,13 @@ class Config
      */
     public function parseConfigFile($filePath)
     {
-        if(!file_exists($filePath))
-        {
+        if (!file_exists($filePath)) {
             throw new ConfigNotFoundException("Cannot find the file at path $filePath");
         }
 
         return $this->parseConfigText(file_get_contents($filePath));
     }
+
     public function parseConfigText($input)
     {
         return Yaml::parse($input);

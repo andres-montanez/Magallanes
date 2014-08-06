@@ -22,10 +22,10 @@ use Mage\Console;
 class UnlockCommand
     extends AbstractCommand implements RequiresEnvironment
 {
-	/**
-	 * Unlocks an Environment
-	 * @see \Mage\Command\AbstractCommand::run()
-	 */
+    /**
+     * Unlocks an Environment
+     * @see \Mage\Command\AbstractCommand::run()
+     */
     public function run()
     {
         $lockFile = getcwd() . '/.mage/' . $this->getConfig()->getEnvironment() . '.lock';

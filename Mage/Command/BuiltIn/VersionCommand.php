@@ -20,13 +20,13 @@ use Mage\Console;
  */
 class VersionCommand extends AbstractCommand
 {
-	/**
-	 * Display the Magallanes Version
-	 * @see \Mage\Command\AbstractCommand::run()
-	 */
+    /**
+     * Display the Magallanes Version
+     * @see \Mage\Command\AbstractCommand::run()
+     */
     public function run()
     {
-        Console::output('Running <blue>Magallanes</blue> version <dark_gray>' . MAGALLANES_VERSION .'</dark_gray>', 0, 2);
+        Console::output('Running <blue>Magallanes</blue> version <dark_gray>' . MAGALLANES_VERSION . '</dark_gray>', 0, 2);
     }
 
 }

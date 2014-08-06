@@ -24,11 +24,11 @@ use Exception;
  */
 class AddCommand extends AbstractCommand
 {
-	/**
-	 * Adds new Configuration Elements
-	 * @see \Mage\Command\AbstractCommand::run()
-	 * @throws Exception
-	 */
+    /**
+     * Adds new Configuration Elements
+     * @see \Mage\Command\AbstractCommand::run()
+     * @throws Exception
+     */
     public function run()
     {
         $subCommand = $this->getConfig()->getArgument(1);
@@ -71,24 +71,24 @@ class AddCommand extends AbstractCommand
         Console::output('Adding new environment: <dark_gray>' . $environmentName . '</dark_gray>');
 
         $releasesConfig = 'releases:' . PHP_EOL
-                        . '  enabled: true' . PHP_EOL
-                        . '  max: 10' . PHP_EOL
-                        . '  symlink: current' . PHP_EOL
-                        . '  directory: releases' . PHP_EOL;
+            . '  enabled: true' . PHP_EOL
+            . '  max: 10' . PHP_EOL
+            . '  symlink: current' . PHP_EOL
+            . '  directory: releases' . PHP_EOL;
 
         $baseConfig = '#' . $environmentName . PHP_EOL
-                    . 'deployment:' . PHP_EOL
-                    . '  user: dummy' . PHP_EOL
-                    . '  from: ./' . PHP_EOL
-                    . '  to: /var/www/vhosts/example.com/www' . PHP_EOL
-                    . '  excludes:' . PHP_EOL
-                    . ($withReleases ? $releasesConfig : '')
-                    . 'hosts:' . PHP_EOL
-                    . 'tasks:' . PHP_EOL
-                    . '  pre-deploy:' . PHP_EOL
-                    . '  on-deploy:' . PHP_EOL
-                    . ($withReleases ? ('  post-release:' . PHP_EOL) : '')
-                    . '  post-deploy:' . PHP_EOL;
+            . 'deployment:' . PHP_EOL
+            . '  user: dummy' . PHP_EOL
+            . '  from: ./' . PHP_EOL
+            . '  to: /var/www/vhosts/example.com/www' . PHP_EOL
+            . '  excludes:' . PHP_EOL
+            . ($withReleases ? $releasesConfig : '')
+            . 'hosts:' . PHP_EOL
+            . 'tasks:' . PHP_EOL
+            . '  pre-deploy:' . PHP_EOL
+            . '  on-deploy:' . PHP_EOL
+            . ($withReleases ? ('  post-release:' . PHP_EOL) : '')
+            . '  post-deploy:' . PHP_EOL;
 
         $result = file_put_contents($environmentConfigFile, $baseConfig);
 

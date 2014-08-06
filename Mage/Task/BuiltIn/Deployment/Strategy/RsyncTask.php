@@ -21,10 +21,10 @@ use Mage\Task\Releases\IsReleaseAware;
  */
 class RsyncTask extends BaseStrategyTaskAbstract implements IsReleaseAware
 {
-	/**
-	 * (non-PHPdoc)
-	 * @see \Mage\Task\AbstractTask::getName()
-	 */
+    /**
+     * (non-PHPdoc)
+     * @see \Mage\Task\AbstractTask::getName()
+     */
     public function getName()
     {
         if ($this->getConfig()->release('enabled', false) == true) {
@@ -32,14 +32,14 @@ class RsyncTask extends BaseStrategyTaskAbstract implements IsReleaseAware
                 return 'Deploy via Rsync (with Releases override) [built-in]';
             } else {
                 $rsync_copy = $this->getConfig()->deployment("rsync");
-                if ( $rsync_copy && is_array($rsync_copy) && $rsync_copy['copy'] ) {
+                if ($rsync_copy && is_array($rsync_copy) && $rsync_copy['copy']) {
                     return 'Deploy via Rsync (with Releases) [built-in, incremental]';
                 } else {
                     return 'Deploy via Rsync (with Releases) [built-in]';
                 }
             }
         } else {
-                return 'Deploy via Rsync [built-in]';
+            return 'Deploy via Rsync [built-in]';
         }
     }
 
@@ -61,8 +61,8 @@ class RsyncTask extends BaseStrategyTaskAbstract implements IsReleaseAware
 
             $currentRelease = false;
             $deployToDirectory = rtrim($this->getConfig()->deployment('to'), '/')
-                               . '/' . $releasesDirectory
-                               . '/' . $this->getConfig()->getReleaseId();
+                . '/' . $releasesDirectory
+                . '/' . $this->getConfig()->getReleaseId();
 
             Console::log('Deploy to ' . $deployToDirectory);
             $resultFetch = $this->runCommandRemote('ls -ld ' . $symlink . ' | cut -d"/" -f2', $currentRelease);
@@ -72,10 +72,10 @@ class RsyncTask extends BaseStrategyTaskAbstract implements IsReleaseAware
                 // rsync: { copy: yes }
                 $rsync_copy = $this->getConfig()->deployment('rsync');
                 // If copy_tool_rsync, use rsync rather than cp for finer control of what is copied
-                if ( $rsync_copy && is_array($rsync_copy) && $rsync_copy['copy'] && isset($rsync_copy['copy_tool_rsync']) ) {
+                if ($rsync_copy && is_array($rsync_copy) && $rsync_copy['copy'] && isset($rsync_copy['copy_tool_rsync'])) {
                     $this->runCommandRemote("rsync -a {$this->excludes(array_merge($excludes, $rsync_copy['rsync_excludes']))} "
-                    . "$releasesDirectory/$currentRelease/ $releasesDirectory/{$this->getConfig()->getReleaseId()}");
-                } elseif ( $rsync_copy && is_array($rsync_copy) && $rsync_copy['copy'] ) {
+                        . "$releasesDirectory/$currentRelease/ $releasesDirectory/{$this->getConfig()->getReleaseId()}");
+                } elseif ($rsync_copy && is_array($rsync_copy) && $rsync_copy['copy']) {
                     $this->runCommandRemote('cp -R ' . $releasesDirectory . '/' . $currentRelease . ' ' . $releasesDirectory . '/' . $this->getConfig()->getReleaseId());
                 } else {
                     $this->runCommandRemote('mkdir -p ' . $releasesDirectory . '/' . $this->getConfig()->getReleaseId());
@@ -84,10 +84,10 @@ class RsyncTask extends BaseStrategyTaskAbstract implements IsReleaseAware
         }
 
         $command = 'rsync -avz '
-                 . '--rsh="ssh ' . $this->getConfig()->getHostIdentityFileOption() . '-p' . $this->getConfig()->getHostPort() . '" '
-                 . $this->excludes($excludes) . ' '
-                 . $this->getConfig()->deployment('from') . ' '
-                 . $this->getConfig()->deployment('user') . '@' . $this->getConfig()->getHostName() . ':' . $deployToDirectory;
+            . '--rsh="ssh ' . $this->getConfig()->getHostIdentityFileOption() . '-p' . $this->getConfig()->getHostPort() . '" '
+            . $this->excludes($excludes) . ' '
+            . $this->getConfig()->deployment('from') . ' '
+            . $this->getConfig()->deployment('user') . '@' . $this->getConfig()->getHostName() . ':' . $deployToDirectory;
 
         $result = $this->runCommandLocal($command);
 

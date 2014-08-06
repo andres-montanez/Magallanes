@@ -56,8 +56,8 @@ class Factory
 
         $instance = new $className($taskConfig, $inRollback, $stage, $taskParameters);
 
-        if (!is_a($instance,'Mage\Task\AbstractTask')) {
-        	throw new Exception('The Task ' . $taskName . ' must be an instance of Mage\Task\AbstractTask.');
+        if (!is_a($instance, 'Mage\Task\AbstractTask')) {
+            throw new Exception('The Task ' . $taskName . ' must be an instance of Mage\Task\AbstractTask.');
         }
 
         return $instance;

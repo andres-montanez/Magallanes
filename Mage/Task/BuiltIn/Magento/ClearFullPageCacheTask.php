@@ -19,10 +19,10 @@ use Mage\Task\AbstractTask;
  */
 class ClearFullPageCacheTask extends AbstractTask
 {
-	/**
-	 * (non-PHPdoc)
-	 * @see \Mage\Task\AbstractTask::getName()
-	 */
+    /**
+     * (non-PHPdoc)
+     * @see \Mage\Task\AbstractTask::getName()
+     */
     public function getName()
     {
         return 'Magento - Clean Full Page Cache [built-in]';

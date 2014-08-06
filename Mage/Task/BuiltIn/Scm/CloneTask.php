@@ -20,10 +20,10 @@ use Mage\Task\SkipException;
  */
 class CloneTask extends AbstractTask
 {
-	/**
-	 * Name of the Task
-	 * @var string
-	 */
+    /**
+     * Name of the Task
+     * @var string
+     */
     private $name = 'SCM Clone [built-in]';
 
     /**
@@ -66,12 +66,12 @@ class CloneTask extends AbstractTask
             case 'git':
                 // Clone Repo
                 $command = 'cd ' . $this->source['temporal'] . ' ; '
-                         . 'git clone ' . $this->source['repository'] . ' . ';
+                    . 'git clone ' . $this->source['repository'] . ' . ';
                 $result = $this->runCommandLocal($command);
 
                 // Checkout Branch
                 $command = 'cd ' . $this->source['temporal'] . ' ; '
-                         . 'git checkout ' . $this->source['from'];
+                    . 'git checkout ' . $this->source['from'];
                 $result = $result && $this->runCommandLocal($command);
 
                 $this->getConfig()->setFrom($this->source['temporal']);

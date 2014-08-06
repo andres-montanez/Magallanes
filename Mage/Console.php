@@ -28,12 +28,12 @@ class Console
      * TODO refactor into own static class
      * @var array
      */
-    public static $paramsNotRequiringEnvironment = array('install'=>'install', 'upgrade'=>'upgrade', 'version'=>'version');
+    public static $paramsNotRequiringEnvironment = array('install' => 'install', 'upgrade' => 'upgrade', 'version' => 'version');
 
-	/**
-	 * Handler to the current Log File.
-	 * @var mixed
-	 */
+    /**
+     * Handler to the current Log File.
+     * @var mixed
+     */
     private static $log = null;
 
     /**
@@ -72,19 +72,19 @@ class Console
      */
     public function run($arguments)
     {
-    	$exitCode = 10;
+        $exitCode = 10;
 
-    	// Declare a Shutdown Closure
-    	register_shutdown_function(function() {
-    		// Only Unlock if there was an error
+        // Declare a Shutdown Closure
+        register_shutdown_function(function () {
+            // Only Unlock if there was an error
             if (error_get_last() !== null) {
-            	if (file_exists(getcwd() . '/.mage/~working.lock')) {
-            		unlink(getcwd() . '/.mage/~working.lock');
-            	}
+                if (file_exists(getcwd() . '/.mage/~working.lock')) {
+                    unlink(getcwd() . '/.mage/~working.lock');
+                }
             }
-    	});
+        });
 
-    	// Load configuration
+        // Load configuration
         $configError = false;
         try {
             // Load Config
@@ -126,7 +126,7 @@ class Console
             self::output('<red>' . $configError . '</red>', 1, 2);
 
         } else {
-        	// Run Command and check for Command Requirements
+            // Run Command and check for Command Requirements
             try {
                 $command = Factory::get($commandName, $config);
 
@@ -146,7 +146,7 @@ class Console
         if ($showGreetings) {
             self::output('Finished <blue>Magallanes</blue>', 0, 2);
             if (file_exists(getcwd() . '/.mage/~working.lock')) {
-            	unlink(getcwd() . '/.mage/~working.lock');
+                unlink(getcwd() . '/.mage/~working.lock');
             }
         }
 
@@ -168,12 +168,12 @@ class Console
         self::log(strip_tags($message));
 
         self::$screenBuffer .= str_repeat("\t", $tabs)
-                              . strip_tags($message)
-                              . str_repeat(PHP_EOL, $newLine);
+            . strip_tags($message)
+            . str_repeat(PHP_EOL, $newLine);
 
         $output = str_repeat("\t", $tabs)
-                . Colors::color($message, self::$config)
-                . str_repeat(PHP_EOL, $newLine);
+            . Colors::color($message, self::$config)
+            . str_repeat(PHP_EOL, $newLine);
 
         echo $output;
     }
@@ -215,7 +215,7 @@ class Console
     {
         if (self::$logEnabled) {
             if (self::$log == null) {
-            	self::$logFile = realpath(getcwd() . '/.mage/logs') . '/log-' . date('Ymd-His') . '.log';
+                self::$logFile = realpath(getcwd() . '/.mage/logs') . '/log-' . date('Ymd-His') . '.log';
                 self::$log = fopen(self::$logFile, 'w');
             }
 
@@ -230,7 +230,7 @@ class Console
      */
     public static function getOutput()
     {
-    	return self::$screenBuffer;
+        return self::$screenBuffer;
     }
 
     /**
@@ -239,7 +239,7 @@ class Console
      */
     public static function getLogFile()
     {
-    	return self::$logFile;
+        return self::$logFile;
     }
 
     /**
@@ -247,7 +247,7 @@ class Console
      */
     public static function readInput()
     {
-        $fp = fopen("php://stdin","r");
+        $fp = fopen("php://stdin", "r");
         $line = '';
         $line = fgets($fp);
 
@@ -261,22 +261,22 @@ class Console
     private static function checkLogs(Config $config)
     {
         if (self::$logEnabled) {
-        	$maxLogs = $config->general('maxlogs', 30);
+            $maxLogs = $config->general('maxlogs', 30);
 
-        	$logs = array();
-        	foreach (new RecursiveDirectoryIterator(getcwd() . '/.mage/logs', RecursiveDirectoryIterator::SKIP_DOTS) as $log) {
-        		if (strpos($log->getFilename(), 'log-') === 0) {
-        			$logs[] = $log->getFilename();
-        		}
-        	}
+            $logs = array();
+            foreach (new RecursiveDirectoryIterator(getcwd() . '/.mage/logs', RecursiveDirectoryIterator::SKIP_DOTS) as $log) {
+                if (strpos($log->getFilename(), 'log-') === 0) {
+                    $logs[] = $log->getFilename();
+                }
+            }
 
-        	sort($logs);
-        	if (count($logs) > $maxLogs) {
+            sort($logs);
+            if (count($logs) > $maxLogs) {
                 $logsToDelete = array_slice($logs, 0, count($logs) - $maxLogs);
                 foreach ($logsToDelete as $logToDeelte) {
-                	unlink(getcwd() . '/.mage/logs/' . $logToDeelte);
+                    unlink(getcwd() . '/.mage/logs/' . $logToDeelte);
                 }
-        	}
+            }
         }
     }
 

@@ -44,8 +44,8 @@ class GitRebaseTask extends BaseStrategyTaskAbstract implements IsReleaseAware
             $releasesDirectory = $this->getConfig()->release('directory', 'releases');
 
             $deployToDirectory = rtrim($this->getConfig()->deployment('to'), '/')
-                               . '/' . $releasesDirectory
-                               . '/' . $this->getConfig()->getReleaseId();
+                . '/' . $releasesDirectory
+                . '/' . $this->getConfig()->getReleaseId();
             $this->runCommandRemote('mkdir -p ' . $releasesDirectory . '/' . $this->getConfig()->getReleaseId());
         }
 
@@ -78,11 +78,11 @@ class GitRebaseTask extends BaseStrategyTaskAbstract implements IsReleaseAware
         $result = $this->runCommandRemote($command) && $result;
 
         // Stash if Working Copy is not clean
-        if(!$status) {
+        if (!$status) {
             $stashResult = '';
             $command = $this->getReleasesAwareCommand('git stash');
             $result = $this->runCommandRemote($command, $stashResult) && $result;
-            if($stashResult != "No local changes to save") {
+            if ($stashResult != "No local changes to save") {
                 $stashed = true;
             }
         }

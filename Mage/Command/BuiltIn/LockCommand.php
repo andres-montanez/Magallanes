@@ -21,10 +21,10 @@ use Mage\Console;
  */
 class LockCommand extends AbstractCommand implements RequiresEnvironment
 {
-	/**
-	 * Locks the Deployment to a Environment
-	 * @see \Mage\Command\AbstractCommand::run()
-	 */
+    /**
+     * Locks the Deployment to a Environment
+     * @see \Mage\Command\AbstractCommand::run()
+     */
     public function run()
     {
         Console::output('Your name (enter to leave blank): ', 0, 0);

@@ -54,22 +54,22 @@ class ListTask extends AbstractTask implements IsReleaseAware
                 Console::output('<dark_gray>No releases available</dark_gray> ... ', 2);
             } else {
                 rsort($releases);
-                $releases  = array_slice($releases, 0, 10);
+                $releases = array_slice($releases, 0, 10);
 
                 foreach ($releases as $releaseIndex => $release) {
                     $release = trim($release);
                     $releaseIndex = str_pad($releaseIndex * -1, 2, ' ', STR_PAD_LEFT);
-                    $releaseDate = $release[0] . $release[1] . $release[2] .$release[3]
-                                 . '-'
-                                 . $release[4] . $release[5]
-                                 . '-'
-                                 . $release[6] . $release[7]
-                                 . ' '
-                                 . $release[8] . $release[9]
-                                 . ':'
-                                 . $release[10] . $release[11]
-                                 . ':'
-                                 . $release[12] . $release[13];
+                    $releaseDate = $release[0] . $release[1] . $release[2] . $release[3]
+                        . '-'
+                        . $release[4] . $release[5]
+                        . '-'
+                        . $release[6] . $release[7]
+                        . ' '
+                        . $release[8] . $release[9]
+                        . ':'
+                        . $release[10] . $release[11]
+                        . ':'
+                        . $release[12] . $release[13];
 
                     $isCurrent = '';
                     if ($currentRelease == $release) {
@@ -80,8 +80,8 @@ class ListTask extends AbstractTask implements IsReleaseAware
 
                     Console::output(
                         'Release: <purple>' . $release . '</purple> '
-                      . '- Date: <dark_gray>' . $releaseDate . '</dark_gray> '
-                      . '- Index: <dark_gray>' . $releaseIndex . '</dark_gray>' . $dateDiff . $isCurrent, 2);
+                        . '- Date: <dark_gray>' . $releaseDate . '</dark_gray> '
+                        . '- Index: <dark_gray>' . $releaseIndex . '</dark_gray>' . $dateDiff . $isCurrent, 2);
                 }
             }
 

@@ -40,7 +40,7 @@ class Factory
         $className = 'Mage\\Command\\BuiltIn\\' . $commandName . 'Command';
         /** @var AbstractCommand $instance */
         $instance = new $className;
-        if(!is_a($instance, "Mage\Command\AbstractCommand")) {
+        if (!is_a($instance, "Mage\Command\AbstractCommand")) {
             throw new Exception('The command ' . $commandName . ' must be an instance of Mage\Command\AbstractCommand.');
         }
 
