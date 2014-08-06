@@ -106,17 +106,20 @@ class Console
             $showGreetings = false;
         } else {
             self::$logEnabled = $config->general('logging', false);
-            if(self::$logEnabled)
-            {
-                self::log("Logging enabled");
-                self::output('<red> Logging enabled: ' . self::getLogFile() . '</red>', 1, 1);
-            }
         }
 
         // Greetings
         if ($showGreetings) {
-            self::output('Starting <blue>Magallanes</blue>', 0, 2);
+            if (!self::$logEnabled) {
+                self::output('Starting <blue>Magallanes</blue>', 0, 2);
+
+            } else {
+                self::output('Starting <blue>Magallanes</blue>', 0, 1);
+                self::log("Logging enabled");
+                self::output('<yellow>Logging enabled: ' . self::getLogFile() . '</yellow>', 1, 2);
+            }
         }
+
 
         // Run Command - Check if there is a Configuration Error
         if ($configError !== false) {
