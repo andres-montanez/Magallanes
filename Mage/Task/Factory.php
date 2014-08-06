@@ -54,6 +54,10 @@ class Factory
             $className = 'Mage\\Task\\BuiltIn\\' . str_replace(' ', '\\', ucwords(str_replace('/', ' ', $taskName))) . 'Task';
         }
 
+        if (!class_exists($className)) {
+            throw new Exception('Task "' . $taskName . '" not found.');
+        }
+
         $instance = new $className($taskConfig, $inRollback, $stage, $taskParameters);
 
         if (!is_a($instance, 'Mage\Task\AbstractTask')) {

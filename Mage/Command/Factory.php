@@ -38,6 +38,11 @@ class Factory
 
         $commandName = str_replace(' ', '_', ucwords(str_replace('/', ' ', $commandName)));
         $className = 'Mage\\Command\\BuiltIn\\' . $commandName . 'Command';
+
+        if (!class_exists($className)) {
+            throw new Exception('Command "' . $commandName . '" not found.');
+        }
+
         /** @var AbstractCommand $instance */
         $instance = new $className;
         if (!is_a($instance, "Mage\Command\AbstractCommand")) {
