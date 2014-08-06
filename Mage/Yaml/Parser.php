@@ -480,6 +480,7 @@ class Parser
                 if ($isCurrentLineBlank) {
                     $text .= substr($this->currentLine, $indentation);
                 } else {
+                    /** @noinspection PhpUndefinedVariableInspection */
                     $text .= $matches[1];
                 }
 

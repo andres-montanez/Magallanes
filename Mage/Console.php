@@ -85,11 +85,10 @@ class Console
             }
         });
 
-        // Load configuration
+        $config = self::$config = new Config;
         $configError = false;
         try {
-            // Load Config
-            $config = self::$config = new Config;
+            // Load configuration
             $config->load($arguments);
 
         } catch (Exception $exception) {
@@ -249,7 +248,6 @@ class Console
     public static function readInput()
     {
         $fp = fopen("php://stdin", "r");
-        $line = '';
         $line = fgets($fp);
 
         return rtrim($line);

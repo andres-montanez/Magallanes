@@ -28,14 +28,16 @@ class RollbackCommand extends AbstractCommand implements RequiresEnvironment
      */
     public function run()
     {
+        $result = false;
         $releaseId = $this->getConfig()->getArgument(1);
+
         if (!is_numeric($releaseId)) {
             Console::output('<red>This release is mandatory.</red>', 1, 2);
             return false;
         }
 
         $lockFile = getcwd() . '/.mage/' . $this->getConfig()->getEnvironment() . '.lock';
-        if (file_exists($lockFile) && ($subcommand == 'rollback')) {
+        if (file_exists($lockFile)) {
             Console::output('<red>This environment is locked!</red>', 1, 2);
             echo file_get_contents($lockFile);
             return null;

@@ -36,6 +36,7 @@ class ReleaseTask extends AbstractTask implements IsReleaseAware, SkipOnOverride
      */
     public function run()
     {
+        $resultFetch = false;
         if ($this->getConfig()->release('enabled', false) == true) {
             $releasesDirectory = $this->getConfig()->release('directory', 'releases');
             $symlink = $this->getConfig()->release('symlink', 'current');

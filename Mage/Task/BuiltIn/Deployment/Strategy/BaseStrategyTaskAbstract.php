@@ -95,7 +95,7 @@ abstract class BaseStrategyTaskAbstract extends AbstractTask implements IsReleas
                             $directoryToDelete = $releasesDirectory . '/' . $releaseIdToDelete;
                             if ($directoryToDelete != '/') {
                                 $command = 'rm -rf ' . $directoryToDelete;
-                                $result = $result && $this->runCommandRemote($command);
+                                $this->runCommandRemote($command);
                             }
                         }
                     }

@@ -28,6 +28,7 @@ class ReleasesCommand extends AbstractCommand implements RequiresEnvironment
      */
     public function run()
     {
+        $result = false;
         $subCommand = $this->getConfig()->getArgument(1);
 
         // Run Tasks for Deployment
