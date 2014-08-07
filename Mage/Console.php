@@ -135,8 +135,7 @@ class Console
                         throw new Exception('You must specify an environment for this command.');
                     }
                 }
-                $command->run();
-                $exitCode = 0;
+                $exitCode = $command->run();
 
             } catch (Exception $exception) {
                 self::output('<red>' . $exception->getMessage() . '</red>', 1, 2);

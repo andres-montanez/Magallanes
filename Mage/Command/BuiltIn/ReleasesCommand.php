@@ -28,7 +28,7 @@ class ReleasesCommand extends AbstractCommand implements RequiresEnvironment
      */
     public function run()
     {
-        $result = false;
+        $exitCode = 400;
         $subCommand = $this->getConfig()->getArgument(1);
 
         // Run Tasks for Deployment
@@ -40,9 +40,10 @@ class ReleasesCommand extends AbstractCommand implements RequiresEnvironment
                 1, 3
             );
 
-            return false;
+            return 401;
         }
 
+        $result = true;
         foreach ($hosts as $host) {
             $this->getConfig()->setHost($host);
 
@@ -50,14 +51,14 @@ class ReleasesCommand extends AbstractCommand implements RequiresEnvironment
                 case 'list':
                     $task = Factory::get('releases/list', $this->getConfig());
                     $task->init();
-                    $result = $task->run();
+                    $result = $task->run() && $result;
                     break;
 
                 case 'rollback':
                     if (!is_numeric($this->getConfig()->getParameter('release', ''))) {
                         Console::output('<red>Missing required releaseid.</red>', 1, 2);
 
-                        return false;
+                        return 410;
                     }
 
                     $lockFile = getcwd() . '/.mage/' . $this->getConfig()->getEnvironment() . '.lock';
@@ -65,18 +66,22 @@ class ReleasesCommand extends AbstractCommand implements RequiresEnvironment
                         Console::output('<red>This environment is locked!</red>', 1, 2);
                         echo file_get_contents($lockFile);
 
-                        return false;
+                        return 420;
                     }
 
                     $releaseId = $this->getConfig()->getParameter('release', '');
                     $this->getConfig()->setReleaseId($releaseId);
                     $task = Factory::get('releases/rollback', $this->getConfig());
                     $task->init();
-                    $result = $task->run();
+                    $result = $task->run() && $result;
                     break;
             }
         }
 
-        return $result;
+        if ($result) {
+            $exitCode = 0;
+        }
+
+        return $exitCode;
     }
 }

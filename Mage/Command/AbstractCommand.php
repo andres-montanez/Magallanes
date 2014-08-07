@@ -28,6 +28,7 @@ abstract class AbstractCommand
 
     /**
      * Runs the Command
+     * @return integer exit code
      * @throws \Exception
      */
     public abstract function run();

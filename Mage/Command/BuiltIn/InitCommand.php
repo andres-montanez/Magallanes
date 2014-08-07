@@ -27,6 +27,7 @@ class InitCommand extends AbstractCommand
      */
     public function run()
     {
+        $exitCode = 50;
         $configDir = getcwd() . '/.mage';
 
         Console::output('Initiating managing process for application with <dark_gray>Magallanes</dark_gray>');
@@ -49,9 +50,13 @@ class InitCommand extends AbstractCommand
             if (!in_array(false, $results)) {
                 Console::output('<light_green>Success!!</light_green> The configuration for <dark_gray>Magallanes</dark_gray> has been generated at <blue>.mage</blue> directory.');
                 Console::output('<dark_gray>Please!! Review and adjust the configuration.</dark_gray>', 2, 2);
+                $exitCode = 0;
+
             } else {
                 Console::output('<light_red>Error!!</light_red> Unable to generate the configuration.', 1, 2);
             }
+
+            return $exitCode;
         }
     }
 

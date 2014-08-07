@@ -38,6 +38,7 @@ class UpgradeCommand extends AbstractCommand
      */
     public function run()
     {
+        $exitCode = 100;
         Console::output('Upgrading <dark_gray>Magallanes</dark_gray> ... ', 1, 0);
 
         $user = '';
@@ -59,10 +60,12 @@ class UpgradeCommand extends AbstractCommand
                 if ($versionCompare == 0) {
                     Console::output('<yellow>SKIP</yellow>', 0, 1);
                     Console::output('Your current version is up to date.', 2);
+                    $exitCode = 0;
 
                 } else if ($versionCompare == 1) {
                     Console::output('<yellow>SKIP</yellow>', 0, 1);
                     Console::output('Your current version is newer.', 2);
+                    $exitCode = 0;
 
                 } else if ($versionCompare == -1) {
                     // Download Package
@@ -82,6 +85,7 @@ class UpgradeCommand extends AbstractCommand
                         Console::executeCommand('mv ' . dirname($tarballFile) . '/magallanes ' . MAGALLANES_DIRECTORY);
 
                         Console::output('<green>OK</green>', 0, 1);
+                        $exitCode = 0;
                     }
 
                 } else {
@@ -93,5 +97,7 @@ class UpgradeCommand extends AbstractCommand
                 Console::output('Invalid version.', 2);
             }
         }
+
+        return $exitCode;
     }
 }

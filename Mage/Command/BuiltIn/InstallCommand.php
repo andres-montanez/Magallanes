@@ -26,6 +26,7 @@ class InstallCommand extends AbstractCommand
      */
     public function run()
     {
+        $exitCode = 88;
         Console::output('Installing <dark_gray>Magallanes</dark_gray>... ', 1, 0);
 
         // Vars
@@ -74,7 +75,10 @@ class InstallCommand extends AbstractCommand
             }
 
             Console::output('<light_green>Success!</light_green>', 0, 2);
+            $exitCode = 0;
         }
+
+        return $exitCode;
     }
 
     /**

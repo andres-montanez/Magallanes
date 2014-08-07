@@ -31,12 +31,13 @@ class ListCommand extends AbstractCommand
      */
     public function run()
     {
+        $exitCode = 600;
         $subCommand = $this->getConfig()->getArgument(1);
 
         try {
             switch ($subCommand) {
                 case 'environments':
-                    $this->listEnvironments();
+                    $exitCode = $this->listEnvironments();
                     break;
 
                 default;
@@ -46,6 +47,8 @@ class ListCommand extends AbstractCommand
         } catch (Exception $e) {
             Console::output('<red>' . $e->getMessage() . '</red>', 1, 2);
         }
+
+        return $exitCode;
     }
 
     /**
@@ -53,6 +56,7 @@ class ListCommand extends AbstractCommand
      */
     protected function listEnvironments()
     {
+        $exitCode = 600;
         $environments = array();
         $content = scandir(getcwd() . '/.mage/config/environment/');
         foreach ($content as $file) {
@@ -68,9 +72,12 @@ class ListCommand extends AbstractCommand
                 Console::output('* <light_red>' . $environment . '</light_red>', 2, 1);
             }
             Console::output('', 1, 1);
+            $exitCode = 0;
 
         } else {
             Console::output('<dark_gray>You don\'t have any environment configured.</dark_gray>', 1, 2);
         }
+
+        return $exitCode;
     }
 }

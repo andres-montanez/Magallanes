@@ -43,6 +43,8 @@ class LockCommand extends AbstractCommand implements RequiresEnvironment
         file_put_contents($lockFile, 'Locked environment at date: ' . date('Y-m-d H:i:s') . $lockmsg);
 
         Console::output('Locked deployment to <light_purple>' . $this->getConfig()->getEnvironment() . '</light_purple> environment', 1, 2);
+
+        return 0;
     }
 
 }

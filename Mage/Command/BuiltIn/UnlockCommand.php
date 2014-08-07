@@ -34,6 +34,8 @@ class UnlockCommand
         }
 
         Console::output('Unlocked deployment to <light_purple>' . $this->getConfig()->getEnvironment() . '</light_purple> environment', 1, 2);
+
+        return 0;
     }
 
 }
