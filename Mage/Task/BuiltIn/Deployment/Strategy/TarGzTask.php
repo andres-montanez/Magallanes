@@ -67,16 +67,40 @@ class TarGzTask extends BaseStrategyTaskAbstract implements IsReleaseAware
             $excludeCmd .= ' --exclude=' . $excludeFile;
         }
 
-        $command = 'tar cfzh ' . $localTarGz . '.tar.gz ' . $excludeCmd . ' -C ' . $this->getConfig()->deployment('from') . ' .';
+        // Strategy Flags
+        $strategyFlags = $this->getConfig()->deployment('strategy_flags', $this->getConfig()->general('strategy_flags', array()));
+        if (isset($strategyFlags['targz']) && isset($strategyFlags['targz']['create'])) {
+            $strategyFlags = $strategyFlags['targz']['create'];
+        } else {
+            $strategyFlags = '';
+        }
+
+        $command = 'tar cfzh' . $strategyFlags . ' ' . $localTarGz . '.tar.gz ' . $excludeCmd . ' -C ' . $this->getConfig()->deployment('from') . ' .';
         $result = $this->runCommandLocal($command);
 
+        // Strategy Flags
+        $strategyFlags = $this->getConfig()->deployment('strategy_flags', $this->getConfig()->general('strategy_flags', array()));
+        if (isset($strategyFlags['targz']) && isset($strategyFlags['targz']['exctract'])) {
+            $strategyFlags = $strategyFlags['targz']['exctract'];
+        } else {
+            $strategyFlags = '';
+        }
+
         // Copy Tar Gz  to Remote Host
-        $command = 'scp ' . $this->getConfig()->getHostIdentityFileOption() . '-P ' . $this->getConfig()->getHostPort() . ' ' . $localTarGz . '.tar.gz '
-            . $this->getConfig()->deployment('user') . '@' . $this->getConfig()->getHostName() . ':' . $deployToDirectory;
+        $command = 'scp ' . $strategyFlags . ' ' . $this->getConfig()->getHostIdentityFileOption() . '-P ' . $this->getConfig()->getHostPort() . ' ' . $localTarGz . '.tar.gz '
+                 . $this->getConfig()->deployment('user') . '@' . $this->getConfig()->getHostName() . ':' . $deployToDirectory;
         $result = $this->runCommandLocal($command) && $result;
 
+        // Strategy Flags
+        $strategyFlags = $this->getConfig()->deployment('strategy_flags', $this->getConfig()->general('strategy_flags', array()));
+        if (isset($strategyFlags['targz']) && isset($strategyFlags['targz']['scp'])) {
+            $strategyFlags = $strategyFlags['targz']['scp'];
+        } else {
+            $strategyFlags = '';
+        }
+
         // Extract Tar Gz
-        $command = $this->getReleasesAwareCommand('tar xfz ' . $remoteTarGz . '.tar.gz');
+        $command = $this->getReleasesAwareCommand('tar xfz' . $strategyFlags . ' ' . $remoteTarGz . '.tar.gz');
         $result = $this->runCommandRemote($command) && $result;
 
         // Delete Tar Gz from Remote Host

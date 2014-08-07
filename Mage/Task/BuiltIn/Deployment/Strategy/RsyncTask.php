@@ -83,12 +83,20 @@ class RsyncTask extends BaseStrategyTaskAbstract implements IsReleaseAware
             }
         }
 
+        // Strategy Flags
+        $strategyFlags = $this->getConfig()->deployment('strategy_flags', $this->getConfig()->general('strategy_flags', array()));
+        if (isset($strategyFlags['rsync'])) {
+            $strategyFlags = $strategyFlags['rsync'];
+        } else {
+            $strategyFlags = '';
+        }
+
         $command = 'rsync -avz '
+                 . $strategyFlags . ' '
                  . '--rsh="ssh ' . $this->getConfig()->getHostIdentityFileOption() . '-p' . $this->getConfig()->getHostPort() . '" '
                  . $this->excludes($excludes) . ' '
                  . $this->getConfig()->deployment('from') . ' '
                  . $this->getConfig()->deployment('user') . '@' . $this->getConfig()->getHostName() . ':' . $deployToDirectory;
-
         $result = $this->runCommandLocal($command);
 
         $this->cleanUpReleases();
