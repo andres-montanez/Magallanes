@@ -61,8 +61,8 @@ class RsyncTask extends BaseStrategyTaskAbstract implements IsReleaseAware
 
             $currentRelease = false;
             $deployToDirectory = rtrim($this->getConfig()->deployment('to'), '/')
-                . '/' . $releasesDirectory
-                . '/' . $this->getConfig()->getReleaseId();
+                               . '/' . $releasesDirectory
+                               . '/' . $this->getConfig()->getReleaseId();
 
             Console::log('Deploy to ' . $deployToDirectory);
             $resultFetch = $this->runCommandRemote('ls -ld ' . $symlink . ' | cut -d"/" -f2', $currentRelease);
@@ -84,10 +84,10 @@ class RsyncTask extends BaseStrategyTaskAbstract implements IsReleaseAware
         }
 
         $command = 'rsync -avz '
-            . '--rsh="ssh ' . $this->getConfig()->getHostIdentityFileOption() . '-p' . $this->getConfig()->getHostPort() . '" '
-            . $this->excludes($excludes) . ' '
-            . $this->getConfig()->deployment('from') . ' '
-            . $this->getConfig()->deployment('user') . '@' . $this->getConfig()->getHostName() . ':' . $deployToDirectory;
+                 . '--rsh="ssh ' . $this->getConfig()->getHostIdentityFileOption() . '-p' . $this->getConfig()->getHostPort() . '" '
+                 . $this->excludes($excludes) . ' '
+                 . $this->getConfig()->deployment('from') . ' '
+                 . $this->getConfig()->deployment('user') . '@' . $this->getConfig()->getHostName() . ':' . $deployToDirectory;
 
         $result = $this->runCommandLocal($command);
 
