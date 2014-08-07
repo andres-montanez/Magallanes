@@ -186,6 +186,10 @@ class DeployCommand extends AbstractCommand implements RequiresEnvironment
         $timeText = $this->transcurredTime(time() - $this->startTime);
         Console::output('Total time: <dark_gray>' . $timeText . '</dark_gray>.', 1, 2);
 
+		if (self::$deployStatus == self::SUCCEDED) {
+			Console::output('Deployment <green>SUCCEDED!</green>', 0, 2);
+		}
+
         // Send Notifications
         $this->sendNotification(self::$failedTasks > 0 ? false : true);
 

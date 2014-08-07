@@ -207,7 +207,7 @@ abstract class AbstractTask
 		if($cdToDirectoryFirst){
 			$remoteCommand = 'cd ' . rtrim($this->getConfig()->deployment('to'), '/') . $releasesDirectory . ' && ' . $remoteCommand;
 		}
-		$localCommand .= ' ' . '"sh -c \"' .  $remoteCommand . '\""';
+		$localCommand .= ' ' . '"sh -c \'' .  $remoteCommand . '\'"';
 
 		Console::log('Run remote command ' . $remoteCommand);
 
@@ -246,6 +246,28 @@ abstract class AbstractTask
 		}
 
 		return $command;
+	}
+
+	protected function tarReleases()
+	{
+		$releasesDirectory = $this->getConfig()->release('directory', 'releases');
+
+		$output = '';
+		$result = $this->runCommandRemote('ls -1 ' . $releasesDirectory, $output);
+		$releases = ($output == '') ? array() : explode(PHP_EOL, $output);
+
+		if (count($releases) == 0) {
+			Console::output('Release are not available for <dark_gray>' . $this->getConfig()->getHost() . '</dark_gray> ... <red>FAIL</red>');
+			return false;
+		} else {
+			rsort($releases);
+
+			foreach ($releases as $releaseId) {
+				$result = $this->tarRelease($releaseId) && $result;
+			}
+
+		}
+		return $result;
 	}
 
 	/**
