@@ -10,6 +10,7 @@
 
 namespace Mage\Command;
 
+use Mage\Command\AbstractCommand;
 use Mage\Config;
 use Mage\Autoload;
 
@@ -40,12 +41,17 @@ class Factory
         $className = 'Mage\\Command\\BuiltIn\\' . $commandName . 'Command';
 
         if (!class_exists($className)) {
-            throw new Exception('Command "' . $commandName . '" not found.');
+            // try a custom command
+            $className = 'Command\\' . $commandName;
+
+            if (!class_exists($className)) {
+                throw new Exception('Command "' . $commandName . '" not found.');
+            }
         }
 
         /** @var AbstractCommand $instance */
         $instance = new $className;
-        if (!is_a($instance, "Mage\Command\AbstractCommand")) {
+        if (! $instance instanceOf AbstractCommand) {
             throw new Exception('The command ' . $commandName . ' must be an instance of Mage\Command\AbstractCommand.');
         }
 
