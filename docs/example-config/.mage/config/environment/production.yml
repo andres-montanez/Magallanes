@@ -4,8 +4,8 @@ deployment:
   from: ./
 #  source:
 #    type: git
-#    repository: git://github.com/andres-montanez/Zend-Framework-Twig-example-app.git
-#    from: production
+#    repository: git://github.com/andres-montanez/Magallanes.git
+#    from: master
 #    temporal: /tmp/myAppClone
   to: /var/www/vhosts/example.com/www
   excludes:
