@@ -526,8 +526,7 @@ class Config
      */
     public function setFrom($from)
     {
-        $envConfig = $this->getEnvironmentConfig();
-        $envConfig['deployment']['from'] = $from;
+        $this->environmentConfig['deployment']['from'] = $from;
         return $this;
     }
 
