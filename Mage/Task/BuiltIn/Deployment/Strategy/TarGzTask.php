@@ -111,8 +111,6 @@ class TarGzTask extends BaseStrategyTaskAbstract implements IsReleaseAware
         $command = 'rm ' . $localTarGz . ' ' . $localTarGz . '.tar.gz';
         $result = $this->runCommandLocal($command) && $result;
 
-        $this->cleanUpReleases();
-
         return $result;
     }
 }

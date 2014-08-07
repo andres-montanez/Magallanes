@@ -97,8 +97,6 @@ class GitRebaseTask extends BaseStrategyTaskAbstract implements IsReleaseAware
             $result = $this->runCommandRemote($command) && $result;
         }
 
-        $this->cleanUpReleases();
-
         return $result;
     }
 }
