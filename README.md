@@ -66,3 +66,6 @@ You can read the whole source code (naaah!); or checkout the documentation at: h
 
 
 Enjoy your magic trip with **Magallanes** to the land of the easily deployable apps!!
+
+### "develop" branch ###
+Please, all pull request now must be on the develop branch. Thanks!
