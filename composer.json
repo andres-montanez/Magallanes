@@ -8,6 +8,14 @@
     "require": {
         "php": ">=5.3"
     },
+    "require-dev": {
+        "phpunit/phpunit": "@stable"
+    },
+    "autoload": {
+        "psr-0": {
+            "Mage": "./"
+        }
+    },
     "bin": [
         "bin/mage"
     ]
