@@ -21,6 +21,7 @@ abstract class ComposerAbstractTask extends AbstractTask
 {
     protected function getComposerPath()
     {
-        return $this->getConfig()->general('composer_path', 'php composer.phar');
+        $composerPath = $this->getParameter('composer_path', 'php composer.phar');
+        return $this->getConfig()->general('composer_path', $composerPath);
     }
 }
