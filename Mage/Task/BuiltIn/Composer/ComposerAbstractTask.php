@@ -19,9 +19,9 @@ use Mage\Task\AbstractTask;
  */
 abstract class ComposerAbstractTask extends AbstractTask
 {
-    protected function getComposerPath()
+    protected function getComposerCmd()
     {
-        $composerPath = $this->getParameter('composer_path', 'php composer.phar');
-        return $this->getConfig()->general('composer_path', $composerPath);
+        $composerCmd = $this->getParameter('composer_cmd', 'php composer.phar');
+        return $this->getConfig()->general('composer_cmd', $composerCmd);
     }
 }
