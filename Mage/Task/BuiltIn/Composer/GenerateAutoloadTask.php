@@ -23,6 +23,6 @@ class GenerateAutoloadTask extends ComposerAbstractTask
      */
     public function run()
     {
-        return $this->runCommand($this->getComposerCmd() . ' dumpautoload --optimize');
+        return $this->runCommandRemote($this->getComposerCmd() . ' dumpautoload --optimize');
     }
 }
