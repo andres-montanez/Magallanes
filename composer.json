@@ -10,7 +10,9 @@
     },
     "autoload": {
         "psr-4": {
-            "Mage\\": "./Mage"
+            "Mage\\": "./Mage",
+            "Task\\": ".mage/tasks",
+            "Command\\": ".mage/commands"
         }
     },
     "bin": [
