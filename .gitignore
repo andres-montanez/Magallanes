@@ -3,6 +3,7 @@
 .project
 .buildpath
 .idea
+vendor
 
 # OS generated files # // GitHub Recommendation
 ######################

@@ -23,6 +23,7 @@ class InstallTask extends ComposerAbstractTask
      */
     public function run()
     {
-        return $this->runCommand($this->getComposerPath() . ' install');
+        $dev = $this->getParameter('dev', true);
+        return $this->runCommand($this->getComposerCmd() . ' install' . ($dev ? ' --dev' : ' --no-dev'));
     }
 }
