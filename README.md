@@ -14,16 +14,16 @@ and run tasks for that freshly deployed code.
 Simply add the following dependency to your project’s composer.json file:
 
 ```js
-    "require": {
+    "require-dev": {
         // ...
-        "andres-montanez/magallanes": "1.0.*"
+        "andres-montanez/magallanes": "~1.0.1"
         // ...
     }
 ```
 Now tell we update the vendors:
 
 ```bash
-$ php composer update
+$ php composer update andres-montanez/magallanes
 ```
 
 And finally we can use Magallanes from the vendor's bin:
@@ -35,7 +35,7 @@ $ bin/mage version
 ### System-wide installation with composer ###
 
 ```bash
-$ composer global require "andres-montanez/magallanes=1.0.*"
+$ composer global require "andres-montanez/magallanes=~1.0.1"
 ```
 
 Make sure you have ~/.composer/vendor/bin/ in your path.
@@ -66,3 +66,6 @@ You can read the whole source code (naaah!); or checkout the documentation at: h
 
 
 Enjoy your magic trip with **Magallanes** to the land of the easily deployable apps!!
+
+### "develop" branch ###
+Please, all pull request now must be on the develop branch. Thanks!
