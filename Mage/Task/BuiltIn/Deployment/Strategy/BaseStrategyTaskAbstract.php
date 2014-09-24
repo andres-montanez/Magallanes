@@ -62,4 +62,16 @@ abstract class BaseStrategyTaskAbstract extends AbstractTask implements IsReleas
 
         return array_merge($excludes, $userExcludes);
     }
+
+    /**
+     * Add file containing excludes
+     *
+     * @return mixed
+     */
+    protected function getExcludesListFile()
+    {
+        $userExcludes = $this->getConfig()->deployment('file_containing_excludes', '');
+
+        return !empty($userExcludes)?realpath($userExcludes):false;
+    }
 }
