@@ -112,7 +112,7 @@ class RsyncTask extends BaseStrategyTaskAbstract implements IsReleaseAware
     {
         $excludesRsync = '';
         foreach ($excludes as $exclude) {
-            $excludesRsync = ' --exclude=' . escapeshellarg($exclude) . ' ';
+            $excludesRsync .= ' --exclude=' . escapeshellarg($exclude) . ' ';
         }
 
         $excludesRsync = trim($excludesRsync);
