@@ -96,11 +96,10 @@ class RsyncTask extends BaseStrategyTaskAbstract implements IsReleaseAware
                  . $strategyFlags . ' '
                  . '--rsh="ssh ' . $this->getConfig()->getHostIdentityFileOption() . '-p' . $this->getConfig()->getHostPort() . '" '
                  . $this->excludes($excludes) . ' '
-                 . $excludesListFilePath?$this->excludesListFile($excludesListFilePath) . ' ' : ''
+                 . $this->excludesListFile($excludesListFilePath) . ' '
                  . $this->getConfig()->deployment('from') . ' '
                  . $this->getConfig()->deployment('user') . '@' . $this->getConfig()->getHostName() . ':' . $deployToDirectory;
         $result = $this->runCommandLocal($command);
-
         return $result;
     }
 
@@ -129,7 +128,7 @@ class RsyncTask extends BaseStrategyTaskAbstract implements IsReleaseAware
     {
         $excludesListFileRsync = '';
         if(!empty($excludesFilePath)) {
-            $excludesListFileRsync = ' --exclude-from=' . escapeshellarg($excludesFilePath);
+            $excludesListFileRsync = ' --exclude-from=' . $excludesFilePath;
         }
         return $excludesListFileRsync;
     }
