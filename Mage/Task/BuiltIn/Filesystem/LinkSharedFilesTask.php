@@ -42,8 +42,8 @@ class LinkSharedFilesTask extends AbstractTask implements IsReleaseAware
             $this->runCommandRemote($command);
         }
 
-        foreach ($linkedFiles as $folder) {
-            $command = "ln -nfs $sharedFolderName/$folder $currentCopy/$folder";
+        foreach ($linkedFiles as $file) {
+            $command = "ln -nfs $sharedFolderName/$file $currentCopy/$file";
             $this->runCommandRemote($command);
         }
 
