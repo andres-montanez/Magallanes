@@ -8,8 +8,16 @@ use Mage\Task\SkipException;
 class LinkSharedFilesTask extends AbstractTask implements IsReleaseAware
 {
 
+    const LINKED_FOLDERS   = 'linked_folders';
+    const LINKED_STRATEGY  = 'linking_stategy';
+
     const ABSOLUTE_LINKING = 'absolute';
     const RELATIVE_LINKING = 'relative';
+
+    public $linkingStrategies = array(
+        self::ABSOLUTE_LINKING,
+        self::RELATIVE_LINKING
+    );
     /**
      * Returns the Title of the Task
      * @return string
@@ -28,8 +36,8 @@ class LinkSharedFilesTask extends AbstractTask implements IsReleaseAware
     public function run()
     {
         $linkedFiles    = $this->getParameter('linked_files', []);
-        $linkedFolders  = $this->getParameter('linked_folders', []);
-        $linkingStrategy = $this->getParameter('linking_stategy', self::ABSOLUTE_LINKING);
+        $linkedFolders  = $this->getParameter(self::LINKED_FOLDERS, []);
+        $linkingStrategy = $this->getParameter(self::LINKED_STRATEGY, self::ABSOLUTE_LINKING);
 
         $linkedEntities = array_merge($linkedFiles,$linkedFolders);
 
@@ -43,14 +51,19 @@ class LinkSharedFilesTask extends AbstractTask implements IsReleaseAware
         $releasesDirectoryPath = rtrim($this->getConfig()->deployment('to'), '/') . '/' . $releasesDirectory;
 
         $currentCopy = $releasesDirectoryPath . '/' . $this->getConfig()->getReleaseId();
-        if($linkingStrategy==self::RELATIVE_LINKING)
-            $relativeDiffPath = str_replace($this->getConfig()->deployment('to'),'',$currentCopy) . '/';
+        $relativeDiffPath = str_replace($this->getConfig()->deployment('to'),'',$currentCopy) . '/';
 
-        foreach ($linkedEntities as $entityPath) {
+        foreach ($linkedEntities as $ePath) {
+            if(is_array($ePath) && in_array($strategy = reset($ePath), $this->linkingStrategies ) ) {
+                $entityPath = key($ePath);
+            } else {
+                $strategy = $linkingStrategy;
+                $entityPath = $ePath;
+            }
             $sharedEntityLinkedPath = "$sharedFolderPath/$entityPath";
-            if($linkingStrategy==self::RELATIVE_LINKING) {
+            if($strategy==self::RELATIVE_LINKING) {
                 $parentFolderPath = dirname($entityPath);
-                $relativePath = empty($parentFolderPath)?$relativeDiffPath:$relativeDiffPath.$parentFolderPath.'/';
+                $relativePath = $parentFolderPath=='.'?$relativeDiffPath:$relativeDiffPath.$parentFolderPath.'/';
                 $sharedEntityLinkedPath = ltrim(preg_replace('/(\w+\/)/', '../', $relativePath),'/').$sharedFolderName .'/'. $entityPath;
             }
             $command = "ln -nfs $sharedEntityLinkedPath $currentCopy/$entityPath";
