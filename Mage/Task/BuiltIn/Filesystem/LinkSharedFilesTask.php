@@ -9,7 +9,7 @@ class LinkSharedFilesTask extends AbstractTask implements IsReleaseAware
 {
 
     const LINKED_FOLDERS   = 'linked_folders';
-    const LINKED_STRATEGY  = 'linking_stategy';
+    const LINKED_STRATEGY  = 'linking_strategy';
 
     const ABSOLUTE_LINKING = 'absolute';
     const RELATIVE_LINKING = 'relative';
