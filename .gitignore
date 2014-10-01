@@ -4,6 +4,7 @@
 .buildpath
 .idea
 vendor
+mage.phar
 
 # OS generated files # // GitHub Recommendation
 ######################
