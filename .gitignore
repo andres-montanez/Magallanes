@@ -5,7 +5,6 @@
 .idea
 vendor
 composer.phar
-composer.lock
 
 # OS generated files # // GitHub Recommendation
 ######################
