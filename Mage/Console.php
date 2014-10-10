@@ -139,7 +139,7 @@ class Console
                 if (is_int($exitCode) && $exitCode !== 0) {
                     throw new Exception("Command execution failed with following exit code: $exitCode.", $exitCode);
                 } elseif (is_bool($exitCode) && !$exitCode) {
-                    $exitCode = 1000;
+                    $exitCode = 1;
                     throw new Exception("Command execution failed.", $exitCode);
                 }
             } catch (Exception $exception) {
