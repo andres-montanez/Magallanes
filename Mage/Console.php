@@ -120,7 +120,7 @@ class Console
             }
         }
 
-
+        $exceptionOccured = false;
         // Run Command - Check if there is a Configuration Error
         if ($configError !== false) {
             self::output('<red>' . $configError . '</red>', 1, 2);
@@ -136,7 +136,12 @@ class Console
                     }
                 }
                 $exitCode = $command->run();
-
+                if (is_int($exitCode) && $exitCode !== 0) {
+                    throw new Exception("Command execution failed with following exit code: $exitCode.", $exitCode);
+                } elseif (is_bool($exitCode) && !$exitCode) {
+                    $exitCode = 1000;
+                    throw new Exception("Command execution failed.", $exitCode);
+                }
             } catch (Exception $exception) {
                 self::output('<red>' . $exception->getMessage() . '</red>', 1, 2);
             }
