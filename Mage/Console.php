@@ -26,7 +26,6 @@ use SplFileInfo;
 class Console
 {
     /**
-     * TODO refactor into own static class
      * @var array
      */
     public static $paramsNotRequiringEnvironment = array('install' => 'install', 'upgrade' => 'upgrade', 'version' => 'version');
