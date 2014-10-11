@@ -10,11 +10,11 @@ deployment:
         ioncube: test
 
 releases:
-        enabled: true
-        symlink: current
-        directory: releases
+  enabled: true
+  symlink: current
+  directory: releases
 hosts:
-        - localhost
+  - localhost
 tasks:
   pre-deploy:
     - ioncube/encrypt
@@ -29,7 +29,6 @@ ioncube:
   checkignorepaths:
     - /public/js/*
     - /public/css/*
-
   projfile: project.prj
   project:
     replace-target:
@@ -57,7 +56,6 @@ ioncube:
       - 'Comment 2'
       - "(c) ACTweb 2013"
       - "Draft Version"
-
     loader-event:
       - corrupt-file=Corupted files
       - expired-file=System needs updated
