@@ -133,7 +133,7 @@ class ReleaseTask extends AbstractTask implements IsReleaseAware, SkipOnOverride
                             $directoryToDelete = $releasesDirectory . '/' . $releaseIdToDelete;
                             if ($directoryToDelete != '/') {
                                 $command = 'rm -rf ' . $directoryToDelete;
-                                $result = $this->runCommandRemote($command);
+                                $this->runCommandRemote($command);
                             }
                         }
                     }
