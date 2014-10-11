@@ -17,15 +17,16 @@ releases:
   directory: releases
 hosts:
   - s01.example.com
-  s02.example.com:
-    deployment:
-      user: toor
-      to: /home/web/public
-    releases:
-      max: 10
-    tasks:
-      on-deploy:
-        - privileges
+  - s02.example.com
+#  s02.example.com:
+#    deployment:
+#      user: toor
+#      to: /home/web/public
+#    releases:
+#      max: 10
+#    tasks:
+#      on-deploy:
+#        - privileges
 tasks:
   pre-deploy:
     - scm/update
