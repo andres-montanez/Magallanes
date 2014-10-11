@@ -223,7 +223,7 @@ abstract class AbstractTask
      */
     protected final function runCommand($command, &$output = null)
     {
-        if ($this->getStage() == self::STAGE_DEPLOY) {
+        if ($this->getStage() == self::STAGE_DEPLOY || $this->getStage() == self::STAGE_POST_RELEASE) {
             return $this->runCommandRemote($command, $output);
         } else {
             return $this->runCommandLocal($command, $output);
