@@ -188,5 +188,4 @@ class RollbackTask extends AbstractTask implements IsReleaseAware
             return false;
         }
     }
-
 }

@@ -45,5 +45,4 @@ class UpdateCommand extends AbstractCommand
 
         return $exitCode;
     }
-
 }
