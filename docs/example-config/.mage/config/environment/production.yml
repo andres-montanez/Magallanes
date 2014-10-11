@@ -16,9 +16,7 @@ releases:
   symlink: current
   directory: releases
 hosts:
-  s01.example.com:22:
-    deployment:
-      user: nobody
+  - s01.example.com
   s02.example.com:
     deployment:
       user: toor
@@ -28,12 +26,11 @@ hosts:
     tasks:
       on-deploy:
         - privileges
-  - s03.example.com
 tasks:
   pre-deploy:
     - scm/update
   on-deploy:
-#    - symfony2/cache-warmup: {env: prod}
+    - symfony2/cache-warmup: { env: prod }
     - privileges
     - sampleTask
     - sampleTaskRollbackAware

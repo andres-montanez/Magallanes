@@ -27,8 +27,8 @@ ioncube:
   encoder: ioncube_encoder54
   checkencoding: true
   checkignorepaths:
-    -/public/js/*
-    -/public/css/*
+    - /public/js/*
+    - /public/css/*
 
   projfile: project.prj
   project:
