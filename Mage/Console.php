@@ -119,7 +119,6 @@ class Console
             }
         }
 
-        $exceptionOccured = false;
         // Run Command - Check if there is a Configuration Error
         if ($configError !== false) {
             self::output('<red>' . $configError . '</red>', 1, 2);

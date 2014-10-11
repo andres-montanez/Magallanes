@@ -10,7 +10,6 @@
 
 namespace Mage\Task\BuiltIn\Deployment\Strategy;
 
-use Mage\Console;
 use Mage\Task\BuiltIn\Deployment\Strategy\BaseStrategyTaskAbstract;
 use Mage\Task\Releases\IsReleaseAware;
 

@@ -13,7 +13,6 @@ namespace Mage;
 use Mage\Config\ConfigNotFoundException;
 use Mage\Config\RequiredConfigNotFoundException;
 use Mage\Console;
-use Mage\Yaml\Exception\RuntimeException;
 use Mage\Yaml\Yaml;
 use Exception;
 
