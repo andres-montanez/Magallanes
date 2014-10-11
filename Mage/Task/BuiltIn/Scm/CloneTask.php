@@ -64,15 +64,11 @@ class CloneTask extends AbstractTask
         $this->runCommandLocal('mkdir -p ' . $this->source['temporal']);
         switch ($this->source['type']) {
             case 'git':
-                // Clone Repo
+                // Fast clone Repo form Branch
                 $command = 'cd ' . $this->source['temporal'] . ' ; '
-                         . 'git clone ' . $this->source['repository'] . ' . ';
+                    . 'git clone --depth 1 -q -b ' . $this->source['from']
+                    . ' ' . $this->source['repository'] . ' . ';
                 $result = $this->runCommandLocal($command);
-
-                // Checkout Branch
-                $command = 'cd ' . $this->source['temporal'] . ' ; '
-                         . 'git checkout ' . $this->source['from'];
-                $result = $result && $this->runCommandLocal($command);
 
                 $this->getConfig()->setFrom($this->source['temporal']);
                 break;
