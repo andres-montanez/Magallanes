@@ -135,12 +135,16 @@ class Console
                         throw new Exception('You must specify an environment for this command.');
                     }
                 }
+
+                // Run the Command
                 $exitCode = $command->run();
+
+                // Check for errors
                 if (is_int($exitCode) && $exitCode !== 0) {
-                    throw new Exception("Command execution failed with following exit code: $exitCode.", $exitCode);
+                    throw new Exception('Command execution failed with following exit code: ' . $exitCode, $exitCode);
                 } elseif (is_bool($exitCode) && !$exitCode) {
                     $exitCode = 1;
-                    throw new Exception("Command execution failed.", $exitCode);
+                    throw new Exception('Command execution failed.', $exitCode);
                 }
             } catch (Exception $exception) {
                 self::output('<red>' . $exception->getMessage() . '</red>', 1, 2);
