@@ -131,7 +131,7 @@ class Console
                 $command = Factory::get($commandName, $config);
 
                 if ($command instanceOf RequiresEnvironment) {
-                    if ($config->getEnvironment() == false) {
+                    if ($config->getEnvironment() === false) {
                         throw new Exception('You must specify an environment for this command.');
                     }
                 }
@@ -222,7 +222,7 @@ class Console
     public static function log($message)
     {
         if (self::$logEnabled) {
-            if (self::$log == null) {
+            if (self::$log === null) {
                 self::$logFile = realpath(getcwd() . '/.mage/logs') . '/log-' . date('Ymd-His') . '.log';
                 self::$log = fopen(self::$logFile, 'w');
             }

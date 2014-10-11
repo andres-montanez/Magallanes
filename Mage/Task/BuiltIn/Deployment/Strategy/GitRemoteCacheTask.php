@@ -42,7 +42,7 @@ class GitRemoteCacheTask extends AbstractTask implements IsReleaseAware
     {
         $overrideRelease = $this->getParameter('overrideRelease', false);
 
-        if ($overrideRelease == true) {
+        if ($overrideRelease === true) {
             $releaseToOverride = false;
             $resultFetch = $this->runCommandRemote('ls -ld current | cut -d"/" -f2', $releaseToOverride);
             if ($resultFetch && is_numeric($releaseToOverride)) {
@@ -63,7 +63,7 @@ class GitRemoteCacheTask extends AbstractTask implements IsReleaseAware
         $userExcludes = $this->getConfig()->deployment('excludes', array());
 
         $deployToDirectory = $this->getConfig()->deployment('to');
-        if ($this->getConfig()->release('enabled', false) == true) {
+        if ($this->getConfig()->release('enabled', false) === true) {
             $releasesDirectory = $this->getConfig()->release('directory', 'releases');
 
             $deployToDirectory = rtrim($this->getConfig()->deployment('to'), '/')

@@ -47,7 +47,7 @@ class RollbackTask extends AbstractTask implements IsReleaseAware
      */
     public function run()
     {
-        if ($this->getConfig()->release('enabled', false) == true) {
+        if ($this->getConfig()->release('enabled', false) === true) {
             $releasesDirectory = $this->getConfig()->release('directory', 'releases');
             $symlink = $this->getConfig()->release('symlink', 'current');
 
@@ -111,7 +111,7 @@ class RollbackTask extends AbstractTask implements IsReleaseAware
                             $tasks++;
                             $result = $task->run();
 
-                            if ($result == true) {
+                            if ($result === true) {
                                 Console::output('<green>OK</green>', 0);
                                 $completedTasks++;
                             } else {
@@ -161,7 +161,7 @@ class RollbackTask extends AbstractTask implements IsReleaseAware
                             $tasks++;
                             $result = $task->run();
 
-                            if ($result == true) {
+                            if ($result === true) {
                                 Console::output('<green>OK</green>', 0);
                                 $completedTasks++;
                             } else {

@@ -35,7 +35,7 @@ class UpdateCommand extends AbstractCommand
         Console::output('Updating application via ' . $task->getName() . ' ... ', 1, 0);
         $result = $task->run();
 
-        if ($result == true) {
+        if ($result === true) {
             Console::output('<green>OK</green>' . PHP_EOL, 0);
             $exitCode = 0;
 
