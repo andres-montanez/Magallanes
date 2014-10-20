@@ -34,7 +34,7 @@ class ListTask extends AbstractTask implements IsReleaseAware
      */
     public function run()
     {
-        if ($this->getConfig()->release('enabled', false) == true) {
+        if ($this->getConfig()->release('enabled', false) === true) {
             $releasesDirectory = $this->getConfig()->release('directory', 'releases');
             $symlink = $this->getConfig()->release('symlink', 'current');
 
@@ -146,5 +146,4 @@ class ListTask extends AbstractTask implements IsReleaseAware
 
         return $textDiff;
     }
-
 }

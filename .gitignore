@@ -1,9 +1,5 @@
-.settings
-.settings/*
-.project
-.buildpath
-.idea
 vendor
+mage.phar
 composer.phar
 
 # OS generated files # // GitHub Recommendation

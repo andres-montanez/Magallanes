@@ -38,5 +38,4 @@ class DisabledTask extends AbstractTask implements IsReleaseAware
     {
         throw new SkipException;
     }
-
 }
