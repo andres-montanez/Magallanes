@@ -53,8 +53,6 @@ class LinkSharedFilesTask extends AbstractTask implements IsReleaseAware
             $command = 'mkdir -p ' . escapeshellarg(dirname($sharedFolderName . '/' . $file));
             $this->runCommandRemote($command);
             $target = escapeshellarg($sharedFolderName . '/' . $file);
-            $command = 'touch ' . $target;
-            $this->runCommandRemote($command);
             $command = 'ln -s ' . $target . ' ' . escapeshellarg($currentCopy . '/' . $file);
             $this->runCommandRemote($command);
         }
