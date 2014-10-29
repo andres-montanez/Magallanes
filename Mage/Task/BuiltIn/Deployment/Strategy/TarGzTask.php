@@ -10,7 +10,6 @@
 
 namespace Mage\Task\BuiltIn\Deployment\Strategy;
 
-use Mage\Console;
 use Mage\Task\BuiltIn\Deployment\Strategy\BaseStrategyTaskAbstract;
 use Mage\Task\Releases\IsReleaseAware;
 
@@ -27,8 +26,8 @@ class TarGzTask extends BaseStrategyTaskAbstract implements IsReleaseAware
      */
     public function getName()
     {
-        if ($this->getConfig()->release('enabled', false) == true) {
-            if ($this->getConfig()->getParameter('overrideRelease', false) == true) {
+        if ($this->getConfig()->release('enabled', false) === true) {
+            if ($this->getConfig()->getParameter('overrideRelease', false) === true) {
                 return 'Deploy via TarGz (with Releases override) [built-in]';
             } else {
                 return 'Deploy via TarGz (with Releases) [built-in]';
@@ -50,7 +49,7 @@ class TarGzTask extends BaseStrategyTaskAbstract implements IsReleaseAware
 
         // If we are working with releases
         $deployToDirectory = $this->getConfig()->deployment('to');
-        if ($this->getConfig()->release('enabled', false) == true) {
+        if ($this->getConfig()->release('enabled', false) === true) {
             $releasesDirectory = $this->getConfig()->release('directory', 'releases');
             $deployToDirectory = rtrim($this->getConfig()->deployment('to'), '/')
                 . '/' . $releasesDirectory

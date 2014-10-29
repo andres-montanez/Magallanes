@@ -53,6 +53,15 @@ class CloneTask extends AbstractTask
                 $this->name = 'SCM Clone (GIT) [built-in]';
                 break;
         }
+
+        // Create temporal directory for clone
+        if (is_array($this->source)) {
+            if (trim($this->source['temporal']) == '') {
+                $this->source['temporal'] = sys_get_temp_dir();
+            }
+            $this->source['temporal'] = rtrim($this->source['temporal'], '/') . '/' . md5(microtime()) . '/';
+            $this->getConfig()->setSourceTemporal($this->source['temporal']);
+        }
     }
 
     /**

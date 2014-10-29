@@ -10,7 +10,6 @@
 
 namespace Mage\Task\BuiltIn\Deployment\Strategy;
 
-use Mage\Task\AbstractTask;
 use Mage\Task\Releases\IsReleaseAware;
 
 /**
@@ -35,20 +34,6 @@ class GitRebaseTask extends BaseStrategyTaskAbstract implements IsReleaseAware
      */
     public function run()
     {
-        $this->checkOverrideRelease();
-        $excludes = $this->getExcludes();
-
-        // If we are working with releases
-        $deployToDirectory = $this->getConfig()->deployment('to');
-        if ($this->getConfig()->release('enabled', false) == true) {
-            $releasesDirectory = $this->getConfig()->release('directory', 'releases');
-
-            $deployToDirectory = rtrim($this->getConfig()->deployment('to'), '/')
-                . '/' . $releasesDirectory
-                . '/' . $this->getConfig()->getReleaseId();
-            $this->runCommandRemote('mkdir -p ' . $releasesDirectory . '/' . $this->getConfig()->getReleaseId());
-        }
-
         $branch = $this->getParameter('branch', 'master');
         $remote = $this->getParameter('remote', 'origin');
 

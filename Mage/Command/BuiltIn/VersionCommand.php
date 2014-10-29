@@ -30,5 +30,4 @@ class VersionCommand extends AbstractCommand
 
         return 0;
     }
-
 }

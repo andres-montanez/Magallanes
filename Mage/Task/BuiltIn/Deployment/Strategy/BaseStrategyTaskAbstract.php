@@ -30,7 +30,7 @@ abstract class BaseStrategyTaskAbstract extends AbstractTask implements IsReleas
         $overrideRelease = $this->getParameter('overrideRelease', false);
         $symlink = $this->getConfig()->release('symlink', 'current');
 
-        if ($overrideRelease == true) {
+        if ($overrideRelease === true) {
             $releaseToOverride = false;
             $resultFetch = $this->runCommandRemote('ls -ld ' . $symlink . ' | cut -d"/" -f2', $releaseToOverride);
             if ($resultFetch && is_numeric($releaseToOverride)) {

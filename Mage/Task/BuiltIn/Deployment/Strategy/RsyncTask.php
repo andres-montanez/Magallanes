@@ -27,8 +27,8 @@ class RsyncTask extends BaseStrategyTaskAbstract implements IsReleaseAware
      */
     public function getName()
     {
-        if ($this->getConfig()->release('enabled', false) == true) {
-            if ($this->getConfig()->getParameter('overrideRelease', false) == true) {
+        if ($this->getConfig()->release('enabled', false) === true) {
+            if ($this->getConfig()->getParameter('overrideRelease', false) === true) {
                 return 'Deploy via Rsync (with Releases override) [built-in]';
             } else {
                 $rsync_copy = $this->getConfig()->deployment("rsync");
@@ -55,7 +55,7 @@ class RsyncTask extends BaseStrategyTaskAbstract implements IsReleaseAware
 
         // If we are working with releases
         $deployToDirectory = $this->getConfig()->deployment('to');
-        if ($this->getConfig()->release('enabled', false) == true) {
+        if ($this->getConfig()->release('enabled', false) === true) {
             $releasesDirectory = $this->getConfig()->release('directory', 'releases');
             $symlink = $this->getConfig()->release('symlink', 'current');
 
