@@ -20,3 +20,4 @@ class SampleTaskRollbackAware extends AbstractTask implements RollbackAware
         return true;
     }
 }
+

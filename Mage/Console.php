@@ -26,7 +26,6 @@ use SplFileInfo;
 class Console
 {
     /**
-     * TODO refactor into own static class
      * @var array
      */
     public static $paramsNotRequiringEnvironment = array('install' => 'install', 'upgrade' => 'upgrade', 'version' => 'version');
@@ -120,7 +119,6 @@ class Console
             }
         }
 
-
         // Run Command - Check if there is a Configuration Error
         if ($configError !== false) {
             self::output('<red>' . $configError . '</red>', 1, 2);
@@ -131,12 +129,21 @@ class Console
                 $command = Factory::get($commandName, $config);
 
                 if ($command instanceOf RequiresEnvironment) {
-                    if ($config->getEnvironment() == false) {
+                    if ($config->getEnvironment() === false) {
                         throw new Exception('You must specify an environment for this command.');
                     }
                 }
+
+                // Run the Command
                 $exitCode = $command->run();
 
+                // Check for errors
+                if (is_int($exitCode) && $exitCode !== 0) {
+                    throw new Exception('Command execution failed with following exit code: ' . $exitCode, $exitCode);
+                } elseif (is_bool($exitCode) && !$exitCode) {
+                    $exitCode = 1;
+                    throw new Exception('Command execution failed.', $exitCode);
+                }
             } catch (Exception $exception) {
                 self::output('<red>' . $exception->getMessage() . '</red>', 1, 2);
             }
@@ -213,7 +220,7 @@ class Console
     public static function log($message)
     {
         if (self::$logEnabled) {
-            if (self::$log == null) {
+            if (self::$log === null) {
                 self::$logFile = realpath(getcwd() . '/.mage/logs') . '/log-' . date('Ymd-His') . '.log';
                 self::$log = fopen(self::$logFile, 'w');
             }

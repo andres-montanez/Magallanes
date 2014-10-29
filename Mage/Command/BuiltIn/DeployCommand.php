@@ -357,7 +357,7 @@ class DeployCommand extends AbstractCommand implements RequiresEnvironment
             }
 
             // Releasing
-            if (self::$deployStatus == self::SUCCEDED && $this->getConfig()->release('enabled', false) == true) {
+            if (self::$deployStatus == self::SUCCEDED && $this->getConfig()->release('enabled', false) === true) {
                 // Execute the Releases
                 Console::output('Starting the <dark_gray>Releasing</dark_gray>');
                 $completedTasks = 0;
@@ -460,7 +460,7 @@ class DeployCommand extends AbstractCommand implements RequiresEnvironment
     {
         $task->init();
 
-        if ($title == null) {
+        if ($title === null) {
             $title = 'Running <purple>' . $task->getName() . '</purple> ... ';
         }
         Console::output($title, 2, 0);
@@ -470,11 +470,11 @@ class DeployCommand extends AbstractCommand implements RequiresEnvironment
             $runTask = false;
         }
 
-        if ($runTask == true) {
+        if ($runTask === true) {
             try {
                 $result = $task->run();
 
-                if ($result == true) {
+                if ($result === true) {
                     Console::output('<green>OK</green>', 0);
                     $result = true;
 
@@ -590,7 +590,7 @@ class DeployCommand extends AbstractCommand implements RequiresEnvironment
 
             case self::DEPLOY_STRATEGY_GUESS:
             default:
-                if ($this->getConfig()->release('enabled', false) == true) {
+                if ($this->getConfig()->release('enabled', false) === true) {
                     $deployStrategy = 'deployment/strategy/tar-gz';
                 } else {
                     $deployStrategy = 'deployment/strategy/rsync';

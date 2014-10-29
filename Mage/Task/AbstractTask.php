@@ -181,7 +181,7 @@ abstract class AbstractTask
      */
     protected final function runCommandRemote($command, &$output = null, $cdToDirectoryFirst = true)
     {
-        if ($this->getConfig()->release('enabled', false) == true) {
+        if ($this->getConfig()->release('enabled', false) === true) {
             if ($this instanceOf IsReleaseAware) {
                 $releasesDirectory = '';
 
@@ -223,7 +223,7 @@ abstract class AbstractTask
      */
     protected final function runCommand($command, &$output = null)
     {
-        if ($this->getStage() == self::STAGE_DEPLOY) {
+        if ($this->getStage() == self::STAGE_DEPLOY || $this->getStage() == self::STAGE_POST_RELEASE) {
             return $this->runCommandRemote($command, $output);
         } else {
             return $this->runCommandLocal($command, $output);
@@ -238,7 +238,7 @@ abstract class AbstractTask
      */
     protected function getReleasesAwareCommand($command)
     {
-        if ($this->getConfig()->release('enabled', false) == true) {
+        if ($this->getConfig()->release('enabled', false) === true) {
             $releasesDirectory = $this->getConfig()->release('directory', 'releases');
 
             $deployToDirectory = $releasesDirectory . '/' . $this->getConfig()->getReleaseId();

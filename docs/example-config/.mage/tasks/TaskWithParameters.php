@@ -18,8 +18,10 @@ class TaskWithParameters extends AbstractTask
 
     public function run()
     {
-        //throw new Mage_Task_SkipException;
-        //return false;
-        return true;
+        if ($this->getParameter('booleanOption', false)) {
+            return true;
+        } else {
+            return false;
+        }
     }
 }
