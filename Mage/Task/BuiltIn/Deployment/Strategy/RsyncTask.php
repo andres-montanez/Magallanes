@@ -52,6 +52,7 @@ class RsyncTask extends BaseStrategyTaskAbstract implements IsReleaseAware
         $this->checkOverrideRelease();
 
         $excludes = $this->getExcludes();
+        $excludesListFilePath = $this->getExcludesListFile();
 
         // If we are working with releases
         $deployToDirectory = $this->getConfig()->deployment('to');
@@ -95,6 +96,7 @@ class RsyncTask extends BaseStrategyTaskAbstract implements IsReleaseAware
                  . $strategyFlags . ' '
                  . '--rsh="ssh ' . $this->getConfig()->getHostIdentityFileOption() . '-p' . $this->getConfig()->getHostPort() . '" '
                  . $this->excludes($excludes) . ' '
+                 . $this->excludesListFile($excludesListFilePath) . ' '
                  . $this->getConfig()->deployment('from') . ' '
                  . $this->getConfig()->deployment('user') . '@' . $this->getConfig()->getHostName() . ':' . $deployToDirectory;
         $result = $this->runCommandLocal($command);
@@ -116,5 +118,19 @@ class RsyncTask extends BaseStrategyTaskAbstract implements IsReleaseAware
 
         $excludesRsync = trim($excludesRsync);
         return $excludesRsync;
+    }
+
+    /**
+     * Generates the Exclude from file for rsync
+     * @param string $excludesFilePath
+     * @return string
+     */
+    protected function excludesListFile($excludesFilePath)
+    {
+        $excludesListFileRsync = '';
+        if(!empty($excludesFilePath)) {
+            $excludesListFileRsync = ' --exclude-from=' . $excludesFilePath;
+        }
+        return $excludesListFileRsync;
     }
 }
