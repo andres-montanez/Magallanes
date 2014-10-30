@@ -431,6 +431,7 @@ class DeployCommand extends AbstractCommand implements RequiresEnvironment
     }
 
     protected function runRollbackTask(){
+        $this->getConfig()->reload();
         $hosts = $this->getConfig()->getHosts();
 
         if (count($hosts) == 0) {
