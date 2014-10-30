@@ -13,9 +13,9 @@ namespace Mage\Task;
 use Exception;
 
 /**
- * Exception that indicates that the Task was Skipped
+ * Exception that indicates that the Task was Failed and rollback needed
  *
- * @author Andrés Montañez <andres@andresmontanez.com>
+ * @author Alex V Kotelnikov <gudron@gudron.me>
  */
 class RollbackException extends Exception
 {
