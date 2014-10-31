@@ -227,6 +227,10 @@ class Console
 
             $message = date('Y-m-d H:i:s -- ') . $message;
             fwrite(self::$log, $message . PHP_EOL);
+
+            if (self::$config->general('verbose_logging', false)) {
+                echo $message . PHP_EOL;
+            }
         }
     }
 
