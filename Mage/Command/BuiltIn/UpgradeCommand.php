@@ -39,7 +39,7 @@ class UpgradeCommand extends AbstractCommand
     public function run()
     {
         $exitCode = 99;
-        Console::output('Upgrading <dark_gray>Magallanes</dark_gray> ... ', 1, 0);
+        Console::output('Upgrading <bold>Magallanes</bold> ... ', 1, 0);
 
         $user = '';
         // Check if user is root
@@ -49,7 +49,7 @@ class UpgradeCommand extends AbstractCommand
 
         if ($user != 'root' && $user != $owner) {
             Console::output('<red>FAIL</red>', 0, 1);
-            Console::output('You need to be the <dark_gray>' . $owner . '</dark_gray> user to perform the upgrade, or <dark_gray>root</dark_gray>.', 2);
+            Console::output('You need to be the <bold>' . $owner . '</bold> user to perform the upgrade, or <bold>root</bold>.', 2);
 
         } else {
             // Check version

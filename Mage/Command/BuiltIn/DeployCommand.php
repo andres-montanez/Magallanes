@@ -133,21 +133,21 @@ class DeployCommand extends AbstractCommand implements RequiresEnvironment
         $this->getConfig()->setReleaseId(date('YmdHis'));
 
         // Deploy Summary
-        Console::output('<dark_gray>Deploy summary</dark_gray>', 1, 1);
+        Console::output('<bold>Deploy summary</bold>', 1, 1);
 
         // Deploy Summary - Environment
-        Console::output('<dark_gray>Environment:</dark_gray> <purple>' . $this->getConfig()->getEnvironment() . '</purple>', 2, 1);
+        Console::output('<bold>Environment:</bold> <purple>' . $this->getConfig()->getEnvironment() . '</purple>', 2, 1);
 
         // Deploy Summary - Releases
         if ($this->getConfig()->release('enabled', false)) {
-            Console::output('<dark_gray>Release ID:</dark_gray>  <purple>' . $this->getConfig()->getReleaseId() . '</purple>', 2, 1);
+            Console::output('<bold>Release ID:</bold>  <purple>' . $this->getConfig()->getReleaseId() . '</purple>', 2, 1);
         }
 
         // Deploy Summary - SCM
         if ($this->getConfig()->deployment('scm', false)) {
             $scmConfig = $this->getConfig()->deployment('scm');
             if (isset($scmConfig['branch'])) {
-                Console::output('<dark_gray>SCM Branch:</dark_gray>  <purple>' . $scmConfig['branch'] . '</purple>', 2, 1);
+                Console::output('<bold>SCM Branch:</bold>  <purple>' . $scmConfig['branch'] . '</purple>', 2, 1);
             }
         }
 
@@ -162,7 +162,7 @@ class DeployCommand extends AbstractCommand implements RequiresEnvironment
         // Check Status
         if (self::$failedTasks > 0) {
             self::$deployStatus = self::FAILED;
-            Console::output('A total of <dark_gray>' . self::$failedTasks . '</dark_gray> deployment tasks failed: <red>ABORTING</red>', 1, 2);
+            Console::output('A total of <bold>' . self::$failedTasks . '</bold> deployment tasks failed: <red>ABORTING</red>', 1, 2);
 
         } else {
             // Run Deployment Tasks
@@ -171,7 +171,7 @@ class DeployCommand extends AbstractCommand implements RequiresEnvironment
             // Check Status
             if (self::$failedTasks > 0) {
                 self::$deployStatus = self::FAILED;
-                Console::output('A total of <dark_gray>' . self::$failedTasks . '</dark_gray> deployment tasks failed: <red>ABORTING</red>', 1, 2);
+                Console::output('A total of <bold>' . self::$failedTasks . '</bold> deployment tasks failed: <red>ABORTING</red>', 1, 2);
             }
 
             // Run Post-Deployment Tasks
@@ -181,15 +181,15 @@ class DeployCommand extends AbstractCommand implements RequiresEnvironment
         // Time Information Hosts
         if ($this->hostsCount > 0) {
             $timeTextHost = $this->transcurredTime($this->endTimeHosts - $this->startTimeHosts);
-            Console::output('Time for deployment: <dark_gray>' . $timeTextHost . '</dark_gray>.');
+            Console::output('Time for deployment: <bold>' . $timeTextHost . '</bold>.');
 
             $timeTextPerHost = $this->transcurredTime(round(($this->endTimeHosts - $this->startTimeHosts) / $this->hostsCount));
-            Console::output('Average time per host: <dark_gray>' . $timeTextPerHost . '</dark_gray>.');
+            Console::output('Average time per host: <bold>' . $timeTextPerHost . '</bold>.');
         }
 
         // Time Information General
         $timeText = $this->transcurredTime(time() - $this->startTime);
-        Console::output('Total time: <dark_gray>' . $timeText . '</dark_gray>.', 1, 2);
+        Console::output('Total time: <bold>' . $timeText . '</bold>.', 1, 2);
 
         // Send Notifications
         $this->sendNotification(self::$failedTasks > 0 ? false : true);
@@ -251,10 +251,10 @@ class DeployCommand extends AbstractCommand implements RequiresEnvironment
         }
 
         if (count($tasksToRun) == 0) {
-            Console::output('<dark_gray>No </dark_gray><light_cyan>' . $title . '</light_cyan> <dark_gray>tasks defined.</dark_gray>', 1, 3);
+            Console::output('<bold>No </bold><light_cyan>' . $title . '</light_cyan> <bold>tasks defined.</bold>', 1, 3);
 
         } else {
-            Console::output('Starting <dark_gray>' . $title . '</dark_gray> tasks:');
+            Console::output('Starting <bold>' . $title . '</bold> tasks:');
 
             $tasks = 0;
             $completedTasks = 0;
@@ -276,7 +276,7 @@ class DeployCommand extends AbstractCommand implements RequiresEnvironment
                 $tasksColor = 'red';
             }
 
-            Console::output('Finished <dark_gray>' . $title . '</dark_gray> tasks: <' . $tasksColor . '>' . $completedTasks . '/' . $tasks . '</' . $tasksColor . '> tasks done.', 1, 3);
+            Console::output('Finished <bold>' . $title . '</bold> tasks: <' . $tasksColor . '>' . $completedTasks . '/' . $tasks . '</' . $tasksColor . '> tasks done.', 1, 3);
         }
     }
 
@@ -292,7 +292,7 @@ class DeployCommand extends AbstractCommand implements RequiresEnvironment
         self::$failedTasks = 0;
 
         if ($this->hostsCount == 0) {
-            Console::output('<light_purple>Warning!</light_purple> <dark_gray>No hosts defined, skipping deployment tasks.</dark_gray>', 1, 3);
+            Console::output('<light_purple>Warning!</light_purple> <bold>No hosts defined, skipping deployment tasks.</bold>', 1, 3);
 
         } else {
             $this->startTimeHosts = time();
@@ -313,7 +313,7 @@ class DeployCommand extends AbstractCommand implements RequiresEnvironment
                 $tasks = 0;
                 $completedTasks = 0;
 
-                Console::output('Deploying to <dark_gray>' . $this->getConfig()->getHost() . '</dark_gray>');
+                Console::output('Deploying to <bold>' . $this->getConfig()->getHost() . '</bold>');
 
                 $tasksToRun = $this->getConfig()->getTasks();
 
@@ -322,8 +322,8 @@ class DeployCommand extends AbstractCommand implements RequiresEnvironment
                 array_unshift($tasksToRun, $deployStrategy);
 
                 if (count($tasksToRun) == 0) {
-                    Console::output('<light_purple>Warning!</light_purple> <dark_gray>No </dark_gray><light_cyan>Deployment</light_cyan> <dark_gray>tasks defined.</dark_gray>', 2);
-                    Console::output('Deployment to <dark_gray>' . $host . '</dark_gray> skipped!', 1, 3);
+                    Console::output('<light_purple>Warning!</light_purple> <bold>No </bold><light_cyan>Deployment</light_cyan> <bold>tasks defined.</bold>', 2);
+                    Console::output('Deployment to <bold>' . $host . '</bold> skipped!', 1, 3);
 
                 } else {
                     foreach ($tasksToRun as $taskData) {
@@ -343,7 +343,7 @@ class DeployCommand extends AbstractCommand implements RequiresEnvironment
                         $tasksColor = 'red';
                     }
 
-                    Console::output('Deployment to <dark_gray>' . $this->getConfig()->getHost() . '</dark_gray> completed: <' . $tasksColor . '>' . $completedTasks . '/' . $tasks . '</' . $tasksColor . '> tasks done.', 1, 3);
+                    Console::output('Deployment to <bold>' . $this->getConfig()->getHost() . '</bold> completed: <' . $tasksColor . '>' . $completedTasks . '/' . $tasks . '</' . $tasksColor . '> tasks done.', 1, 3);
                 }
 
                 // Reset Host Config
@@ -360,7 +360,7 @@ class DeployCommand extends AbstractCommand implements RequiresEnvironment
             // Releasing
             if (self::$deployStatus == self::SUCCEDED && $this->getConfig()->release('enabled', false) === true) {
                 // Execute the Releases
-                Console::output('Starting the <dark_gray>Releasing</dark_gray>');
+                Console::output('Starting the <bold>Releasing</bold>');
                 $completedTasks = 0;
                 foreach ($hosts as $hostKey => $host) {
 
@@ -384,7 +384,7 @@ class DeployCommand extends AbstractCommand implements RequiresEnvironment
                     // Reset Host Config
                     $this->getConfig()->setHostConfig(null);
                 }
-                Console::output('Finished the <dark_gray>Releasing</dark_gray>', 1, 3);
+                Console::output('Finished the <bold>Releasing</bold>', 1, 3);
 
                 // Execute the Post-Release Tasks
                 foreach ($hosts as $hostKey => $host) {
@@ -405,7 +405,7 @@ class DeployCommand extends AbstractCommand implements RequiresEnvironment
                     $completedTasks = 0;
 
                     if (count($tasksToRun) > 0) {
-                        Console::output('Starting <dark_gray>Post-Release</dark_gray> tasks for <dark_gray>' . $host . '</dark_gray>:');
+                        Console::output('Starting <bold>Post-Release</bold> tasks for <bold>' . $host . '</bold>:');
 
                         foreach ($tasksToRun as $task) {
                             $task = Factory::get($task, $this->getConfig(), false, AbstractTask::STAGE_POST_RELEASE);
@@ -420,7 +420,7 @@ class DeployCommand extends AbstractCommand implements RequiresEnvironment
                         } else {
                             $tasksColor = 'red';
                         }
-                        Console::output('Finished <dark_gray>Post-Release</dark_gray> tasks for <dark_gray>' . $host . '</dark_gray>: <' . $tasksColor . '>' . $completedTasks . '/' . $tasks . '</' . $tasksColor . '> tasks done.', 1, 3);
+                        Console::output('Finished <bold>Post-Release</bold> tasks for <bold>' . $host . '</bold>: <' . $tasksColor . '>' . $completedTasks . '/' . $tasks . '</' . $tasksColor . '> tasks done.', 1, 3);
                     }
 
                     // Reset Host Config
@@ -435,7 +435,7 @@ class DeployCommand extends AbstractCommand implements RequiresEnvironment
         $hosts = $this->getConfig()->getHosts();
 
         if (count($hosts) == 0) {
-            Console::output('<light_purple>Warning!</light_purple> <dark_gray>No hosts defined, unable to get releases.</dark_gray>', 1, 3);
+            Console::output('<light_purple>Warning!</light_purple> <bold>No hosts defined, unable to get releases.</bold>', 1, 3);
 
         } else {
             $result = true;

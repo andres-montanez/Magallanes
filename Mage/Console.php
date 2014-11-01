@@ -115,7 +115,7 @@ class Console
             } else {
                 self::output('Starting <blue>Magallanes</blue>', 0, 1);
                 self::log("Logging enabled");
-                self::output('<dark_gray>Logging enabled:</dark_gray> <purple>' . self::getLogFile() . '</purple>', 1, 2);
+                self::output('<bold>Logging enabled:</bold> <purple>' . self::getLogFile() . '</purple>', 1, 2);
             }
         }
 

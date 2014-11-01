@@ -26,7 +26,7 @@ class VersionCommand extends AbstractCommand
      */
     public function run()
     {
-        Console::output('Running <blue>Magallanes</blue> version <dark_gray>' . MAGALLANES_VERSION . '</dark_gray>', 0, 2);
+        Console::output('Running <blue>Magallanes</blue> version <bold>' . MAGALLANES_VERSION . '</bold>', 0, 2);
 
         return 0;
     }

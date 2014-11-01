@@ -30,11 +30,11 @@ class InitCommand extends AbstractCommand
         $exitCode = 50;
         $configDir = getcwd() . '/.mage';
 
-        Console::output('Initiating managing process for application with <dark_gray>Magallanes</dark_gray>');
+        Console::output('Initiating managing process for application with <bold>Magallanes</bold>');
 
         // Check if there is already a config dir
         if (file_exists($configDir)) {
-            Console::output('<light_red>Error!!</light_red> Already exists <dark_gray>.mage</dark_gray> directory.', 1, 2);
+            Console::output('<light_red>Error!!</light_red> Already exists <bold>.mage</bold> directory.', 1, 2);
         } else {
             $results = array();
             $results[] = mkdir($configDir);
@@ -48,8 +48,8 @@ class InitCommand extends AbstractCommand
             $results[] = file_put_contents($configDir . '/config/general.yml', $this->getGeneralConfig());
 
             if (!in_array(false, $results)) {
-                Console::output('<light_green>Success!!</light_green> The configuration for <dark_gray>Magallanes</dark_gray> has been generated at <blue>.mage</blue> directory.');
-                Console::output('<dark_gray>Please!! Review and adjust the configuration.</dark_gray>', 2, 2);
+                Console::output('<light_green>Success!!</light_green> The configuration for <bold>Magallanes</bold> has been generated at <blue>.mage</blue> directory.');
+                Console::output('<bold>Please!! Review and adjust the configuration.</bold>', 2, 2);
                 $exitCode = 0;
 
             } else {

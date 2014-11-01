@@ -47,7 +47,7 @@ class RollbackCommand extends AbstractCommand implements RequiresEnvironment
         $hosts = $this->getConfig()->getHosts();
 
         if (count($hosts) == 0) {
-            Console::output('<light_purple>Warning!</light_purple> <dark_gray>No hosts defined, unable to get releases.</dark_gray>', 1, 3);
+            Console::output('<light_purple>Warning!</light_purple> <bold>No hosts defined, unable to get releases.</bold>', 1, 3);
 
         } else {
             $result = true;

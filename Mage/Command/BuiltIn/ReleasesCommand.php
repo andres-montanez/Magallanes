@@ -36,7 +36,7 @@ class ReleasesCommand extends AbstractCommand implements RequiresEnvironment
 
         if (count($hosts) == 0) {
             Console::output(
-                '<light_purple>Warning!</light_purple> <dark_gray>No hosts defined, unable to get releases.</dark_gray>',
+                '<light_purple>Warning!</light_purple> <bold>No hosts defined, unable to get releases.</bold>',
                 1, 3
             );
 
