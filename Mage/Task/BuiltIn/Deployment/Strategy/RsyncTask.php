@@ -52,7 +52,7 @@ class RsyncTask extends BaseStrategyTaskAbstract implements IsReleaseAware
         $this->checkOverrideRelease();
 
         $excludes = $this->getExcludes();
-        $excludesListFilePath = $this->getConfig()->deployment('file_containing_excludes', '');
+        $excludesListFilePath = $this->getConfig()->deployment('excludes_file', '');
 
         // If we are working with releases
         $deployToDirectory = $this->getConfig()->deployment('to');
@@ -122,14 +122,14 @@ class RsyncTask extends BaseStrategyTaskAbstract implements IsReleaseAware
 
     /**
      * Generates the Exclude from file for rsync
-     * @param string $excludesFilePath
+     * @param string $excludesFile
      * @return string
      */
-    protected function excludesListFile($excludesFilePath)
+    protected function excludesListFile($excludesFile)
     {
         $excludesListFileRsync = '';
-        if(!empty($excludesFilePath)) {
-            $excludesListFileRsync = ' --exclude-from=' . $excludesFilePath;
+        if(!empty($excludesFile) && file_exists($excludesFile) && is_file($excludesFile) && is_readable($excludesFile)) {
+            $excludesListFileRsync = ' --exclude-from=' . $excludesFile;
         }
         return $excludesListFileRsync;
     }
