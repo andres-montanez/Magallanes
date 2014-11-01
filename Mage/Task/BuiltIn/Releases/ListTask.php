@@ -34,11 +34,11 @@ class ListTask extends AbstractTask implements IsReleaseAware
      */
     public function run()
     {
-        if ($this->getConfig()->release('enabled', false) == true) {
+        if ($this->getConfig()->release('enabled', false) === true) {
             $releasesDirectory = $this->getConfig()->release('directory', 'releases');
             $symlink = $this->getConfig()->release('symlink', 'current');
 
-            Console::output('Releases available on <dark_gray>' . $this->getConfig()->getHost() . '</dark_gray>');
+            Console::output('Releases available on <bold>' . $this->getConfig()->getHost() . '</bold>');
 
             // Get Releases
             $output = '';
@@ -51,7 +51,7 @@ class ListTask extends AbstractTask implements IsReleaseAware
             $currentRelease = trim(array_pop($currentRelease));
 
             if (count($releases) == 0) {
-                Console::output('<dark_gray>No releases available</dark_gray> ... ', 2);
+                Console::output('<bold>No releases available</bold> ... ', 2);
             } else {
                 rsort($releases);
                 $releases = array_slice($releases, 0, 10);
@@ -80,8 +80,8 @@ class ListTask extends AbstractTask implements IsReleaseAware
 
                     Console::output(
                         'Release: <purple>' . $release . '</purple> '
-                        . '- Date: <dark_gray>' . $releaseDate . '</dark_gray> '
-                        . '- Index: <dark_gray>' . $releaseIndex . '</dark_gray>' . $dateDiff . $isCurrent, 2);
+                        . '- Date: <bold>' . $releaseDate . '</bold> '
+                        . '- Index: <bold>' . $releaseIndex . '</bold>' . $dateDiff . $isCurrent, 2);
                 }
             }
 
@@ -146,5 +146,4 @@ class ListTask extends AbstractTask implements IsReleaseAware
 
         return $textDiff;
     }
-
 }

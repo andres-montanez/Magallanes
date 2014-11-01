@@ -14,17 +14,22 @@ use Mage\Task\AbstractTask;
 use Mage\Task\SkipException;
 
 /**
- * Task for Updating a Working Copy
+ * Task for Force Updating a Working Copy
+ * 
+ * 'git fetch' downloads the latest from remote without trying to merge or rebase anything.
+ * 'git reset' resets the master branch to what you just fetched. 
+ * The '--hard' option changes all the files in your working tree to match the files in origin/master,
+ * so if you have any local changes, they will be lost.
  *
- * @author Andrés Montañez <andres@andresmontanez.com>
+ * @author Samuel Chiriluta <samuel4x4@gmail.com>
  */
-class UpdateTask extends AbstractTask
+class ForceUpdateTask extends AbstractTask
 {
     /**
      * Name of the Task
      * @var string
      */
-    private $name = 'SCM Update [built-in]';
+    private $name = 'SCM Force Update [built-in]';
 
     /**
      * (non-PHPdoc)
@@ -43,20 +48,30 @@ class UpdateTask extends AbstractTask
     {
         switch ($this->getConfig()->general('scm')) {
             case 'git':
-                $this->name = 'SCM Update (GIT) [built-in]';
+                $this->name = 'SCM Force Update (GIT) [built-in]';
                 break;
         }
     }
 
     /**
-     * Updates the Working Copy
+     * Force Updates the Working Copy
      * @see \Mage\Task\AbstractTask::run()
      */
     public function run()
     {
         switch ($this->getConfig()->general('scm')) {
             case 'git':
-                $command = 'git pull';
+                $branch = $this->getParameter('branch', 'master');
+                $remote = $this->getParameter('remote', 'origin');
+                
+                $command = 'git fetch ' . $remote . ' ' . $branch;
+                $result = $this->runCommandRemote($command);
+
+                $command = 'git reset --hard ' . $remote . '/' . $branch;
+                $result = $result && $this->runCommandRemote($command);
+
+                $command = 'git pull ' . $remote . ' ' . $branch;
+                $result = $result && $this->runCommandRemote($command);
                 break;
 
             default:

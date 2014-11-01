@@ -28,7 +28,7 @@ class ReleasesCommand extends AbstractCommand implements RequiresEnvironment
      */
     public function run()
     {
-        $exitCode = 400;
+        $exitCode = 100;
         $subCommand = $this->getConfig()->getArgument(1);
 
         // Run Tasks for Deployment
@@ -36,16 +36,25 @@ class ReleasesCommand extends AbstractCommand implements RequiresEnvironment
 
         if (count($hosts) == 0) {
             Console::output(
-                '<light_purple>Warning!</light_purple> <dark_gray>No hosts defined, unable to get releases.</dark_gray>',
+                '<light_purple>Warning!</light_purple> <bold>No hosts defined, unable to get releases.</bold>',
                 1, 3
             );
 
-            return 401;
+            return 101;
         }
 
         $result = true;
-        foreach ($hosts as $host) {
+        foreach ($hosts as $hostKey => $host) {
+            // Check if Host has specific configuration
+            $hostConfig = null;
+            if (is_array($host)) {
+                $hostConfig = $host;
+                $host = $hostKey;
+            }
+
+            // Set Host and Host Specific Config
             $this->getConfig()->setHost($host);
+            $this->getConfig()->setHostConfig($hostConfig);
 
             switch ($subCommand) {
                 case 'list':
@@ -58,7 +67,7 @@ class ReleasesCommand extends AbstractCommand implements RequiresEnvironment
                     if (!is_numeric($this->getConfig()->getParameter('release', ''))) {
                         Console::output('<red>Missing required releaseid.</red>', 1, 2);
 
-                        return 410;
+                        return 102;
                     }
 
                     $lockFile = getcwd() . '/.mage/' . $this->getConfig()->getEnvironment() . '.lock';
@@ -66,7 +75,7 @@ class ReleasesCommand extends AbstractCommand implements RequiresEnvironment
                         Console::output('<red>This environment is locked!</red>', 1, 2);
                         echo file_get_contents($lockFile);
 
-                        return 420;
+                        return 103;
                     }
 
                     $releaseId = $this->getConfig()->getParameter('release', '');

@@ -25,7 +25,7 @@ class Colors
      */
     private static $foregroundColors = array(
         'black' => '0;30',
-        'dark_gray' => '1;30',
+        'bold' => '1',
         'blue' => '0;34',
         'light_blue' => '1;34',
         'green' => '0;32',

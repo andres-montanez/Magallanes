@@ -27,8 +27,8 @@ class RsyncTask extends BaseStrategyTaskAbstract implements IsReleaseAware
      */
     public function getName()
     {
-        if ($this->getConfig()->release('enabled', false) == true) {
-            if ($this->getConfig()->getParameter('overrideRelease', false) == true) {
+        if ($this->getConfig()->release('enabled', false) === true) {
+            if ($this->getConfig()->getParameter('overrideRelease', false) === true) {
                 return 'Deploy via Rsync (with Releases override) [built-in]';
             } else {
                 $rsync_copy = $this->getConfig()->deployment("rsync");
@@ -52,10 +52,11 @@ class RsyncTask extends BaseStrategyTaskAbstract implements IsReleaseAware
         $this->checkOverrideRelease();
 
         $excludes = $this->getExcludes();
+        $excludesListFilePath = $this->getConfig()->deployment('excludes_file', '');
 
         // If we are working with releases
         $deployToDirectory = $this->getConfig()->deployment('to');
-        if ($this->getConfig()->release('enabled', false) == true) {
+        if ($this->getConfig()->release('enabled', false) === true) {
             $releasesDirectory = $this->getConfig()->release('directory', 'releases');
             $symlink = $this->getConfig()->release('symlink', 'current');
 
@@ -95,6 +96,7 @@ class RsyncTask extends BaseStrategyTaskAbstract implements IsReleaseAware
                  . $strategyFlags . ' '
                  . '--rsh="ssh ' . $this->getConfig()->getHostIdentityFileOption() . '-p' . $this->getConfig()->getHostPort() . '" '
                  . $this->excludes($excludes) . ' '
+                 . $this->excludesListFile($excludesListFilePath) . ' '
                  . $this->getConfig()->deployment('from') . ' '
                  . $this->getConfig()->deployment('user') . '@' . $this->getConfig()->getHostName() . ':' . $deployToDirectory;
         $result = $this->runCommandLocal($command);
@@ -116,5 +118,19 @@ class RsyncTask extends BaseStrategyTaskAbstract implements IsReleaseAware
 
         $excludesRsync = trim($excludesRsync);
         return $excludesRsync;
+    }
+
+    /**
+     * Generates the Exclude from file for rsync
+     * @param string $excludesFile
+     * @return string
+     */
+    protected function excludesListFile($excludesFile)
+    {
+        $excludesListFileRsync = '';
+        if(!empty($excludesFile) && file_exists($excludesFile) && is_file($excludesFile) && is_readable($excludesFile)) {
+            $excludesListFileRsync = ' --exclude-from=' . $excludesFile;
+        }
+        return $excludesListFileRsync;
     }
 }

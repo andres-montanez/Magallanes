@@ -47,7 +47,7 @@ class RollbackTask extends AbstractTask implements IsReleaseAware
      */
     public function run()
     {
-        if ($this->getConfig()->release('enabled', false) == true) {
+        if ($this->getConfig()->release('enabled', false) === true) {
             $releasesDirectory = $this->getConfig()->release('directory', 'releases');
             $symlink = $this->getConfig()->release('symlink', 'current');
 
@@ -56,7 +56,7 @@ class RollbackTask extends AbstractTask implements IsReleaseAware
             $releases = ($output == '') ? array() : explode(PHP_EOL, $output);
 
             if (count($releases) == 0) {
-                Console::output('Release are not available for <dark_gray>' . $this->getConfig()->getHost() . '</dark_gray> ... <red>FAIL</red>');
+                Console::output('Release are not available for <bold>' . $this->getConfig()->getHost() . '</bold> ... <red>FAIL</red>');
 
             } else {
                 rsort($releases);
@@ -81,10 +81,10 @@ class RollbackTask extends AbstractTask implements IsReleaseAware
                 }
 
                 if (!$releaseIsAvailable) {
-                    Console::output('Release <dark_gray>' . $this->getReleaseId() . '</dark_gray> is invalid or unavailable for <dark_gray>' . $this->getConfig()->getHost() . '</dark_gray> ... <red>FAIL</red>');
+                    Console::output('Release <bold>' . $this->getReleaseId() . '</bold> is invalid or unavailable for <bold>' . $this->getConfig()->getHost() . '</bold> ... <red>FAIL</red>');
 
                 } else {
-                    Console::output('Rollback release on <dark_gray>' . $this->getConfig()->getHost() . '</dark_gray>');
+                    Console::output('Rollback release on <bold>' . $this->getConfig()->getHost() . '</bold>');
                     $rollbackTo = $releasesDirectory . '/' . $releaseId;
 
                     // Get Current Release
@@ -111,7 +111,7 @@ class RollbackTask extends AbstractTask implements IsReleaseAware
                             $tasks++;
                             $result = $task->run();
 
-                            if ($result == true) {
+                            if ($result === true) {
                                 Console::output('<green>OK</green>', 0);
                                 $completedTasks++;
                             } else {
@@ -161,7 +161,7 @@ class RollbackTask extends AbstractTask implements IsReleaseAware
                             $tasks++;
                             $result = $task->run();
 
-                            if ($result == true) {
+                            if ($result === true) {
                                 Console::output('<green>OK</green>', 0);
                                 $completedTasks++;
                             } else {
@@ -178,7 +178,7 @@ class RollbackTask extends AbstractTask implements IsReleaseAware
                         $tasksColor = 'red';
                     }
 
-                    Console::output('Release rollback on <dark_gray>' . $this->getConfig()->getHost() . '</dark_gray> compted: <' . $tasksColor . '>' . $completedTasks . '/' . $tasks . '</' . $tasksColor . '> tasks done.', 1, 3);
+                    Console::output('Release rollback on <bold>' . $this->getConfig()->getHost() . '</bold> compted: <' . $tasksColor . '>' . $completedTasks . '/' . $tasks . '</' . $tasksColor . '> tasks done.', 1, 3);
                 }
             }
 
@@ -188,5 +188,4 @@ class RollbackTask extends AbstractTask implements IsReleaseAware
             return false;
         }
     }
-
 }

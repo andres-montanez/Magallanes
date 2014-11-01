@@ -27,7 +27,7 @@ class InstallCommand extends AbstractCommand
     public function run()
     {
         $exitCode = 88;
-        Console::output('Installing <dark_gray>Magallanes</dark_gray>... ', 1, 0);
+        Console::output('Installing <bold>Magallanes</bold>... ', 1, 0);
 
         // Vars
         $installDir = $this->getConfig()->getParameter('installDir', '/opt/magallanes');

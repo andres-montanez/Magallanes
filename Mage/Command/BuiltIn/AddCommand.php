@@ -68,7 +68,7 @@ class AddCommand extends AbstractCommand
             throw new Exception('The environment already exists.');
         }
 
-        Console::output('Adding new environment: <dark_gray>' . $environmentName . '</dark_gray>');
+        Console::output('Adding new environment: <bold>' . $environmentName . '</bold>');
 
         $releasesConfig = 'releases:' . PHP_EOL
             . '  enabled: true' . PHP_EOL
@@ -93,10 +93,10 @@ class AddCommand extends AbstractCommand
         $result = file_put_contents($environmentConfigFile, $baseConfig);
 
         if ($result) {
-            Console::output('<light_green>Success!!</light_green> Environment config file for <dark_gray>' . $environmentName . '</dark_gray> created successfully at <blue>' . $environmentConfigFile . '</blue>');
-            Console::output('<dark_gray>So please! Review and adjust its configuration.</dark_gray>', 2, 2);
+            Console::output('<light_green>Success!!</light_green> Environment config file for <bold>' . $environmentName . '</bold> created successfully at <blue>' . $environmentConfigFile . '</blue>');
+            Console::output('<bold>So please! Review and adjust its configuration.</bold>', 2, 2);
         } else {
-            Console::output('<light_red>Error!!</light_red> Unable to create config file for environment called <dark_gray>' . $environmentName . '</dark_gray>', 1, 2);
+            Console::output('<light_red>Error!!</light_red> Unable to create config file for environment called <bold>' . $environmentName . '</bold>', 1, 2);
         }
     }
 }

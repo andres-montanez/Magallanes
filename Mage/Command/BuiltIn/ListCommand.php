@@ -31,7 +31,7 @@ class ListCommand extends AbstractCommand
      */
     public function run()
     {
-        $exitCode = 600;
+        $exitCode = 221;
         $subCommand = $this->getConfig()->getArgument(1);
 
         try {
@@ -56,7 +56,7 @@ class ListCommand extends AbstractCommand
      */
     protected function listEnvironments()
     {
-        $exitCode = 600;
+        $exitCode = 220;
         $environments = array();
         $content = scandir(getcwd() . '/.mage/config/environment/');
         foreach ($content as $file) {
@@ -67,7 +67,7 @@ class ListCommand extends AbstractCommand
         sort($environments);
 
         if (count($environments) > 0) {
-            Console::output('<dark_gray>These are your configured environments:</dark_gray>', 1, 1);
+            Console::output('<bold>These are your configured environments:</bold>', 1, 1);
             foreach ($environments as $environment) {
                 Console::output('* <light_red>' . $environment . '</light_red>', 2, 1);
             }
@@ -75,7 +75,7 @@ class ListCommand extends AbstractCommand
             $exitCode = 0;
 
         } else {
-            Console::output('<dark_gray>You don\'t have any environment configured.</dark_gray>', 1, 2);
+            Console::output('<bold>You don\'t have any environment configured.</bold>', 1, 2);
         }
 
         return $exitCode;

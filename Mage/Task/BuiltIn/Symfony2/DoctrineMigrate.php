@@ -1,6 +1,6 @@
 <?php
 /*
- * This file is part of the Magallanes package.
+* This file is part of the Magallanes package.
 *
 * (c) Andrés Montañez <andres@andresmontanez.com>
 *
@@ -13,11 +13,9 @@ namespace Mage\Task\BuiltIn\Symfony2;
 use Mage\Task\BuiltIn\Symfony2\SymfonyAbstractTask;
 
 /**
- * Task for Clearing the Cache
- *
- * @author Andrés Montañez <andres@andresmontanez.com>
+ * Task for Doctrine migrations
  */
-class CacheClearTask extends SymfonyAbstractTask
+class DoctrineMigrate extends SymfonyAbstractTask
 {
     /**
      * (non-PHPdoc)
@@ -25,21 +23,18 @@ class CacheClearTask extends SymfonyAbstractTask
      */
     public function getName()
     {
-        return 'Symfony v2 - Cache Clear [built-in]';
+        return 'Symfony v2 - Migrate doctrine entities [built-in]';
     }
 
     /**
-     * Clears the Cache
+     * Migrates Doctrine entities
+     *
      * @see \Mage\Task\AbstractTask::run()
      */
     public function run()
     {
-        // Options
         $env = $this->getParameter('env', 'dev');
-
-        $command = $this->getAppPath() . ' cache:clear --env=' . $env;
-        $result = $this->runCommand($command);
-
-        return $result;
+        $command = $this->getAppPath() . ' doctrine:migrations:migrate -n --env=' . $env;
+        return $this->runCommand($command);
     }
 }

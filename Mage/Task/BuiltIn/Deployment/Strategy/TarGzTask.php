@@ -10,7 +10,6 @@
 
 namespace Mage\Task\BuiltIn\Deployment\Strategy;
 
-use Mage\Console;
 use Mage\Task\BuiltIn\Deployment\Strategy\BaseStrategyTaskAbstract;
 use Mage\Task\Releases\IsReleaseAware;
 
@@ -27,8 +26,8 @@ class TarGzTask extends BaseStrategyTaskAbstract implements IsReleaseAware
      */
     public function getName()
     {
-        if ($this->getConfig()->release('enabled', false) == true) {
-            if ($this->getConfig()->getParameter('overrideRelease', false) == true) {
+        if ($this->getConfig()->release('enabled', false) === true) {
+            if ($this->getConfig()->getParameter('overrideRelease', false) === true) {
                 return 'Deploy via TarGz (with Releases override) [built-in]';
             } else {
                 return 'Deploy via TarGz (with Releases) [built-in]';
@@ -47,10 +46,11 @@ class TarGzTask extends BaseStrategyTaskAbstract implements IsReleaseAware
         $this->checkOverrideRelease();
 
         $excludes = $this->getExcludes();
+        $excludesListFilePath   = $this->getConfig()->deployment('excludes_file', '');;
 
         // If we are working with releases
         $deployToDirectory = $this->getConfig()->deployment('to');
-        if ($this->getConfig()->release('enabled', false) == true) {
+        if ($this->getConfig()->release('enabled', false) === true) {
             $releasesDirectory = $this->getConfig()->release('directory', 'releases');
             $deployToDirectory = rtrim($this->getConfig()->deployment('to'), '/')
                 . '/' . $releasesDirectory
@@ -67,6 +67,8 @@ class TarGzTask extends BaseStrategyTaskAbstract implements IsReleaseAware
             $excludeCmd .= ' --exclude=' . $excludeFile;
         }
 
+        $excludeFromFileCmd = $this->excludesListFile($excludesListFilePath);
+
         // Strategy Flags
         $strategyFlags = $this->getConfig()->deployment('strategy_flags', $this->getConfig()->general('strategy_flags', array()));
         if (isset($strategyFlags['targz']) && isset($strategyFlags['targz']['create'])) {
@@ -75,7 +77,7 @@ class TarGzTask extends BaseStrategyTaskAbstract implements IsReleaseAware
             $strategyFlags = '';
         }
 
-        $command = 'tar cfzh' . $strategyFlags . ' ' . $localTarGz . '.tar.gz ' . $excludeCmd . ' -C ' . $this->getConfig()->deployment('from') . ' .';
+        $command = 'tar cfzh' . $strategyFlags . ' ' . $localTarGz . '.tar.gz ' . $excludeCmd . $excludeFromFileCmd . ' -C ' . $this->getConfig()->deployment('from') . ' .';
         $result = $this->runCommandLocal($command);
 
         // Strategy Flags
@@ -112,5 +114,19 @@ class TarGzTask extends BaseStrategyTaskAbstract implements IsReleaseAware
         $result = $this->runCommandLocal($command) && $result;
 
         return $result;
+    }
+
+    /**
+     * Generates the Exclude from file for rsync
+     * @param string $excludesFile
+     * @return string
+     */
+    protected function excludesListFile($excludesFile)
+    {
+        $excludesListFileRsync = '';
+        if(!empty($excludesFile) && file_exists($excludesFile) && is_file($excludesFile) && is_readable($excludesFile)) {
+            $excludesListFileRsync = ' --exclude-from=' . $excludesFile;
+        }
+        return $excludesListFileRsync;
     }
 }

@@ -655,5 +655,4 @@ class Parser
     {
         return (0 === strpos($this->currentLine, '- '));
     }
-
 }

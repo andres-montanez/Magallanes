@@ -13,7 +13,6 @@ namespace Mage;
 use Mage\Config\ConfigNotFoundException;
 use Mage\Config\RequiredConfigNotFoundException;
 use Mage\Console;
-use Mage\Yaml\Exception\RuntimeException;
 use Mage\Yaml\Yaml;
 use Exception;
 
@@ -121,29 +120,6 @@ class Config
         return $this->parseConfigFile($filePath);
     }
 
-
-    /**
-     * Obviously this method is a HACK.  It was refactored from ::loadEnvironment()
-     * TODO Please put it to SCM functionality.
-     *
-     * @param array $settings
-     *
-     * @return array
-     */
-    protected function updateSCMTempDir(array $settings)
-    {
-        // Create temporal directory for clone
-        if (isset($settings['deployment']['source']) && is_array($settings['deployment']['source'])) {
-            if (trim($settings['deployment']['source']['temporal']) == '') {
-                $settings['deployment']['source']['temporal'] = sys_get_temp_dir();
-            }
-            $settings['deployment']['source']['temporal']
-                = rtrim($settings['deployment']['source']['temporal'], '/') . '/' . md5(microtime()) . '/';
-        }
-
-        return $settings;
-    }
-
     /**
      * Loads the Environment configuration
      * @param $filePath string
@@ -155,9 +131,6 @@ class Config
     {
 
         $settings = $this->parseConfigFile($filePath);
-
-        //this is a HACK in the old code - no time to remove it now, so I factored it out in own method
-        $settings = $this->updateSCMTempDir($settings);
 
         return $settings;
 
@@ -488,6 +461,11 @@ class Config
         } else {
             return $default;
         }
+    }
+
+    public function setSourceTemporal($directory)
+    {
+        $this->environmentConfig['deployment']['source']['temporal'] = $directory;
     }
 
     /**

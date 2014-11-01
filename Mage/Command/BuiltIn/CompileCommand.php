@@ -28,7 +28,7 @@ class CompileCommand extends AbstractCommand
     {
         if (ini_get('phar.readonly')) {
             Console::output('The <purple>php.ini</purple> variable <light_red>phar.readonly</light_red> must be <yellow>Off</yellow>.', 1, 2);
-            return 300;
+            return 200;
         }
 
         $compiler = new Compiler;
