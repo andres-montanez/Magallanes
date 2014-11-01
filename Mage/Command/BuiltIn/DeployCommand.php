@@ -3,6 +3,7 @@
  * This file is part of the Magallanes package.
 *
 * (c) Andrés Montañez <andres@andresmontanez.com>
+* (c) Alex V Kotelnikov <gudron@gudron.me>
 *
 * For the full copyright and license information, please view the LICENSE
 * file that was distributed with this source code.
@@ -16,6 +17,7 @@ use Mage\Task\Factory;
 use Mage\Task\AbstractTask;
 use Mage\Task\Releases\SkipOnOverride;
 use Mage\Task\ErrorWithMessageException;
+use Mage\Task\RollbackException;
 use Mage\Task\SkipException;
 use Mage\Console;
 use Mage\Config;
@@ -428,6 +430,28 @@ class DeployCommand extends AbstractCommand implements RequiresEnvironment
         }
     }
 
+    protected function runRollbackTask(){
+        $this->getConfig()->reload();
+        $hosts = $this->getConfig()->getHosts();
+
+        if (count($hosts) == 0) {
+            Console::output('<light_purple>Warning!</light_purple> <dark_gray>No hosts defined, unable to get releases.</dark_gray>', 1, 3);
+
+        } else {
+            $result = true;
+            foreach ($hosts as $host) {
+                $this->getConfig()->setHost($host);
+
+                $this->getConfig()->setReleaseId(-1);
+                $task = Factory::get('releases/rollback', $this->getConfig());
+                $task->init();
+                $result = $task->run() && $result;
+            }
+            return $result;
+        }
+        return false;
+    }
+
     /**
      * Runs a Task
      *
@@ -461,6 +485,11 @@ class DeployCommand extends AbstractCommand implements RequiresEnvironment
                     Console::output('<red>FAIL</red>', 0);
                     $result = false;
                 }
+            } catch (RollbackException $e) {
+                Console::output('<red>FAIL, Rollback started</red> [Message: ' . $e->getMessage() . ']', 0);
+                $this->runRollbackTask();
+                $result = false;
+
             } catch (ErrorWithMessageException $e) {
                 Console::output('<red>FAIL</red> [Message: ' . $e->getMessage() . ']', 0);
                 $result = false;
