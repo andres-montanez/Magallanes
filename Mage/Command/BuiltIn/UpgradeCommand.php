@@ -38,7 +38,7 @@ class UpgradeCommand extends AbstractCommand
      */
     public function run()
     {
-        $exitCode = 100;
+        $exitCode = 99;
         Console::output('Upgrading <dark_gray>Magallanes</dark_gray> ... ', 1, 0);
 
         $user = '';

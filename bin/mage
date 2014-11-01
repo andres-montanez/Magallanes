@@ -32,4 +32,4 @@ array_shift($argv);
 $console = new Mage\Console;
 $exitCode = $console->run($argv);
 
-exit($exitCode);
+exit((integer) $exitCode);

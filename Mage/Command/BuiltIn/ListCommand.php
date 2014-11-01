@@ -31,7 +31,7 @@ class ListCommand extends AbstractCommand
      */
     public function run()
     {
-        $exitCode = 600;
+        $exitCode = 221;
         $subCommand = $this->getConfig()->getArgument(1);
 
         try {
@@ -56,7 +56,7 @@ class ListCommand extends AbstractCommand
      */
     protected function listEnvironments()
     {
-        $exitCode = 600;
+        $exitCode = 220;
         $environments = array();
         $content = scandir(getcwd() . '/.mage/config/environment/');
         foreach ($content as $file) {

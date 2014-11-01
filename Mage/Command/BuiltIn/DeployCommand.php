@@ -111,20 +111,20 @@ class DeployCommand extends AbstractCommand implements RequiresEnvironment
      */
     public function run()
     {
-        $exitCode = 1000;
+        $exitCode = 240;
 
         // Check if Environment is not Locked
         $lockFile = getcwd() . '/.mage/' . $this->getConfig()->getEnvironment() . '.lock';
         if (file_exists($lockFile)) {
             Console::output('<red>This environment is locked!</red>', 1, 2);
             echo file_get_contents($lockFile);
-            return 1010;
+            return 231;
         }
 
         // Check for running instance and Lock
         if (file_exists(getcwd() . '/.mage/~working.lock')) {
             Console::output('<red>There is already an instance of Magallanes running!</red>', 1, 2);
-            return 1020;
+            return 230;
         } else {
             touch(getcwd() . '/.mage/~working.lock');
         }

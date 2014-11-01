@@ -28,7 +28,7 @@ class ReleasesCommand extends AbstractCommand implements RequiresEnvironment
      */
     public function run()
     {
-        $exitCode = 400;
+        $exitCode = 100;
         $subCommand = $this->getConfig()->getArgument(1);
 
         // Run Tasks for Deployment
@@ -40,7 +40,7 @@ class ReleasesCommand extends AbstractCommand implements RequiresEnvironment
                 1, 3
             );
 
-            return 401;
+            return 101;
         }
 
         $result = true;
@@ -67,7 +67,7 @@ class ReleasesCommand extends AbstractCommand implements RequiresEnvironment
                     if (!is_numeric($this->getConfig()->getParameter('release', ''))) {
                         Console::output('<red>Missing required releaseid.</red>', 1, 2);
 
-                        return 410;
+                        return 102;
                     }
 
                     $lockFile = getcwd() . '/.mage/' . $this->getConfig()->getEnvironment() . '.lock';
@@ -75,7 +75,7 @@ class ReleasesCommand extends AbstractCommand implements RequiresEnvironment
                         Console::output('<red>This environment is locked!</red>', 1, 2);
                         echo file_get_contents($lockFile);
 
-                        return 420;
+                        return 103;
                     }
 
                     $releaseId = $this->getConfig()->getParameter('release', '');
