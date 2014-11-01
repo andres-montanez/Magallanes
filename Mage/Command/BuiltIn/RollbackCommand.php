@@ -51,8 +51,17 @@ class RollbackCommand extends AbstractCommand implements RequiresEnvironment
 
         } else {
             $result = true;
-            foreach ($hosts as $host) {
+            foreach ($hosts as $hostKey => $host) {
+                // Check if Host has specific configuration
+                $hostConfig = null;
+                if (is_array($host)) {
+                    $hostConfig = $host;
+                    $host = $hostKey;
+                }
+
+                // Set Host and Host Specific Config
                 $this->getConfig()->setHost($host);
+                $this->getConfig()->setHostConfig($hostConfig);
 
                 $this->getConfig()->setReleaseId($releaseId);
                 $task = Factory::get('releases/rollback', $this->getConfig());

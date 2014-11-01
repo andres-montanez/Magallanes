@@ -44,8 +44,17 @@ class ReleasesCommand extends AbstractCommand implements RequiresEnvironment
         }
 
         $result = true;
-        foreach ($hosts as $host) {
+        foreach ($hosts as $hostKey => $host) {
+            // Check if Host has specific configuration
+            $hostConfig = null;
+            if (is_array($host)) {
+                $hostConfig = $host;
+                $host = $hostKey;
+            }
+
+            // Set Host and Host Specific Config
             $this->getConfig()->setHost($host);
+            $this->getConfig()->setHostConfig($hostConfig);
 
             switch ($subCommand) {
                 case 'list':
