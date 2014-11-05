@@ -4,6 +4,7 @@ namespace Mage\Task\BuiltIn\Filesystem;
 use Mage\Task\AbstractTask;
 use Mage\Task\Releases\IsReleaseAware;
 use Mage\Task\SkipException;
+use Symfony\Component\Filesystem\Filesystem;
 
 /**
  * Class LinkSharedFilesTask
@@ -70,26 +71,23 @@ class LinkSharedFilesTask extends AbstractTask implements IsReleaseAware
             throw new SkipException('No files and folders configured for sym-linking.');
         }
 
-        $sharedFolderName = $this->getParameter('shared', 'shared');
-        $sharedFolderPath = rtrim($this->getConfig()->deployment('to'), '/') . '/' . $sharedFolderName;
-        $releasesDirectory = $this->getConfig()->release('directory', 'releases');
-        $releasesDirectoryPath = rtrim($this->getConfig()->deployment('to'), '/') . '/' . $releasesDirectory;
-
+        $remoteDirectory = rtrim($this->getConfig()->deployment('to'), '/') . '/';
+        $sharedFolderPath = $remoteDirectory . $this->getParameter('shared', 'shared');
+        $releasesDirectoryPath = $remoteDirectory . $this->getConfig()->release('directory', 'releases');
         $currentCopy = $releasesDirectoryPath . '/' . $this->getConfig()->getReleaseId();
-        $relativeDiffPath = str_replace($this->getConfig()->deployment('to'), '', $currentCopy) . '/';
+        $fileSystem = new Filesystem();
 
         foreach ($linkedEntities as $ePath) {
             list($entityPath, $strategy) = $this->getPath($ePath);
-            $sharedEntityLinkedPath = "$sharedFolderPath/$entityPath";
-            if ($strategy == self::RELATIVE_LINKING) {
-                $parentFolderPath = dirname($entityPath);
-                $relativePath = $parentFolderPath == '.' ? $relativeDiffPath : $relativeDiffPath . $parentFolderPath . '/';
-                $sharedEntityLinkedPath = ltrim(
-                        preg_replace('/(\w+\/)/', '../', $relativePath),
-                        '/'
-                    ) . $sharedFolderName . '/' . $entityPath;
+            if ($strategy === self::RELATIVE_LINKING) {
+                $dirName = dirname($currentCopy . '/' . $entityPath);
+                $target = $fileSystem->makePathRelative($sharedFolderPath, $dirName) . $entityPath;
+            } else {
+                $target = $sharedFolderPath . '/' . $entityPath;
             }
-            $command = "ln -nfs $sharedEntityLinkedPath $currentCopy/$entityPath";
+            $command = 'mkdir -p ' . escapeshellarg(dirname($target));
+            $this->runCommandRemote($command);
+            $command = 'ln -nfs ' . escapeshellarg($target) . ' ' . escapeshellarg($currentCopy . '/' . $entityPath);
             $this->runCommandRemote($command);
         }
 
