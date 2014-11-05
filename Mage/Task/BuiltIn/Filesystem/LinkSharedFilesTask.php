@@ -10,7 +10,7 @@ use Symfony\Component\Filesystem\Filesystem;
  * Class LinkSharedFilesTask
  *
  * @package Mage\Task\BuiltIn\Filesystem
- * @author Andrey Kolchenko <a.j.kolchenko@baltsoftservice.ru>
+ * @author Andrey Kolchenko <andrey@kolchenko.me>
  */
 class LinkSharedFilesTask extends AbstractTask implements IsReleaseAware
 {
