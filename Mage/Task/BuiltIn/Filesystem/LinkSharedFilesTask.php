@@ -13,7 +13,10 @@ use Mage\Task\SkipException;
  */
 class LinkSharedFilesTask extends AbstractTask implements IsReleaseAware
 {
-
+    /**
+     * Linked folders parameter name
+     */
+    const LINKED_FILES = 'linked_files';
     /**
      * Linked folders parameter name
      */
@@ -58,13 +61,12 @@ class LinkSharedFilesTask extends AbstractTask implements IsReleaseAware
      */
     public function run()
     {
-        $linkedFiles = $this->getParameter('linked_files', array());
-        $linkedFolders = $this->getParameter(self::LINKED_FOLDERS, array());
-        $linkingStrategy = $this->getParameter(self::LINKED_STRATEGY, self::ABSOLUTE_LINKING);
+        $linkedEntities = array_merge(
+            $this->getParameter(self::LINKED_FILES, array()),
+            $this->getParameter(self::LINKED_FOLDERS, array())
+        );
 
-        $linkedEntities = array_merge($linkedFiles, $linkedFolders);
-
-        if (empty($linkedFiles) && empty($linkedFolders)) {
+        if (empty($linkedEntities)) {
             throw new SkipException('No files and folders configured for sym-linking.');
         }
 
