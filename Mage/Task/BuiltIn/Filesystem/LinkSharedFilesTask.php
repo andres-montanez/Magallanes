@@ -35,7 +35,7 @@ class LinkSharedFilesTask extends AbstractTask implements IsReleaseAware
     /**
      * @var array
      */
-    public $linkingStrategies = array(
+    private static $linkingStrategies = array(
         self::ABSOLUTE_LINKING,
         self::RELATIVE_LINKING
     );
@@ -77,12 +77,7 @@ class LinkSharedFilesTask extends AbstractTask implements IsReleaseAware
         $relativeDiffPath = str_replace($this->getConfig()->deployment('to'), '', $currentCopy) . '/';
 
         foreach ($linkedEntities as $ePath) {
-            if (is_array($ePath) && in_array($strategy = reset($ePath), $this->linkingStrategies)) {
-                $entityPath = key($ePath);
-            } else {
-                $strategy = $linkingStrategy;
-                $entityPath = $ePath;
-            }
+            list($entityPath, $strategy) = $this->getPath($ePath);
             $sharedEntityLinkedPath = "$sharedFolderPath/$entityPath";
             if ($strategy == self::RELATIVE_LINKING) {
                 $parentFolderPath = dirname($entityPath);
@@ -97,5 +92,26 @@ class LinkSharedFilesTask extends AbstractTask implements IsReleaseAware
         }
 
         return true;
+    }
+
+    /**
+     * @param array|string $linkedEntity
+     *
+     * @return array [$path, $strategy]
+     */
+    private function getPath($linkedEntity)
+    {
+        $linkingStrategy = $this->getParameter(self::LINKED_STRATEGY, self::ABSOLUTE_LINKING);
+        if (is_array($linkedEntity)) {
+            list($path, $strategy) = each($linkedEntity);
+            if (!in_array($strategy, self::$linkingStrategies)) {
+                $strategy = $linkingStrategy;
+            }
+        } else {
+            $strategy = $linkingStrategy;
+            $path = $linkedEntity;
+        }
+
+        return [$path, $strategy];
     }
 }
