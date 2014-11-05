@@ -4,22 +4,49 @@ namespace Mage\Task\BuiltIn\Filesystem;
 use Mage\Task\AbstractTask;
 use Mage\Task\Releases\IsReleaseAware;
 use Mage\Task\SkipException;
+use Symfony\Component\Filesystem\Filesystem;
 
+/**
+ * Class LinkSharedFilesTask
+ *
+ * @package Mage\Task\BuiltIn\Filesystem
+ * @author Andrey Kolchenko <andrey@kolchenko.me>
+ */
 class LinkSharedFilesTask extends AbstractTask implements IsReleaseAware
 {
+    /**
+     * Linked folders parameter name
+     */
+    const LINKED_FILES = 'linked_files';
+    /**
+     * Linked folders parameter name
+     */
+    const LINKED_FOLDERS = 'linked_folders';
+    /**
+     * Linking strategy parameter name
+     */
+    const LINKED_STRATEGY = 'linking_strategy';
 
-    const LINKED_FOLDERS   = 'linked_folders';
-    const LINKED_STRATEGY  = 'linking_strategy';
-
+    /**
+     * Absolute linked strategy
+     */
     const ABSOLUTE_LINKING = 'absolute';
+    /**
+     * Relative linked strategy
+     */
     const RELATIVE_LINKING = 'relative';
 
-    public $linkingStrategies = array(
+    /**
+     * @var array
+     */
+    private static $linkingStrategies = array(
         self::ABSOLUTE_LINKING,
         self::RELATIVE_LINKING
     );
+
     /**
      * Returns the Title of the Task
+     *
      * @return string
      */
     public function getName()
@@ -35,41 +62,56 @@ class LinkSharedFilesTask extends AbstractTask implements IsReleaseAware
      */
     public function run()
     {
-        $linkedFiles    = $this->getParameter('linked_files', []);
-        $linkedFolders  = $this->getParameter(self::LINKED_FOLDERS, []);
-        $linkingStrategy = $this->getParameter(self::LINKED_STRATEGY, self::ABSOLUTE_LINKING);
+        $linkedEntities = array_merge(
+            $this->getParameter(self::LINKED_FILES, array()),
+            $this->getParameter(self::LINKED_FOLDERS, array())
+        );
 
-        $linkedEntities = array_merge($linkedFiles,$linkedFolders);
-
-        if (sizeof($linkedFiles) == 0 && sizeof($linkedFolders) == 0) {
+        if (empty($linkedEntities)) {
             throw new SkipException('No files and folders configured for sym-linking.');
         }
 
-        $sharedFolderName = $this->getParameter('shared', 'shared');
-        $sharedFolderPath = rtrim($this->getConfig()->deployment('to'), '/') . '/' . $sharedFolderName;
-        $releasesDirectory = $this->getConfig()->release('directory', 'releases');
-        $releasesDirectoryPath = rtrim($this->getConfig()->deployment('to'), '/') . '/' . $releasesDirectory;
-
+        $remoteDirectory = rtrim($this->getConfig()->deployment('to'), '/') . '/';
+        $sharedFolderPath = $remoteDirectory . $this->getParameter('shared', 'shared');
+        $releasesDirectoryPath = $remoteDirectory . $this->getConfig()->release('directory', 'releases');
         $currentCopy = $releasesDirectoryPath . '/' . $this->getConfig()->getReleaseId();
-        $relativeDiffPath = str_replace($this->getConfig()->deployment('to'),'',$currentCopy) . '/';
+        $fileSystem = new Filesystem();
 
         foreach ($linkedEntities as $ePath) {
-            if(is_array($ePath) && in_array($strategy = reset($ePath), $this->linkingStrategies ) ) {
-                $entityPath = key($ePath);
+            list($entityPath, $strategy) = $this->getPath($ePath);
+            if ($strategy === self::RELATIVE_LINKING) {
+                $dirName = dirname($currentCopy . '/' . $entityPath);
+                $target = $fileSystem->makePathRelative($sharedFolderPath, $dirName) . $entityPath;
             } else {
-                $strategy = $linkingStrategy;
-                $entityPath = $ePath;
+                $target = $sharedFolderPath . '/' . $entityPath;
             }
-            $sharedEntityLinkedPath = "$sharedFolderPath/$entityPath";
-            if($strategy==self::RELATIVE_LINKING) {
-                $parentFolderPath = dirname($entityPath);
-                $relativePath = $parentFolderPath=='.'?$relativeDiffPath:$relativeDiffPath.$parentFolderPath.'/';
-                $sharedEntityLinkedPath = ltrim(preg_replace('/(\w+\/)/', '../', $relativePath),'/').$sharedFolderName .'/'. $entityPath;
-            }
-            $command = "ln -nfs $sharedEntityLinkedPath $currentCopy/$entityPath";
+            $command = 'mkdir -p ' . escapeshellarg(dirname($target));
+            $this->runCommandRemote($command);
+            $command = 'ln -nfs ' . escapeshellarg($target) . ' ' . escapeshellarg($currentCopy . '/' . $entityPath);
             $this->runCommandRemote($command);
         }
 
         return true;
+    }
+
+    /**
+     * @param array|string $linkedEntity
+     *
+     * @return array [$path, $strategy]
+     */
+    private function getPath($linkedEntity)
+    {
+        $linkingStrategy = $this->getParameter(self::LINKED_STRATEGY, self::ABSOLUTE_LINKING);
+        if (is_array($linkedEntity)) {
+            list($path, $strategy) = each($linkedEntity);
+            if (!in_array($strategy, self::$linkingStrategies)) {
+                $strategy = $linkingStrategy;
+            }
+        } else {
+            $strategy = $linkingStrategy;
+            $path = $linkedEntity;
+        }
+
+        return [$path, $strategy];
     }
 }
