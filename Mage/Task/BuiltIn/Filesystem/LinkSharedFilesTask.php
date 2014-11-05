@@ -58,13 +58,13 @@ class LinkSharedFilesTask extends AbstractTask implements IsReleaseAware
      */
     public function run()
     {
-        $linkedFiles = $this->getParameter('linked_files', []);
-        $linkedFolders = $this->getParameter(self::LINKED_FOLDERS, []);
+        $linkedFiles = $this->getParameter('linked_files', array());
+        $linkedFolders = $this->getParameter(self::LINKED_FOLDERS, array());
         $linkingStrategy = $this->getParameter(self::LINKED_STRATEGY, self::ABSOLUTE_LINKING);
 
         $linkedEntities = array_merge($linkedFiles, $linkedFolders);
 
-        if (sizeof($linkedFiles) == 0 && sizeof($linkedFolders) == 0) {
+        if (empty($linkedFiles) && empty($linkedFolders)) {
             throw new SkipException('No files and folders configured for sym-linking.');
         }
 
