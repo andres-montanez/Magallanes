@@ -113,7 +113,7 @@ class Console
             self::$logEnabled = $config->general('logging', false);
         }
 
-        self::$verboseLogEnabled = $config->general('verbose_logging', false);
+        self::$verboseLogEnabled = self::isVerboseLoggingEnabled();
 
         // Greetings
         if ($showGreetings) {
@@ -298,6 +298,15 @@ class Console
                 }
             }
         }
+    }
+
+    /**
+     * Check if verbose logging is enabled
+     * @return boolean
+     */
+    protected static function isVerboseLoggingEnabled()
+    {
+        return self::$config->getParameter('verbose', false) || self::$config->general('verbose_logging');
     }
 
 }
