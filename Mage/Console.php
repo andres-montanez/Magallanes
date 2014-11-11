@@ -306,7 +306,9 @@ class Console
      */
     protected static function isVerboseLoggingEnabled()
     {
-        return self::$config->getParameter('verbose', false) || self::$config->general('verbose_logging');
+        return self::$config->getParameter('verbose', false)
+            || self::$config->general('verbose_logging')
+            || self::$config->environmentConfig('verbose_logging', false);
     }
 
 }
