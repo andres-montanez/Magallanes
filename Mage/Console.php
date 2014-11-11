@@ -181,15 +181,17 @@ class Console
     {
         self::log(strip_tags($message));
 
-        self::$screenBuffer .= str_repeat("\t", $tabs)
-            . strip_tags($message)
-            . str_repeat(PHP_EOL, $newLine);
+        if (!self::$verboseLogEnabled) {
+            self::$screenBuffer .= str_repeat("\t", $tabs)
+                . strip_tags($message)
+                . str_repeat(PHP_EOL, $newLine);
 
-        $output = str_repeat("\t", $tabs)
-            . Colors::color($message, self::$config)
-            . str_repeat(PHP_EOL, $newLine);
+            $output = str_repeat("\t", $tabs)
+                . Colors::color($message, self::$config)
+                . str_repeat(PHP_EOL, $newLine);
 
-        echo $output;
+            echo $output;
+        }
     }
 
     /**
