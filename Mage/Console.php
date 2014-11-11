@@ -49,6 +49,12 @@ class Console
     private static $logEnabled = true;
 
     /**
+     * Enables or disables verbose logging
+     * @var boolean
+     */
+    private static $verboseLogEnabled = false;
+
+    /**
      * String Buffer for the screen output
      * @var string
      */
@@ -106,6 +112,8 @@ class Console
         } else {
             self::$logEnabled = $config->general('logging', false);
         }
+
+        self::$verboseLogEnabled = $config->general('verbose_logging', false);
 
         // Greetings
         if ($showGreetings) {
@@ -228,7 +236,7 @@ class Console
             $message = date('Y-m-d H:i:s -- ') . $message;
             fwrite(self::$log, $message . PHP_EOL);
 
-            if (self::$config->general('verbose_logging', false)) {
+            if (self::$verboseLogEnabled) {
                 echo $message . PHP_EOL;
             }
         }
