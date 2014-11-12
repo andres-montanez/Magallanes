@@ -439,13 +439,22 @@ class DeployCommand extends AbstractCommand implements RequiresEnvironment
 
         } else {
             $result = true;
-            foreach ($hosts as $host) {
-                $this->getConfig()->setHost($host);
+            foreach ($hosts as $hostKey => $host) {
+                $hostConfig = null;
+                if (is_array($host)) {
+                    $hostConfig = $host;
+                    $host = $hostKey;
+                }
 
+                // Set Host and Host Specific Config
+                $this->getConfig()->setHost($host);
+                $this->getConfig()->setHostConfig($hostConfig);
                 $this->getConfig()->setReleaseId(-1);
+
                 $task = Factory::get('releases/rollback', $this->getConfig());
                 $task->init();
                 $result = $task->run() && $result;
+
             }
             return $result;
         }
