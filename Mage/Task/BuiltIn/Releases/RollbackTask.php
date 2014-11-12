@@ -60,7 +60,11 @@ class RollbackTask extends AbstractTask implements IsReleaseAware
 
             } else {
                 rsort($releases);
-                $deleteCurrent = $this->getConfig()->getParameter('deleteCurrent', false);
+                $deleteCurrent = $this->getConfig()->getParameter('deleteCurrent',
+                    $this->getConfig()->deployment('delete-on-rollback',
+                        $this->getConfig()->general('delete-on-rollback',false)
+                    )
+                );
 
                 $releaseIsAvailable = false;
                 if ($this->getReleaseId() == '') {
