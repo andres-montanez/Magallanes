@@ -15,7 +15,7 @@ use Mage\Task\BuiltIn\Symfony2\SymfonyAbstractTask;
 /**
  * Task for Doctrine migrations
  */
-class DoctrineMigrate extends SymfonyAbstractTask
+class DoctrineMigrateTask extends SymfonyAbstractTask
 {
     /**
      * (non-PHPdoc)
