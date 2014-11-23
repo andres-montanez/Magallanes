@@ -9,7 +9,7 @@
  * file that was distributed with this source code.
  */
 
-namespace Mage\Task\BuiltIn\Scm;
+namespace Mage\Task\BuiltIn\General;
 
 use Mage\Task\AbstractTask;
 
