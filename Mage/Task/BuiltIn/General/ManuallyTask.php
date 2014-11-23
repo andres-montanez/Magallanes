@@ -25,6 +25,7 @@ use Mage\Task\AbstractTask;
  *          - find . -type d -exec chmod 755 {} \;
  *          - find . -type f -exec chmod 644 {} \;
  *          - chmod +x bin/console
+ *          - find var/logs -maxdepth 1 -type f -name '*.log' -exec chown apache:apache {} \;
  *       - symfony2/cache-clear
  *
  * @author Samuel Chiriluta <samuel4x4@gmail.com>
