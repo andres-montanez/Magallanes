@@ -5,8 +5,14 @@ namespace MageTest\Console;
 use Mage\Console\Colors;
 use PHPUnit_Framework_TestCase;
 
+/**
+ * @group Mage_Console_Colors
+ */
 class ColorsTest extends PHPUnit_Framework_TestCase
 {
+    /**
+     * @group 159
+     */
     public function testColor()
     {
         $config = $this->getMock('Mage\Config');
@@ -23,6 +29,9 @@ class ColorsTest extends PHPUnit_Framework_TestCase
         $this->assertSame($expected, $result);
     }
 
+    /**
+     * @group 159
+     */
     public function testColorNoColor()
     {
         $config = $this->getMock('Mage\Config');
