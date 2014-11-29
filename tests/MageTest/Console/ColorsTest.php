@@ -47,4 +47,22 @@ class ColorsTest extends PHPUnit_Framework_TestCase
 
         $this->assertSame($expected, $result);
     }
+
+    /**
+     * @group 159
+     */
+    public function testColorUnknownColorName()
+    {
+        $config = $this->getMock('Mage\Config');
+        $config->expects($this->once())
+            ->method('getParameter')
+            ->will($this->returnValue(false));
+
+        $string = '<foo>FooBar</foo>';
+
+        // Method need to be non static in the future
+        $result = Colors::color($string, $config);
+
+        $this->assertSame($string, $result);
+    }
 }
