@@ -65,13 +65,13 @@ class ForceUpdateTask extends AbstractTask
                 $remote = $this->getParameter('remote', 'origin');
                 
                 $command = 'git fetch ' . $remote . ' ' . $branch;
-                $result = $this->runCommandRemote($command);
+                $result = $this->runCommand($command);
 
                 $command = 'git reset --hard ' . $remote . '/' . $branch;
-                $result = $result && $this->runCommandRemote($command);
+                $result = $result && $this->runCommand($command);
 
                 $command = 'git pull ' . $remote . ' ' . $branch;
-                $result = $result && $this->runCommandRemote($command);
+                $result = $result && $this->runCommand($command);
                 break;
 
             default:
@@ -79,7 +79,6 @@ class ForceUpdateTask extends AbstractTask
                 break;
         }
 
-        $result = $this->runCommandLocal($command);
         $this->getConfig()->reload();
 
         return $result;
