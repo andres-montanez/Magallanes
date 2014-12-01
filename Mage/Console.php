@@ -49,6 +49,12 @@ class Console
     private static $logEnabled = true;
 
     /**
+     * Enables or disables verbose logging
+     * @var boolean
+     */
+    private static $verboseLogEnabled = false;
+
+    /**
      * String Buffer for the screen output
      * @var string
      */
@@ -106,6 +112,8 @@ class Console
         } else {
             self::$logEnabled = $config->general('logging', false);
         }
+
+        self::$verboseLogEnabled = self::isVerboseLoggingEnabled();
 
         // Greetings
         if ($showGreetings) {
@@ -173,15 +181,17 @@ class Console
     {
         self::log(strip_tags($message));
 
-        self::$screenBuffer .= str_repeat("\t", $tabs)
-            . strip_tags($message)
-            . str_repeat(PHP_EOL, $newLine);
+        if (!self::$verboseLogEnabled) {
+            self::$screenBuffer .= str_repeat("\t", $tabs)
+                . strip_tags($message)
+                . str_repeat(PHP_EOL, $newLine);
 
-        $output = str_repeat("\t", $tabs)
-            . Colors::color($message, self::$config)
-            . str_repeat(PHP_EOL, $newLine);
+            $output = str_repeat("\t", $tabs)
+                . Colors::color($message, self::$config)
+                . str_repeat(PHP_EOL, $newLine);
 
-        echo $output;
+            echo $output;
+        }
     }
 
     /**
@@ -227,6 +237,10 @@ class Console
 
             $message = date('Y-m-d H:i:s -- ') . $message;
             fwrite(self::$log, $message . PHP_EOL);
+
+            if (self::$verboseLogEnabled) {
+                echo $message . PHP_EOL;
+            }
         }
     }
 
@@ -284,6 +298,17 @@ class Console
                 }
             }
         }
+    }
+
+    /**
+     * Check if verbose logging is enabled
+     * @return boolean
+     */
+    protected static function isVerboseLoggingEnabled()
+    {
+        return self::$config->getParameter('verbose', false)
+            || self::$config->general('verbose_logging')
+            || self::$config->environmentConfig('verbose_logging', false);
     }
 
 }

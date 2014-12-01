@@ -21,3 +21,4 @@ tasks:
     - privileges
     - sampleTask
     - sampleTaskRollbackAware
+verbose_logging: true

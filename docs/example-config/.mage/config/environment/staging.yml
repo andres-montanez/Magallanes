@@ -29,3 +29,4 @@ tasks:
 #    - sampleTask
   post-deploy:
     - sampleTask
+verbose_logging: false
