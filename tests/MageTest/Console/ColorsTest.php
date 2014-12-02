@@ -18,6 +18,7 @@ class ColorsTest extends PHPUnit_Framework_TestCase
         $config = $this->getMock('Mage\Config');
         $config->expects($this->once())
             ->method('getParameter')
+            ->with('no-color')
             ->will($this->returnValue(false));
 
         $string = '<green>FooBar</green>';
@@ -37,6 +38,7 @@ class ColorsTest extends PHPUnit_Framework_TestCase
         $config = $this->getMock('Mage\Config');
         $config->expects($this->once())
             ->method('getParameter')
+            ->with('no-color')
             ->will($this->returnValue(true));
 
         $string = '<black>FooBar</black>';
@@ -56,6 +58,7 @@ class ColorsTest extends PHPUnit_Framework_TestCase
         $config = $this->getMock('Mage\Config');
         $config->expects($this->once())
             ->method('getParameter')
+            ->with('no-color')
             ->will($this->returnValue(false));
 
         $string = '<foo>FooBar</foo>';
