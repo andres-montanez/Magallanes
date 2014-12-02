@@ -7,11 +7,13 @@ use PHPUnit_Framework_TestCase;
 
 /**
  * @group Mage_Console_Colors
+ * @coversDefaultClass Mage\Console\Colors
  */
 class ColorsTest extends PHPUnit_Framework_TestCase
 {
     /**
      * @group 159
+     * @covers ::color
      */
     public function testColor()
     {
@@ -32,6 +34,7 @@ class ColorsTest extends PHPUnit_Framework_TestCase
 
     /**
      * @group 159
+     * @covers ::color
      */
     public function testColorNoColor()
     {
@@ -52,6 +55,7 @@ class ColorsTest extends PHPUnit_Framework_TestCase
 
     /**
      * @group 159
+     * @covers ::color
      */
     public function testColorUnknownColorName()
     {
