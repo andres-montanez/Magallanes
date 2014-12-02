@@ -5,8 +5,8 @@
          backupGlobals="false"
          verbose="true"
          strict="true"
-         colors="false">
-    <testsuite name="small">
+         colors="true">
+    <testsuite name="unit-tests">
       <directory suffix="Test.php">tests</directory>
     </testsuite>
 
