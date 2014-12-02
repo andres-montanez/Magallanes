@@ -14,8 +14,13 @@ use Mage\Task\BuiltIn\Symfony2\SymfonyAbstractTask;
 
 /**
  * Task for Clearing the Cache
+ * 
+ * Example of usage:
+ *    symfony2/cache-clear: { env: dev }
+ *    symfony2/cache-clear: { env: dev, optional: --no-warmup }
  *
  * @author Andrés Montañez <andres@andresmontanez.com>
+ * @author Samuel Chiriluta <samuel4x4@gmail.com>
  */
 class CacheClearTask extends SymfonyAbstractTask
 {
@@ -36,8 +41,10 @@ class CacheClearTask extends SymfonyAbstractTask
     {
         // Options
         $env = $this->getParameter('env', 'dev');
+        $optional = $this->getParameter('optional', '');
 
-        $command = $this->getAppPath() . ' cache:clear --env=' . $env;
+        $command = $this->getAppPath() . ' cache:clear --env=' . $env . ' ' . $optional;
+
         $result = $this->runCommand($command);
 
         return $result;

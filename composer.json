@@ -8,12 +8,18 @@
     "require": {
         "php": ">=5.3"
     },
+    "require-dev": {
+        "phpunit/phpunit": "4.3.5"
+    },
     "autoload": {
         "psr-4": {
             "Mage\\": "./Mage",
             "Task\\": ".mage/tasks",
             "Command\\": ".mage/commands"
         }
+    },
+    "config": {
+        "bin-dir": "bin"
     },
     "bin": [
         "bin/mage"
