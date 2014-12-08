@@ -15,7 +15,7 @@ use Mage\Task\BuiltIn\Symfony2\SymfonyAbstractTask;
 /**
  * Task for Doctrine migrations
  */
-class DoctrineMigrate extends SymfonyAbstractTask
+class DoctrineMigrateTask extends SymfonyAbstractTask
 {
     /**
      * (non-PHPdoc)
@@ -34,7 +34,9 @@ class DoctrineMigrate extends SymfonyAbstractTask
     public function run()
     {
         $env = $this->getParameter('env', 'dev');
+
         $command = $this->getAppPath() . ' doctrine:migrations:migrate -n --env=' . $env;
+        
         return $this->runCommand($command);
     }
 }
