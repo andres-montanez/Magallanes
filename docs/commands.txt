@@ -51,6 +51,8 @@ mage releases rollback --release=-3 to:production
 # Rollback to a specific Release on the Production environment
 # mage releases rollback --release=20120101172148 to:production
 
+# Output logs by adding verbose option to ANY command
+mage deploy to:production --verbose
 
 ### List of UPCOMING Commands ###
 # mage config add host s05.example.com to:[production]
