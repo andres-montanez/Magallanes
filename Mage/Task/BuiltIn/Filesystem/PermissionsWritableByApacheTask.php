@@ -6,9 +6,9 @@ namespace Mage\Task\BuiltIn\Filesystem;
  *
  * Usage :
  *   pre-deploy:
- *     - filesystem/permissions-writable-by-apache: {paths: /var/www/myapp/app/cache:/var/www/myapp/app/cache, checkPathsExist: true}
+ *     - filesystem/permissions-writable-by-apache: {paths: /var/www/myapp/app/cache:/var/www/myapp/app/cache, recursive: false, checkPathsExist: true}
  *   on-deploy:
- *     - filesystem/permissions-writable-by-apache: {paths: app/cache:app/logs, checkPathsExist: true}
+ *     - filesystem/permissions-writable-by-apache: {paths: app/cache:app/logs, recursive: false, checkPathsExist: true}
  *
  * @author Jérémy Huet <jeremy.huet@gmail.com>
  */
@@ -19,7 +19,7 @@ class PermissionsWritableByApacheTask extends PermissionsTask
         parent::init();
 
         $this->setGroup('www-data')
-             ->setRights('775');
+             ->setRights('g+w');
     }
 
     /**

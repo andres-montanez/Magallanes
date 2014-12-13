@@ -10,9 +10,9 @@ use Mage\Task\SkipException;
  *
  * Usage :
  *   pre-deploy:
- *     - filesystem/permissions: {paths: /var/www/myapp/app/cache:/var/www/myapp/app/cache, checkPathsExist: true, owner: www-data, group: www-data, rights: 775}
+ *     - filesystem/permissions: {paths: /var/www/myapp/app/cache:/var/www/myapp/app/cache, recursive: false, checkPathsExist: true, owner: www-data, group: www-data, rights: 775}
  *   on-deploy:
- *     - filesystem/permissions: {paths: app/cache:app/logs, checkPathsExist: true, owner: www-data, group: www-data, rights: 775}
+ *     - filesystem/permissions: {paths: app/cache:app/logs, recursive: false, checkPathsExist: true, owner: www-data, group: www-data, rights: 775}
  *
  * @author Jérémy Huet <jeremy.huet@gmail.com>
  */
@@ -58,6 +58,13 @@ class PermissionsTask extends AbstractTask
     private $rights;
 
     /**
+     * If set to true, will recursively change permissions on given paths.
+     *
+     * @var string
+     */
+    private $recursive = false;
+
+    /**
      * Initialize parameters.
      *
      * @throws SkipException
@@ -86,6 +93,10 @@ class PermissionsTask extends AbstractTask
         if (! is_null($this->getParameter('rights'))) {
             $this->setRights($this->getParameter('rights'));
         }
+
+        if (! is_null($this->getParameter('recursive'))) {
+            $this->setRecursive($this->getParameter('recursive'));
+        }
     }
 
     /**
@@ -102,17 +113,18 @@ class PermissionsTask extends AbstractTask
     public function run()
     {
         $command = '';
+        $recursive = $this->recursive ? '-R' : '';
 
         if ($this->paths && $this->owner) {
-            $command .= 'chown -R ' . $this->owner . ' ' . $this->getPathsForCmd() . ';';
+            $command .= 'chown '. $recursive .' ' . $this->owner . ' ' . $this->getPathsForCmd() . ';';
         }
 
         if ($this->paths && $this->group) {
-            $command .= 'chgrp -R ' . $this->group . ' ' . $this->getPathsForCmd() . ';';
+            $command .= 'chgrp '. $recursive .' ' . $this->group . ' ' . $this->getPathsForCmd() . ';';
         }
 
         if ($this->paths && $this->rights) {
-            $command .= 'chmod -R ' . $this->rights . ' ' . $this->getPathsForCmd() . ';';
+            $command .= 'chmod '. $recursive .' ' . $this->rights . ' ' . $this->getPathsForCmd() . ';';
         }
 
         $result = $this->runCommand($command);
@@ -178,7 +190,7 @@ class PermissionsTask extends AbstractTask
      */
     protected function setCheckPathsExist($checkPathsExist)
     {
-        $this->checkPathsExist = $checkPathsExist;
+        $this->checkPathsExist = (bool) $checkPathsExist;
 
         return $this;
     }
@@ -240,17 +252,13 @@ class PermissionsTask extends AbstractTask
     /**
      * Set rights.
      *
-     * @todo better way to check if $rights is in a correct format.
+     * @todo check if $rights is in a correct format.
      *
      * @param string $rights
      * @return PermissionsTask
      */
     protected function setRights($rights)
     {
-        if (strlen($rights) != 3 || !is_numeric($rights) || $rights > 777) {
-            throw new SkipException('Make sure the rights "' . $rights . '" are in a correct format.');
-        }
-
         $this->rights = $rights;
 
         return $this;
@@ -262,5 +270,26 @@ class PermissionsTask extends AbstractTask
     protected function getRights()
     {
         return $this->rights;
+    }
+
+    /**
+     * Set recursive.
+     *
+     * @param boolean $recursive
+     * @return PermissionsTask
+     */
+    protected function setRecursive($recursive)
+    {
+        $this->recursive = (bool) $recursive;
+
+        return $this;
+    }
+
+    /**
+     * @return boolean
+     */
+    protected function getRecursive()
+    {
+        return $this->recursive;
     }
 }
