@@ -5,7 +5,14 @@ use Mage\Task\AbstractTask;
 use Mage\Task\SkipException;
 
 /**
- * Task for setting permissions on given paths.
+ * Task for setting permissions on given paths. Change will be done on local or
+ * remote host depending on the stage of the deployment.
+ *
+ * Usage :
+ *   pre-deploy:
+ *     - filesystem/permissions: {paths: /var/www/myapp/app/cache:/var/www/myapp/app/cache, checkPathsExist: true, owner: www-data, group: www-data, rights: 775}
+ *   on-deploy:
+ *     - filesystem/permissions: {paths: app/cache:app/logs, checkPathsExist: true, owner: www-data, group: www-data, rights: 775}
  *
  * @author Jérémy Huet <jeremy.huet@gmail.com>
  */
@@ -14,12 +21,15 @@ class PermissionsTask extends AbstractTask
     /**
      * Paths to change of permissions separated by PATH_SEPARATOR.
      *
+     * If the stage is on local host you should give full paths. If on remote
+     * you may give full or relative to the current release directory paths.
+     *
      * @var string
      */
     private $paths;
 
     /**
-     * If set to true, will check existance of given paths on remote host and
+     * If set to true, will check existance of given paths on the host and
      * throw SkipException if at least one does not exist.
      *
      * @var boolean
@@ -105,7 +115,7 @@ class PermissionsTask extends AbstractTask
             $command .= 'chmod -R ' . $this->rights . ' ' . $this->getPathsForCmd() . ';';
         }
 
-        $result = $this->runCommandRemote($command);
+        $result = $this->runCommand($command);
 
         return $result;
     }
@@ -126,7 +136,7 @@ class PermissionsTask extends AbstractTask
     }
 
     /**
-     * Set paths. Will check if they exist on remote host depending on
+     * Set paths. Will check if they exist on the host depending on
      * checkPathsExist flag.
      *
      * @param array $paths
@@ -142,8 +152,8 @@ class PermissionsTask extends AbstractTask
             }
 
             $command = implode(' && ', $commands);
-            if (! $this->runCommandRemote($command)) {
-                throw new SkipException('Make sure all paths given exist on remote host : ' . $this->getPathsForCmd($paths));
+            if (! $this->runCommand($command)) {
+                throw new SkipException('Make sure all paths given exist on the host : ' . $this->getPathsForCmd($paths));
             }
         }
 
@@ -184,7 +194,7 @@ class PermissionsTask extends AbstractTask
     /**
      * Set owner.
      *
-     * @todo check existance of $owner on remote, might be different ways depending on OS.
+     * @todo check existance of $owner on host, might be different ways depending on OS.
      *
      * @param string $owner
      * @return PermissionsTask
@@ -207,7 +217,7 @@ class PermissionsTask extends AbstractTask
     /**
      * Set group.
      *
-     * @todo check existance of $group on remote, might be different ways depending on OS.
+     * @todo check existance of $group on host, might be different ways depending on OS.
      *
      * @param string $group
      * @return PermissionsTask
