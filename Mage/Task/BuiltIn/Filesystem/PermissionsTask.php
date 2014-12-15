@@ -113,23 +113,43 @@ class PermissionsTask extends AbstractTask
     public function run()
     {
         $command = '';
-        $recursive = $this->recursive ? '-R' : '';
 
         if ($this->paths && $this->owner) {
-            $command .= 'chown '. $recursive .' ' . $this->owner . ' ' . $this->getPathsForCmd() . ';';
+            $command .= 'chown '. $this->getOptionsForCmd() .' ' . $this->owner . ' ' . $this->getPathsForCmd() . ';';
         }
 
         if ($this->paths && $this->group) {
-            $command .= 'chgrp '. $recursive .' ' . $this->group . ' ' . $this->getPathsForCmd() . ';';
+            $command .= 'chgrp '. $this->getOptionsForCmd()  .' ' . $this->group . ' ' . $this->getPathsForCmd() . ';';
         }
 
         if ($this->paths && $this->rights) {
-            $command .= 'chmod '. $recursive .' ' . $this->rights . ' ' . $this->getPathsForCmd() . ';';
+            $command .= 'chmod '. $this->getOptionsForCmd()  .' ' . $this->rights . ' ' . $this->getPathsForCmd() . ';';
         }
 
         $result = $this->runCommand($command);
 
         return $result;
+    }
+
+    /**
+     * Returns the options for the commands to run. Only supports -R for now.
+     *
+     * @return string
+     */
+    protected function getOptionsForCmd()
+    {
+        $optionsForCmd = '';
+        $options = array(
+            'R' => $this->recursive
+        );
+
+        foreach($options as $option => $apply) {
+            if ($apply == true) {
+                $optionsForCmd .= $option;
+            }
+        }
+
+        return $optionsForCmd ? '-' . $optionsForCmd : '';
     }
 
     /**
