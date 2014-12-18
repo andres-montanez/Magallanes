@@ -9,6 +9,12 @@ use Mage\Task\SkipException;
  * Usage :
  *   pre-deploy:
  *     - filesystem/permissions-writable-by-web-server: {paths: /var/www/myapp/app/cache:/var/www/myapp/app/logs, recursive: false, checkPathsExist: true}
+ *     - filesystem/permissions-writable-by-web-server:
+ *         paths:
+ *             - /var/www/myapp/app/cache
+ *             - /var/www/myapp/app/logs
+ *         recursive: false
+ *         checkPathsExist: true
  *   on-deploy:
  *     - filesystem/permissions-writable-by-web-server: {paths: app/cache:app/logs, recursive: false, checkPathsExist: true}
  *
@@ -32,7 +38,7 @@ class PermissionsWritableByWebServerTask extends PermissionsTask
      */
     public function getName()
     {
-        return "Gives write permissions to web server user for given paths [built-in]";
+        return "Giving write permissions to web server user for given paths [built-in]";
     }
 
     /**

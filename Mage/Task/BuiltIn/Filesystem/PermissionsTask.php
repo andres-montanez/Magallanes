@@ -11,6 +11,14 @@ use Mage\Task\SkipException;
  * Usage :
  *   pre-deploy:
  *     - filesystem/permissions: {paths: /var/www/myapp/app/cache:/var/www/myapp/app/cache, recursive: false, checkPathsExist: true, owner: www-data, group: www-data, rights: 775}
+ *     - filesystem/permissions:
+ *         paths:
+ *             - /var/www/myapp/app/cache
+ *             - /var/www/myapp/app/logs
+ *         recursive: false
+ *         checkPathsExist: true
+ *         owner: www-data:www-data
+ *         rights: 775
  *   on-deploy:
  *     - filesystem/permissions: {paths: app/cache:app/logs, recursive: false, checkPathsExist: true, owner: www-data, group: www-data, rights: 775}
  *
@@ -37,7 +45,8 @@ class PermissionsTask extends AbstractTask
     private $checkPathsExist = true;
 
     /**
-     * Owner to set for the given paths (ex : "www-data")
+     * Owner to set for the given paths (ex : "www-data" or "www-data:www-data"
+     * to set both owner and group at the same time)
      *
      * @var string
      */
@@ -51,7 +60,7 @@ class PermissionsTask extends AbstractTask
     private $group;
 
     /**
-     * Rights to set for the given paths (ex: "755")
+     * Rights to set for the given paths (ex: "755" or "g+w")
      *
      * @var string
      */
@@ -80,22 +89,27 @@ class PermissionsTask extends AbstractTask
         if (! $this->getParameter('paths')) {
             throw new SkipException('Param paths is mandatory');
         }
-        $this->setPaths(explode(PATH_SEPARATOR, $this->getParameter('paths', '')));
+        $this->setPaths(is_array($this->getParameter('paths')) ? $this->getParameter('paths') : explode(PATH_SEPARATOR, $this->getParameter('paths', '')));
 
-        if (! is_null($this->getParameter('owner'))) {
-            $this->setOwner($this->getParameter('owner'));
+        if (! is_null($owner = $this->getParameter('owner'))) {
+            if (strpos($owner, ':') !== false) {
+                $this->setOwner(array_shift(explode(':', $owner)));
+                $this->setGroup(array_pop(explode(':', $owner)));
+            } else {
+                $this->setOwner($owner);
+            }
         }
 
-        if (! is_null($this->getParameter('group'))) {
-            $this->setGroup($this->getParameter('group'));
+        if (! is_null($group = $this->getParameter('group'))) {
+            $this->setGroup($group);
         }
 
-        if (! is_null($this->getParameter('rights'))) {
-            $this->setRights($this->getParameter('rights'));
+        if (! is_null($rights = $this->getParameter('rights'))) {
+            $this->setRights($rights);
         }
 
-        if (! is_null($this->getParameter('recursive'))) {
-            $this->setRecursive($this->getParameter('recursive'));
+        if (! is_null($recursive = $this->getParameter('recursive'))) {
+            $this->setRecursive($recursive);
         }
     }
 
@@ -104,7 +118,7 @@ class PermissionsTask extends AbstractTask
      */
     public function getName()
     {
-        return "Change rights / owner / group for paths : " . $this->getPathsForCmd() . " [built-in]";
+        return "Changing rights / owner / group for given paths [built-in]";
     }
 
     /**
@@ -112,21 +126,21 @@ class PermissionsTask extends AbstractTask
      */
     public function run()
     {
-        $command = '';
+        $commands = array();
 
         if ($this->paths && $this->owner) {
-            $command .= 'chown '. $this->getOptionsForCmd() .' ' . $this->owner . ' ' . $this->getPathsForCmd() . ';';
+            $commands []= 'chown '. $this->getOptionsForCmd() .' ' . $this->owner . ' ' . $this->getPathsForCmd();
         }
 
         if ($this->paths && $this->group) {
-            $command .= 'chgrp '. $this->getOptionsForCmd()  .' ' . $this->group . ' ' . $this->getPathsForCmd() . ';';
+            $commands []= 'chgrp '. $this->getOptionsForCmd()  .' ' . $this->group . ' ' . $this->getPathsForCmd();
         }
 
         if ($this->paths && $this->rights) {
-            $command .= 'chmod '. $this->getOptionsForCmd()  .' ' . $this->rights . ' ' . $this->getPathsForCmd() . ';';
+            $commands []= 'chmod '. $this->getOptionsForCmd()  .' ' . $this->rights . ' ' . $this->getPathsForCmd();
         }
 
-        $result = $this->runCommand($command);
+        $result = $this->runCommand(implode(' && ', $commands));
 
         return $result;
     }
