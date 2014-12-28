@@ -27,7 +27,8 @@ use Mage\Task\SkipException;
 class PermissionsTask extends AbstractTask
 {
     /**
-     * Paths to change of permissions separated by PATH_SEPARATOR.
+     * Paths to change of permissions in an array or a string separated by
+     * PATH_SEPARATOR.
      *
      * If the stage is on local host you should give full paths. If on remote
      * you may give full or relative to the current release directory paths.

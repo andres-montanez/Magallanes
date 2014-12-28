@@ -29,7 +29,7 @@ class PermissionsReadableOnlyByWebServerTask extends PermissionsTask
     {
         parent::init();
 
-        $this->setGroup($this->getParameter('group', $this->getWebServerUser()))
+        $this->setGroup($this->getParameter('group') ? $this->getParameter('group') : $this->getWebServerUser())
              ->setRights('040');
     }
 
