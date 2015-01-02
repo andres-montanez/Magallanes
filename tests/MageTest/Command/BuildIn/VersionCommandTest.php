@@ -13,7 +13,6 @@ class VersionCommandTest extends PHPUnit_Framework_TestCase
 {
     public function testRun()
     {
-        define('MAGALLANES_VERSION', '1');
         $this->workAroundStatic();
         $command = new VersionCommand();
         $command->run();
