@@ -17,7 +17,7 @@ class VersionCommandTest extends PHPUnit_Framework_TestCase
         $command = new VersionCommand();
         $command->run();
 
-        $this->expectOutputString('Running Magallanes version ' . MAGALLANES_VERSION . str_repeat(PHP_EOL, 2));
+        $this->expectOutputString('Running Magallanes version 2' . str_repeat(PHP_EOL, 2));
     }
 
     /**
