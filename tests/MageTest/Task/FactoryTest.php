@@ -33,9 +33,9 @@ class FactoryTest extends PHPUnit_Framework_TestCase
     /**
      * @dataProvider taskDataProvider
      */
-    public function testGetWith($taskData)
+    public function testGetWithOptionalParams($taskData)
     {
-        $task = Factory::get($taskData, $this->config);
+        $task = Factory::get($taskData, $this->config, true, 'production');
         $this->assertInstanceOf('\\Mage\\Task\\AbstractTask', $task);
     }
 
