@@ -11,6 +11,7 @@
 namespace Mage\Task;
 
 use Mage\Config;
+use Mage\Task\AbstractTask;
 
 use Exception;
 
@@ -26,7 +27,6 @@ class Factory
      *
      * @param string|array $taskData
      * @param \Mage\Config $taskConfig
-     * @param Config $taskConfig
      * @param boolean $inRollback
      * @param string $stage
      * @return \Mage\Task\AbstractTask
