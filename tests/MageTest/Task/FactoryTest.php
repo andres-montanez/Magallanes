@@ -50,7 +50,7 @@ class FactoryTest extends PHPUnit_Framework_TestCase
 
     /**
      * @expectedException \Exception
-     * @expectedExceptionMessage Task "Notknowntask" not found.
+     * @expectedExceptionMessage Task "Unknowntask" not found.
      */
     public function testGetClassDoesNotExist()
     {
