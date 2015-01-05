@@ -31,6 +31,15 @@ class FactoryTest extends PHPUnit_Framework_TestCase
     }
 
     /**
+     * @dataProvider taskDataProvider
+     */
+    public function testGetWith($taskData)
+    {
+        $task = Factory::get($taskData, $this->config);
+        $this->assertInstanceOf('\\Mage\\Task\\AbstractTask', $task);
+    }
+
+    /**
      * @expectedException \Exception
      * @expectedExceptionMessage The Task MyInconsistentTask must be an instance of Mage\Task\AbstractTask.
      */
@@ -45,7 +54,7 @@ class FactoryTest extends PHPUnit_Framework_TestCase
      */
     public function testGetClassDoesNotExist()
     {
-        Factory::get('notknowntask', $this->config);
+        Factory::get('unknowntask', $this->config);
     }
 
     /**

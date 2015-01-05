@@ -30,7 +30,7 @@ class Factory
      * @param boolean $inRollback
      * @param string $stage
      * @return \Mage\Task\AbstractTask
-     * @throws \Exception|\Mage\Task\ErrorWithMessageException
+     * @throws \Exception
      */
     public static function get($taskData, Config $taskConfig, $inRollback = false, $stage = null)
     {
