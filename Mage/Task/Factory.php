@@ -11,6 +11,7 @@
 namespace Mage\Task;
 
 use Mage\Config;
+use Mage\Task\AbstractTask;
 
 use Exception;
 
@@ -26,7 +27,6 @@ class Factory
      *
      * @param string|array $taskData
      * @param \Mage\Config $taskConfig
-     * @param Config $taskConfig
      * @param boolean $inRollback
      * @param string $stage
      * @return \Mage\Task\AbstractTask
@@ -59,7 +59,7 @@ class Factory
 
         $instance = new $className($taskConfig, $inRollback, $stage, $taskParameters);
 
-        if (!is_a($instance, 'Mage\Task\AbstractTask')) {
+        if (!$instance instanceof AbstractTask) {
             throw new Exception('The Task ' . $taskName . ' must be an instance of Mage\Task\AbstractTask.');
         }
 
