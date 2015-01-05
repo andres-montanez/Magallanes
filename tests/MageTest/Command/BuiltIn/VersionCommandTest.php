@@ -1,6 +1,6 @@
 <?php
 
-namespace MageTest\Command\BuildIn;
+namespace MageTest\Command\BuiltIn;
 
 use Mage\Command\BuiltIn\VersionCommand;
 use Mage\Console;
@@ -11,6 +11,9 @@ use PHPUnit_Framework_TestCase;
  */
 class VersionCommandTest extends PHPUnit_Framework_TestCase
 {
+    /**
+     * @group 175
+     */
     public function testRun()
     {
         $this->workAroundStatic();
