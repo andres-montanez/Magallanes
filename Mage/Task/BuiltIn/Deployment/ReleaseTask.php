@@ -75,9 +75,10 @@ class ReleaseTask extends AbstractTask implements IsReleaseAware, SkipOnOverride
             }
 
             // Remove symlink if exists; create new symlink and change owners
-            $command = 'rm -f ' . $symlink
-                . ' ; '
-                . 'ln -sf ' . $currentCopy . ' ' . $symlink;
+            $tmplink = $currentCopy . '.tmp';
+            $command = 'ln -sfn ' . $currentCopy . ' ' . $tmplink
+                . ' && '
+                . 'mv -T ' . $tmplink . ' ' . $symlink;
 
             if ($resultFetch && $userGroup != '') {
                 $command .= ' && '
