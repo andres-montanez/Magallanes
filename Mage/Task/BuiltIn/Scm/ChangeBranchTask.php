@@ -63,14 +63,15 @@ class ChangeBranchTask extends AbstractTask
      */
     public function run()
     {
+        $preCommand = 'cd ' . $this->getConfig()->deployment('from', './') . '; ';
         switch ($this->getConfig()->general('scm')) {
             case 'git':
                 if ($this->getParameter('_changeBranchRevert', false)) {
-                    $command = 'git checkout ' . self::$startingBranch;
+                    $command = $preCommand . 'git checkout ' . self::$startingBranch;
                     $result = $this->runCommandLocal($command);
 
                 } else {
-                    $command = 'git branch | grep \'*\' | cut -d\' \' -f 2';
+                    $command = $preCommand . 'git branch | grep \'*\' | cut -d\' \' -f 2';
                     $currentBranch = 'master';
                     $result = $this->runCommandLocal($command, $currentBranch);
 
