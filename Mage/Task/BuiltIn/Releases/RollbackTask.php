@@ -51,6 +51,10 @@ class RollbackTask extends AbstractTask implements IsReleaseAware
             $releasesDirectory = $this->getConfig()->release('directory', 'releases');
             $symlink = $this->getConfig()->release('symlink', 'current');
 
+            if (substr($symlink, 0, 1) == '/') {
+                $releasesDirectory = rtrim($this->getConfig()->deployment('to'), '/') . '/' . $releasesDirectory;
+            }
+
             $output = '';
             $result = $this->runCommandRemote('ls -1 ' . $releasesDirectory, $output);
             $releases = ($output == '') ? array() : explode(PHP_EOL, $output);
