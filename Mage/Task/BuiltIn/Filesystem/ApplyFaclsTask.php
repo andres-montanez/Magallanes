@@ -25,7 +25,6 @@ class ApplyFaclsTask extends AbstractTask implements IsReleaseAware
     public function run()
     {
         $releasesDirectory = $this->getConfig()->release('directory', 'releases');
-        $releasesDirectory = rtrim($this->getConfig()->deployment('to'), '/') . '/' . $releasesDirectory;
         $currentCopy = $releasesDirectory . '/' . $this->getConfig()->getReleaseId();
 
 
