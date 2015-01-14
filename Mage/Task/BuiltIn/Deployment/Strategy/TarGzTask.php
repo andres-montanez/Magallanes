@@ -77,8 +77,8 @@ class TarGzTask extends BaseStrategyTaskAbstract implements IsReleaseAware
             $strategyFlags = '';
         }
 
-        // remove h option only if dump_symlinks is allowed in the release config part
-        $dumpSymlinks = $this->getConfig()->release('dump_symlinks') ? '' : 'h';
+        // remove h option only if dump-symlinks is allowed in the release config part
+        $dumpSymlinks = $this->getConfig()->release('dump-symlinks') ? '' : 'h';
 
         $command = 'tar cfz'. $dumpSymlinks . $strategyFlags . ' ' . $localTarGz . '.tar.gz ' . $excludeCmd . $excludeFromFileCmd . ' -C ' . $this->getConfig()->deployment('from') . ' .';
         $result = $this->runCommandLocal($command);
