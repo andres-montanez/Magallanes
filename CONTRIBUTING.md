@@ -65,7 +65,7 @@ We use PHPUnit to test our classes. Now not the whole project is covered with te
 Tests structure follow the same structure as production code with `Test` suffix in class and file name. All tests should go to `tests` directory in project root.  So if you've created a class `Mage\Tasks\BuilIn\NewTask` the testing class should be called `MageTest\Tasks\BuiltIn\NewTaskTest`. 
 
 ## Configuration
-Magallanes configuration is kept in YAML files. Please follow those rules whie adding or changing the configuration:
+Magallanes configuration is kept in YAML files. Please follow those rules while adding or changing the configuration:
 * Keep 2 spaces indentation in each level
 * Multi-word config keys should be joined with dash (`-`), like `my-custom-task`
 * If your contribution includes new config key, please be sure that you've documented it in configuration documentation.
