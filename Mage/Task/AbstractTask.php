@@ -322,7 +322,10 @@ abstract class AbstractTask
         $configVars = array_merge(
             $this->getConfig()->general('env', []),
             $this->getConfig()->environmentConfig('env', []),
-            $this->getConfig()->getParameter('env', [])
+            $this->getConfig()->getParameter('env', []),
+            [
+                'variables' => $this->getConfig()->getParameter('env.variables', [])
+            ]
         );
 
         if (isset($configVars['variables'])) {
