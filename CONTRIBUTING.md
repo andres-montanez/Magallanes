@@ -61,7 +61,15 @@ The rules above have been set a long time after the project has started. If you 
 4. PHP Dead Code Detector
 
 ## Testing and quality
-We use PHPUnit to test our classes. Now not the whole project is covered with tests but we've been working on it for some time. If you want your code to be merged into Magallanes, we want you to push it with proper tests. We would love to reach and keep at leats 90% of code coverage. In short time we want to configure quality tools to make sure your code is tested properly with minimum coverage. Anyway, try to keep 100% of Code Coverage in your pull requests.
+We use PHPUnit to test our classes. Now not the whole project is covered with tests but we've been working on it for some time. If you want your code to be merged into Magallanes, we want you to push it with proper tests. We would love to reach and keep at least 90% of line code coverage. In short time we want to configure quality tools to make sure your code is tested properly with minimum coverage. Anyway, try to keep 100% of Code Coverage in your pull requests. To run your tests with code coverage report, you can either run it with:
+```
+/bin/phpunit --coverage-text
+```
+or with more friendly and detailed user graphical representation, into HTML:
+```
+/bin/phpunit --coverate-html report
+```
+where `report` is the directory where html report files shall be stored.
 Tests structure follow the same structure as production code with `Test` suffix in class and file name. All tests should go to `tests` directory in project root.  So if you've created a class `Mage\Tasks\BuilIn\NewTask` the testing class should be called `MageTest\Tasks\BuiltIn\NewTaskTest`. 
 
 ## Configuration
