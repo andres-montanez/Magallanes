@@ -22,6 +22,24 @@ If you have a problem or you've noticed some bug, please feel free to open new i
 ## Opening pull requests
 Pull Request are actually some kind of issues with code, so please keep the rules above in **Reporting issues** section before making the pull requests.
 Our code isn't so beautiful, tested and testable as we would like it to be but if you're pushing your code please be sure it meets the requirements from **Organization and code quality** chapter. We want to improve the existing code to facilitate extending it and making fixes quicker. So if you are editing some class and you find it ugly, please do not ignore it. Following [The Boy Scout Rule](http://www.informit.com/articles/article.aspx?p=1235624&seqNum=6) - *Leave the campground cleaner than you found it* - we allcan improve the existing code.
+Keep your git commits as atomic as it's possible. It brings better history description only by commit messages and allow us to eventually revert the single commits with no affects. Your commit messages should be also descriptive. The first line of commit should be short, try to limit it up to 50 characters. The messages should be written impreatively, like following:
+```
+Add MyCustomTask
+```
+If you need to write more about your tasks, please enter the description in next lines. There you can write whatever you want, like why you made this commit and what it consists of.
+```
+Add MyCustomTask
+
+This task has very important role for the project. I found this very useful for all developers. I think the deploy with it should be a lot easier.
+```
+
+Optionally you can tag your messages in square brackets. It can be issue number or simple flag. Examples:
+```
+[#183] Add new CONTRIBUTING document
+[FIX] Set correct permissions on deploy stage
+[FEATURE] Create new PermissionsTask
+```
+Remember of square brackets when adding issue number. If you'd forget adding them, your whole message will be a comment!
 
 ## Contributing the documentation
 Magallanes is made to deploy application quick and with no need to write redudant code. Usage is as simple as writing the configuration for target project in YAML files. In the nearest future we would like to make some Wiki with all available options, tasks and commands. For now, the only "documentation" is examples file in `doc` directory. If the code you are going to include in your pull requests adds or changes config options, please make sure you that you create a new sample in that file. You should also to the same with commands.
