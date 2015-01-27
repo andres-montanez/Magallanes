@@ -11,7 +11,7 @@ use PHPUnit_Framework_TestCase;
  */
 class ColorsTest extends PHPUnit_Framework_TestCase
 {
-    protected $noColorParameter = "no-color";
+    private $noColorParameter = "no-color";
     /**
      * @group 159
      * @covers ::color
