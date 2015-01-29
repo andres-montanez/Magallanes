@@ -18,6 +18,9 @@
             "Command\\": ".mage/commands"
         }
     },
+    "config": {
+        "bin-dir": "bin"
+    },
     "bin": [
         "bin/mage"
     ]
