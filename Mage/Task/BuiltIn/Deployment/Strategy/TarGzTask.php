@@ -109,11 +109,11 @@ class TarGzTask extends BaseStrategyTaskAbstract implements IsReleaseAware
         $result = $this->runCommandRemote($command) && $result;
 
         // Delete Tar Gz from Remote Host
-        $command = $this->getReleasesAwareCommand('rm ' . $remoteTarGz . '.tar.gz');
+        $command = $this->getReleasesAwareCommand('rm -f ' . $remoteTarGz . '.tar.gz');
         $result = $this->runCommandRemote($command) && $result;
 
         // Delete Tar Gz from Local
-        $command = 'rm ' . $localTarGz . ' ' . $localTarGz . '.tar.gz';
+        $command = 'rm -f ' . $localTarGz . ' ' . $localTarGz . '.tar.gz';
         $result = $this->runCommandLocal($command) && $result;
 
         return $result;

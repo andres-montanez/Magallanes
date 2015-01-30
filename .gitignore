@@ -9,4 +9,7 @@ bin
 ehthumbs.db
 Icon?
 Thumbs.db
+
+# IDE generated files
+.idea
 nbproject
