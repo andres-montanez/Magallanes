@@ -47,7 +47,7 @@ class Factory
         $taskName = str_replace(' ', '', $taskName);
 
         if (class_exists($taskName)) {
-            $className = $className;
+            $className = $taskName;
         } elseif (strpos($taskName, '/') === false) {
             $className = 'Task\\' . $taskName;
         } else {
