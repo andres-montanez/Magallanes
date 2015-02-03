@@ -9,13 +9,16 @@ use PHPUnit_Framework_TestCase;
  * @group Mage_Task
  * @coversDefaultClass Mage\Task\Factory
  */
-class ColorsTest extends PHPUnit_Framework_TestCase
+class FactoryTest extends PHPUnit_Framework_TestCase
 {
     public function setUp()
     {
         require_once __DIR__ . '/MyTaskExample.php';
     }
 
+    /**
+     * @covers Mage\Task\Factory
+     */
     public function testLoadFromExternalNamespace()
     {
         $factory = new Factory;
