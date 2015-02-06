@@ -42,7 +42,7 @@ class GitRebaseTask extends BaseStrategyTaskAbstract implements IsReleaseAware
             $deployToDirectory = rtrim($this->getConfig()->deployment('to'), '/')
                 . '/' . $releasesDirectory
                 . '/' . $this->getConfig()->getReleaseId();
-            $this->runCommandRemote('mkdir -p ' . $deployToDirectory . '/' . $this->getConfig()->getReleaseId());
+            $this->runCommandRemote('mkdir -p ' . $deployToDirectory);
         }
 
         $branch = $this->getParameter('branch', 'master');
