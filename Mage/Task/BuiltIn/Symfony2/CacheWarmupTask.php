@@ -37,9 +37,11 @@ class CacheWarmupTask extends SymfonyAbstractTask
         // Options
         $env = $this->getParameter('env', 'dev');
 
-        $command = $this->getAppPath() . ' cache:warmup --env=' . $env;
+        $command = 'nice ' . $this->getAppPath();
+        $command .= ' cache:warmup --env=' . $env;
         $result = $this->runCommand($command);
 
         return $result;
     }
 }
+
