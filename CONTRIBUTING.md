@@ -90,6 +90,31 @@ bin/phpunit --coverate-html report
 ```
 where `report` is the directory where html report files shall be stored.
 Tests structure follow the same structure as production code with `Test` suffix in class and file name. All tests should go to `tests` directory in project root.  So if you've created a class `Mage\Tasks\BuilIn\NewTask` the testing class should be called `MageTest\Tasks\BuiltIn\NewTaskTest`. 
+To provide more strict tests, point what the method actually test and omit testing some classes indirectly, remember to add annotations to your tests:
+
+* **`@coversDefaultClass` class annotations**
+This prevent to to write full class name each time you write `@covers` for test method (see next point)
+```php
+
+/**
+ * @coversDefaultClass Mage\Console\Colors
+ */
+class ColorsTest extends PHPUnit_Framework_TestCase
+{
+```
+* **`@covers` methods annotations**
+```php
+/**
+ * @covers ::add
+ */
+public function testAddOnePlusOne()
+{
+	// ...
+}
+```
+**Note:** If you omit `coversDefaultClass` for test class, you need to write full class name in `@covers` annotation.
+
+**Test class musn't test more than one class and any other classes than class being actually tested**
 
 ## Configuration
 Magallanes configuration is kept in YAML files. Please follow those rules while adding or changing the configuration:
