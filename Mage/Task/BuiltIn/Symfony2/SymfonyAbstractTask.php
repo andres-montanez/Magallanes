@@ -19,6 +19,9 @@ use Mage\Task\AbstractTask;
  */
 abstract class SymfonyAbstractTask extends AbstractTask
 {
+    /**
+     * @return string
+     */
     protected function getAppPath()
     {
         if ($this->getConfig()->general('symfony_version', '2') == '3') {
@@ -26,7 +29,13 @@ abstract class SymfonyAbstractTask extends AbstractTask
         } else {
             $defaultAppPath = 'app/console';
         }
-
-        return $this->getConfig()->general('symfony_app_path', $defaultAppPath);
+        
+        $path = '';
+        $niceness = intval($this->getParameter('niceness', 0));
+        if (!empty($niceness)) {
+            $path .= 'nice -n ' . $niceness . ' ';
+        }
+        $path .= $this->getConfig()->general('symfony_app_path', $defaultAppPath);
+        return $path;
     }
 }
