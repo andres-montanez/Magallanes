@@ -4,16 +4,12 @@ namespace MageTest\Command;
 
 use Mage\Command\Factory;
 use PHPUnit_Framework_TestCase;
-use PHPUnit_Framework_Constraint_IsInstanceOf;
-
-require_once(__DIR__ . '/../../Dummies/Command/MyCommand.php');
-require_once(__DIR__ . '/../../Dummies/Command/MyInconsistentCommand.php');
 
 /**
  * @group Mage_Command
  * @group Mage_Command_Factory
  *
- * @todo test case for naming convention
+ * @group issue-167
  */
 class FactoryTest extends PHPUnit_Framework_TestCase
 {
@@ -40,6 +36,16 @@ class FactoryTest extends PHPUnit_Framework_TestCase
 
     public function testGetCustomCommand()
     {
+        $this->getMockBuilder('Mage\\Command\\AbstractCommand')
+            ->setMockClassName('MyCommand')
+            ->getMock();
+
+        /**
+         * current workaround
+         * @see https://github.com/sebastianbergmann/phpunit-mock-objects/issues/134
+         */
+        class_alias('MyCommand', 'Command\\MyCommand');
+
         $command = Factory::get('my-command', $this->config);
         $this->assertInstanceOf('Command\\MyCommand', $command);
     }
@@ -50,6 +56,8 @@ class FactoryTest extends PHPUnit_Framework_TestCase
      */
     public function testGetInconsistencyException()
     {
+        $this->getMock('Command\\MyInconsistentCommand');
+
         $command = Factory::get('my-inconsistent-command', $this->config);
     }
 }
