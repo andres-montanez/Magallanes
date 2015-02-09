@@ -392,6 +392,16 @@ class Config
     }
 
     /**
+     * Get the ConnectTimeout option
+     *
+     * @return string
+     */
+    public function getConnectTimeoutOption()
+    {
+        return $this->environmentConfig('connect-timeout') ? ('-o ConnectTimeout=' . $this->environmentConfig('connect-timeout') . ' ') : '';
+    }
+
+    /**
      * Get the current Host
      *
      * @return string

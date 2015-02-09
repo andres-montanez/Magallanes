@@ -7,17 +7,21 @@ use PHPUnit_Framework_TestCase;
 
 /**
  * @group Mage_Console_Colors
+ * @coversDefaultClass Mage\Console\Colors
  */
 class ColorsTest extends PHPUnit_Framework_TestCase
 {
+    private $noColorParameter = "no-color";
     /**
      * @group 159
+     * @covers ::color
      */
     public function testColor()
     {
         $config = $this->getMock('Mage\Config');
         $config->expects($this->once())
             ->method('getParameter')
+            ->with($this->noColorParameter)
             ->will($this->returnValue(false));
 
         $string = '<green>FooBar</green>';
@@ -31,12 +35,14 @@ class ColorsTest extends PHPUnit_Framework_TestCase
 
     /**
      * @group 159
+     * @covers ::color
      */
     public function testColorNoColor()
     {
         $config = $this->getMock('Mage\Config');
         $config->expects($this->once())
             ->method('getParameter')
+            ->with($this->noColorParameter)
             ->will($this->returnValue(true));
 
         $string = '<black>FooBar</black>';
@@ -50,12 +56,14 @@ class ColorsTest extends PHPUnit_Framework_TestCase
 
     /**
      * @group 159
+     * @covers ::color
      */
     public function testColorUnknownColorName()
     {
         $config = $this->getMock('Mage\Config');
         $config->expects($this->once())
             ->method('getParameter')
+            ->with($this->noColorParameter)
             ->will($this->returnValue(false));
 
         $string = '<foo>FooBar</foo>';
