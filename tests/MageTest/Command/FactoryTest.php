@@ -20,6 +20,9 @@ class FactoryTest extends PHPUnit_Framework_TestCase
         $this->config = $this->getMock('Mage\Config');
     }
 
+    /**
+     * @covers Factory::get
+     */
     public function testGet()
     {
         $command = Factory::get('add', $this->config);
@@ -28,12 +31,16 @@ class FactoryTest extends PHPUnit_Framework_TestCase
 
     /**
      * @expectedException \Exception
+     * @covers Factory::get
      */
     public function testGetClassNotFoundException()
     {
         $command = Factory::get('commanddoesntexist', $this->config);
     }
 
+    /**
+     * @covers Factory::get
+     */
     public function testGetCustomCommand()
     {
         $this->getMockBuilder('Mage\\Command\\AbstractCommand')
@@ -42,7 +49,7 @@ class FactoryTest extends PHPUnit_Framework_TestCase
 
         /**
          * current workaround
-         * @see https://github.com/sebastianbergmann/phpunit-mock-objects/issues/134
+         * @link https://github.com/sebastianbergmann/phpunit-mock-objects/issues/134
          */
         class_alias('MyCommand', 'Command\\MyCommand');
 
@@ -53,6 +60,7 @@ class FactoryTest extends PHPUnit_Framework_TestCase
     /**
      * @expectedException \Exception
      * @expectedExceptionMessage The command MyInconsistentCommand must be an instance of Mage\Command\AbstractCommand.
+     * @covers Factory::get
      */
     public function testGetInconsistencyException()
     {
