@@ -8,3 +8,10 @@ php:
 
 install:
   - composer install --prefer-source
+
+script:
+  - mkdir -p build/logs
+  - bin/phpunit --coverage-clover build/logs/coverage.xml
+
+after_script:
+  - bin/coveralls -v
