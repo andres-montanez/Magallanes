@@ -2,6 +2,7 @@
 
 namespace MageTest\Command;
 use Mage\Command\AbstractCommand;
+use MageTest\TestHelper\BaseTest;
 use PHPUnit_Framework_MockObject_MockObject;
 
 /**
@@ -9,7 +10,7 @@ use PHPUnit_Framework_MockObject_MockObject;
  * @package MageTest\Command
  * @coversDefaultClass Mage\Command\AbstractCommand
  */
-class AbstractCommandTest extends \PHPUnit_Framework_TestCase
+class AbstractCommandTest extends BaseTest
 {
     /**
      * @var AbstractCommand|PHPUnit_Framework_MockObject_MockObject
@@ -32,11 +33,8 @@ class AbstractCommandTest extends \PHPUnit_Framework_TestCase
         $configMock = $this->getMock('Mage\Config');
         $this->abstractCommand->setConfig($configMock);
 
-        $configProperty = new \ReflectionProperty($this->abstractCommand, 'config');
-        $configProperty->setAccessible(true);
-        $configValue = $configProperty->getValue($this->abstractCommand);
-
-        $this->assertEquals($configMock, $configValue);
+        $actual = $this->getPropertyValue($this->abstractCommand, 'config');
+        $this->assertEquals($configMock, $actual);
     }
 
     /**
@@ -45,10 +43,7 @@ class AbstractCommandTest extends \PHPUnit_Framework_TestCase
     public function testGetConfig()
     {
         $configMock = $this->getMock('Mage\Config');
-
-        $configProperty = new \ReflectionProperty($this->abstractCommand, 'config');
-        $configProperty->setAccessible(true);
-        $configProperty->setValue($this->abstractCommand, $configMock);
+        $this->setPropertyValue($this->abstractCommand, 'config', $configMock);
 
         $actual = $this->abstractCommand->getConfig();
         $this->assertEquals($configMock, $actual);
