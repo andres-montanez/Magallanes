@@ -8,6 +8,7 @@ use PHPUnit_Framework_MockObject_MockObject;
 /**
  * Class AbstractCommandTest
  * @package MageTest\Command
+ * @author Jakub Turek <ja@kubaturek.pl>
  * @coversDefaultClass Mage\Command\AbstractCommand
  */
 class AbstractCommandTest extends BaseTest
