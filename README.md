@@ -16,7 +16,7 @@ Simply add the following dependency to your project’s composer.json file:
 ```js
     "require-dev": {
         // ...
-        "andres-montanez/magallanes": "~1.0.1"
+        "andres-montanez/magallanes": "~1.0.3"
         // ...
     }
 ```
@@ -35,7 +35,7 @@ $ bin/mage version
 ### System-wide installation with composer ###
 
 ```bash
-$ composer global require "andres-montanez/magallanes=~1.0.1"
+$ composer global require "andres-montanez/magallanes=~1.0.3"
 ```
 
 Make sure you have ~/.composer/vendor/bin/ in your path.
