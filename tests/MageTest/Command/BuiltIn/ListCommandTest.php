@@ -76,56 +76,56 @@ class ListCommandTest extends BaseTest
         $configProperty->setValue($configMock);
     }
 
-    /**
-     * @covers ::run
-     * @covers ::listEnvironments
-     */
-    public function testListEnvironment()
+    public function listEnvironmentsProvider()
     {
-        $expectedOutput = <<<OUTPUT
-\tThese are your configured environments:
-\t\t* local
-\t\t* production
-\t\t* rc
-\t\n
-OUTPUT;
-        $this->expectOutputString($expectedOutput);
-
-        $environmentsFiles = [
-            'rc.yml',
-            'production.yml',
-            'local.yml'
-        ];
-
-        $this->scandirValueObj->setValue($environmentsFiles);
-
-        $configMock = $this->getMock('Mage\Config');
-        $configMock->expects($this->once())
-            ->method('getArgument')
-            ->with(1)
-            ->willReturn('environments');
-        $this->listCommand->setConfig($configMock);
-
-        $this->listCommand->run();
+        return array(
+            'normal' => array(
+                'environmentFiles' => array(
+                    'rc.yml',
+                    'production.yml',
+                    'local.yml'
+                ),
+                'expectedOutput' => "\tThese are your configured environments:\n"
+                    . "\t\t* local\n"
+                    . "\t\t* production\n"
+                    . "\t\t* rc\n"
+                    . "\t\n"
+            ),
+            'with_missing_yml_files' => array(
+                'environmentFiles' => array(
+                    'rc',
+                    'production.yml'
+                ),
+                'expectedOutput' => "\tThese are your configured environments:\n"
+                    . "\t\t* production\n"
+                    . "\t\n"
+            ),
+            'with_no_yml_configs' => array(
+                'environmentFiles' => array(
+                    'rc.ini',
+                    'production.txt'
+                ),
+                'expectedOutput' => "\tYou don't have any environment configured.\n\n"
+            ),
+            'with_no_configs' => array(
+                'environmentFiles' => array(),
+                'expectedOutput' => "\tYou don't have any environment configured.\n\n"
+            )
+        );
     }
 
     /**
      * @covers ::run
      * @covers ::listEnvironments
+     * @dataProvider listEnvironmentsProvider
      */
-    public function testListEnvironmentWithNoEnvironments()
+    public function testListEnvironment($environmentFiles, $expectedOutput)
     {
-        $expectedOutput = "\tYou don't have any environment configured.\n\n";
         $this->expectOutputString($expectedOutput);
 
-        $this->scandirValueObj->setValue([]);
+        $this->scandirValueObj->setValue($environmentFiles);
+        $this->mockInputArgument('environments');
 
-        $configMock = $this->getMock('Mage\Config');
-        $configMock->expects($this->once())
-            ->method('getArgument')
-            ->with(1)
-            ->willReturn('environments');
-        $this->listCommand->setConfig($configMock);
         $this->listCommand->run();
     }
 
@@ -137,12 +137,19 @@ OUTPUT;
         $expectedOutput = "\tThe Type of Elements to List is needed.\n\n";
         $this->expectOutputString($expectedOutput);
 
+        $this->mockInputArgument('abc');
+
+        $this->listCommand->run();
+    }
+
+    private function mockInputArgument($argumentValue)
+    {
         $configMock = $this->getMock('Mage\Config');
         $configMock->expects($this->once())
             ->method('getArgument')
             ->with(1)
-            ->willReturn('abc');
+            ->willReturn($argumentValue);
+
         $this->listCommand->setConfig($configMock);
-        $this->listCommand->run();
     }
 }
