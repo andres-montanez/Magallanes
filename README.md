@@ -52,7 +52,6 @@ Like this:
 $ mage deploy to:production
 ```
 
-
 ### What's this sorcery?! ###
 Easy boy. It's not sorcery, just some *technomagick*!
 
@@ -69,3 +68,5 @@ Enjoy your magic trip with **Magallanes** to the land of the easily deployable a
 
 ### "develop" branch ###
 Please, all pull request now must be on the develop branch. Thanks!
+
+[![SensioLabsInsight](https://insight.sensiolabs.com/projects/ed0de53a-a12e-459b-9464-34def5907b56/mini.png)](https://insight.sensiolabs.com/projects/ed0de53a-a12e-459b-9464-34def5907b56)
