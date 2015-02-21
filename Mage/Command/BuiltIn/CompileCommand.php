@@ -28,7 +28,7 @@ class CompileCommand extends AbstractCommand
 
     public function __construct()
     {
-        $this->compiler = new Compiler();
+        $this->setCompiler(new Compiler());
     }
 
     public function setCompiler(Compiler $compiler)
@@ -46,8 +46,7 @@ class CompileCommand extends AbstractCommand
             return 200;
         }
 
-        $compiler = new Compiler;
-        $compiler->compile();
+        $this->compiler->compile();
 
         Console::output('<light_purple>mage.phar</light_purple> compiled <light_green>successfully</light_green>', 0, 2);
 
