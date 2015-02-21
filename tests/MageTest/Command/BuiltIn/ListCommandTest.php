@@ -89,7 +89,8 @@ class ListCommandTest extends BaseTest
                     . "\t\t* local\n"
                     . "\t\t* production\n"
                     . "\t\t* rc\n"
-                    . "\t\n"
+                    . "\t\n",
+                'expectedExitCode' => 0
             ),
             'with_missing_yml_files' => array(
                 'environmentFiles' => array(
@@ -98,18 +99,21 @@ class ListCommandTest extends BaseTest
                 ),
                 'expectedOutput' => "\tThese are your configured environments:\n"
                     . "\t\t* production\n"
-                    . "\t\n"
+                    . "\t\n",
+                'expectedExitCode' => 0
             ),
             'with_no_yml_configs' => array(
                 'environmentFiles' => array(
                     'rc.ini',
                     'production.txt'
                 ),
-                'expectedOutput' => "\tYou don't have any environment configured.\n\n"
+                'expectedOutput' => "\tYou don't have any environment configured.\n\n",
+                'expectedExitCode' => 220
             ),
             'with_no_configs' => array(
                 'environmentFiles' => array(),
-                'expectedOutput' => "\tYou don't have any environment configured.\n\n"
+                'expectedOutput' => "\tYou don't have any environment configured.\n\n",
+                'expectedExitCode' => 220
             )
         );
     }
@@ -119,14 +123,15 @@ class ListCommandTest extends BaseTest
      * @covers ::listEnvironments
      * @dataProvider listEnvironmentsProvider
      */
-    public function testListEnvironment($environmentFiles, $expectedOutput)
+    public function testListEnvironment($environmentFiles, $expectedOutput, $expectedExitCode)
     {
         $this->expectOutputString($expectedOutput);
 
         $this->scandirValueObj->setValue($environmentFiles);
         $this->mockInputArgument('environments');
 
-        $this->listCommand->run();
+        $actualExitCode = $this->listCommand->run();
+        $this->assertEquals($expectedExitCode, $actualExitCode);
     }
 
     /**
@@ -139,7 +144,9 @@ class ListCommandTest extends BaseTest
 
         $this->mockInputArgument('abc');
 
-        $this->listCommand->run();
+        $expectedExitCode = 221;
+        $actualExitCode = $this->listCommand->run();
+        $this->assertEquals($expectedExitCode, $actualExitCode);
     }
 
     private function mockInputArgument($argumentValue)
