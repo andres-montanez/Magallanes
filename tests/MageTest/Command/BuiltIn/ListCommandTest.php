@@ -51,29 +51,8 @@ class ListCommandTest extends BaseTest
             ->build();
         $this->scandirMock->disable();
         $this->scandirMock->enable();
-    }
 
-    /**
-     * Disable logging to log file and turn off colors
-     *
-     * @before
-     */
-    public function setUpConsoleStatics()
-    {
-        $consoleReflection = new \ReflectionClass('Mage\Console');
-        $logEnableProperty = $consoleReflection->getProperty('logEnabled');
-        $logEnableProperty->setAccessible(true);
-        $logEnableProperty->setValue(false);
-
-        $configMock = $this->getMock('Mage\Config');
-        $configMock->expects($this->atLeastOnce())
-            ->method('getParameter')
-            ->with('no-color')
-            ->willReturn(true);
-
-        $configProperty = $consoleReflection->getProperty('config');
-        $configProperty->setAccessible(true);
-        $configProperty->setValue($configMock);
+        $this->setUpConsoleStatics();
     }
 
     public function listEnvironmentsProvider()

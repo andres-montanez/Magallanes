@@ -42,4 +42,27 @@ abstract class BaseTest extends \PHPUnit_Framework_TestCase
         $configProperty->setAccessible(true);
         $configProperty->setValue($object, $value);
     }
+
+    /**
+     * Disable logging to log file and turn off colors
+     *
+     * @before
+     */
+    protected function setUpConsoleStatics()
+    {
+        $consoleReflection = new \ReflectionClass('Mage\Console');
+        $logEnableProperty = $consoleReflection->getProperty('logEnabled');
+        $logEnableProperty->setAccessible(true);
+        $logEnableProperty->setValue(false);
+
+        $configMock = $this->getMock('Mage\Config');
+        $configMock->expects($this->any())
+            ->method('getParameter')
+            ->with('no-color')
+            ->willReturn(true);
+
+        $configProperty = $consoleReflection->getProperty('config');
+        $configProperty->setAccessible(true);
+        $configProperty->setValue($configMock);
+    }
 }
