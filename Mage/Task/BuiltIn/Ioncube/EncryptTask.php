@@ -33,7 +33,6 @@ use Mage\Task\ErrorWithMessageException;
  *
  * Example enviroment.yaml file at end
  *
- * @todo add support for creating license files.
  *
  * (c) ActWeb 2013
  * (c) Matt Lowe (marl.scot.1@googlemail.com)
@@ -202,7 +201,7 @@ class EncryptTask extends AbstractTask
         /*
          * Get all our IonCube config options
          */
-        $this->_getAllIonCubeConfigs();
+        $this->getAllIonCubeConfigs();
         /*
          * get the source code location
          */
@@ -279,7 +278,7 @@ class EncryptTask extends AbstractTask
      *
      * @return void
      */
-    private function _getAllIonCubeConfigs()
+    private function getAllIonCubeConfigs()
     {
 
         /*
@@ -553,7 +552,6 @@ class EncryptTask extends AbstractTask
          * D - Default options as stored in script
          *
          * more options could be added to make this a bit more flexable
-         * @todo I'm sure this could be combined into a loop to make it easier and shorter
          *
          */
         $s = array();

@@ -201,6 +201,7 @@ abstract class AbstractTask
 
         $localCommand = 'ssh ' . $this->getConfig()->getHostIdentityFileOption() . $needs_tty . ' -p ' . $this->getConfig()->getHostPort() . ' '
             . '-q -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no '
+            . $this->getConfig()->getConnectTimeoutOption()
             . $this->getConfig()->deployment('user') . '@' . $this->getConfig()->getHostName();
 
         $remoteCommand = str_replace('"', '\"', $command);

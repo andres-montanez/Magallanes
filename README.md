@@ -1,5 +1,7 @@
 # Magallanes #
 
+[![SensioLabsInsight](https://insight.sensiolabs.com/projects/ed0de53a-a12e-459b-9464-34def5907b56/mini.png)](https://insight.sensiolabs.com/projects/ed0de53a-a12e-459b-9464-34def5907b56)
+
 ### What's Magallanes? ###
 Magallanes is a deployment tool for PHP applications; it's quite simple to use and manage.
 It will get your application to a safe harbor.
@@ -16,7 +18,7 @@ Simply add the following dependency to your project’s composer.json file:
 ```js
     "require-dev": {
         // ...
-        "andres-montanez/magallanes": "~1.0.3"
+        "andres-montanez/magallanes": "~1.0.*"
         // ...
     }
 ```
@@ -35,7 +37,7 @@ $ bin/mage version
 ### System-wide installation with composer ###
 
 ```bash
-$ composer global require "andres-montanez/magallanes=~1.0.3"
+$ composer global require "andres-montanez/magallanes=~1.0.*"
 ```
 
 Make sure you have ~/.composer/vendor/bin/ in your path.
@@ -51,7 +53,6 @@ Like this:
 ```
 $ mage deploy to:production
 ```
-
 
 ### What's this sorcery?! ###
 Easy boy. It's not sorcery, just some *technomagick*!
@@ -69,3 +70,4 @@ Enjoy your magic trip with **Magallanes** to the land of the easily deployable a
 
 ### "develop" branch ###
 Please, all pull request now must be on the develop branch. Thanks!
+

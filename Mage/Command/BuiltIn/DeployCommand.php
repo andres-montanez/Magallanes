@@ -60,6 +60,15 @@ class DeployCommand extends AbstractCommand implements RequiresEnvironment
     const IN_PROGRESS = 'in_progress';
 
     /**
+     * Stage where possible throw Rollback Exception
+     * @var array
+     */
+    public $acceptedStagesToRollback = array(
+        AbstractTask::STAGE_POST_RELEASE,
+        AbstractTask::STAGE_POST_DEPLOY
+    );
+
+    /**
      * Time the Deployment has Started
      * @var integer
      */
@@ -434,22 +443,46 @@ class DeployCommand extends AbstractCommand implements RequiresEnvironment
         }
     }
 
-    protected function runRollbackTask(){
+    protected function runRollbackTask(AbstractTask $task){
         $this->getConfig()->reload();
         $hosts = $this->getConfig()->getHosts();
 
-        if (count($hosts) == 0) {
+        Console::output("",1,2);
+        Console::output("Starting the <bold>rollback</bold>",1,1);
+
+        if(!in_array($task->getStage(), $this->acceptedStagesToRollback ) ) {
+            $stagesString = implode(', ',$this->acceptedStagesToRollback);
+            Console::output("<light_purple>Warning!</light_purple> <bold>Rollback during deployment can be called only at the stages: $stagesString <bold>",1);
+            Console::output("<bold>Rollback:<bold> <red>ABORTING</red>",1,3);
+
+        } elseif (count($hosts) == 0) {
             Console::output('<light_purple>Warning!</light_purple> <bold>No hosts defined, unable to get releases.</bold>', 1, 3);
 
         } else {
             $result = true;
-            foreach ($hosts as $host) {
-                $this->getConfig()->setHost($host);
+            foreach ($hosts as $hostKey => $host) {
+                $hostConfig = null;
+                if (is_array($host)) {
+                    $hostConfig = $host;
+                    $host = $hostKey;
+                }
 
+                // Set Host and Host Specific Config
+                $this->getConfig()->setHost($host);
+                $this->getConfig()->setHostConfig($hostConfig);
                 $this->getConfig()->setReleaseId(-1);
-                $task = Factory::get('releases/rollback', $this->getConfig());
+
+                $task = Factory::get(array(
+                        'name'=>'releases/rollback',
+                        'parameters' => array('inDeploy'=>true)
+                    ),
+                    $this->getConfig(),
+                    false,
+                    $task->getStage()
+                );
                 $task->init();
                 $result = $task->run() && $result;
+
             }
             return $result;
         }
@@ -490,8 +523,8 @@ class DeployCommand extends AbstractCommand implements RequiresEnvironment
                     $result = false;
                 }
             } catch (RollbackException $e) {
-                Console::output('<red>FAIL, Rollback started</red> [Message: ' . $e->getMessage() . ']', 0);
-                $this->runRollbackTask();
+                Console::output('<red>FAIL, Rollback catched</red> [Message: ' . $e->getMessage() . ']', 0);
+                $this->runRollbackTask($task);
                 $result = false;
 
             } catch (ErrorWithMessageException $e) {
