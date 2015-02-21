@@ -22,6 +22,21 @@ use Mage\Compiler;
 class CompileCommand extends AbstractCommand
 {
     /**
+     * @var Compiler
+     */
+    private $compiler;
+
+    public function __construct()
+    {
+        $this->compiler = new Compiler();
+    }
+
+    public function setCompiler(Compiler $compiler)
+    {
+        $this->compiler = $compiler;
+    }
+
+    /**
      * @see \Mage\Compile::compile()
      */
     public function run()
