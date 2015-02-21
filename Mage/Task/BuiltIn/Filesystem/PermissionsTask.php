@@ -159,7 +159,7 @@ class PermissionsTask extends AbstractTask
         );
 
         foreach($options as $option => $apply) {
-            if ($apply == true) {
+            if ($apply === true) {
                 $optionsForCmd .= $option;
             }
         }
@@ -192,7 +192,7 @@ class PermissionsTask extends AbstractTask
      */
     protected function setPaths(array $paths)
     {
-        if ($this->checkPathsExist == true) {
+        if ($this->checkPathsExist === true) {
             $commands = array();
             foreach ($paths as $path) {
                 $commands[] = '(([ -f ' . $path . ' ]) || ([ -d ' . $path . ' ]))';
@@ -241,8 +241,6 @@ class PermissionsTask extends AbstractTask
     /**
      * Set owner.
      *
-     * @todo check existance of $owner on host, might be different ways depending on OS.
-     *
      * @param string $owner
      * @return PermissionsTask
      */
@@ -264,8 +262,6 @@ class PermissionsTask extends AbstractTask
     /**
      * Set group.
      *
-     * @todo check existance of $group on host, might be different ways depending on OS.
-     *
      * @param string $group
      * @return PermissionsTask
      */
@@ -286,8 +282,6 @@ class PermissionsTask extends AbstractTask
 
     /**
      * Set rights.
-     *
-     * @todo check if $rights is in a correct format.
      *
      * @param string $rights
      * @return PermissionsTask
