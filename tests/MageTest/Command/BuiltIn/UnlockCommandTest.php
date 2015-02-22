@@ -72,7 +72,6 @@ class UnlockCommandTest extends BaseTest
         $unlinkMock->disable();
         $getCwdMock->disable();
 
-
         $fileExistsMock->enable();
         $unlinkMock->enable();
         $getCwdMock->enable();

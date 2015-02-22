@@ -27,11 +27,6 @@ class ListCommandTest extends BaseTest
     private $listCommand;
 
     /**
-     * @var Mock
-     */
-    private $scandirMock;
-
-    /**
      * @var FixedValueFunction
      */
     private $scandirValueObj;
@@ -45,12 +40,12 @@ class ListCommandTest extends BaseTest
 
         $this->scandirValueObj = new FixedValueFunction();
         $mockBuilder = new MockBuilder();
-        $this->scandirMock = $mockBuilder->setNamespace('Mage\Command\BuiltIn')
+        $scandirMock = $mockBuilder->setNamespace('Mage\Command\BuiltIn')
             ->setName("scandir")
             ->setCallableProvider($this->scandirValueObj)
             ->build();
-        $this->scandirMock->disable();
-        $this->scandirMock->enable();
+        $scandirMock->disable();
+        $scandirMock->enable();
 
         $this->setUpConsoleStatics();
     }
@@ -128,6 +123,11 @@ class ListCommandTest extends BaseTest
         $this->assertEquals($expectedExitCode, $actualExitCode);
     }
 
+    /**
+     * Stub Config::getArgument to return desired value
+     *
+     * @param String $argumentValue Input argument
+     */
     private function mockInputArgument($argumentValue)
     {
         $configMock = $this->getMock('Mage\Config');

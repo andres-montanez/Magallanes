@@ -32,12 +32,6 @@ class CompileCommandTest extends BaseTest
     private $iniGetValue;
 
     /**
-     * @var Mock
-     */
-    private $iniGetMock;
-
-
-    /**
      * @before
      */
     public function before()
@@ -46,12 +40,12 @@ class CompileCommandTest extends BaseTest
 
         $this->iniGetValue = new FixedValueFunction();
         $mockBuilder = new MockBuilder();
-        $this->iniGetMock = $mockBuilder->setNamespace('Mage\Command\BuiltIn')
+        $iniGetMock = $mockBuilder->setNamespace('Mage\Command\BuiltIn')
             ->setName("ini_get")
             ->setCallableProvider($this->iniGetValue)
             ->build();
-        $this->iniGetMock->disable();
-        $this->iniGetMock->enable();
+        $iniGetMock->disable();
+        $iniGetMock->enable();
 
         $this->setUpConsoleStatics();
     }
