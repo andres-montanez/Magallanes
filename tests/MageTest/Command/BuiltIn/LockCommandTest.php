@@ -43,6 +43,12 @@ class LockCommandTest extends BaseTest
     public function before()
     {
         self::$fgetsCount = 0;
+        self::$mockName = '';
+        self::$mockEmail = '';
+        self::$mockDesc = '';
+        self::$filePutContentsResult = '';
+        self::$filePutContentsFile = '';
+
         $this->lockCommand = new LockCommand();
 
         $mockBuilder = new MockBuilder();
