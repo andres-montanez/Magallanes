@@ -5,12 +5,11 @@ namespace MageTest\Task;
 use Mage\Task\Factory;
 use PHPUnit_Framework_TestCase;
 
-require_once(__DIR__ . '/../../Dummies/Task/MyTask.php');
-require_once(__DIR__ . '/../../Dummies/Task/MyInconsistentTask.php');
-
 /**
  * @group MageTest_Task
  * @group MageTest_Task_Factory
+ *
+ * @group issue-176
  */
 class FactoryTest extends PHPUnit_Framework_TestCase
 {
@@ -18,25 +17,47 @@ class FactoryTest extends PHPUnit_Framework_TestCase
 
     protected function setUp()
     {
-        $this->config = $this->getMock('Mage\Config');
+        $this->config = $this->getMock('Mage\\Config');
     }
 
-    /**
-     * @dataProvider taskDataProvider
-     */
-    public function testGet($taskData)
+    public function testGet()
     {
+        $task = Factory::get('composer/install', $this->config);
+        $this->assertInstanceOf('\\Mage\\Task\\BuiltIn\\Composer\\InstallTask', $task);
+    }
+
+    public function testGetTaskDataIsArray()
+    {
+        $taskData = array(
+            'name' => 'composer/install',
+            'parameters' => array(),
+        );
+
         $task = Factory::get($taskData, $this->config);
-        $this->assertInstanceOf('\\Mage\\Task\\AbstractTask', $task);
+        $this->assertInstanceOf('\\Mage\\Task\\BuiltIn\\Composer\\InstallTask', $task);
     }
 
-    /**
-     * @dataProvider taskDataProvider
-     */
-    public function testGetWithOptionalParams($taskData)
+    public function testGetCustomTask()
     {
-        $task = Factory::get($taskData, $this->config, true, 'production');
-        $this->assertInstanceOf('\\Mage\\Task\\AbstractTask', $task);
+        $this->getMockBuilder('Mage\\Task\\AbstractTask')
+            ->disableOriginalConstructor()
+            ->setMockClassName('MyTask')
+            ->getMock();
+
+        /**
+         * current workaround
+         * @link https://github.com/sebastianbergmann/phpunit-mock-objects/issues/134
+         */
+        class_alias('MyTask', 'Task\\MyTask');
+
+        $task = Factory::get('my-task', $this->config);
+        $this->assertInstanceOf('Task\\MyTask', $task);
+    }
+
+    public function testGetWithOptionalParams()
+    {
+        $task = Factory::get('composer/install', $this->config, true, 'production');
+        $this->assertInstanceOf('\\Mage\\Task\\BuiltIn\\Composer\\InstallTask', $task);
     }
 
     /**
@@ -45,6 +66,7 @@ class FactoryTest extends PHPUnit_Framework_TestCase
      */
     public function testGetInconsistentException()
     {
+        $this->getMock('Task\\MyInconsistentTask');
         Factory::get('my-inconsistent-task', $this->config);
     }
 
@@ -56,37 +78,4 @@ class FactoryTest extends PHPUnit_Framework_TestCase
     {
         Factory::get('unknowntask', $this->config);
     }
-
-    /**
-     * Only build in tasks contains a slash
-     *
-     * @return array
-     */
-    public function taskDataProvider()
-    {
-        return array(
-            array(
-                array(
-                    'name' => 'my-task',
-                    'parameters' => array(),
-                )
-            ),
-            array('my-task'),
-            array(
-                array(
-                    'name' => 'composer/install',
-                    'parameters' => array(),
-                )
-            ),
-            array('composer/install'),
-            array(
-                array(
-                    'name' => 'magento/clear-cache',
-                    'parameters' => array(),
-                )
-            ),
-            array('magento/clear-cache'),
-        );
-    }
 }
- 
