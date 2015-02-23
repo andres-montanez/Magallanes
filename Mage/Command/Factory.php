@@ -43,14 +43,17 @@ class Factory
             // try a custom command
             $className = 'Command\\' . $commandName;
 
+            // TODO use a custom exception
             if (!class_exists($className)) {
                 throw new Exception('Command "' . $commandName . '" not found.');
             }
         }
 
         /** @var AbstractCommand $instance */
+        // TODO dependencies like $config should be injected into constructor
         $instance = new $className;
         if (! $instance instanceOf AbstractCommand) {
+            // TODO use a custom exception
             throw new Exception('The command ' . $commandName . ' must be an instance of Mage\Command\AbstractCommand.');
         }
 

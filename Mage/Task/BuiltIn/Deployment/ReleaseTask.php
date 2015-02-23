@@ -74,20 +74,21 @@ class ReleaseTask extends AbstractTask implements IsReleaseAware, SkipOnOverride
                 }
             }
 
-            // Remove symlink if exists; create new symlink and change owners
-            $command = 'rm -f ' . $symlink
-                . ' ; '
-                . 'ln -sf ' . $currentCopy . ' ' . $symlink;
-
-            if ($resultFetch && $userGroup != '') {
-                $command .= ' && '
-                    . 'chown -h ' . $userGroup . ' ' . $symlink
+            if ($resultFetch && $userGroup != '') {  
+                $command = 'chown -h ' . $userGroup . ' ' . $symlink
                     . ' && '
                     . 'chown -R ' . $userGroup . ' ' . $currentCopy
                     . ' && '
                     . 'chown ' . $userGroup . ' ' . $releasesDirectory;
+                $result = $this->runCommandRemote($command);
+                if (!$result) {
+                    return $result;
+                }
             }
 
+            // Remove symlink if exists; create new symlink and change owner
+            $tmplink = $currentCopy . '.tmp';
+            $command = "ln -sfn {$currentCopy} {$tmplink} && mv -fT {$tmplink} {$symlink}";
             $result = $this->runCommandRemote($command);
 
             if ($result) {

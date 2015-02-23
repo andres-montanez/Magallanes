@@ -14,9 +14,12 @@
     "autoload": {
         "psr-4": {
             "Mage\\": "./Mage",
-            "Task\\": ".mage/tasks",
-            "Command\\": ".mage/commands"
+            "Task\\": [".mage/tasks", "../../../.mage/tasks"],
+            "Command\\": [".mage/tasks", "../../../.mage/commands"]
         }
+    },
+    "config": {
+        "bin-dir": "bin"
     },
     "bin": [
         "bin/mage"

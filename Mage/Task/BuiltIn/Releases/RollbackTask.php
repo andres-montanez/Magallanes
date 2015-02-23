@@ -51,11 +51,13 @@ class RollbackTask extends AbstractTask implements IsReleaseAware
             $releasesDirectory = $this->getConfig()->release('directory', 'releases');
             $symlink = $this->getConfig()->release('symlink', 'current');
 
+            if (substr($symlink, 0, 1) == '/') {
+                $releasesDirectory = rtrim($this->getConfig()->deployment('to'), '/') . '/' . $releasesDirectory;
+            }
+
             $output = '';
             $result = $this->runCommandRemote('ls -1 ' . $releasesDirectory, $output);
             $releases = ($output == '') ? array() : explode(PHP_EOL, $output);
-
-            $inDeploy = $this->getParameter('inDeploy',false);
 
             if (count($releases) == 0) {
                 Console::output('Release are not available for <bold>' . $this->getConfig()->getHost() . '</bold> ... <red>FAIL</red>');
@@ -133,9 +135,11 @@ class RollbackTask extends AbstractTask implements IsReleaseAware
 
                     $userGroup = '';
                     $resultFetch = $this->runCommandRemote('ls -ld ' . $rollbackTo . ' | awk \'{print \$3":"\$4}\'', $userGroup);
-                    $command = 'rm -f ' . $symlink
+
+                    $tmplink = $rollbackTo . '.tmp';
+                    $command = 'ln -sfn ' . $currentCopy . ' ' . $tmplink
                              . ' && '
-                             . 'ln -sf ' . $rollbackTo . ' ' . $symlink;
+                             . 'mv -T ' . $tmplink . ' ' . $symlink;
 
                     if ($resultFetch) {
                         $command .= ' && chown -h ' . $userGroup . ' ' . $symlink;

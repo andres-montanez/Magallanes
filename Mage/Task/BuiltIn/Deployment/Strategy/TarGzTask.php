@@ -77,7 +77,10 @@ class TarGzTask extends BaseStrategyTaskAbstract implements IsReleaseAware
             $strategyFlags = '';
         }
 
-        $command = 'tar cfzh' . $strategyFlags . ' ' . $localTarGz . '.tar.gz ' . $excludeCmd . $excludeFromFileCmd . ' -C ' . $this->getConfig()->deployment('from') . ' .';
+        // remove h option only if dump-symlinks is allowed in the release config part
+        $dumpSymlinks = $this->getConfig()->release('dump-symlinks') ? '' : 'h';
+
+        $command = 'tar cfz'. $dumpSymlinks . $strategyFlags . ' ' . $localTarGz . '.tar.gz ' . $excludeCmd . $excludeFromFileCmd . ' -C ' . $this->getConfig()->deployment('from') . ' .';
         $result = $this->runCommandLocal($command);
 
         // Strategy Flags
@@ -89,7 +92,7 @@ class TarGzTask extends BaseStrategyTaskAbstract implements IsReleaseAware
         }
 
         // Copy Tar Gz  to Remote Host
-        $command = 'scp ' . $strategyFlags . ' ' . $this->getConfig()->getHostIdentityFileOption() . '-P ' . $this->getConfig()->getHostPort() . ' ' . $localTarGz . '.tar.gz '
+        $command = 'scp ' . $strategyFlags . ' ' . $this->getConfig()->getHostIdentityFileOption() . $this->getConfig()->getConnectTimeoutOption() . '-P ' . $this->getConfig()->getHostPort() . ' ' . $localTarGz . '.tar.gz '
                  . $this->getConfig()->deployment('user') . '@' . $this->getConfig()->getHostName() . ':' . $deployToDirectory;
         $result = $this->runCommandLocal($command) && $result;
 
@@ -106,11 +109,11 @@ class TarGzTask extends BaseStrategyTaskAbstract implements IsReleaseAware
         $result = $this->runCommandRemote($command) && $result;
 
         // Delete Tar Gz from Remote Host
-        $command = $this->getReleasesAwareCommand('rm ' . $remoteTarGz . '.tar.gz');
+        $command = $this->getReleasesAwareCommand('rm -f ' . $remoteTarGz . '.tar.gz');
         $result = $this->runCommandRemote($command) && $result;
 
         // Delete Tar Gz from Local
-        $command = 'rm ' . $localTarGz . ' ' . $localTarGz . '.tar.gz';
+        $command = 'rm -f ' . $localTarGz . ' ' . $localTarGz . '.tar.gz';
         $result = $this->runCommandLocal($command) && $result;
 
         return $result;

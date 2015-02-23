@@ -1,5 +1,7 @@
 vendor
 mage.phar
+bin
+!bin/mage
 
 # OS generated files # // GitHub Recommendation
 ######################
@@ -7,4 +9,7 @@ mage.phar
 ehthumbs.db
 Icon?
 Thumbs.db
+
+# IDE generated files
+.idea
 nbproject

@@ -211,7 +211,11 @@ class DeployCommand extends AbstractCommand implements RequiresEnvironment
         if (self::$failedTasks === 0) {
             $exitCode = 0;
         }
-
+        
+        if (self::$deployStatus === self::FAILED) {
+            $exitCode = 1;
+        }
+        
         return $exitCode;
     }
 
