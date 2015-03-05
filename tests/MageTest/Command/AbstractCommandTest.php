@@ -1,6 +1,7 @@
 <?php
 
 namespace MageTest\Command;
+
 use Mage\Command\AbstractCommand;
 use MageTest\TestHelper\BaseTest;
 use PHPUnit_Framework_MockObject_MockObject;
@@ -35,7 +36,7 @@ class AbstractCommandTest extends BaseTest
         $this->abstractCommand->setConfig($configMock);
 
         $actual = $this->getPropertyValue($this->abstractCommand, 'config');
-        $this->assertEquals($configMock, $actual);
+        $this->assertSame($configMock, $actual);
     }
 
     /**
@@ -47,6 +48,6 @@ class AbstractCommandTest extends BaseTest
         $this->setPropertyValue($this->abstractCommand, 'config', $configMock);
 
         $actual = $this->abstractCommand->getConfig();
-        $this->assertEquals($configMock, $actual);
+        $this->assertSame($configMock, $actual);
     }
 }
