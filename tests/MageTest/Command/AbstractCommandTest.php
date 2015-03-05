@@ -33,10 +33,7 @@ class AbstractCommandTest extends BaseTest
     public function testSetConfig()
     {
         $configMock = $this->getMock('Mage\Config');
-        $this->abstractCommand->setConfig($configMock);
-
-        $actual = $this->getPropertyValue($this->abstractCommand, 'config');
-        $this->assertSame($configMock, $actual);
+        $this->doTestSetter($this->abstractCommand, 'config', $configMock);
     }
 
     /**
@@ -45,9 +42,6 @@ class AbstractCommandTest extends BaseTest
     public function testGetConfig()
     {
         $configMock = $this->getMock('Mage\Config');
-        $this->setPropertyValue($this->abstractCommand, 'config', $configMock);
-
-        $actual = $this->abstractCommand->getConfig();
-        $this->assertSame($configMock, $actual);
+        $this->doTestGetter($this->abstractCommand, 'config', $configMock);
     }
 }

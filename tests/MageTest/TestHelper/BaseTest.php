@@ -65,4 +65,59 @@ abstract class BaseTest extends \PHPUnit_Framework_TestCase
         $configProperty->setAccessible(true);
         $configProperty->setValue($configMock);
     }
+
+    /**
+     * Tests getter of given object for given property name and example value
+     *
+     * @param object $object Object instance
+     * @param string $propertyName Property name
+     * @param mixed $propertyValue Value to set
+     */
+    final protected function doTestGetter($object, $propertyName, $propertyValue)
+    {
+        $this->setPropertyValue($object, $propertyName, $propertyValue);
+        $getterName = $this->getGetterName($propertyName);
+
+        $actual = $object->$getterName();
+
+        $this->assertSame($propertyValue, $actual);
+    }
+
+    /**
+     * Tests setter of given object for given property name and example value
+     *
+     * @param object $object Object instance
+     * @param string $propertyName Property name
+     * @param mixed $propertyValue Value to set
+     */
+    final protected function doTestSetter($object, $propertyName, $propertyValue)
+    {
+        $setterName = $this->getSetterName($propertyName);
+        $object->$setterName($propertyValue);
+
+        $actual = $this->getPropertyValue($object, $propertyName);
+        $this->assertSame($propertyValue, $actual);
+    }
+
+    /**
+     * Returns the conventional getter name for given property name
+     *
+     * @param string $propertyName Property name
+     * @return string Getter method name
+     */
+    final protected function getGetterName($propertyName)
+    {
+        return 'get' . ucfirst($propertyName);
+    }
+
+    /**
+     * Returns the conventional setter name for given property name
+     *
+     * @param string $propertyName Property name
+     * @return string Getter method name
+     */
+    final protected function getSetterName($propertyName)
+    {
+        return 'set' . ucfirst($propertyName);
+    }
 }

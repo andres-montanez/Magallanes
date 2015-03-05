@@ -31,7 +31,7 @@ abstract class AbstractCommand
      * @return integer exit code
      * @throws \Exception
      */
-    public abstract function run();
+    abstract public function run();
 
     /**
      * Sets the Loaded Configuration.
