@@ -17,7 +17,11 @@
         "psr-4": {
             "Mage\\": "./Mage",
             "Task\\": [".mage/tasks", "../../../.mage/tasks"],
-            "Command\\": [".mage/tasks", "../../../.mage/commands"],
+            "Command\\": [".mage/tasks", "../../../.mage/commands"]
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
             "MageTest\\": "./tests/MageTest"
         }
     },
