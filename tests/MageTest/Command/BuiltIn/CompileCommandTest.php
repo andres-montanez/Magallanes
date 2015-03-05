@@ -5,14 +5,12 @@ namespace MageTest\Command\BuiltIn;
 use Mage\Command\BuiltIn\CompileCommand;
 use MageTest\TestHelper\BaseTest;
 use malkusch\phpmock\FixedValueFunction;
-use malkusch\phpmock\Mock;
 use malkusch\phpmock\MockBuilder;
 
 /**
  * Class CompileCommandTest
  * @package MageTest\Command\BuiltIn
  * @coversDefaultClass Mage\Command\BuiltIn\CompileCommand
- * @uses Mage\Compiler
  * @uses malkusch\phpmock\FixedValueFunction
  * @uses malkusch\phpmock\Mock
  * @uses malkusch\phpmock\MockBuilder
@@ -21,11 +19,6 @@ use malkusch\phpmock\MockBuilder;
  */
 class CompileCommandTest extends BaseTest
 {
-    /**
-     * @var CompileCommand
-     */
-    private $compileCommand;
-
     /**
      * @var FixedValueFunction
      */
@@ -36,8 +29,6 @@ class CompileCommandTest extends BaseTest
      */
     public function before()
     {
-        $this->compileCommand = new CompileCommand();
-
         $this->iniGetValue = new FixedValueFunction();
         $mockBuilder = new MockBuilder();
         $iniGetMock = $mockBuilder->setNamespace('Mage\Command\BuiltIn')
@@ -52,30 +43,28 @@ class CompileCommandTest extends BaseTest
 
     /**
      * @covers ::__construct
-     * @covers ::setCompiler
      */
     public function testConstruct()
     {
-        $compilerProperty = $this->getPropertyValue($this->compileCommand, 'compiler');
+        $compileCommand = $this->getRawCompileCommand();
+        $compilerProperty = $this->getPropertyValue($compileCommand, 'compiler');
+
         $this->assertInstanceOf('Mage\Compiler', $compilerProperty);
     }
 
     /**
      * @covers ::__construct
-     * @covers ::setCompiler
      */
-    public function testSetCompiler()
+    public function testConstructWithNoParams()
     {
-        $compilerMock = $this->getMock('Mage\Compiler');
-        $this->compileCommand->setCompiler($compilerMock);
+        $compileCommand = new CompileCommand();
+        $compilerProperty = $this->getPropertyValue($compileCommand, 'compiler');
 
-        $compilerProperty = $this->getPropertyValue($this->compileCommand, 'compiler');
-        $this->assertEquals($compilerMock, $compilerProperty);
+        $this->assertInstanceOf('Mage\Compiler', $compilerProperty);
     }
 
     /**
      * @covers ::__construct
-     * @covers ::setCompiler
      * @covers ::run
      */
     public function testRun()
@@ -84,20 +73,20 @@ class CompileCommandTest extends BaseTest
         $expectedExitCode = 0;
         $this->expectOutputString($expectedOutput);
 
+        $this->iniGetValue->setValue(false);
+
         $compilerMock = $this->getMock('Mage\Compiler');
         $compilerMock->expects($this->once())
             ->method('compile');
+        $compileCommand = new CompileCommand($compilerMock);
 
-        $this->iniGetValue->setValue(false);
-        $this->compileCommand->setCompiler($compilerMock);
-        $actualExitCode = $this->compileCommand->run();
+        $actualExitCode = $compileCommand->run();
 
         $this->assertEquals($expectedExitCode, $actualExitCode);
     }
 
     /**
      * @covers ::__construct
-     * @covers ::setCompiler
      * @covers ::run
      */
     public function testRunWhenPharReadonlyEnabled()
@@ -107,8 +96,15 @@ class CompileCommandTest extends BaseTest
         $this->expectOutputString($expectedOutput);
         $this->iniGetValue->setValue(true);
 
-        $actualExitCode = $this->compileCommand->run();
+        $compileCommand = $this->getRawCompileCommand();
+        $actualExitCode = $compileCommand->run();
 
         $this->assertEquals($expectedExitCode, $actualExitCode);
+    }
+
+    private function getRawCompileCommand()
+    {
+        $compilerMock = $this->getMock('Mage\Compiler');
+        return new CompileCommand($compilerMock);
     }
 }

@@ -26,13 +26,12 @@ class CompileCommand extends AbstractCommand
      */
     private $compiler;
 
-    public function __construct()
+    public function __construct(Compiler $compiler = null)
     {
-        $this->setCompiler(new Compiler());
-    }
+        if ($compiler === null) {
+            $compiler = new Compiler();
+        }
 
-    public function setCompiler(Compiler $compiler)
-    {
         $this->compiler = $compiler;
     }
 
