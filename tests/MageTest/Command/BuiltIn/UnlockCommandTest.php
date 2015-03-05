@@ -27,6 +27,18 @@ class UnlockCommandTest extends BaseTest
     public static $fileExistsResult;
     public static $isFileExists;
 
+    public function runProvider()
+    {
+        return array(
+            'happy_path' => array(
+                'file_exists' => true,
+            ),
+            'file_not_exists' => array(
+                'file_exsits' => false
+            )
+        );
+    }
+
     /**
      * @before
      */
@@ -87,38 +99,20 @@ class UnlockCommandTest extends BaseTest
 
     /**
      * @covers ::run
+     * @dataProvider runProvider
      */
-    public function testRun()
+    public function testRun($fileExists)
     {
         $expectedOutput = "\tUnlocked deployment to production environment\n\n";
         $this->expectOutputString($expectedOutput);
         $expectedLockFilePath = '/.mage/production.lock';
 
-        self::$isFileExists = true;
+        self::$isFileExists = $fileExists;
 
         $actualExitCode = $this->unlockCommand->run();
         $expectedExitCode = 0;
 
-        $this->assertTrue(self::$isUnlinkCalled);
-        $this->assertEquals($expectedExitCode, $actualExitCode);
-        $this->assertEquals($expectedLockFilePath, self::$fileExistsResult);
-    }
-
-    /**
-     * @covers ::run
-     */
-    public function testRunIfFileNotExist()
-    {
-        $expectedOutput = "\tUnlocked deployment to production environment\n\n";
-        $this->expectOutputString($expectedOutput);
-        $expectedLockFilePath = '/.mage/production.lock';
-
-        self::$isFileExists = false;
-
-        $actualExitCode = $this->unlockCommand->run();
-        $expectedExitCode = 0;
-
-        $this->assertFalse(self::$isUnlinkCalled);
+        $this->assertEquals(self::$isUnlinkCalled, $fileExists);
         $this->assertEquals($expectedExitCode, $actualExitCode);
         $this->assertEquals($expectedLockFilePath, self::$fileExistsResult);
     }
