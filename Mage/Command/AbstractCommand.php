@@ -86,20 +86,19 @@ abstract class AbstractCommand
 
         if (!empty($this->helpMessage)) {
             $output .= "\n";
-            $output .= $this->helpMessage . "\n";
+            $output .= "<cyan><bold>{$this->helpMessage}</bold></cyan>\n";
         }
 
         if (!empty($this->syntaxMessage)) {
             $output .= "\n";
-            $output .= "Syntax:\n";
-            $output .= $indent;
-            $output .= $this->syntaxMessage;
+            $output .= "<light_gray><bold>Syntax:</bold></light_gray>\n";
+            $output .= "$indent<light_green>{$this->syntaxMessage}</light_green>";
             $output .= "\n";
         }
 
         if (!empty($this->usageExamples)) {
             $output .= "\n";
-            $output .= "Usage examples:\n";
+            $output .= "<light_gray><bold>Usage examples:</bold></light_gray>\n";
             foreach ($this->usageExamples as $example) {
                 $snippet = $example[0];
                 $description = $example[1];
@@ -110,7 +109,7 @@ abstract class AbstractCommand
                     $output .= "\n$indent$indent";
                 }
 
-                $output .= $snippet;
+                $output .= "<green>$snippet</green>";
                 $output .= "\n";
             }
         }

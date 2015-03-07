@@ -62,16 +62,16 @@ class AbstractCommandTest extends BaseTest
                 ],
                 'syntax' => 'mage example [light]',
                 'output' => "\n"
-                    . "This command does everything you want to\n"
+                    . "<cyan><bold>This command does everything you want to</bold></cyan>\n"
                     . "\n"
-                    . "Syntax:\n"
-                    . "    mage example [light]\n"
+                    . "<light_gray><bold>Syntax:</bold></light_gray>\n"
+                    . "    <light_green>mage example [light]</light_green>\n"
                     . "\n"
-                    . "Usage examples:\n"
+                    . "<light_gray><bold>Usage examples:</bold></light_gray>\n"
                     . "    * Default command:\n"
-                    . "        mage example\n"
+                    . "        <green>mage example</green>\n"
                     . "    * Runs the command with lights:\n"
-                    . "        mage example light\n"
+                    . "        <green>mage example light</green>\n"
             ],
             'no_help_message' => [
                 'helpMessage' => '',
@@ -87,24 +87,24 @@ class AbstractCommandTest extends BaseTest
                 ],
                 'syntax' => 'mage example [light]',
                 'output' => "\n"
-                    . "Syntax:\n"
-                    . "    mage example [light]\n"
+                    . "<light_gray><bold>Syntax:</bold></light_gray>\n"
+                    . "    <light_green>mage example [light]</light_green>\n"
                     . "\n"
-                    . "Usage examples:\n"
+                    . "<light_gray><bold>Usage examples:</bold></light_gray>\n"
                     . "    * Default command:\n"
-                    . "        mage example\n"
+                    . "        <green>mage example</green>\n"
                     . "    * Runs the command with lights:\n"
-                    . "        mage example light\n"
+                    . "        <green>mage example light</green>\n"
             ],
             'no_examples' => [
                 'helpMessage' => 'This command does everything you want to',
                 'examples' => [],
                 'syntax' => 'mage example [light]',
                 'output' => "\n"
-                    . "This command does everything you want to\n"
+                    . "<cyan><bold>This command does everything you want to</bold></cyan>\n"
                     . "\n"
-                    . "Syntax:\n"
-                    . "    mage example [light]\n"
+                    . "<light_gray><bold>Syntax:</bold></light_gray>\n"
+                    . "    <light_green>mage example [light]</light_green>\n"
             ],
             "no_syntax" => [
                 'helpMessage' => 'This command does everything you want to',
@@ -120,13 +120,13 @@ class AbstractCommandTest extends BaseTest
                 ],
                 'syntax' => '',
                 'output' => "\n"
-                    . "This command does everything you want to\n"
+                    . "<cyan><bold>This command does everything you want to</bold></cyan>\n"
                     . "\n"
-                    . "Usage examples:\n"
+                    . "<light_gray><bold>Usage examples:</bold></light_gray>\n"
                     . "    * Default command:\n"
-                    . "        mage example\n"
+                    . "        <green>mage example</green>\n"
                     . "    * Runs the command with lights:\n"
-                    . "        mage example light\n"
+                    . "        <green>mage example light</green>\n"
             ],
             "stripping_colons" => [
                 'helpMessage' => 'This command does everything you want to',
@@ -142,23 +142,23 @@ class AbstractCommandTest extends BaseTest
                 ],
                 'syntax' => 'mage example [light]',
                 'output' => "\n"
-                    . "This command does everything you want to\n"
+                    . "<cyan><bold>This command does everything you want to</bold></cyan>\n"
                     . "\n"
-                    . "Syntax:\n"
-                    . "    mage example [light]\n"
+                    . "<light_gray><bold>Syntax:</bold></light_gray>\n"
+                    . "    <light_green>mage example [light]</light_green>\n"
                     . "\n"
-                    . "Usage examples:\n"
+                    . "<light_gray><bold>Usage examples:</bold></light_gray>\n"
                     . "    * Default command:\n"
-                    . "        mage example\n"
+                    . "        <green>mage example</green>\n"
                     . "    * Runs the command with lights:\n"
-                    . "        mage example light\n"
+                    . "        <green>mage example light</green>\n"
             ],
             "only_help" => [
                 'helpMessage' => 'This command does everything you want to',
                 'examples' => [],
                 'syntax' => '',
                 'output' => "\n"
-                    . "This command does everything you want to\n"
+                    . "<cyan><bold>This command does everything you want to</bold></cyan>\n"
             ],
             "only_examples" => [
                 'helpMessage' => '',
@@ -174,19 +174,19 @@ class AbstractCommandTest extends BaseTest
                 ],
                 'syntax' => '',
                 'output' => "\n"
-                    . "Usage examples:\n"
+                    . "<light_gray><bold>Usage examples:</bold></light_gray>\n"
                     . "    * Default command:\n"
-                    . "        mage example\n"
+                    . "        <green>mage example</green>\n"
                     . "    * Runs the command with lights:\n"
-                    . "        mage example light\n"
+                    . "        <green>mage example light</green>\n"
             ],
             "only_syntax" => [
                 'helpMessage' => '',
                 'examples' => [],
                 'syntax' => 'mage example [light]',
                 'output' => "\n"
-                    . "Syntax:\n"
-                    . "    mage example [light]\n"
+                    . "<light_gray><bold>Syntax:</bold></light_gray>\n"
+                    . "    <light_green>mage example [light]</light_green>\n"
             ]
         ];
     }
