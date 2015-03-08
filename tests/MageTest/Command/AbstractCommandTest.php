@@ -229,6 +229,14 @@ class AbstractCommandTest extends BaseTest
                     . "        <green>mage example</green>\n"
                     . "    * Runs the command with lights:\n"
                     . "        <green>mage example light</green>\n"
+            ),
+            "no_info_at_all" => array(
+                'name' => '',
+                'helpMessage' => '',
+                'examples' => array(),
+                'syntax' => '',
+                'output' => "\n"
+                    . "<red><bold>Sorry, there's no help for this command at the moment.</bold></red>\n"
             )
         );
     }

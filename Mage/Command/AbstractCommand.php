@@ -180,6 +180,12 @@ abstract class AbstractCommand
             }
         }
 
+        if (empty($output)) {
+            $output .= "\n";
+            $output .= "<red><bold>Sorry, there's no help for this command at the moment.</bold></red>";
+            $output .= "\n";
+        }
+
         return $output;
     }
 }
