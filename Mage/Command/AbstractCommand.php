@@ -116,7 +116,7 @@ abstract class AbstractCommand
      */
     public function addUsageExample($snippet, $description = '')
     {
-        array_push($this->usageExamples, [$snippet, $description]);
+        array_push($this->usageExamples, array($snippet, $description));
 
         return $this;
     }
