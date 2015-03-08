@@ -21,6 +21,13 @@ use Mage\Compiler;
  */
 class CompileCommand extends AbstractCommand
 {
+    public function __construct()
+    {
+        $this->setName('Compile command')
+            ->setHelpMessage('Compiles Magallanes to mage.phar file')
+            ->setSyntaxMessage('mage compile');
+    }
+
     /**
      * @var Compiler
      */

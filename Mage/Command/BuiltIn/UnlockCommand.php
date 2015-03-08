@@ -21,6 +21,17 @@ use Mage\Console;
  */
 class UnlockCommand extends AbstractCommand implements RequiresEnvironment
 {
+    public function __construct()
+    {
+        $this->setName('Unlock command')
+            ->setHelpMessage('Unlocks deployment for given environment')
+            ->setSyntaxMessage('mage unlock to:[environment_name]')
+            ->addUsageExample(
+                'mage unlock to:production',
+                'Removes the lock form production environment deployment'
+            );
+    }
+
     /**
      * Unlocks an Environment
      * @see \Mage\Command\AbstractCommand::run()

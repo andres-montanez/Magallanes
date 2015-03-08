@@ -21,6 +21,21 @@ use Mage\Console;
  */
 class LockCommand extends AbstractCommand implements RequiresEnvironment
 {
+    public function __construct()
+    {
+        $this->setName('Lock command')
+            ->setHelpMessage(
+                "Locks the deployment to given environment and creates a lock file "
+                . "with lock reason and lock performer.\n"
+                . "You are going to be prompted to provide this information"
+            )
+            ->setSyntaxMessage('mage lock to:[environment_name]')
+            ->addUsageExample(
+                'mage lock to:production',
+                'Create a lock to production environment deployment'
+            );
+    }
+
     /**
      * Locks the Deployment to a Environment
      * @see \Mage\Command\AbstractCommand::run()
