@@ -26,9 +26,32 @@ abstract class AbstractCommand
      */
     protected $config = null;
 
+    /**
+     * Command's help message
+     *
+     * @var string
+     */
     private $helpMessage;
-    private $usageExamples = [];
+
+    /**
+     * Usage examples.
+     *
+     * @var array
+     */
+    private $usageExamples = array();
+
+    /**
+     * Command's syntax message
+     *
+     * @var string
+     */
     private $syntaxMessage;
+
+    /**
+     * Command name
+     *
+     * @var string
+     */
     private $name;
 
     /**
@@ -58,6 +81,12 @@ abstract class AbstractCommand
         return $this->config;
     }
 
+    /**
+     * Sets command name
+     *
+     * @param string $name Command name
+     * @return $this
+     */
     public function setName($name)
     {
         $this->name = $name;
@@ -65,6 +94,12 @@ abstract class AbstractCommand
         return $this;
     }
 
+    /**
+     * Sets command's help message
+     *
+     * @param string $message Command's help message
+     * @return $this
+     */
     public function setHelpMessage($message)
     {
         $this->helpMessage = $message;
@@ -72,6 +107,13 @@ abstract class AbstractCommand
         return $this;
     }
 
+    /**
+     * Adds command's usage example
+     *
+     * @param string $snippet Example's snippet
+     * @param string $description Example's description
+     * @return $this
+     */
     public function addUsageExample($snippet, $description = '')
     {
         array_push($this->usageExamples, [$snippet, $description]);
@@ -79,6 +121,12 @@ abstract class AbstractCommand
         return $this;
     }
 
+    /**
+     * Sets command's syntax message
+     *
+     * @param string $message Syntax message
+     * @return $this
+     */
     public function setSyntaxMessage($message)
     {
         $this->syntaxMessage = $message;
@@ -86,6 +134,11 @@ abstract class AbstractCommand
         return $this;
     }
 
+    /**
+     * Returns formatted command info
+     *
+     * @return string
+     */
     public function getInfoMessage()
     {
         $indent = str_repeat(" ", 4);
