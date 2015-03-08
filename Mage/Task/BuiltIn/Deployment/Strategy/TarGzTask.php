@@ -92,8 +92,12 @@ class TarGzTask extends BaseStrategyTaskAbstract implements IsReleaseAware
         }
 
         // Copy Tar Gz  to Remote Host
-        $command = 'scp ' . $strategyFlags . ' ' . $this->getConfig()->getHostIdentityFileOption() . $this->getConfig()->getConnectTimeoutOption() . '-P ' . $this->getConfig()->getHostPort() . ' ' . $localTarGz . '.tar.gz '
-                 . $this->getConfig()->deployment('user') . '@' . $this->getConfig()->getHostName() . ':' . $deployToDirectory;
+        $command = 'scp ' . $strategyFlags . ' ' . $this->getConfig()->getHostIdentityFileOption()
+            . $this->getConfig()->getConnectTimeoutOption() . '-P ' . $this->getConfig()->getHostPort()
+            . " -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no "
+            . ' ' . $localTarGz . '.tar.gz '
+            . $this->getConfig()->deployment('user') . '@' . $this->getConfig()->getHostName() . ':'
+            . $deployToDirectory;
         $result = $this->runCommandLocal($command) && $result;
 
         // Strategy Flags
