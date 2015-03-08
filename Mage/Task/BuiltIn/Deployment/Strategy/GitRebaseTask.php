@@ -34,6 +34,17 @@ class GitRebaseTask extends BaseStrategyTaskAbstract implements IsReleaseAware
      */
     public function run()
     {
+        $this->checkOverrideRelease();
+
+        if ($this->getConfig()->release('enabled', false) == true) {
+            $releasesDirectory = $this->getConfig()->release('directory', 'releases');
+
+            $deployToDirectory = rtrim($this->getConfig()->deployment('to'), '/')
+                . '/' . $releasesDirectory
+                . '/' . $this->getConfig()->getReleaseId();
+            $this->runCommandRemote('mkdir -p ' . $deployToDirectory);
+        }
+
         $branch = $this->getParameter('branch', 'master');
         $remote = $this->getParameter('remote', 'origin');
 

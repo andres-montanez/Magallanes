@@ -74,12 +74,13 @@ class ReleaseTask extends AbstractTask implements IsReleaseAware, SkipOnOverride
                 }
             }
 
-            if ($resultFetch && $userGroup != '') {  
-                $command = 'chown -h ' . $userGroup . ' ' . $symlink
-                    . ' && '
-                    . 'chown -R ' . $userGroup . ' ' . $currentCopy
+            if ($resultFetch && $userGroup != '') {
+                $command = 'chown -R ' . $userGroup . ' ' . $currentCopy
                     . ' && '
                     . 'chown ' . $userGroup . ' ' . $releasesDirectory;
+                if (file_exists($symlink)) {
+                    $command.= ' && ' . 'chown -h ' . $userGroup . ' ' . $symlink;
+                }
                 $result = $this->runCommandRemote($command);
                 if (!$result) {
                     return $result;
