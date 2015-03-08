@@ -46,10 +46,13 @@ class CompileCommandTest extends BaseTest
      */
     public function testConstruct()
     {
-        $compileCommand = $this->getRawCompileCommand();
+        $compilerMock = $this->getMock('Mage\Compiler');
+        $compileCommand = new CompileCommand($compilerMock);
+
         $compilerProperty = $this->getPropertyValue($compileCommand, 'compiler');
 
         $this->assertInstanceOf('Mage\Compiler', $compilerProperty);
+        $this->assertSame($compilerMock, $compilerProperty);
     }
 
     /**
@@ -96,15 +99,10 @@ class CompileCommandTest extends BaseTest
         $this->expectOutputString($expectedOutput);
         $this->iniGetValue->setValue(true);
 
-        $compileCommand = $this->getRawCompileCommand();
+        $compilerMock = $this->getMock('Mage\Compiler');
+        $compileCommand = new CompileCommand($compilerMock);
         $actualExitCode = $compileCommand->run();
 
         $this->assertEquals($expectedExitCode, $actualExitCode);
-    }
-
-    private function getRawCompileCommand()
-    {
-        $compilerMock = $this->getMock('Mage\Compiler');
-        return new CompileCommand($compilerMock);
     }
 }
