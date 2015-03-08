@@ -105,7 +105,7 @@ abstract class BaseTest extends \PHPUnit_Framework_TestCase
      * @param string $propertyName Property name
      * @return string Getter method name
      */
-    final protected function getGetterName($propertyName)
+    private function getGetterName($propertyName)
     {
         return 'get' . ucfirst($propertyName);
     }
@@ -116,7 +116,7 @@ abstract class BaseTest extends \PHPUnit_Framework_TestCase
      * @param string $propertyName Property name
      * @return string Getter method name
      */
-    final protected function getSetterName($propertyName)
+    private function getSetterName($propertyName)
     {
         return 'set' . ucfirst($propertyName);
     }
