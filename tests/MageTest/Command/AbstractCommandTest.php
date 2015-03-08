@@ -246,6 +246,7 @@ class AbstractCommandTest extends BaseTest
      * @covers ::setHelpMessage
      * @covers ::addUsageExample
      * @covers ::setSyntaxMessage
+     * @covers ::setName
      *
      * @dataProvider infoMessageProvider
      */
