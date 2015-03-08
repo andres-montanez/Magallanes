@@ -47,20 +47,20 @@ class AbstractCommandTest extends BaseTest
 
     public function infoMessageProvider()
     {
-        return [
-            'happy_path' => [
+        return array(
+            'happy_path' => array(
                 'name' => 'Example command',
                 'helpMessage' => 'This command does everything you want to',
-                'examples' => [
-                    [
+                'examples' => array(
+                    array(
                         'snippet' => 'mage example',
                         'description' => 'Default command'
-                    ],
-                    [
+                    ),
+                    array(
                         'snippet' => 'mage example light',
                         'description' => 'Runs the command with lights'
-                    ]
-                ],
+                    )
+                ),
                 'syntax' => 'mage example [light]',
                 'output' => "\n"
                     . "<cyan><bold>Command: </bold></cyan>Example command\n"
@@ -74,20 +74,20 @@ class AbstractCommandTest extends BaseTest
                     . "        <green>mage example</green>\n"
                     . "    * Runs the command with lights:\n"
                     . "        <green>mage example light</green>\n"
-            ],
-            'no_help_message' => [
+            ),
+            'no_help_message' => array(
                 'name' => 'Example command',
                 'helpMessage' => '',
-                'examples' => [
-                    [
+                'examples' => array(
+                    array(
                         'snippet' => 'mage example',
                         'description' => 'Default command'
-                    ],
-                    [
+                    ),
+                    array(
                         'snippet' => 'mage example light',
                         'description' => 'Runs the command with lights'
-                    ]
-                ],
+                    )
+                ),
                 'syntax' => 'mage example [light]',
                 'output' => "\n"
                     . "<cyan><bold>Command: </bold></cyan>Example command\n"
@@ -99,11 +99,11 @@ class AbstractCommandTest extends BaseTest
                     . "        <green>mage example</green>\n"
                     . "    * Runs the command with lights:\n"
                     . "        <green>mage example light</green>\n"
-            ],
-            'no_examples' => [
+            ),
+            'no_examples' => array(
                 'name' => 'Example command',
                 'helpMessage' => 'This command does everything you want to',
-                'examples' => [],
+                'examples' => array(),
                 'syntax' => 'mage example [light]',
                 'output' => "\n"
                     . "<cyan><bold>Command: </bold></cyan>Example command\n"
@@ -111,20 +111,20 @@ class AbstractCommandTest extends BaseTest
                     . "\n"
                     . "<light_gray><bold>Syntax:</bold></light_gray>\n"
                     . "    <light_green>mage example [light]</light_green>\n"
-            ],
-            "no_syntax" => [
+            ),
+            "no_syntax" => array(
                 'name' => 'Example command',
                 'helpMessage' => 'This command does everything you want to',
-                'examples' => [
-                    [
+                'examples' => array(
+                    array(
                         'snippet' => 'mage example',
                         'description' => 'Default command'
-                    ],
-                    [
+                    ),
+                    array(
                         'snippet' => 'mage example light',
                         'description' => 'Runs the command with lights'
-                    ]
-                ],
+                    )
+                ),
                 'syntax' => '',
                 'output' => "\n"
                     . "<cyan><bold>Command: </bold></cyan>Example command\n"
@@ -135,20 +135,20 @@ class AbstractCommandTest extends BaseTest
                     . "        <green>mage example</green>\n"
                     . "    * Runs the command with lights:\n"
                     . "        <green>mage example light</green>\n"
-            ],
-            "stripping_colons" => [
+            ),
+            "stripping_colons" => array(
                 'name' => 'Example command',
                 'helpMessage' => 'This command does everything you want to',
-                'examples' => [
-                    [
+                'examples' => array(
+                    array(
                         'snippet' => 'mage example',
                         'description' => 'Default command : '
-                    ],
-                    [
+                    ),
+                    array(
                         'snippet' => 'mage example light',
                         'description' => 'Runs the command with lights:  '
-                    ]
-                ],
+                    )
+                ),
                 'syntax' => 'mage example [light]',
                 'output' => "\n"
                     . "<cyan><bold>Command: </bold></cyan>Example command\n"
@@ -162,29 +162,29 @@ class AbstractCommandTest extends BaseTest
                     . "        <green>mage example</green>\n"
                     . "    * Runs the command with lights:\n"
                     . "        <green>mage example light</green>\n"
-            ],
-            "only_help" => [
+            ),
+            "only_help" => array(
                 'name' => 'Example command',
                 'helpMessage' => 'This command does everything you want to',
-                'examples' => [],
+                'examples' => array(),
                 'syntax' => '',
                 'output' => "\n"
                     . "<cyan><bold>Command: </bold></cyan>Example command\n"
                     . "<light_blue>This command does everything you want to</light_blue>\n"
-            ],
-            "only_examples" => [
+            ),
+            "only_examples" => array(
                 'name' => 'Example command',
                 'helpMessage' => '',
-                'examples' => [
-                    [
+                'examples' => array(
+                    array(
                         'snippet' => 'mage example',
                         'description' => 'Default command'
-                    ],
-                    [
+                    ),
+                    array(
                         'snippet' => 'mage example light',
                         'description' => 'Runs the command with lights'
-                    ]
-                ],
+                    )
+                ),
                 'syntax' => '',
                 'output' => "\n"
                     . "<cyan><bold>Command: </bold></cyan>Example command\n"
@@ -193,30 +193,30 @@ class AbstractCommandTest extends BaseTest
                     . "        <green>mage example</green>\n"
                     . "    * Runs the command with lights:\n"
                     . "        <green>mage example light</green>\n"
-            ],
-            "only_syntax" => [
+            ),
+            "only_syntax" => array(
                 'name' => 'Example command',
                 'helpMessage' => '',
-                'examples' => [],
+                'examples' => array(),
                 'syntax' => 'mage example [light]',
                 'output' => "\n"
                     . "<cyan><bold>Command: </bold></cyan>Example command\n"
                     . "<light_gray><bold>Syntax:</bold></light_gray>\n"
                     . "    <light_green>mage example [light]</light_green>\n"
-            ],
-            "no_name" => [
+            ),
+            "no_name" => array(
                 'name' => '',
                 'helpMessage' => 'This command does everything you want to',
-                'examples' => [
-                    [
+                'examples' => array(
+                    array(
                         'snippet' => 'mage example',
                         'description' => 'Default command'
-                    ],
-                    [
+                    ),
+                    array(
                         'snippet' => 'mage example light',
                         'description' => 'Runs the command with lights'
-                    ]
-                ],
+                    )
+                ),
                 'syntax' => 'mage example [light]',
                 'output' => "\n"
                     . "<light_blue>This command does everything you want to</light_blue>\n"
@@ -229,8 +229,8 @@ class AbstractCommandTest extends BaseTest
                     . "        <green>mage example</green>\n"
                     . "    * Runs the command with lights:\n"
                     . "        <green>mage example light</green>\n"
-            ]
-        ];
+            )
+        );
     }
 
     /**
