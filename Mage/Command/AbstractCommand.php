@@ -29,6 +29,7 @@ abstract class AbstractCommand
     private $helpMessage;
     private $usageExamples = [];
     private $syntaxMessage;
+    private $name;
 
     /**
      * Runs the Command
@@ -57,6 +58,13 @@ abstract class AbstractCommand
         return $this->config;
     }
 
+    public function setName($name)
+    {
+        $this->name = $name;
+
+        return $this;
+    }
+
     public function setHelpMessage($message)
     {
         $this->helpMessage = $message;
@@ -83,10 +91,15 @@ abstract class AbstractCommand
         $indent = str_repeat(" ", 4);
 
         $output = "";
+        if (!empty($this->name)) {
+            $output .= "\n";
+            $output .= "<cyan><bold>Command: </bold></cyan>";
+            $output .= $this->name;
+        }
 
         if (!empty($this->helpMessage)) {
             $output .= "\n";
-            $output .= "<cyan><bold>{$this->helpMessage}</bold></cyan>\n";
+            $output .= "<light_blue>{$this->helpMessage}</light_blue>\n";
         }
 
         if (!empty($this->syntaxMessage)) {
