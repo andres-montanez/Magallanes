@@ -4,7 +4,7 @@
         "Read more about it at http://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "d82ccc62c52f99a0819bea9b247d4f86",
+    "hash": "caa09089c7b57461ed42e97a4449f2c6",
     "packages": [],
     "packages-dev": [
         {
@@ -152,6 +152,54 @@
                 "web service"
             ],
             "time": "2014-08-11 04:32:36"
+        },
+        {
+            "name": "malkusch/php-mock",
+            "version": "dev-php-5.3",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/malkusch/php-mock.git",
+                "reference": "37b301b4b479601232f3919920451c6e777c3264"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/malkusch/php-mock/zipball/37b301b4b479601232f3919920451c6e777c3264",
+                "reference": "37b301b4b479601232f3919920451c6e777c3264",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=5.3"
+            },
+            "require-dev": {
+                "phpunit/phpunit": ">=4"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "malkusch\\phpmock\\": "classes/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "WTFPL-2.0"
+            ],
+            "authors": [
+                {
+                    "name": "Markus Malkusch",
+                    "email": "markus@malkusch.de",
+                    "homepage": "http://markus.malkusch.de",
+                    "role": "Developer"
+                }
+            ],
+            "description": "Mock non deterministic built-in PHP functions (e.g. time() or rand())",
+            "homepage": "https://github.com/malkusch/php-mock",
+            "keywords": [
+                "function",
+                "mock",
+                "stub",
+                "test"
+            ],
+            "time": "2014-12-01 18:01:18"
         },
         {
             "name": "phpunit/php-code-coverage",
@@ -1208,7 +1256,9 @@
     ],
     "aliases": [],
     "minimum-stability": "stable",
-    "stability-flags": [],
+    "stability-flags": {
+        "malkusch/php-mock": 20
+    },
     "prefer-stable": false,
     "prefer-lowest": false,
     "platform": {

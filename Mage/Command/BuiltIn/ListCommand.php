@@ -40,7 +40,7 @@ class ListCommand extends AbstractCommand
                     $exitCode = $this->listEnvironments();
                     break;
 
-                default;
+                default:
                     throw new Exception('The Type of Elements to List is needed.');
                     break;
             }
