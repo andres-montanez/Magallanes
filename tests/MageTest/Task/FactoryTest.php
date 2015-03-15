@@ -6,12 +6,12 @@ use Mage\Task\Factory;
 use PHPUnit_Framework_TestCase;
 
 /**
- * @group MageTest_Task
  * @group MageTest_Task_Factory
- * @uses Mage\Task\AbstractTask
- * @covers Mage\Task\Factory
- *
+ * @group MageTest_Task
  * @group issue-176
+ *
+ * @uses Mage\Task\AbstractTask
+ * @coversDefaultClass Mage\Task\Factory
  */
 class FactoryTest extends PHPUnit_Framework_TestCase
 {
@@ -55,7 +55,7 @@ class FactoryTest extends PHPUnit_Framework_TestCase
             ->setMockClassName('MyTask')
             ->getMock();
 
-        /**
+        /*
          * current workaround
          * @link https://github.com/sebastianbergmann/phpunit-mock-objects/issues/134
          */
