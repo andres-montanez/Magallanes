@@ -8,6 +8,9 @@ use PHPUnit_Framework_TestCase;
 /**
  * @group MageTest_Task
  * @group MageTest_Task_Factory
+ * @uses Mage\Task\AbstractTask
+ * @uses Doctrine\Instantiator\Instantiator
+ * @covers Mage\Task\Factory
  *
  * @group issue-176
  */
