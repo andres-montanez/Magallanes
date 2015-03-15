@@ -4,43 +4,27 @@ namespace MageTest\Command\BuiltIn;
 
 use Mage\Command\BuiltIn\VersionCommand;
 use Mage\Console;
+use MageTest\TestHelper\BaseTest;
 use PHPUnit_Framework_TestCase;
 
 /**
+ * @coversDefaultClass Mage\Command\BuiltIn\VersionCommands
  * @group Mage_Command_BuildIn_VersionCommand
+ * @uses Mage\Console
+ * @uses Mage\Console\Colors
  */
-class VersionCommandTest extends PHPUnit_Framework_TestCase
+class VersionCommandTest extends BaseTest
 {
     /**
      * @group 175
+     * @covers Mage\Command\BuiltIn\VersionCommand::run()
      */
     public function testRun()
     {
-        $this->workAroundStatic();
+        $this->setUpConsoleStatics();
         $command = new VersionCommand();
         $command->run();
 
         $this->expectOutputString('Running Magallanes version 2' . str_repeat(PHP_EOL, 2));
-    }
-
-    /**
-     * This is only needed as long as Console-class has static methods and properties
-     */
-    private function workAroundStatic()
-    {
-        $refClass = new \ReflectionClass('Mage\Console');
-
-        $refProperty = $refClass->getProperty('logEnabled');
-        $refProperty->setAccessible(true);
-        $refProperty->setValue(false);
-
-        $config = $this->getMock('Mage\Config');
-        $config->expects($this->once())
-            ->method('getParameter')
-            ->will($this->returnValue(true));
-
-        $refProperty = $refClass->getProperty('config');
-        $refProperty->setAccessible(true);
-        $refProperty->setValue($config);
     }
 }
