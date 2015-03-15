@@ -9,7 +9,6 @@ use PHPUnit_Framework_TestCase;
  * @group MageTest_Task
  * @group MageTest_Task_Factory
  * @uses Mage\Task\AbstractTask
- * @uses Doctrine\Instantiator\Instantiator
  * @covers Mage\Task\Factory
  *
  * @group issue-176
@@ -23,12 +22,18 @@ class FactoryTest extends PHPUnit_Framework_TestCase
         $this->config = $this->getMock('Mage\\Config');
     }
 
+    /**
+     * @covers Mage\Task\Factory::get
+     */
     public function testGet()
     {
         $task = Factory::get('composer/install', $this->config);
         $this->assertInstanceOf('\\Mage\\Task\\BuiltIn\\Composer\\InstallTask', $task);
     }
 
+    /**
+     * @covers Mage\Task\Factory::get
+     */
     public function testGetTaskDataIsArray()
     {
         $taskData = array(
@@ -40,10 +45,13 @@ class FactoryTest extends PHPUnit_Framework_TestCase
         $this->assertInstanceOf('\\Mage\\Task\\BuiltIn\\Composer\\InstallTask', $task);
     }
 
+    /**
+     * @covers Mage\Task\Factory::get
+     */
     public function testGetCustomTask()
     {
         $this->getMockBuilder('Mage\\Task\\AbstractTask')
-            ->disableOriginalConstructor()
+            ->setConstructorArgs(array($this->config))
             ->setMockClassName('MyTask')
             ->getMock();
 
@@ -57,6 +65,9 @@ class FactoryTest extends PHPUnit_Framework_TestCase
         $this->assertInstanceOf('Task\\MyTask', $task);
     }
 
+    /**
+     * @covers Mage\Task\Factory::get
+     */
     public function testGetWithOptionalParams()
     {
         $task = Factory::get('composer/install', $this->config, true, 'production');
@@ -66,6 +77,7 @@ class FactoryTest extends PHPUnit_Framework_TestCase
     /**
      * @expectedException \Exception
      * @expectedExceptionMessage The Task MyInconsistentTask must be an instance of Mage\Task\AbstractTask.
+     * @covers Mage\Task\Factory::get
      */
     public function testGetInconsistentException()
     {
@@ -76,6 +88,7 @@ class FactoryTest extends PHPUnit_Framework_TestCase
     /**
      * @expectedException \Exception
      * @expectedExceptionMessage Task "Unknowntask" not found.
+     * @covers Mage\Task\Factory::get
      */
     public function testGetClassDoesNotExist()
     {
