@@ -88,6 +88,8 @@ class RollbackTask extends AbstractTask implements IsReleaseAware
                     }
                 }
 
+                $currentCopy = rtrim($releasesDirectory, '/') . '/' . $releaseId;
+
                 if (!$releaseIsAvailable) {
                     Console::output('Release <bold>' . $this->getReleaseId() . '</bold> is invalid or unavailable for <bold>' . $this->getConfig()->getHost() . '</bold> ... <red>FAIL</red>');
 
