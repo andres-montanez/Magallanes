@@ -9,7 +9,9 @@
 * file that was distributed with this source code.
 */
 
-date_default_timezone_set('UTC');
+if(empty(ini_get('date.timezone'))){
+    date_default_timezone_set('UTC');
+}
 
 $baseDir = dirname(dirname(__FILE__));
 
