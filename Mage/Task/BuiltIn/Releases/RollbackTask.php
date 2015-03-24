@@ -138,14 +138,12 @@ class RollbackTask extends AbstractTask implements IsReleaseAware
                     $userGroup = '';
                     $resultFetch = $this->runCommandRemote('ls -ld ' . $rollbackTo . ' | awk \'{print \$3":"\$4}\'', $userGroup);
 
-                    $tmplink = $rollbackTo . '.tmp';
-                    $command = 'ln -sfn ' . $currentCopy . ' ' . $tmplink
-                             . ' && '
-                             . 'mv -T ' . $tmplink . ' ' . $symlink;
-
-                    if ($resultFetch) {
-                        $command .= ' && chown -h ' . $userGroup . ' ' . $symlink;
+                    $tmplink = $symlink . '.tmp';
+                    $command = "ln -sfn {$currentCopy} {$tmplink}";
+                    if ($resultFetch && $userGroup) {
+                        $command .= " && chown -h {$userGroup} ${tmplink}";
                     }
+                    $command .= " && mv -T {$tmplink} {$symlink}";
 
                     $result = $this->runCommandRemote($command);
 

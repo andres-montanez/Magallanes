@@ -100,7 +100,9 @@ class RsyncTask extends BaseStrategyTaskAbstract implements IsReleaseAware
                  . $this->excludes($excludes) . ' '
                  . $this->excludesListFile($excludesListFilePath) . ' '
                  . $this->getConfig()->deployment('from') . ' '
-                 . $this->getConfig()->deployment('user') . '@' . $this->getConfig()->getHostName() . ':' . $deployToDirectory;
+                 . ( $this->getConfig()->deployment('user') ? $this->getConfig()->deployment('user') . '@' : '' )
+                 . $this->getConfig()->getHostName() . ':' . $deployToDirectory;
+
         $result = $this->runCommandLocal($command);
 
         return $result;
