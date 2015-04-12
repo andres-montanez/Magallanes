@@ -73,7 +73,7 @@ class RsyncTask extends BaseStrategyTaskAbstract implements IsReleaseAware
                 // rsync: { copy: yes }
                 $rsync_copy = $this->getConfig()->deployment('rsync');
                 // If copy_tool_rsync, use rsync rather than cp for finer control of what is copied
-                if ($rsync_copy && is_array($rsync_copy) && $rsync_copy['copy'] && is_dir("$releasesDirectory/$currentRelease")) {
+                if ($rsync_copy && is_array($rsync_copy) && $rsync_copy['copy'] && $this->runCommandRemote('test -d ' . $releasesDirectory . '/' . $currentRelease)) {
                     if (isset($rsync_copy['copy_tool_rsync'])) {
                         $this->runCommandRemote("rsync -a {$this->excludes(array_merge($excludes, $rsync_copy['rsync_excludes']))} "
                                           . "$releasesDirectory/$currentRelease/ $releasesDirectory/{$this->getConfig()->getReleaseId()}");
