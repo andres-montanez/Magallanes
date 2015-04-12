@@ -36,7 +36,7 @@ class GitRebaseTask extends BaseStrategyTaskAbstract implements IsReleaseAware
     {
         $this->checkOverrideRelease();
 
-        if ($this->getConfig()->release('enabled', false) == true) {
+        if ($this->getConfig()->release('enabled', false) === true) {
             $releasesDirectory = $this->getConfig()->release('directory', 'releases');
 
             $deployToDirectory = rtrim($this->getConfig()->deployment('to'), '/')
