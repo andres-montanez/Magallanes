@@ -42,9 +42,8 @@ class InstallCommand extends AbstractCommand
             Console::output('<red>Failure: install directory is invalid.</red>', 0, 2);
 
             // Chck if it is a system wide install the user is root
-        } else if ($systemWide && (getenv('LOGNAME') != 'root')) {
+        } elseif ($systemWide && (getenv('LOGNAME') != 'root')) {
             Console::output('<red>Failure: you have to be root to perform a system wide install.</red>', 0, 2);
-
         } else {
             $destinationDir = $baseDir . '/' . $installDir;
             if (!is_dir($destinationDir)) {
@@ -104,7 +103,6 @@ class InstallCommand extends AbstractCommand
                             $from . DIRECTORY_SEPARATOR . $file,
                             $to . DIRECTORY_SEPARATOR . $file
                         );
-
                     } else {
                         copy(
                             $from . DIRECTORY_SEPARATOR . $file,
@@ -114,10 +112,8 @@ class InstallCommand extends AbstractCommand
                 }
             }
             return true;
-
         } elseif (is_file($from)) {
             return copy($from, $to);
-
         } else {
             return false;
         }

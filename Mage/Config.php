@@ -75,15 +75,14 @@ class Config
         foreach ($arguments as $argument) {
             if (preg_match('/to:[\w]+/i', $argument)) {
                 $this->environment = str_replace('to:', '', $argument);
-
-            } else if (preg_match('/--[\w]+/i', $argument)) {
+            } elseif (preg_match('/--[\w]+/i', $argument)) {
                 $optionValue = explode('=', substr($argument, 2));
                 if (count($optionValue) == 1) {
                     $this->parameters[$optionValue[0]] = true;
-                } else if (count($optionValue) == 2) {
+                } elseif (count($optionValue) == 2) {
                     if (strtolower($optionValue[1]) == 'true') {
                         $this->parameters[$optionValue[0]] = true;
-                    } else if (strtolower($optionValue[1]) == 'false') {
+                    } elseif (strtolower($optionValue[1]) == 'false') {
                         $this->parameters[$optionValue[0]] = false;
                     } else {
                         $this->parameters[$optionValue[0]] = $optionValue[1];
@@ -129,11 +128,9 @@ class Config
      */
     protected function loadEnvironment($filePath)
     {
-
         $settings = $this->parseConfigFile($filePath);
 
         return $settings;
-
     }
 
     /**
@@ -154,7 +151,6 @@ class Config
             } catch (ConfigNotFoundException $e) {
                 throw new RequiredConfigNotFoundException("Not found required config $configFilePath for environment $environment", 0, $e);
             }
-
         }
     }
 
@@ -165,8 +161,9 @@ class Config
      */
     protected function isRunInSpecialMode(array $parameters)
     {
-        if (empty($parameters))
+        if (empty($parameters)) {
             return true;
+        }
         foreach ($parameters as $parameter) {
             if (isset(Console::$paramsNotRequiringEnvironment[$parameter])) {
                 return true;
@@ -235,7 +232,7 @@ class Config
     {
         if (isset($this->parameters[$name])) {
             return $this->parameters[$name];
-        } else if (isset($extraParameters[$name])) {
+        } elseif (isset($extraParameters[$name])) {
             return $extraParameters[$name];
         } else {
             return $default;
@@ -326,7 +323,7 @@ class Config
         if (isset($envConfig['hosts'])) {
             if (is_array($envConfig['hosts'])) {
                 $hosts = (array)$envConfig['hosts'];
-            } else if (is_string($envConfig['hosts']) && file_exists($envConfig['hosts']) && is_readable($envConfig['hosts'])) {
+            } elseif (is_string($envConfig['hosts']) && file_exists($envConfig['hosts']) && is_readable($envConfig['hosts'])) {
                 $hosts = $this->getHostsFromFile($envConfig['hosts']);
             }
         }
@@ -605,7 +602,6 @@ class Config
             $fileContent = stream_get_contents($handle);
             $hosts = json_decode($fileContent);
         } catch (Exception $e) {
-
             rewind($handle);
             //do it old-style: one host per line
             while (($host = stream_get_line($handle, self::HOST_NAME_LENGTH)) !== false) {
@@ -618,5 +614,4 @@ class Config
 
         return $hosts;
     }
-
 }

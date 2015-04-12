@@ -100,7 +100,7 @@ class RsyncTask extends BaseStrategyTaskAbstract implements IsReleaseAware
                  . $this->excludes($excludes) . ' '
                  . $this->excludesListFile($excludesListFilePath) . ' '
                  . $this->getConfig()->deployment('from') . ' '
-                 . ( $this->getConfig()->deployment('user') ? $this->getConfig()->deployment('user') . '@' : '' )
+                 . ($this->getConfig()->deployment('user') ? $this->getConfig()->deployment('user') . '@' : '')
                  . $this->getConfig()->getHostName() . ':' . $deployToDirectory;
 
         $result = $this->runCommandLocal($command);
@@ -132,7 +132,7 @@ class RsyncTask extends BaseStrategyTaskAbstract implements IsReleaseAware
     protected function excludesListFile($excludesFile)
     {
         $excludesListFileRsync = '';
-        if(!empty($excludesFile) && file_exists($excludesFile) && is_file($excludesFile) && is_readable($excludesFile)) {
+        if (!empty($excludesFile) && file_exists($excludesFile) && is_file($excludesFile) && is_readable($excludesFile)) {
             $excludesListFileRsync = ' --exclude-from=' . $excludesFile;
         }
         return $excludesListFileRsync;

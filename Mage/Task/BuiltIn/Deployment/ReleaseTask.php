@@ -98,7 +98,6 @@ class ReleaseTask extends AbstractTask implements IsReleaseAware, SkipOnOverride
             }
 
             return $result;
-
         } else {
             return false;
         }

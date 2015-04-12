@@ -12,7 +12,6 @@ namespace Mage\Command;
 
 use Mage\Command\AbstractCommand;
 use Mage\Config;
-
 use Exception;
 
 /**
@@ -52,7 +51,7 @@ class Factory
         /** @var AbstractCommand $instance */
         // TODO dependencies like $config should be injected into constructor
         $instance = new $className;
-        if (! $instance instanceOf AbstractCommand) {
+        if (! $instance instanceof AbstractCommand) {
             // TODO use a custom exception
             throw new Exception('The command ' . $commandName . ' must be an instance of Mage\Command\AbstractCommand.');
         }

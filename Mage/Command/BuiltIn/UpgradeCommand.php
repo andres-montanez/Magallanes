@@ -50,7 +50,6 @@ class UpgradeCommand extends AbstractCommand
         if ($user != 'root' && $user != $owner) {
             Console::output('<red>FAIL</red>', 0, 1);
             Console::output('You need to be the <bold>' . $owner . '</bold> user to perform the upgrade, or <bold>root</bold>.', 2);
-
         } else {
             // Check version
             $version = json_decode(file_get_contents(self::UPGRADE));
@@ -61,19 +60,16 @@ class UpgradeCommand extends AbstractCommand
                     Console::output('<yellow>SKIP</yellow>', 0, 1);
                     Console::output('Your current version is up to date.', 2);
                     $exitCode = 0;
-
-                } else if ($versionCompare == 1) {
+                } elseif ($versionCompare == 1) {
                     Console::output('<yellow>SKIP</yellow>', 0, 1);
                     Console::output('Your current version is newer.', 2);
                     $exitCode = 0;
-
-                } else if ($versionCompare == -1) {
+                } elseif ($versionCompare == -1) {
                     // Download Package
                     $tarball = file_get_contents(str_replace('{version}', $version->latest, self::DOWNLOAD));
                     if ($tarball === false) {
                         Console::output('<red>FAIL</red>', 0, 1);
                         Console::output('Corrupted download.', 2);
-
                     } else {
                         $tarballFile = tempnam('/tmp', 'magallanes_download');
                         rename($tarballFile, $tarballFile . '.tar.gz');
@@ -87,7 +83,6 @@ class UpgradeCommand extends AbstractCommand
                         Console::output('<green>OK</green>', 0, 1);
                         $exitCode = 0;
                     }
-
                 } else {
                     Console::output('<red>FAIL</red>', 0, 1);
                     Console::output('Invalid version.', 2);

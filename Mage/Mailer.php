@@ -10,7 +10,6 @@
 
 namespace Mage;
 
-
 /**
  * Mailer Helper.
  *

@@ -58,5 +58,4 @@ class LockCommand extends AbstractCommand implements RequiresEnvironment
 
         return 0;
     }
-
 }

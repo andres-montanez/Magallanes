@@ -15,9 +15,9 @@ use Mage\Task\AbstractTask;
 
 /**
  * Task for running multiple custom commands setting them manually
- * 
+ *
  * Example of usage:
- * 
+ *
  * tasks:
  *    on-deploy:
  *       - scm/force-update
@@ -30,7 +30,8 @@ use Mage\Task\AbstractTask;
  *
  * @author Samuel Chiriluta <samuel4x4@gmail.com>
  */
-class ManuallyTask extends AbstractTask {
+class ManuallyTask extends AbstractTask
+{
 
     /**
      * (non-PHPdoc)
@@ -50,12 +51,10 @@ class ManuallyTask extends AbstractTask {
         
         $commands = $this->getParameters();
 
-        foreach ($commands as $command)
-        {
+        foreach ($commands as $command) {
             $result = $result && $this->runCommand($command);
         }
 
         return $result;
     }
-
 }

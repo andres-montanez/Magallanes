@@ -12,7 +12,6 @@ namespace Mage\Command\BuiltIn;
 
 use Mage\Command\AbstractCommand;
 use Mage\Console;
-
 use Exception;
 
 /**
@@ -73,7 +72,6 @@ class ListCommand extends AbstractCommand
             }
             Console::output('', 1, 1);
             $exitCode = 0;
-
         } else {
             Console::output('<bold>You don\'t have any environment configured.</bold>', 1, 2);
         }

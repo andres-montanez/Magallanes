@@ -13,7 +13,6 @@ namespace Mage\Task;
 use Mage\Console;
 use Mage\Config;
 use Mage\Task\Releases\IsReleaseAware;
-
 use Exception;
 
 /**
@@ -75,7 +74,7 @@ abstract class AbstractTask
      * Returns the Title of the Task
      * @return string
      */
-    public abstract function getName();
+    abstract public function getName();
 
     /**
      * Runs the task
@@ -85,7 +84,7 @@ abstract class AbstractTask
      * @throws ErrorWithMessageException
      * @throws SkipException
      */
-    public abstract function run();
+    abstract public function run();
 
     /**
      * Task Constructor
@@ -95,7 +94,7 @@ abstract class AbstractTask
      * @param string $stage
      * @param array $parameters
      */
-    public final function __construct(Config $config, $inRollback = false, $stage = null, $parameters = array())
+    final public function __construct(Config $config, $inRollback = false, $stage = null, $parameters = array())
     {
         $this->config = $config;
         $this->inRollback = $inRollback;
@@ -167,7 +166,7 @@ abstract class AbstractTask
      * @param string $output
      * @return boolean
      */
-    protected final function runCommandLocal($command, &$output = null)
+    final protected function runCommandLocal($command, &$output = null)
     {
         return Console::executeCommand($command, $output);
     }
@@ -179,19 +178,17 @@ abstract class AbstractTask
      * @param boolean $cdToDirectoryFirst
      * @return boolean
      */
-    protected final function runCommandRemote($command, &$output = null, $cdToDirectoryFirst = true)
+    final protected function runCommandRemote($command, &$output = null, $cdToDirectoryFirst = true)
     {
         if ($this->getConfig()->release('enabled', false) === true) {
-            if ($this instanceOf IsReleaseAware) {
+            if ($this instanceof IsReleaseAware) {
                 $releasesDirectory = '';
-
             } else {
                 $releasesDirectory = '/'
                     . $this->getConfig()->release('directory', 'releases')
                     . '/'
                     . $this->getConfig()->getReleaseId();
             }
-
         } else {
             $releasesDirectory = '';
         }
@@ -202,7 +199,7 @@ abstract class AbstractTask
         $localCommand = 'ssh ' . $this->getConfig()->getHostIdentityFileOption() . $needs_tty . ' -p ' . $this->getConfig()->getHostPort() . ' '
             . '-q -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no '
             . $this->getConfig()->getConnectTimeoutOption()
-            . ( $this->getConfig()->deployment('user') != '' ? $this->getConfig()->deployment('user') . '@' : '' )
+            . ($this->getConfig()->deployment('user') != '' ? $this->getConfig()->deployment('user') . '@' : '')
             . $this->getConfig()->getHostName();
 
         $remoteCommand = str_replace('"', '\"', $command);
@@ -223,7 +220,7 @@ abstract class AbstractTask
      * @param string $output
      * @return boolean
      */
-    protected final function runCommand($command, &$output = null)
+    final protected function runCommand($command, &$output = null)
     {
         if ($this->getStage() == self::STAGE_DEPLOY || $this->getStage() == self::STAGE_POST_RELEASE) {
             return $this->runCommandRemote($command, $output);

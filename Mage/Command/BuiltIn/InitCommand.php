@@ -51,7 +51,6 @@ class InitCommand extends AbstractCommand
                 Console::output('<light_green>Success!!</light_green> The configuration for <bold>Magallanes</bold> has been generated at <blue>.mage</blue> directory.');
                 Console::output('<bold>Please!! Review and adjust the configuration.</bold>', 2, 2);
                 $exitCode = 0;
-
             } else {
                 Console::output('<light_red>Error!!</light_red> Unable to generate the configuration.', 1, 2);
             }

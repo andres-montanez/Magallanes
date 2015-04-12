@@ -13,7 +13,6 @@ namespace Mage\Task\BuiltIn\Releases;
 use Mage\Console;
 use Mage\Task\AbstractTask;
 use Mage\Task\Releases\IsReleaseAware;
-
 use DateTime;
 
 /**
@@ -87,7 +86,6 @@ class ListTask extends AbstractTask implements IsReleaseAware
 
             Console::output('');
             return $result;
-
         } else {
             Console::output('');
             return false;
@@ -109,32 +107,28 @@ class ListTask extends AbstractTask implements IsReleaseAware
         if ($diff->format('%a') <= 7) {
             if ($diff->format('%d') == 7) {
                 $textDiff = ' [a week ago] ';
-
-            } else if ($diff->format('%d') > 0 && $diff->format('%d') < 7) {
+            } elseif ($diff->format('%d') > 0 && $diff->format('%d') < 7) {
                 $days = $diff->format('%d');
                 if ($days <= 1) {
                     $textDiff = ' [one day ago] ';
                 } else {
                     $textDiff = ' [' . $days . ' days ago] ';
                 }
-
-            } else if ($diff->format('%d') == 0 && $diff->format('%h') > 0) {
+            } elseif ($diff->format('%d') == 0 && $diff->format('%h') > 0) {
                 $hours = $diff->format('%h');
                 if ($hours <= 1) {
                     $textDiff = ' [one hour ago] ';
                 } else {
                     $textDiff = ' [' . $hours . ' hours ago] ';
                 }
-
-            } else if ($diff->format('%d') == 0 && $diff->format('%h') == 0) {
+            } elseif ($diff->format('%d') == 0 && $diff->format('%h') == 0) {
                 $minutes = $diff->format('%i');
                 if ($minutes <= 1) {
                     $textDiff = ' [one minute ago] ';
                 } else {
                     $textDiff = ' [' . $minutes . ' minutes ago] ';
                 }
-
-            } else if ($diff->format('%d') == 0 && $diff->format('%h') == 0 && $diff->format('%i') == 0) {
+            } elseif ($diff->format('%d') == 0 && $diff->format('%h') == 0 && $diff->format('%i') == 0) {
                 $seconds = $diff->format('%s');
                 if ($seconds < 10) {
                     $textDiff = ' [just now!] ';

@@ -14,7 +14,7 @@ use Mage\Task\BuiltIn\Symfony2\SymfonyAbstractTask;
 
 /**
  * Task for Clearing the Cache
- * 
+ *
  * Example of usage:
  *    symfony2/cache-clear: { env: dev }
  *    symfony2/cache-clear: { env: dev, optional: --no-warmup }

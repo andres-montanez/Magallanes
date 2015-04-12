@@ -54,7 +54,7 @@ class UpdateTask extends AbstractTask
      */
     public function run()
     {
-        $command = 'cd ' . $this->getConfig()->deployment('from', './') . '; '; 
+        $command = 'cd ' . $this->getConfig()->deployment('from', './') . '; ';
         switch ($this->getConfig()->general('scm')) {
             case 'git':
                 $command .= 'git pull';

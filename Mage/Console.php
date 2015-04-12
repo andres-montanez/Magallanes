@@ -13,7 +13,6 @@ namespace Mage;
 use Mage\Command\Factory;
 use Mage\Command\RequiresEnvironment;
 use Mage\Console\Colors;
-
 use Exception;
 use RecursiveDirectoryIterator;
 use SplFileInfo;
@@ -95,7 +94,6 @@ class Console
         try {
             // Load configuration
             $config->load($arguments);
-
         } catch (Exception $exception) {
             $configError = $exception->getMessage();
         }
@@ -119,7 +117,6 @@ class Console
         if ($showGreetings) {
             if (!self::$logEnabled) {
                 self::output('Starting <blue>Magallanes</blue>', 0, 2);
-
             } else {
                 self::output('Starting <blue>Magallanes</blue>', 0, 1);
                 self::log("Logging enabled");
@@ -130,13 +127,12 @@ class Console
         // Run Command - Check if there is a Configuration Error
         if ($configError !== false) {
             self::output('<red>' . $configError . '</red>', 1, 2);
-
         } else {
             // Run Command and check for Command Requirements
             try {
                 $command = Factory::get($commandName, $config);
 
-                if ($command instanceOf RequiresEnvironment) {
+                if ($command instanceof RequiresEnvironment) {
                     if ($config->getEnvironment() === false) {
                         throw new Exception('You must specify an environment for this command.');
                     }
@@ -310,5 +306,4 @@ class Console
             || self::$config->general('verbose_logging')
             || self::$config->environmentConfig('verbose_logging', false);
     }
-
 }

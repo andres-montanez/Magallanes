@@ -12,7 +12,6 @@ namespace Mage\Task;
 
 use Mage\Config;
 use Mage\Task\AbstractTask;
-
 use Exception;
 
 /**
@@ -48,7 +47,6 @@ class Factory
 
         if (strpos($taskName, '/') === false) {
             $className = 'Task\\' . $taskName;
-
         } else {
             $className = 'Mage\\Task\\BuiltIn\\' . str_replace(' ', '\\', ucwords(str_replace('/', ' ', $taskName))) . 'Task';
         }

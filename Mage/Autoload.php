@@ -31,11 +31,9 @@ class Autoload
         if (strpos($className, 'Task\\') === 0) {
             $baseDir = getcwd() . '/.mage/tasks';
             $postfix = substr($postfix, 5);
-
-        } else if (strpos($className, 'Command\\') === 0) {
+        } elseif (strpos($className, 'Command\\') === 0) {
             $baseDir = getcwd() . '/.mage/commands';
             $postfix = substr($postfix, 8);
-
         } else {
             $baseDir = dirname(dirname(__FILE__));
         }
@@ -68,5 +66,4 @@ class Autoload
     {
         return is_readable($filePath);
     }
-
 }

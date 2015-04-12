@@ -41,5 +41,4 @@ class UnlockCommand extends AbstractCommand implements RequiresEnvironment
 
         return 0;
     }
-
 }

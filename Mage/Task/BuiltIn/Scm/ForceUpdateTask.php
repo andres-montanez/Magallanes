@@ -15,9 +15,9 @@ use Mage\Task\SkipException;
 
 /**
  * Task for Force Updating a Working Copy
- * 
+ *
  * 'git fetch' downloads the latest from remote without trying to merge or rebase anything.
- * 'git reset' resets the master branch to what you just fetched. 
+ * 'git reset' resets the master branch to what you just fetched.
  * The '--hard' option changes all the files in your working tree to match the files in origin/master,
  * so if you have any local changes, they will be lost.
  *

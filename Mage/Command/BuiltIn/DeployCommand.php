@@ -22,7 +22,6 @@ use Mage\Task\SkipException;
 use Mage\Console;
 use Mage\Config;
 use Mage\Mailer;
-
 use Exception;
 
 /**
@@ -172,7 +171,6 @@ class DeployCommand extends AbstractCommand implements RequiresEnvironment
         if (self::$failedTasks > 0) {
             self::$deployStatus = self::FAILED;
             Console::output('A total of <bold>' . self::$failedTasks . '</bold> deployment tasks failed: <red>ABORTING</red>', 1, 2);
-
         } else {
             // Run Deployment Tasks
             $this->runDeploymentTasks();
@@ -265,7 +263,6 @@ class DeployCommand extends AbstractCommand implements RequiresEnvironment
 
         if (count($tasksToRun) == 0) {
             Console::output('<bold>No </bold><light_cyan>' . $title . '</light_cyan> <bold>tasks defined.</bold>', 1, 3);
-
         } else {
             Console::output('Starting <bold>' . $title . '</bold> tasks:');
 
@@ -306,7 +303,6 @@ class DeployCommand extends AbstractCommand implements RequiresEnvironment
 
         if ($this->hostsCount == 0) {
             Console::output('<light_purple>Warning!</light_purple> <bold>No hosts defined, skipping deployment tasks.</bold>', 1, 3);
-
         } else {
             $this->startTimeHosts = time();
             foreach ($hosts as $hostKey => $host) {
@@ -337,7 +333,6 @@ class DeployCommand extends AbstractCommand implements RequiresEnvironment
                 if (count($tasksToRun) == 0) {
                     Console::output('<light_purple>Warning!</light_purple> <bold>No </bold><light_cyan>Deployment</light_cyan> <bold>tasks defined.</bold>', 2);
                     Console::output('Deployment to <bold>' . $host . '</bold> skipped!', 1, 3);
-
                 } else {
                     foreach ($tasksToRun as $taskData) {
                         $tasks++;
@@ -443,21 +438,20 @@ class DeployCommand extends AbstractCommand implements RequiresEnvironment
         }
     }
 
-    protected function runRollbackTask(AbstractTask $task){
+    protected function runRollbackTask(AbstractTask $task)
+    {
         $this->getConfig()->reload();
         $hosts = $this->getConfig()->getHosts();
 
-        Console::output("",1,2);
-        Console::output("Starting the <bold>rollback</bold>",1,1);
+        Console::output("", 1, 2);
+        Console::output("Starting the <bold>rollback</bold>", 1, 1);
 
-        if(!in_array($task->getStage(), $this->acceptedStagesToRollback ) ) {
-            $stagesString = implode(', ',$this->acceptedStagesToRollback);
-            Console::output("<light_purple>Warning!</light_purple> <bold>Rollback during deployment can be called only at the stages: $stagesString <bold>",1);
-            Console::output("<bold>Rollback:<bold> <red>ABORTING</red>",1,3);
-
+        if (!in_array($task->getStage(), $this->acceptedStagesToRollback)) {
+            $stagesString = implode(', ', $this->acceptedStagesToRollback);
+            Console::output("<light_purple>Warning!</light_purple> <bold>Rollback during deployment can be called only at the stages: $stagesString <bold>", 1);
+            Console::output("<bold>Rollback:<bold> <red>ABORTING</red>", 1, 3);
         } elseif (count($hosts) == 0) {
             Console::output('<light_purple>Warning!</light_purple> <bold>No hosts defined, unable to get releases.</bold>', 1, 3);
-
         } else {
             $result = true;
             foreach ($hosts as $hostKey => $host) {
@@ -482,7 +476,6 @@ class DeployCommand extends AbstractCommand implements RequiresEnvironment
                 );
                 $task->init();
                 $result = $task->run() && $result;
-
             }
             return $result;
         }
@@ -506,7 +499,7 @@ class DeployCommand extends AbstractCommand implements RequiresEnvironment
         Console::output($title, 2, 0);
 
         $runTask = true;
-        if (($task instanceOf SkipOnOverride) && $this->getConfig()->getParameter('overrideRelease', false)) {
+        if (($task instanceof SkipOnOverride) && $this->getConfig()->getParameter('overrideRelease', false)) {
             $runTask = false;
         }
 
@@ -517,7 +510,6 @@ class DeployCommand extends AbstractCommand implements RequiresEnvironment
                 if ($result === true) {
                     Console::output('<green>OK</green>', 0);
                     $result = true;
-
                 } else {
                     Console::output('<red>FAIL</red>', 0);
                     $result = false;
@@ -526,15 +518,12 @@ class DeployCommand extends AbstractCommand implements RequiresEnvironment
                 Console::output('<red>FAIL, Rollback catched</red> [Message: ' . $e->getMessage() . ']', 0);
                 $this->runRollbackTask($task);
                 $result = false;
-
             } catch (ErrorWithMessageException $e) {
                 Console::output('<red>FAIL</red> [Message: ' . $e->getMessage() . ']', 0);
                 $result = false;
-
             } catch (SkipException $e) {
                 Console::output('<yellow>SKIPPED</yellow>', 0);
                 $result = true;
-
             } catch (Exception $e) {
                 Console::output('<red>FAIL</red>', 0);
                 $result = false;
@@ -645,7 +634,6 @@ class DeployCommand extends AbstractCommand implements RequiresEnvironment
      */
     protected function chooseReleaseStrategy()
     {
-
         if ($this->getConfig()->release('enabled', self::DEFAULT_RELEASE_IS_ENABLED)
             && $this->getConfig()->deployment('strategy', self::DEFAULT_DEPLOY_STRATEGY) !== self::DEPLOY_STRATEGY_DISABLED
         ) {
@@ -656,5 +644,4 @@ class DeployCommand extends AbstractCommand implements RequiresEnvironment
 
         return $strategy;
     }
-
 }

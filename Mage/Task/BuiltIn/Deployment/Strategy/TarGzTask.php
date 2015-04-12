@@ -46,7 +46,8 @@ class TarGzTask extends BaseStrategyTaskAbstract implements IsReleaseAware
         $this->checkOverrideRelease();
 
         $excludes = $this->getExcludes();
-        $excludesListFilePath   = $this->getConfig()->deployment('excludes_file', '');;
+        $excludesListFilePath   = $this->getConfig()->deployment('excludes_file', '');
+        ;
 
         // If we are working with releases
         $deployToDirectory = $this->getConfig()->deployment('to');
@@ -131,7 +132,7 @@ class TarGzTask extends BaseStrategyTaskAbstract implements IsReleaseAware
     protected function excludesListFile($excludesFile)
     {
         $excludesListFileRsync = '';
-        if(!empty($excludesFile) && file_exists($excludesFile) && is_file($excludesFile) && is_readable($excludesFile)) {
+        if (!empty($excludesFile) && file_exists($excludesFile) && is_file($excludesFile) && is_readable($excludesFile)) {
             $excludesListFileRsync = ' --exclude-from=' . $excludesFile;
         }
         return $excludesListFileRsync;

@@ -225,7 +225,7 @@ class EncryptTask extends AbstractTask
          * Check if we have been given an encoder script
          * If not then we will just use the default
          */
-        if (isset ($this->mageConfig ['encoder'])) {
+        if (isset($this->mageConfig ['encoder'])) {
             $this->encoder = $this->mageConfig ['encoder'];
         }
         /*
@@ -233,14 +233,14 @@ class EncryptTask extends AbstractTask
          * supplied, this defines how the 3 differant
          * config files will be merged together.
          */
-        if (isset ($this->mageConfig ['override'])) {
+        if (isset($this->mageConfig ['override'])) {
             $this->ionOverRide = $this->mageConfig ['override'];
         }
         /*
          * Check if we have been asked to
          * confirm all encodings
          */
-        if (isset ($this->mageConfig ['checkencoding'])) {
+        if (isset($this->mageConfig ['checkencoding'])) {
             $this->checkEncoding = true;
         }
         /*
@@ -249,7 +249,7 @@ class EncryptTask extends AbstractTask
          * encrypt/encode file check
          *
          */
-        if (isset ($this->mageConfig ['checkignoreextens'])) {
+        if (isset($this->mageConfig ['checkignoreextens'])) {
             $this->checkIgnoreExtens = array_merge($this->ignoreExtens, $this->mageConfig['ignoreextens']);
         }
 
@@ -259,7 +259,7 @@ class EncryptTask extends AbstractTask
         * encrypt/encode file check
         *
         */
-        if (isset ($this->mageConfig ['checkignorepaths'])) {
+        if (isset($this->mageConfig ['checkignorepaths'])) {
             $this->checkIgnorePaths = array_merge($this->checkIgnorePaths, $this->mageConfig['checkignorepaths']);
         }
 
@@ -289,7 +289,7 @@ class EncryptTask extends AbstractTask
          * Check if there is a 'project' section,
          * if so then get the options from there
          */
-        if (isset ($this->mageConfig ['project'])) {
+        if (isset($this->mageConfig ['project'])) {
             $this->yaml = $this->getOptionsFromYaml($this->mageConfig ['project']);
         } else {
             $this->yaml = array(
@@ -301,7 +301,7 @@ class EncryptTask extends AbstractTask
          * Check if a seperate projectfile has been specified, and if so
          * then read the options from there.
          */
-        if (isset ($this->mageConfig ['projectfile'])) {
+        if (isset($this->mageConfig ['projectfile'])) {
             $this->file = $this->getOptionsFromFile($this->mageConfig ['projectfile']);
         } else {
             $this->file = array(
@@ -359,8 +359,8 @@ class EncryptTask extends AbstractTask
         // $ask holds flag to indicate we need to prompt the end user
         $ask = false;
         // scan through the directory
-        $rit = new \RecursiveDirectoryIterator ($src);
-        foreach (new \RecursiveIteratorIterator ($rit) as $filename => $cur) {
+        $rit = new \RecursiveDirectoryIterator($src);
+        foreach (new \RecursiveIteratorIterator($rit) as $filename => $cur) {
             // get the 'base dir' for the project, eg. relative to the temp folder
             $srcFileName = (str_replace($this->source, '', $filename));
             /*
@@ -468,7 +468,7 @@ class EncryptTask extends AbstractTask
      */
     private function deleteTmpFiles()
     {
-        if (isset ($this->mageConfig ['keeptemp'])) {
+        if (isset($this->mageConfig ['keeptemp'])) {
             return;
         }
         Console::log('Deleting tempory files :', 1);
@@ -477,7 +477,7 @@ class EncryptTask extends AbstractTask
         if ($ret1 && $ret2) {
             return;
         }
-        throw new ErrorWithMessageException ('Error deleting temp files :' . $out1 . ' : ' . $out2, 40);
+        throw new ErrorWithMessageException('Error deleting temp files :' . $out1 . ' : ' . $out2, 40);
     }
 
     /**
@@ -533,7 +533,7 @@ class EncryptTask extends AbstractTask
         if (!$ret) {
             // something went wrong
             $this->deleteTmpFiles();
-            throw new ErrorWithMessageException ('Unable to create project file.', 20);
+            throw new ErrorWithMessageException('Unable to create project file.', 20);
         }
     }
 
@@ -603,11 +603,11 @@ class EncryptTask extends AbstractTask
     {
         $ret = Console::executeCommand('mv ' . $this->source . ' ' . $this->ionSource, $out);
         if (!$ret) {
-            throw new ErrorWithMessageException ('Cant create tmp dir :' . $out, $ret);
+            throw new ErrorWithMessageException('Cant create tmp dir :' . $out, $ret);
         }
         $ret = Console::executeCommand('mkdir -p ' . $this->source, $out);
         if (!$ret) {
-            throw new ErrorWithMessageException ('Cant re-create dir :' . $out, $ret);
+            throw new ErrorWithMessageException('Cant re-create dir :' . $out, $ret);
         }
         return true;
     }

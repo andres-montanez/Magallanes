@@ -158,7 +158,7 @@ class PermissionsTask extends AbstractTask
             'R' => $this->recursive
         );
 
-        foreach($options as $option => $apply) {
+        foreach ($options as $option => $apply) {
             if ($apply === true) {
                 $optionsForCmd .= $option;
             }
