@@ -74,7 +74,7 @@ class ReleaseTask extends AbstractTask implements IsReleaseAware, SkipOnOverride
                 }
             }
 
-            if ($resultFetch && $userGroup != '') {
+            if ($userGroup != '') {
                 $command = 'chown -R ' . $userGroup . ' ' . $currentCopy
                     . ' && '
                     . 'chown ' . $userGroup . ' ' . $releasesDirectory;
