@@ -94,8 +94,10 @@ class TarGzTask extends BaseStrategyTaskAbstract implements IsReleaseAware
 
         $sudo = $this->getConfig()->deployment('use-sudo', false);
 
+        $uploadDirectory = $deployToDirectory;
+
         if ($sudo === true) {
-            $deployToDirectory = "/tmp";
+            $uploadDirectory = "/tmp";
         }
 
         // Copy Tar Gz  to Remote Host
@@ -104,12 +106,12 @@ class TarGzTask extends BaseStrategyTaskAbstract implements IsReleaseAware
             . " -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no "
             . ' ' . $localTarGz . '.tar.gz '
             . $this->getConfig()->deployment('user') . '@' . $this->getConfig()->getHostName() . ':'
-            . $deployToDirectory;
+            . $uploadDirectory;
         $result = $this->runCommandLocal($command) && $result;
 
         if ($sudo === true) {
-            $tarGzFileName = basename($localTarGz) . '.tar.gz';
-            $command = "mv /tmp/" . $tarGzFileName . " " . $this->getConfig()->deployment('to');
+            $tarGzFileName = $remoteTarGz . '.tar.gz';
+            $command = "mv /tmp/" . $tarGzFileName . " " . $deployToDirectory;
             $result = $this->runCommandRemote($command) && $result;
         }
 
