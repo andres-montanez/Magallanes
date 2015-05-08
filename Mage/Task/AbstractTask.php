@@ -181,8 +181,9 @@ abstract class AbstractTask
     final protected function runCommandRemote($command, &$output = null, $cdToDirectoryFirst = true)
     {
         if ($this->getConfig()->deployment('use-sudo', false) === true) {
-            $command = 'sudo ' . $command;
+            $command = 'sudo (' . $command . ')';
         }
+
         if ($this->getConfig()->release('enabled', false) === true) {
             if ($this instanceof IsReleaseAware) {
                 $releasesDirectory = '';
@@ -244,8 +245,7 @@ abstract class AbstractTask
     {
         if ($this->getConfig()->release('enabled', false) === true) {
             $releasesDirectory = $this->getConfig()->release('directory', 'releases');
-            $absoluteReleasesDirectory = rtrim($this->getConfig()->deployment('to'), '/') . '/' . $releasesDirectory;
-            $deployToDirectory = $absoluteReleasesDirectory . '/' . $this->getConfig()->getReleaseId();
+            $deployToDirectory = $releasesDirectory . '/' . $this->getConfig()->getReleaseId();
             return 'cd ' . $deployToDirectory . ' && ' . $command;
         }
 
