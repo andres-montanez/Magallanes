@@ -244,8 +244,8 @@ abstract class AbstractTask
     {
         if ($this->getConfig()->release('enabled', false) === true) {
             $releasesDirectory = $this->getConfig()->release('directory', 'releases');
-
-            $deployToDirectory = $releasesDirectory . '/' . $this->getConfig()->getReleaseId();
+            $absoluteReleasesDirectory = rtrim($this->getConfig()->deployment('to'), '/') . $releasesDirectory;
+            $deployToDirectory = realpath($absoluteReleasesDirectory . '/' . $this->getConfig()->getReleaseId());
             return 'cd ' . $deployToDirectory . ' && ' . $command;
         }
 

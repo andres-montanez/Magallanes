@@ -111,7 +111,7 @@ class TarGzTask extends BaseStrategyTaskAbstract implements IsReleaseAware
 
         if ($sudo === true) {
             $tarGzFileName = $remoteTarGz . '.tar.gz';
-            $command = "mv /tmp/" . $tarGzFileName . " " . $deployToDirectory;
+            $command = $this->getReleasesAwareCommand('mv /tmp/' . $tarGzFileName . ' ' . $deployToDirectory);
             $result = $this->runCommandRemote($command) && $result;
         }
 
