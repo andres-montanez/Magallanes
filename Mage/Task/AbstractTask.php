@@ -180,10 +180,6 @@ abstract class AbstractTask
      */
     final protected function runCommandRemote($command, &$output = null, $cdToDirectoryFirst = true)
     {
-        if ($this->getConfig()->deployment('use-sudo', false) === true) {
-            $command = 'sudo (' . $command . ')';
-        }
-
         if ($this->getConfig()->release('enabled', false) === true) {
             if ($this instanceof IsReleaseAware) {
                 $releasesDirectory = '';
@@ -199,7 +195,7 @@ abstract class AbstractTask
 
         // if general.yml includes "ssy_needs_tty: true", then add "-t" to the ssh command
         $ttyIsNeeded = $this->getConfig()->general('ssh_needs_tty', false)
-                        || $this->getConfig()->deployment('use-sudo', false);
+                        || $this->getConfig()->deployment('use-sudo', false)
         $needs_tty = ($ttyIsNeeded ? '-t' : '');
 
         $localCommand = 'ssh ' . $this->getConfig()->getHostIdentityFileOption() . $needs_tty . ' -p ' . $this->getConfig()->getHostPort() . ' '
@@ -212,7 +208,12 @@ abstract class AbstractTask
         if ($cdToDirectoryFirst) {
             $remoteCommand = 'cd ' . rtrim($this->getConfig()->deployment('to'), '/') . $releasesDirectory . ' && ' . $remoteCommand;
         }
-        $localCommand .= ' ' . '"sh -c \"' . $remoteCommand . '\""';
+
+        if ($this->getConfig()->deployment('use-sudo', false) === true) {
+            $localCommand .= ' ' . '"sudo sh -c \"' . $remoteCommand . '\""';
+        } else {
+            $localCommand .= ' ' . '"sh -c \"' . $remoteCommand . '\""';
+        }
 
         Console::log('Run remote command ' . $remoteCommand);
 
@@ -245,6 +246,7 @@ abstract class AbstractTask
     {
         if ($this->getConfig()->release('enabled', false) === true) {
             $releasesDirectory = $this->getConfig()->release('directory', 'releases');
+
             $deployToDirectory = $releasesDirectory . '/' . $this->getConfig()->getReleaseId();
             return 'cd ' . $deployToDirectory . ' && ' . $command;
         }
