@@ -195,7 +195,7 @@ abstract class AbstractTask
 
         // if general.yml includes "ssy_needs_tty: true", then add "-t" to the ssh command
         $ttyIsNeeded = $this->getConfig()->general('ssh_needs_tty', false)
-                        || $this->getConfig()->deployment('use-sudo', false)
+                        || $this->getConfig()->deployment('use-sudo', false);
         $needs_tty = ($ttyIsNeeded ? '-t' : '');
 
         $localCommand = 'ssh ' . $this->getConfig()->getHostIdentityFileOption() . $needs_tty . ' -p ' . $this->getConfig()->getHostPort() . ' '
