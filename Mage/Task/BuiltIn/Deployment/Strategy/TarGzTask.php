@@ -92,6 +92,12 @@ class TarGzTask extends BaseStrategyTaskAbstract implements IsReleaseAware
             $strategyFlags = '';
         }
 
+        $sudo = $this->getConfig()->deployment('use-sudo', false);
+
+        if ($sudo === true) {
+            $deployToDirectory = "/tmp";
+        }
+
         // Copy Tar Gz  to Remote Host
         $command = 'scp ' . $strategyFlags . ' ' . $this->getConfig()->getHostIdentityFileOption()
             . $this->getConfig()->getConnectTimeoutOption() . '-P ' . $this->getConfig()->getHostPort()
@@ -100,6 +106,12 @@ class TarGzTask extends BaseStrategyTaskAbstract implements IsReleaseAware
             . $this->getConfig()->deployment('user') . '@' . $this->getConfig()->getHostName() . ':'
             . $deployToDirectory;
         $result = $this->runCommandLocal($command) && $result;
+
+        if ($sudo === true) {
+            $tarGzFileName = basename($localTarGz);
+            $command = "mv /tmp/" . $tarGzFileName . " " . $this->getConfig()->deployment('to');
+            $result = $this->runCommandRemote($command) && $result;
+        }
 
         // Strategy Flags
         $strategyFlags = $this->getConfig()->deployment('strategy_flags', $this->getConfig()->general('strategy_flags', array()));
