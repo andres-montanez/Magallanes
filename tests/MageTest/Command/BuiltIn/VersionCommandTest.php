@@ -8,16 +8,18 @@ use MageTest\TestHelper\BaseTest;
 use PHPUnit_Framework_TestCase;
 
 /**
- * @coversDefaultClass Mage\Command\BuiltIn\VersionCommands
+ * @coversDefaultClass Mage\Command\BuiltIn\VersionCommand
  * @group Mage_Command_BuildIn_VersionCommand
  * @uses Mage\Console
  * @uses Mage\Console\Colors
+ * @uses Mage\Command\AbstractCommand
  */
 class VersionCommandTest extends BaseTest
 {
     /**
      * @group 175
-     * @covers Mage\Command\BuiltIn\VersionCommand::run()
+     * @covers ::__construct
+     * @covers ::run()
      */
     public function testRun()
     {
