@@ -7,3 +7,7 @@ verbose_logging: false
 scm:
   type: git
   url:  git://github.com/andres-montanez/Zend-Framework-Twig-example-app.git
+env:
+  variables:
+    node_path: "/bin/node"
+    symfony_env: prod
