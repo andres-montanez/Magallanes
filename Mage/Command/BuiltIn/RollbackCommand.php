@@ -22,6 +22,24 @@ use Mage\Console;
  */
 class RollbackCommand extends AbstractCommand implements RequiresEnvironment
 {
+    public function __construct()
+    {
+        $this->setName('Rollback command')
+            ->setHelpMessage('Rollbacks the release by given release id or index')
+            ->setSyntaxMessage('mage rollback [releaseId] to:[environment_name]')
+            ->addUsageExample(
+                'mage rollback 20120101172148 to:production',
+                'Rollbacks the 20120101172148 release on production environment'
+            )
+            ->addUsageExample(
+                'mage rollback -1 to:production',
+                'Rollbacks the <bold>last release -1</bold> release'
+            )
+            ->addUsageExample(
+                'mage rollback -1 to:production --deleteCurrent',
+                'Rollbacks the <bold>last release -1</bold> release and removes current release'
+            );
+    }
     /**
      * Rollback a release
      * @see \Mage\Command\AbstractCommand::run()

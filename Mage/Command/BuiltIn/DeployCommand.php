@@ -103,6 +103,22 @@ class DeployCommand extends AbstractCommand implements RequiresEnvironment
      */
     protected static $failedTasks = 0;
 
+    public function __construct()
+    {
+        $this->setName('Deploy command')
+            ->setHelpMessage('Deploys the project into target environment')
+            ->setSyntaxMessage('mage deploy to:[environment_name]')
+            ->addUsageExample(
+                'mage deploy to:production',
+                'Deploy the project into <bold>production</bold> environment'
+            )
+            ->addUsageExample(
+                'mage deploy to:production --overrideRelease',
+                'Deploy the project into <bold>production</bold> environment '
+                . 'but skip <bold>SkipOnOverride</bold> aware tasks'
+            );
+    }
+
     /**
      * Returns the Status of the Deployment
      *

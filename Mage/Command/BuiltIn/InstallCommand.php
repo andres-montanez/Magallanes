@@ -20,6 +20,24 @@ use Mage\Console;
  */
 class InstallCommand extends AbstractCommand
 {
+    public function __construct()
+    {
+        $this->setName('Install command')
+            ->setHelpMessage(
+                'Installs Magallanes system-widely.'
+                . ' By default, Magallanes\' going to be installed in /opt/magallanes'
+            )
+            ->setSyntaxMessage('mage install [--installDir=[install_directory]] [--systemWide]')
+            ->addUsageExample(
+                'mage install --installDir=/src/projects/Magellanes',
+                'Install Magallanes at /src/projects/Magallanes directory'
+            )
+            ->addUsageExample(
+                'mage install --systemWide',
+                'Install Magallanes at default directory and creates a symlink in /usr/bin/mage'
+            );
+    }
+
     /**
      * Installs Magallanes
      * @see \Mage\Command\AbstractCommand::run()

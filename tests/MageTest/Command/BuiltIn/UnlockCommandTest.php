@@ -98,6 +98,7 @@ class UnlockCommandTest extends BaseTest
     }
 
     /**
+     * @covers ::__construct
      * @covers ::run
      * @dataProvider runProvider
      */
