@@ -1,7 +1,7 @@
 #production
 deployment:
   user: root
-# use-sudo: true
+  use-sudo: true
   from: ./
 #  source:
 #    type: git
