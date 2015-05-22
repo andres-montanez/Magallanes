@@ -198,7 +198,8 @@ abstract class AbstractTask
                         || $this->getConfig()->deployment('use-sudo', false);
         $needs_tty = ($ttyIsNeeded ? '-t' : '');
 
-        $localCommand = 'ssh ' . $this->getConfig()->getHostIdentityFileOption() . $needs_tty . ' -p ' . $this->getConfig()->getHostPort() . ' '
+        $localCommand = 'ssh ' . $this->getConfig()->getHostIdentityFileOption()
+            . $needs_tty . ' -p ' . $this->getConfig()->getHostPort() . ' '
             . '-q -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no '
             . $this->getConfig()->getConnectTimeoutOption()
             . ($this->getConfig()->deployment('user') != '' ? $this->getConfig()->deployment('user') . '@' : '')
@@ -206,7 +207,8 @@ abstract class AbstractTask
 
         $remoteCommand = str_replace('"', '\"', $command);
         if ($cdToDirectoryFirst) {
-            $remoteCommand = 'cd ' . rtrim($this->getConfig()->deployment('to'), '/') . $releasesDirectory . ' && ' . $remoteCommand;
+            $remoteCommand = 'cd ' . rtrim($this->getConfig()->deployment('to'), '/')
+                . $releasesDirectory . ' && ' . $remoteCommand;
         }
 
         if ($this->getConfig()->deployment('use-sudo', false) === true) {

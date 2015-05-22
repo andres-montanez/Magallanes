@@ -71,7 +71,10 @@ class TarGzTask extends BaseStrategyTaskAbstract implements IsReleaseAware
         $excludeFromFileCmd = $this->excludesListFile($excludesListFilePath);
 
         // Strategy Flags
-        $strategyFlags = $this->getConfig()->deployment('strategy_flags', $this->getConfig()->general('strategy_flags', array()));
+        $strategyFlags = $this->getConfig()->deployment(
+            'strategy_flags',
+            $this->getConfig()->general('strategy_flags', array())
+        );
         if (isset($strategyFlags['targz']) && isset($strategyFlags['targz']['create'])) {
             $strategyFlags = $strategyFlags['targz']['create'];
         } else {
@@ -81,11 +84,15 @@ class TarGzTask extends BaseStrategyTaskAbstract implements IsReleaseAware
         // remove h option only if dump-symlinks is allowed in the release config part
         $dumpSymlinks = $this->getConfig()->release('dump-symlinks') ? '' : 'h';
 
-        $command = 'tar cfz'. $dumpSymlinks . $strategyFlags . ' ' . $localTarGz . '.tar.gz ' . $excludeCmd . $excludeFromFileCmd . ' -C ' . $this->getConfig()->deployment('from') . ' .';
+        $command = 'tar cfz'. $dumpSymlinks . $strategyFlags . ' ' . $localTarGz . '.tar.gz '
+            . $excludeCmd . $excludeFromFileCmd . ' -C ' . $this->getConfig()->deployment('from') . ' .';
         $result = $this->runCommandLocal($command);
 
         // Strategy Flags
-        $strategyFlags = $this->getConfig()->deployment('strategy_flags', $this->getConfig()->general('strategy_flags', array()));
+        $strategyFlags = $this->getConfig()->deployment(
+            'strategy_flags',
+            $this->getConfig()->general('strategy_flags', array())
+        );
         if (isset($strategyFlags['targz']) && isset($strategyFlags['targz']['exctract'])) {
             $strategyFlags = $strategyFlags['targz']['exctract'];
         } else {
@@ -116,7 +123,10 @@ class TarGzTask extends BaseStrategyTaskAbstract implements IsReleaseAware
         }
 
         // Strategy Flags
-        $strategyFlags = $this->getConfig()->deployment('strategy_flags', $this->getConfig()->general('strategy_flags', array()));
+        $strategyFlags = $this->getConfig()->deployment(
+            'strategy_flags',
+            $this->getConfig()->general('strategy_flags', array())
+        );
         if (isset($strategyFlags['targz']) && isset($strategyFlags['targz']['scp'])) {
             $strategyFlags = $strategyFlags['targz']['scp'];
         } else {
@@ -146,7 +156,10 @@ class TarGzTask extends BaseStrategyTaskAbstract implements IsReleaseAware
     protected function excludesListFile($excludesFile)
     {
         $excludesListFileRsync = '';
-        if (!empty($excludesFile) && file_exists($excludesFile) && is_file($excludesFile) && is_readable($excludesFile)) {
+        if (!empty($excludesFile)
+            && file_exists($excludesFile)
+            && is_file($excludesFile)
+            && is_readable($excludesFile)) {
             $excludesListFileRsync = ' --exclude-from=' . $excludesFile;
         }
         return $excludesListFileRsync;
