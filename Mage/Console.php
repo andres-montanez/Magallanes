@@ -212,7 +212,7 @@ class Console
 
         $return = 1;
         $log = array();
-        exec($command . ' 2>&1', $log, $return);
+        exec(escapeshellcmd($command . ' 2>&1'), $log, $return);
         $log = implode(PHP_EOL, $log);
 
         if (!$return) {
