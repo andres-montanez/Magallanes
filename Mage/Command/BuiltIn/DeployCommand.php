@@ -39,6 +39,7 @@ class DeployCommand extends AbstractCommand implements RequiresEnvironment
     const DEPLOY_STRATEGY_GIT_REMOTE_CACHE = 'git-remote-cache';
     const DEPLOY_STRATEGY_GUESS = 'guess';
     const DEFAULT_DEPLOY_STRATEGY = self::DEPLOY_STRATEGY_GUESS;
+    const LOCK_FILE = '.mage/~working.lock';
 
     /**
      * Deploy has Failed
@@ -95,13 +96,13 @@ class DeployCommand extends AbstractCommand implements RequiresEnvironment
      * Current Status of the Deployment (in progress, succeded, failed)
      * @var string
      */
-    protected static $deployStatus = 'in_progress';
+    protected $deployStatus = self::IN_PROGRESS;
 
     /**
      * Total of Failed tasks
      * @var integer
      */
-    protected static $failedTasks = 0;
+    protected $failedTasks = 0;
 
     public function __construct()
     {
@@ -126,7 +127,7 @@ class DeployCommand extends AbstractCommand implements RequiresEnvironment
      */
     public static function getStatus()
     {
-        return self::$deployStatus;
+        return $this->deployStatus;
     }
 
     /**
@@ -145,12 +146,8 @@ class DeployCommand extends AbstractCommand implements RequiresEnvironment
             return 231;
         }
 
-        // Check for running instance and Lock
-        if (file_exists(getcwd() . '/.mage/~working.lock')) {
-            Console::output('<red>There is already an instance of Magallanes running!</red>', 1, 2);
+        if (!$this->lock()) {
             return 230;
-        } else {
-            touch(getcwd() . '/.mage/~working.lock');
         }
 
         // Release ID
@@ -184,21 +181,21 @@ class DeployCommand extends AbstractCommand implements RequiresEnvironment
         $this->runNonDeploymentTasks(AbstractTask::STAGE_PRE_DEPLOY, $this->getConfig(), 'Pre-Deployment');
 
         // Check Status
-        if (self::$failedTasks > 0) {
-            self::$deployStatus = self::FAILED;
-            Console::output('A total of <bold>' . self::$failedTasks . '</bold> deployment tasks failed: <red>ABORTING</red>', 1, 2);
+        if ($this->failedTasks > 0) {
+            $this->deployStatus = self::FAILED;
+            Console::output('A total of <bold>' . $this->failedTasks . '</bold> deployment tasks failed: <red>ABORTING</red>', 1, 2);
         } else {
             // Run Deployment Tasks
             $this->runDeploymentTasks();
 
             // Check Status
-            if (self::$failedTasks > 0) {
-                self::$deployStatus = self::FAILED;
-                Console::output('A total of <bold>' . self::$failedTasks . '</bold> deployment tasks failed: <red>ABORTING</red>', 1, 2);
+            if ($this->failedTasks > 0) {
+                $this->deployStatus = self::FAILED;
+                Console::output('A total of <bold>' . $this->failedTasks . '</bold> deployment tasks failed: <red>ABORTING</red>', 1, 2);
+            } else {
+                // Run Post-Deployment Tasks
+                $this->runNonDeploymentTasks(AbstractTask::STAGE_POST_DEPLOY, $this->getConfig(), 'Post-Deployment');
             }
-
-            // Run Post-Deployment Tasks
-            $this->runNonDeploymentTasks(AbstractTask::STAGE_POST_DEPLOY, $this->getConfig(), 'Post-Deployment');
         }
 
         // Time Information Hosts
@@ -215,18 +212,15 @@ class DeployCommand extends AbstractCommand implements RequiresEnvironment
         Console::output('Total time: <bold>' . $timeText . '</bold>.', 1, 2);
 
         // Send Notifications
-        $this->sendNotification(self::$failedTasks > 0 ? false : true);
+        $this->sendNotification($this->failedTasks > 0 ? false : true);
 
-        // Unlock
-        if (file_exists(getcwd() . '/.mage/~working.lock')) {
-            unlink(getcwd() . '/.mage/~working.lock');
-        }
+        $this->unlock();
 
-        if (self::$failedTasks === 0) {
+        if ($this->failedTasks === 0) {
             $exitCode = 0;
         }
         
-        if (self::$deployStatus === self::FAILED) {
+        if ($this->deployStatus === self::FAILED) {
             $exitCode = 1;
         }
         
@@ -243,7 +237,7 @@ class DeployCommand extends AbstractCommand implements RequiresEnvironment
     protected function runNonDeploymentTasks($stage, Config $config, $title)
     {
         $tasksToRun = $config->getTasks($stage);
-        self::$failedTasks = 0;
+        $this->failedTasks = 0;
 
         // PreDeployment Hook
         if ($stage == AbstractTask::STAGE_PRE_DEPLOY) {
@@ -260,11 +254,6 @@ class DeployCommand extends AbstractCommand implements RequiresEnvironment
 
         // PostDeployment Hook
         if ($stage == AbstractTask::STAGE_POST_DEPLOY) {
-            // If Deploy failed, clear post deploy tasks
-            if (self::$deployStatus == self::FAILED) {
-                $tasksToRun = array();
-            }
-
             // Change Branch Back
             if ($config->deployment('scm', false)) {
                 array_unshift($tasksToRun, 'scm/change-branch');
@@ -279,48 +268,110 @@ class DeployCommand extends AbstractCommand implements RequiresEnvironment
 
         if (count($tasksToRun) == 0) {
             Console::output('<bold>No </bold><light_cyan>' . $title . '</light_cyan> <bold>tasks defined.</bold>', 1, 3);
-        } else {
-            Console::output('Starting <bold>' . $title . '</bold> tasks:');
-
-            $tasks = 0;
-            $completedTasks = 0;
-
-            foreach ($tasksToRun as $taskData) {
-                $tasks++;
-                $task = Factory::get($taskData, $config, false, $stage);
-
-                if ($this->runTask($task)) {
-                    $completedTasks++;
-                } else {
-                    self::$failedTasks++;
-                }
-            }
-
-            if ($completedTasks == $tasks) {
-                $tasksColor = 'green';
-            } else {
-                $tasksColor = 'red';
-            }
-
-            Console::output('Finished <bold>' . $title . '</bold> tasks: <' . $tasksColor . '>' . $completedTasks . '/' . $tasks . '</' . $tasksColor . '> tasks done.', 1, 3);
+            return;
         }
+        
+        Console::output('Starting <bold>' . $title . '</bold> tasks:');
+
+        $tasks = 0;
+        $completedTasks = 0;
+
+        foreach ($tasksToRun as $taskData) {
+            $tasks++;
+            $task = Factory::get($taskData, $config, false, $stage);
+
+            if ($this->runTask($task)) {
+                $completedTasks++;
+            } else {
+                $this->failedTasks++;
+            }
+        }
+
+        $tasksColor = ($completedTasks == $tasks) ? 'green' : 'red';
+
+        Console::output('Finished <bold>' . $title . '</bold> tasks: <' . $tasksColor . '>' . $completedTasks . '/' . $tasks . '</' . $tasksColor . '> tasks done.', 1, 3);
     }
 
     protected function runDeploymentTasks()
     {
-        if (self::$deployStatus == self::FAILED) {
+        if ($this->deployStatus == self::FAILED) {
             return;
         }
 
         // Run Tasks for Deployment
         $hosts = $this->getConfig()->getHosts();
         $this->hostsCount = count($hosts);
-        self::$failedTasks = 0;
+        $this->failedTasks = 0;
 
         if ($this->hostsCount == 0) {
             Console::output('<light_purple>Warning!</light_purple> <bold>No hosts defined, skipping deployment tasks.</bold>', 1, 3);
+            return;
+        }
+        
+        $this->startTimeHosts = time();
+        foreach ($hosts as $hostKey => $host) {
+
+            // Check if Host has specific configuration
+            $hostConfig = null;
+            if (is_array($host)) {
+                $hostConfig = $host;
+                $host = $hostKey;
+            }
+
+            // Set Host and Host Specific Config
+            $this->getConfig()->setHost($host);
+            $this->getConfig()->setHostConfig($hostConfig);
+
+            // Prepare Tasks
+            $tasks = 0;
+            $completedTasks = 0;
+
+            Console::output('Deploying to <bold>' . $this->getConfig()->getHost() . '</bold>');
+
+            $tasksToRun = $this->getConfig()->getTasks();
+
+            $deployStrategy = $this->chooseDeployStrategy();
+
+            array_unshift($tasksToRun, $deployStrategy);
+
+            if (count($tasksToRun) == 0) {
+                Console::output('<light_purple>Warning!</light_purple> <bold>No </bold><light_cyan>Deployment</light_cyan> <bold>tasks defined.</bold>', 2);
+                Console::output('Deployment to <bold>' . $host . '</bold> skipped!', 1, 3);
+                $this->getConfig()->setHostConfig(null);
+                continue;
+            }
+            
+            foreach ($tasksToRun as $taskData) {
+                $tasks++;
+                $task = Factory::get($taskData, $this->getConfig(), false, AbstractTask::STAGE_DEPLOY);
+
+                if ($this->runTask($task)) {
+                    $completedTasks++;
+                } else {
+                    $this->failedTasks++;
+                }
+            }
+
+            $tasksColor = ($completedTasks == $tasks) ? 'green' : 'red';
+
+            Console::output('Deployment to <bold>' . $this->getConfig()->getHost() . '</bold> completed: <' . $tasksColor . '>' . $completedTasks . '/' . $tasks . '</' . $tasksColor . '> tasks done.', 1, 3);
+
+            // Reset Host Config
+            $this->getConfig()->setHostConfig(null);
+        }
+        $this->endTimeHosts = time();
+
+        if ($this->failedTasks > 0) {
+            $this->deployStatus = self::FAILED;
         } else {
-            $this->startTimeHosts = time();
+            $this->deployStatus = self::SUCCEDED;
+        }
+
+        // Releasing
+        if ($this->deployStatus == self::SUCCEDED && $this->getConfig()->release('enabled', false) === true) {
+            // Execute the Releases
+            Console::output('Starting the <bold>Releasing</bold>');
+            $completedTasks = 0;
             foreach ($hosts as $hostKey => $host) {
 
                 // Check if Host has specific configuration
@@ -330,34 +381,47 @@ class DeployCommand extends AbstractCommand implements RequiresEnvironment
                     $host = $hostKey;
                 }
 
-                // Set Host and Host Specific Config
+                // Set Host
                 $this->getConfig()->setHost($host);
                 $this->getConfig()->setHostConfig($hostConfig);
 
-                // Prepare Tasks
-                $tasks = 0;
+                $task = Factory::get($this->chooseReleaseStrategy(), $this->getConfig(), false, AbstractTask::STAGE_DEPLOY);
+
+                if ($this->runTask($task, 'Releasing on host <purple>' . $host . '</purple> ... ')) {
+                    $completedTasks++;
+                }
+
+                // Reset Host Config
+                $this->getConfig()->setHostConfig(null);
+            }
+            Console::output('Finished the <bold>Releasing</bold>', 1, 3);
+
+            // Execute the Post-Release Tasks
+            foreach ($hosts as $hostKey => $host) {
+
+                // Check if Host has specific configuration
+                $hostConfig = null;
+                if (is_array($host)) {
+                    $hostConfig = $host;
+                    $host = $hostKey;
+                }
+
+                // Set Host
+                $this->getConfig()->setHost($host);
+                $this->getConfig()->setHostConfig($hostConfig);
+
+                $tasksToRun = $this->getConfig()->getTasks(AbstractTask::STAGE_POST_RELEASE);
+                $tasks = count($tasksToRun);
                 $completedTasks = 0;
 
-                Console::output('Deploying to <bold>' . $this->getConfig()->getHost() . '</bold>');
+                if (count($tasksToRun) > 0) {
+                    Console::output('Starting <bold>Post-Release</bold> tasks for <bold>' . $host . '</bold>:');
 
-                $tasksToRun = $this->getConfig()->getTasks();
-
-                $deployStrategy = $this->chooseDeployStrategy();
-
-                array_unshift($tasksToRun, $deployStrategy);
-
-                if (count($tasksToRun) == 0) {
-                    Console::output('<light_purple>Warning!</light_purple> <bold>No </bold><light_cyan>Deployment</light_cyan> <bold>tasks defined.</bold>', 2);
-                    Console::output('Deployment to <bold>' . $host . '</bold> skipped!', 1, 3);
-                } else {
-                    foreach ($tasksToRun as $taskData) {
-                        $tasks++;
-                        $task = Factory::get($taskData, $this->getConfig(), false, AbstractTask::STAGE_DEPLOY);
+                    foreach ($tasksToRun as $task) {
+                        $task = Factory::get($task, $this->getConfig(), false, AbstractTask::STAGE_POST_RELEASE);
 
                         if ($this->runTask($task)) {
                             $completedTasks++;
-                        } else {
-                            self::$failedTasks++;
                         }
                     }
 
@@ -366,90 +430,11 @@ class DeployCommand extends AbstractCommand implements RequiresEnvironment
                     } else {
                         $tasksColor = 'red';
                     }
-
-                    Console::output('Deployment to <bold>' . $this->getConfig()->getHost() . '</bold> completed: <' . $tasksColor . '>' . $completedTasks . '/' . $tasks . '</' . $tasksColor . '> tasks done.', 1, 3);
+                    Console::output('Finished <bold>Post-Release</bold> tasks for <bold>' . $host . '</bold>: <' . $tasksColor . '>' . $completedTasks . '/' . $tasks . '</' . $tasksColor . '> tasks done.', 1, 3);
                 }
 
                 // Reset Host Config
                 $this->getConfig()->setHostConfig(null);
-            }
-            $this->endTimeHosts = time();
-
-            if (self::$failedTasks > 0) {
-                self::$deployStatus = self::FAILED;
-            } else {
-                self::$deployStatus = self::SUCCEDED;
-            }
-
-            // Releasing
-            if (self::$deployStatus == self::SUCCEDED && $this->getConfig()->release('enabled', false) === true) {
-                // Execute the Releases
-                Console::output('Starting the <bold>Releasing</bold>');
-                $completedTasks = 0;
-                foreach ($hosts as $hostKey => $host) {
-
-                    // Check if Host has specific configuration
-                    $hostConfig = null;
-                    if (is_array($host)) {
-                        $hostConfig = $host;
-                        $host = $hostKey;
-                    }
-
-                    // Set Host
-                    $this->getConfig()->setHost($host);
-                    $this->getConfig()->setHostConfig($hostConfig);
-
-                    $task = Factory::get($this->chooseReleaseStrategy(), $this->getConfig(), false, AbstractTask::STAGE_DEPLOY);
-
-                    if ($this->runTask($task, 'Releasing on host <purple>' . $host . '</purple> ... ')) {
-                        $completedTasks++;
-                    }
-
-                    // Reset Host Config
-                    $this->getConfig()->setHostConfig(null);
-                }
-                Console::output('Finished the <bold>Releasing</bold>', 1, 3);
-
-                // Execute the Post-Release Tasks
-                foreach ($hosts as $hostKey => $host) {
-
-                    // Check if Host has specific configuration
-                    $hostConfig = null;
-                    if (is_array($host)) {
-                        $hostConfig = $host;
-                        $host = $hostKey;
-                    }
-
-                    // Set Host
-                    $this->getConfig()->setHost($host);
-                    $this->getConfig()->setHostConfig($hostConfig);
-
-                    $tasksToRun = $this->getConfig()->getTasks(AbstractTask::STAGE_POST_RELEASE);
-                    $tasks = count($tasksToRun);
-                    $completedTasks = 0;
-
-                    if (count($tasksToRun) > 0) {
-                        Console::output('Starting <bold>Post-Release</bold> tasks for <bold>' . $host . '</bold>:');
-
-                        foreach ($tasksToRun as $task) {
-                            $task = Factory::get($task, $this->getConfig(), false, AbstractTask::STAGE_POST_RELEASE);
-
-                            if ($this->runTask($task)) {
-                                $completedTasks++;
-                            }
-                        }
-
-                        if ($completedTasks == $tasks) {
-                            $tasksColor = 'green';
-                        } else {
-                            $tasksColor = 'red';
-                        }
-                        Console::output('Finished <bold>Post-Release</bold> tasks for <bold>' . $host . '</bold>: <' . $tasksColor . '>' . $completedTasks . '/' . $tasks . '</' . $tasksColor . '> tasks done.', 1, 3);
-                    }
-
-                    // Reset Host Config
-                    $this->getConfig()->setHostConfig(null);
-                }
             }
         }
     }
@@ -466,36 +451,38 @@ class DeployCommand extends AbstractCommand implements RequiresEnvironment
             $stagesString = implode(', ', $this->acceptedStagesToRollback);
             Console::output("<light_purple>Warning!</light_purple> <bold>Rollback during deployment can be called only at the stages: $stagesString <bold>", 1);
             Console::output("<bold>Rollback:<bold> <red>ABORTING</red>", 1, 3);
+            return false;
         } elseif (count($hosts) == 0) {
             Console::output('<light_purple>Warning!</light_purple> <bold>No hosts defined, unable to get releases.</bold>', 1, 3);
-        } else {
-            $result = true;
-            foreach ($hosts as $hostKey => $host) {
-                $hostConfig = null;
-                if (is_array($host)) {
-                    $hostConfig = $host;
-                    $host = $hostKey;
-                }
-
-                // Set Host and Host Specific Config
-                $this->getConfig()->setHost($host);
-                $this->getConfig()->setHostConfig($hostConfig);
-                $this->getConfig()->setReleaseId(-1);
-
-                $task = Factory::get(array(
-                        'name'=>'releases/rollback',
-                        'parameters' => array('inDeploy'=>true)
-                    ),
-                    $this->getConfig(),
-                    false,
-                    $task->getStage()
-                );
-                $task->init();
-                $result = $task->run() && $result;
-            }
-            return $result;
+            return false;
         }
-        return false;
+        
+        // run rollback on all hosts
+        $result = true;
+        foreach ($hosts as $hostKey => $host) {
+            $hostConfig = null;
+            if (is_array($host)) {
+                $hostConfig = $host;
+                $host = $hostKey;
+            }
+
+            // Set Host and Host Specific Config
+            $this->getConfig()->setHost($host);
+            $this->getConfig()->setHostConfig($hostConfig);
+            $this->getConfig()->setReleaseId(-1);
+
+            $task = Factory::get(array(
+                    'name'=>'releases/rollback',
+                    'parameters' => array('inDeploy'=>true)
+                ),
+                $this->getConfig(),
+                false,
+                $task->getStage()
+            );
+            $task->init();
+            $result = $task->run() && $result;
+        }
+        return $result;
     }
 
     /**
@@ -512,44 +499,36 @@ class DeployCommand extends AbstractCommand implements RequiresEnvironment
         if ($title === null) {
             $title = 'Running <purple>' . $task->getName() . '</purple> ... ';
         }
+        
         Console::output($title, 2, 0);
 
-        $runTask = true;
         if (($task instanceof SkipOnOverride) && $this->getConfig()->getParameter('overrideRelease', false)) {
-            $runTask = false;
-        }
-
-        if ($runTask === true) {
-            try {
-                $result = $task->run();
-
-                if ($result === true) {
-                    Console::output('<green>OK</green>', 0);
-                    $result = true;
-                } else {
-                    Console::output('<red>FAIL</red>', 0);
-                    $result = false;
-                }
-            } catch (RollbackException $e) {
-                Console::output('<red>FAIL, Rollback catched</red> [Message: ' . $e->getMessage() . ']', 0);
-                $this->runRollbackTask($task);
-                $result = false;
-            } catch (ErrorWithMessageException $e) {
-                Console::output('<red>FAIL</red> [Message: ' . $e->getMessage() . ']', 0);
-                $result = false;
-            } catch (SkipException $e) {
-                Console::output('<yellow>SKIPPED</yellow>', 0);
-                $result = true;
-            } catch (Exception $e) {
-                Console::output('<red>FAIL</red>', 0);
-                $result = false;
-            }
-        } else {
             Console::output('<yellow>SKIPPED</yellow>', 0);
-            $result = true;
+            return true;
         }
 
-        return $result;
+        try {
+            $result = $task->run();
+
+            if ($result === true) {
+                Console::output('<green>OK</green>', 0);
+                return true;
+            } else {
+                Console::output('<red>FAIL</red>', 0);
+            }
+        } catch (RollbackException $e) {
+            Console::output('<red>FAIL, Rollback catched</red> [Message: ' . $e->getMessage() . ']', 0);
+            $this->runRollbackTask($task);
+        } catch (ErrorWithMessageException $e) {
+            Console::output('<red>FAIL</red> [Message: ' . $e->getMessage() . ']', 0);
+        } catch (SkipException $e) {
+            Console::output('<yellow>SKIPPED</yellow>', 0);
+            return true;
+        } catch (Exception $e) {
+            Console::output('<red>FAIL</red>', 0);
+        }
+
+        return false;
     }
 
     /**
@@ -659,5 +638,35 @@ class DeployCommand extends AbstractCommand implements RequiresEnvironment
         }
 
         return $strategy;
+    }
+    
+    /**
+     * Check for running instance and Lock
+     * 
+     * @return boolean
+     */
+    protected function lock()
+    {
+        // Check for running instance and Lock
+        $lockFile = getcwd() . '/' . self::LOCK_FILE;
+        if (file_exists($lockFile)) {
+            Console::output('<red>There is already an instance of Magallanes running!</red>', 1, 2);
+            return false;
+        }
+        
+        touch($lockFile);
+        
+        return true;
+    }
+    
+    /**
+     * Unlock
+     */
+    protected function unlock()
+    {
+        $lockFile = getcwd() . '/' . self::LOCK_FILE;
+        if (file_exists($lockFile)) {
+            unlink($lockFile);
+        }
     }
 }
