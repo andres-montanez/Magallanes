@@ -103,7 +103,7 @@ class TarGzTask extends BaseStrategyTaskAbstract implements IsReleaseAware
 
         $uploadDirectory = $deployToDirectory;
 
-        if ($sudo === true) {
+        if ($sudo) {
             $uploadDirectory = "/tmp";
         }
 
@@ -116,7 +116,7 @@ class TarGzTask extends BaseStrategyTaskAbstract implements IsReleaseAware
             . $uploadDirectory;
         $result = $this->runCommandLocal($command) && $result;
 
-        if ($sudo === true) {
+        if ($sudo) {
             $tarGzFileName = $remoteTarGz . '.tar.gz';
             $command = $this->getReleasesAwareCommand('mv /tmp/' . $tarGzFileName . ' ' . $deployToDirectory);
             $result = $this->runCommandRemote($command) && $result;
