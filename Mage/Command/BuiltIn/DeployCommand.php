@@ -267,7 +267,7 @@ class DeployCommand extends AbstractCommand implements RequiresEnvironment
 
             // Change Branch Back
             if ($config->deployment('scm', false)) {
-                array_unshift($tasksToRun, 'scm/change-branch');
+                array_push($tasksToRun, 'scm/change-branch');
                 $config->addParameter('_changeBranchRevert');
             }
 
