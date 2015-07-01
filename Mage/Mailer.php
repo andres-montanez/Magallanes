@@ -65,7 +65,7 @@ class Mailer
             array('{project}', '{environment}', '{result}'),
             array($this->project, $this->environment, $result ? 'SUCCESS' : 'FAILURE'),
             self::SUBJECT
-		);
+        );
 
         $message = 'This is a multi-part message in MIME format.' . self::EOL
             . '--Mage-mixed-' . $boundary . self::EOL
