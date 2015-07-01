@@ -75,16 +75,16 @@ class Mailer
             . strip_tags(Console::getOutput()) . self::EOL
 			. self::EOL;
 
-		if ($this->logFile) {
-			$attachment = chunk_split(base64_encode(file_get_contents($this->logFile)));
-            $message .= '--Mage-mixed-' . $boundary . self::EOL
-				. 'Content-Type: text/plain; name="log.txt"' . self::EOL
-				. 'Content-Transfer-Encoding: base64' . self::EOL
-				. 'Content-Disposition: attachment' . self::EOL
-				. self::EOL
-				. $attachment . self::EOL
-				. '--Mage-mixed-' . $boundary . '--' . self::EOL;
-		}
+	if ($this->logFile) {
+		$attachment = chunk_split(base64_encode(file_get_contents($this->logFile)));
+        $message .= '--Mage-mixed-' . $boundary . self::EOL
+		. 'Content-Type: text/plain; name="log.txt"' . self::EOL
+		. 'Content-Transfer-Encoding: base64' . self::EOL
+		. 'Content-Disposition: attachment' . self::EOL
+		. self::EOL
+		. $attachment . self::EOL
+		. '--Mage-mixed-' . $boundary . '--' . self::EOL;
+	}
 
         mail($this->address, $subject, $message, $headers);
     }
