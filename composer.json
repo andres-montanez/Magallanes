@@ -11,7 +11,8 @@
     "require-dev": {
         "phpunit/phpunit": "4.3.5",
         "satooshi/php-coveralls": ">=0.6.1",
-        "php-mock/php-mock": "^0.1"
+        "php-mock/php-mock": "^0.1",
+        "fabpot/php-cs-fixer": "*"
     },
     "autoload": {
         "psr-4": {
@@ -24,6 +25,11 @@
         "psr-4": {
             "MageTest\\": "./tests/MageTest"
         }
+    },
+    "scripts": {
+        "cs-fix": [
+            "php-cs-fixer -vv -n fix; echo"
+        ]
     },
     "config": {
         "bin-dir": "bin"
