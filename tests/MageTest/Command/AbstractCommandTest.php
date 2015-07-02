@@ -266,6 +266,5 @@ class AbstractCommandTest extends BaseTest
 
         $actualMessage = $command->getInfoMessage();
         $this->assertEquals($expectedMessage, $actualMessage);
-
     }
 }
