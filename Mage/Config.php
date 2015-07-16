@@ -470,6 +470,35 @@ class Config
         }
     }
 
+    /**
+     * Get repository configuration
+     *
+     * @param string $option
+     * @param bool|string $default
+     * @return mixed
+     */
+    public function repository($option, $default = false)
+    {
+        // Host Config
+        if (is_array($this->hostConfig) && isset($this->hostConfig['repository'])) {
+            if (isset($this->hostConfig['repository'][$option])) {
+                return $this->hostConfig['repository'][$option];
+            }
+        }
+
+        // Global Config
+        $config = $this->getEnvironmentOption('repository', array());
+        if (isset($config[$option])) {
+            if (is_array($default) && ($config[$option] == '')) {
+                return $default;
+            } else {
+                return $config[$option];
+            }
+        } else {
+            return $default;
+        }
+    }
+
     public function setSourceTemporal($directory)
     {
         $this->environmentConfig['deployment']['source']['temporal'] = $directory;

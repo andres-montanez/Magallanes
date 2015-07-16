@@ -248,6 +248,25 @@ abstract class AbstractTask
     }
 
     /**
+     * adds a cd to the needed remote-cache if we work with remote cache.
+     *
+     * @param string $command
+     * @return string
+     */
+    protected function getCacheAwareCommand($command)
+    {
+        if ($this->getConfig()->repository('enabled', false) === true) {
+            $sharedDirectory = $this->getConfig()->repository('directory', 'shared');
+	    $cacheDirectory = $this->getConfig()->repository('cache', 'git-remote-cache');
+
+            $remoteCacheDirectory = $sharedDirectory . '/' . $cacheDirectory;
+            return 'cd ' . $remoteCacheDirectory . ' && ' . $command;
+        }
+
+        return $command;
+    }
+
+    /**
      * @param integer $releaseId
      * @return bool
      */

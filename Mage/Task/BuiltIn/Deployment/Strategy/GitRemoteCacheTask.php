@@ -1,11 +1,9 @@
 <?php
 namespace Mage\Task\BuiltIn\Deployment\Strategy;
 
-use Exception;
+use Mage\Console;
 use Mage\Task\AbstractTask;
-use Mage\Task\ErrorWithMessageException;
 use Mage\Task\Releases\IsReleaseAware;
-use Mage\Task\SkipException;
 
 /**
  * The git remote cache deployment task.
@@ -17,9 +15,9 @@ use Mage\Task\SkipException;
  * start using it.
  *
  * @package Mage\Task\BuiltIn\Deployment\Strategy
- * @author Mario Mueller <mueller@freshcells.de>
+ * @author Mario Mueller <mueller@freshcells.de>, J.Moriarty <moriarty@codefelony.com>
  */
-class GitRemoteCacheTask extends AbstractTask implements IsReleaseAware
+class GitRemoteCacheTask extends BaseStrategyTaskAbstract implements IsReleaseAware
 {
     /**
      * Returns the Title of the Task
@@ -40,67 +38,69 @@ class GitRemoteCacheTask extends AbstractTask implements IsReleaseAware
      */
     public function run()
     {
-        $overrideRelease = $this->getParameter('overrideRelease', false);
+        $this->checkOverrideRelease();
 
-        if ($overrideRelease === true) {
-            $releaseToOverride = false;
-            $resultFetch = $this->runCommandRemote('ls -ld current | cut -d"/" -f2', $releaseToOverride);
-            if ($resultFetch && is_numeric($releaseToOverride)) {
-                $this->getConfig()->setReleaseId($releaseToOverride);
-            }
-        }
+        $excludes = $this->getExcludes();
+        $excludesListFilePath = $this->getConfig()->deployment('excludes_file', '');
 
-        $excludes = array(
-            '.git',
-            '.svn',
-            '.mage',
-            '.gitignore',
-            '.gitkeep',
-            'nohup.out'
-        );
-
-        // Look for User Excludes
-        $userExcludes = $this->getConfig()->deployment('excludes', array());
-
+        // If we are working with releases
         $deployToDirectory = $this->getConfig()->deployment('to');
         if ($this->getConfig()->release('enabled', false) === true) {
             $releasesDirectory = $this->getConfig()->release('directory', 'releases');
+            $symlink = $this->getConfig()->release('symlink', 'current');
 
-            $deployToDirectory = rtrim($this->getConfig()->deployment('to'), '/')
-                . '/' . $releasesDirectory
-                . '/' . $this->getConfig()->getReleaseId();
-            $this->runCommandRemote('mkdir -p ' . $releasesDirectory . '/' . $this->getConfig()->getReleaseId());
+            $currentRelease = false;
+            $deployToDirectory = rtrim($deployToDirectory, '/') . '/' . $releasesDirectory . '/' . $this->getConfig()->getReleaseId();
+            Console::log('Deploy to ' . $deployToDirectory);
+            $resultFetch = $this->runCommandRemote('ls -ld ' . $symlink . ' | cut -d"/" -f2', $currentRelease);
+
+            if ($resultFetch && $currentRelease) {
+                // If deployment configuration is rsync, include a flag to simply sync the deltas between the prior release
+                // rsync: { copy: yes }
+                $rsync_copy = $this->getConfig()->repository('rsync');
+                // If copy_tool_rsync, use rsync rather than cp for finer control of what is copied
+                if ($rsync_copy && is_array($rsync_copy) && $rsync_copy['copy'] && $this->runCommandRemote('test -d ' . $releasesDirectory . '/' . $currentRelease)) {
+                    if (isset($rsync_copy['copy_tool_rsync'])) {
+                        $this->runCommandRemote("rsync -a {$this->excludes(array_merge($excludes, $rsync_copy['rsync_excludes']))} "
+                                          . "$releasesDirectory/$currentRelease/ $releasesDirectory/{$this->getConfig()->getReleaseId()}");
+                    } else {
+                        $this->runCommandRemote('cp -R ' . $releasesDirectory . '/' . $currentRelease . ' ' . $releasesDirectory . '/' . $this->getConfig()->getReleaseId());
+                    }
+                } else {
+                    $this->runCommandRemote('mkdir -p ' . $releasesDirectory . '/' . $this->getConfig()->getReleaseId());
+                }
+            }
         }
 
-        $branch = $this->getParameter('branch');
-        $remote = $this->getParameter('remote', 'origin');
+        $branch = $this->getConfig()->repository('branch', 'master');
+        $remote = $this->getConfig()->repository('remote', 'origin');
 
-        $remoteCacheParam = $this->getParameter('remote_cache', 'shared/git-remote-cache');
-        $remoteCacheFolder = rtrim($this->getConfig()->deployment('to'), '/') . '/' . $remoteCacheParam;
+	$sharedDirectory = $this->getConfig()->repository('directory', 'shared');
+	$cacheDirectory = $this->getConfig()->repository('gitcache', 'git-remote-cache');
+        $remoteCacheFolder = rtrim($this->getConfig()->deployment('to'), '/')
+            . '/' . $sharedDirectory
+            . '/' . $cacheDirectory;
+	$this->runCommandRemote('mkdir -p ' . $remoteCacheFolder);
 
-        // Don't use -C as git 1.7 does not support it
-        $command = 'cd ' . $remoteCacheFolder . ' && /usr/bin/env git fetch ' . $remote;
-        $result = $this->runCommandRemote($command);
+	// Fetch Remote
+	$command = $this->getCacheAwareCommand('git fetch ' . $remote);
+	$result = $this->runCommandRemote($command);
 
-        $command = 'cd ' . $remoteCacheFolder . ' && /usr/bin/env git checkout ' . $branch;
-        $result = $this->runCommandRemote($command) && $result;
+        if ($result === false) {
+            $repository = $this->getConfig()->repository('vcs');
+            if ($repository) {
+                $command = $this->getCacheAwareCommand('git clone --mirror ' . $repository . ' .');
+                $result = $this->runCommandRemote($command);
 
-        $command = 'cd ' . $remoteCacheFolder . ' && /usr/bin/env git pull --rebase ' . $branch;
-        $result = $this->runCommandRemote($command) && $result;
-
-        $excludes = array_merge($excludes, $userExcludes);
-        $excludeCmd = '';
-        foreach ($excludes as $excludeFile) {
-            $excludeCmd .= ' --exclude=' . $excludeFile;
+                $command = $this->getCacheAwareCommand('git fetch ' . $remote);
+                $result = $this->runCommandRemote($command);
+            }
         }
 
-        $command = 'cd ' . $remoteCacheFolder . ' && /usr/bin/env git archive ' . $branch . ' | tar -x -C ' . $deployToDirectory . ' ' . $excludeCmd;
+	// Archive Remote
+	$command = $this->getCacheAwareCommand('git archive ' . $branch . ' | tar -x -C ' . $deployToDirectory);
         $result = $this->runCommandRemote($command) && $result;
 
-        if ($result) {
-            $this->cleanUpReleases();
-        }
-
-        return $result;
+	return $result;
     }
 }
