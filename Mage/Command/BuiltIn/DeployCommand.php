@@ -243,7 +243,6 @@ class DeployCommand extends AbstractCommand implements RequiresEnvironment
     protected function runNonDeploymentTasks($stage, Config $config, $title)
     {
         $tasksToRun = $config->getTasks($stage);
-        self::$failedTasks = 0;
 
         // PreDeployment Hook
         if ($stage == AbstractTask::STAGE_PRE_DEPLOY) {
@@ -284,6 +283,7 @@ class DeployCommand extends AbstractCommand implements RequiresEnvironment
 
             $tasks = 0;
             $completedTasks = 0;
+            self::$failedTasks = 0;
 
             foreach ($tasksToRun as $taskData) {
                 $tasks++;
