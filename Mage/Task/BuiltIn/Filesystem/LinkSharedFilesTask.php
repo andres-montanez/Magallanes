@@ -147,6 +147,6 @@ class LinkSharedFilesTask extends AbstractTask implements IsReleaseAware
             $path = $linkedEntity;
         }
 
-        return [$path, $strategy];
+        return array($path, $strategy);
     }
 }
