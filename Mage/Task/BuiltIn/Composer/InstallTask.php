@@ -1,7 +1,6 @@
 <?php
 namespace Mage\Task\BuiltIn\Composer;
 
-use Mage\Task\BuiltIn\Composer\ComposerAbstractTask;
 use Mage\Task\ErrorWithMessageException;
 
 class InstallTask extends ComposerAbstractTask
@@ -24,6 +23,10 @@ class InstallTask extends ComposerAbstractTask
     public function run()
     {
         $dev = $this->getParameter('dev', true);
-        return $this->runCommand($this->getComposerCmd() . ' install' . ($dev ? ' --dev' : ' --no-dev'));
+        $optional = $this->getParameter('optional', '');
+
+        $command = $this->getComposerCmd() . ' install' . ($dev ? ' --dev' : ' --no-dev') . ' ' . $optional;
+
+        return $this->runCommand($command);
     }
 }
