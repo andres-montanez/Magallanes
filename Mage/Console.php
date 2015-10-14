@@ -270,6 +270,14 @@ class Console
     }
 
     /**
+     * Read String From Prompt Without
+     */
+    public static function readInputSilent()
+    {
+        return rtrim(exec('read -s input && echo $input'));
+    }
+
+    /**
      * Check Logs
      * @param \Mage\Config $config
      */
