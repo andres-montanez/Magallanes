@@ -8,7 +8,7 @@ use Mage\Task\AbstractTask;
  * Class ACLPermissions
  * @package Task
  */
-class ComposerDownload extends AbstractTask
+class DownloadTask extends ComposerAbstractTask
 {
   /**
    * @return string
