@@ -219,6 +219,22 @@ class Console
     }
 
     /**
+     * Disable logging to logfile.
+     *
+     */
+    public static function disableLogging(){
+        self::$logEnabled = false;
+    }
+
+    /**
+     * Enable logging to logfile.
+     *
+     */
+    public static function enableLogging(){
+        self::$logEnabled = true;
+    }
+
+    /**
      * Log a message to the logfile.
      *
      * @param string $message
