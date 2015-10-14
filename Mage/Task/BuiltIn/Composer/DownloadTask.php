@@ -15,7 +15,7 @@ class DownloadTask extends ComposerAbstractTask
    */
   public function getName()
   {
-    return 'Composer - Download composer';
+    return 'Download composer [newcraft]';
   }
 
   /**
