@@ -632,9 +632,15 @@ class DeployCommand extends AbstractCommand implements RequiresEnvironment
                 //dashes to CamelCase
                 $CamelCaseStrategyName = ucfirst(str_replace(' ', '', ucwords(str_replace('-', ' ', $strategyName))));
 
-                if(class_exists('Mage\Task\BuiltIn\Deployment\Strategy\\'.$CamelCaseStrategyName.'Task')){
-                    $deployStrategy =  'deployment/strategy/'.$strategyName;
-                } else {
+                foreach(glob(__DIR__.'/../../Task/*',GLOB_ONLYDIR) as $dirPath){
+                    $dirName = substr($dirPath,strrpos($dirPath,'/')+1);
+                    if(class_exists('Mage\\Task\\'.$dirName.'\\Deployment\\Strategy\\'.$CamelCaseStrategyName.'Task')){
+                        $deployStrategy = 'deployment/strategy/' . $strategyName;
+                        break;
+                    }
+                }
+
+                if(!isset($deployStrategy)){
                     throw new Exception('Deployment Strategy "' . $strategyName . '" not found.');
                 }
 
