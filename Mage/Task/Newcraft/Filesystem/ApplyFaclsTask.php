@@ -1,5 +1,6 @@
 <?php
-namespace Mage\Task\BuiltIn\Filesystem;
+
+namespace Mage\Task\Newcraft\Filesystem;
 
 use Mage\Task\AbstractTask;
 use Mage\Task\SkipException;
@@ -29,9 +30,6 @@ class ApplyFaclsTask extends AbstractTask implements IsReleaseAware
      */
     public function run()
     {
-        $releasesDirectory = $this->getConfig()->release('directory', 'releases');
-        $currentCopy = $releasesDirectory . '/' . $this->getConfig()->getReleaseId();
-
         $flags = ' -'.$this->getParameter('flags', false).' ';
 
         $aclParam = $this->getParameter('acl_param', '');
@@ -43,7 +41,8 @@ class ApplyFaclsTask extends AbstractTask implements IsReleaseAware
 
         $return = true;
         foreach ($folders as $folder) {
-            $execute = $this->runCommandRemote("setfacl$flags $aclParam $currentCopy/$folder", $output);
+            $aclCommand = $this->getReleasesAwareCommand('setfacl'.$flags.' '.$aclParam.' '.$folder);
+            $execute = $this->runCommandRemote($aclCommand, $output);
             if(!$execute) $return = false;
         }
 
