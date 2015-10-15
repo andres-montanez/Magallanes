@@ -41,10 +41,12 @@ class ApplyFaclsTask extends AbstractTask implements IsReleaseAware
 
         $return = true;
         foreach ($folders as $folder) {
-
             $aclCommand = $this->getReleasesAwareCommand('setfacl'.$flags.' '.$aclParam.' '.$folder);
             $execute = $this->runCommandRemote($aclCommand, $output);
-            if(!$execute) $return = false;
+
+            if (!$execute) {
+                $return = false;
+            }
         }
 
         return $return;
