@@ -5,6 +5,11 @@ use Mage\Task\AbstractTask;
 use Mage\Task\SkipException;
 use Mage\Task\Releases\IsReleaseAware;
 
+/**
+ * Applies Facls to defined directories with the provided flags
+ * Class ApplyFaclsTask
+ * @package Mage\Task\BuiltIn\Filesystem
+ */
 class ApplyFaclsTask extends AbstractTask implements IsReleaseAware
 {
     /**
@@ -13,7 +18,7 @@ class ApplyFaclsTask extends AbstractTask implements IsReleaseAware
      */
     public function getName()
     {
-        return 'Set file ACLs on remote system [built-in]';
+        return 'Set file ACLs on remote system [newcraft]';
     }
 
     /**
@@ -27,6 +32,7 @@ class ApplyFaclsTask extends AbstractTask implements IsReleaseAware
         $releasesDirectory = $this->getConfig()->release('directory', 'releases');
         $currentCopy = $releasesDirectory . '/' . $this->getConfig()->getReleaseId();
 
+        $flags = ' -'.$this->getParameter('flags', false).' ';
 
         $aclParam = $this->getParameter('acl_param', '');
         if (empty($aclParam)) {
@@ -34,12 +40,13 @@ class ApplyFaclsTask extends AbstractTask implements IsReleaseAware
         }
 
         $folders = $this->getParameter('folders', []);
-        $recursive = $this->getParameter('recursive', false) ? ' -R ' : ' ';
 
+        $return = true;
         foreach ($folders as $folder) {
-            $this->runCommandRemote("setfacl$recursive-m $aclParam $currentCopy/$folder", $output);
+            $execute = $this->runCommandRemote("setfacl$flags $aclParam $currentCopy/$folder", $output);
+            if(!$execute) $return = false;
         }
 
-        return true;
+        return $return;
     }
 }
