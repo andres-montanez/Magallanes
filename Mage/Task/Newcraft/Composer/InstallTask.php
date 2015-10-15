@@ -4,8 +4,9 @@ namespace Mage\Task\Newcraft\Composer;
 
 use Mage\Task\BuiltIn\Composer\ComposerAbstractTask;
 use Mage\Task\ErrorWithMessageException;
+use Mage\Task\Releases\IsReleaseAware;
 
-class InstallTask extends ComposerAbstractTask
+class InstallTask extends ComposerAbstractTask implements IsReleaseAware
 {
     /**
      * Returns the Title of the Task
@@ -25,6 +26,7 @@ class InstallTask extends ComposerAbstractTask
     public function run()
     {
         $dev = $this->getParameter('dev', true);
-        return $this->runRemoteCommand($this->getComposerCmd() . ' install' . ($dev ? ' --dev' : ' --no-dev'));
+        $installCommand = $this->getReleasesAwareCommand($this->getComposerCmd() . ' install' . ($dev ? ' --dev' : ' --no-dev'));
+        return $this->runCommandRemote($installCommand);
     }
 }

@@ -3,12 +3,13 @@
 namespace Mage\Task\Newcraft\Composer;
 
 use Mage\Task\BuiltIn\Composer\ComposerAbstractTask;
+use Mage\Task\Releases\IsReleaseAware;
 
 /**
  * Class ACLPermissions
  * @package Task
  */
-class DownloadTask extends ComposerAbstractTask
+class DownloadTask extends ComposerAbstractTask implements IsReleaseAware
 {
   /**
    * @return string
@@ -23,6 +24,7 @@ class DownloadTask extends ComposerAbstractTask
    */
   public function run()
   {
-    return $this->runCommandRemote('curl -sS https://getcomposer.org/installer | php');
+    $downloadCommand = $this->getReleasesAwareCommand('curl -sS https://getcomposer.org/installer | php');
+    return $this->runCommandRemote($downloadCommand);
   }
 }
