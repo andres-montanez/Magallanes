@@ -632,8 +632,13 @@ class DeployCommand extends AbstractCommand implements RequiresEnvironment
                 //dashes to CamelCase
                 $CamelCaseStrategyName = ucfirst(str_replace(' ', '', ucwords(str_replace('-', ' ', $strategyName))));
 
-                foreach(glob(__DIR__.'/../../Task/*',GLOB_ONLYDIR) as $dirPath){
-                    $dirName = substr($dirPath,strrpos($dirPath,'/')+1);
+                $dirNames = array_map(function($path){ return substr($path, strrpos($path, '/') + 1); },glob(__DIR__ . '/../../Task/*', GLOB_ONLYDIR));
+
+                //make BuiltIn last entry of array for easy overriding.
+                unset($dirNames[array_search('BuiltIn',$dirNames)]);
+                $dirNames[] = 'BuiltIn';
+
+                foreach ($dirNames as $dirName) {
                     if(class_exists('Mage\\Task\\'.$dirName.'\\Deployment\\Strategy\\'.$CamelCaseStrategyName.'Task')){
                         $deployStrategy = 'deployment/strategy/' . $strategyName;
                         break;

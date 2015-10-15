@@ -49,8 +49,13 @@ class Factory
             //dashes to CamelCase
             $CamelCaseTaskName = ucfirst(str_replace(' ', '', ucwords(str_replace('-', ' ', $taskName))));
 
-            foreach (glob(__DIR__ . '/*', GLOB_ONLYDIR) as $dirPath) {
-                $dirName = substr($dirPath, strrpos($dirPath, '/') + 1);
+            $dirNames = array_map(function($path){ return substr($path, strrpos($path, '/') + 1); },glob(__DIR__ . '/*', GLOB_ONLYDIR));
+
+            //make BuiltIn last entry of array for easy overriding.
+            unset($dirNames[array_search('BuiltIn',$dirNames)]);
+            $dirNames[] = 'BuiltIn';
+
+            foreach ($dirNames as $dirName) {
                 $className = 'Mage\\Task\\' . $dirName . '\\' . str_replace(' ', '\\', ucwords(str_replace('/', ' ', $CamelCaseTaskName))) . 'Task';
                 if (class_exists($className)) {
                     break;
