@@ -28,12 +28,20 @@ class CreateLogsDirectoryTask extends AbstractTask implements IsReleaseAware
     {
         $directoryName = $this->getParameter('name', 'logs');
 
+        //create logs folder if not exists
+        $this->runCommandRemote('test ! -d '.$directoryName.' && rm -f '.$directoryName.' && mkdir '.$directoryName);
+
+        //set correct acls
         $users = $this->getParameter('users', []);
         $usersCommandString = implode(' -m ',array_map(function($v){ return 'u:'.$v.':rwX'; }, $users));
 
-        $this->runCommandRemote('test ! -d '.$directoryName.' && rm -f '.$directoryName.' && mkdir '.$directoryName);
         $this->runCommandRemote('setfacl -Rnm '.$usersCommandString.' '.$directoryName);
         $this->runCommandRemote('setfacl -dRnm '.$usersCommandString.' '.$directoryName);
+
+        //create symlink from app/logs
+        $symLinkCommand = $this->getReleasesAwareCommand('ln -snf ../../../'.$directoryName.' app/logs');
+        $this->runCommandRemote($symLinkCommand);
+
         return true;
     }
 }
