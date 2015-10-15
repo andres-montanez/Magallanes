@@ -2,7 +2,7 @@
 
 namespace Mage\Task\Newcraft\Composer;
 
-use Mage\Task\AbstractTask;
+use Mage\Task\BuiltIn\Composer\ComposerAbstractTask;
 
 /**
  * Class ACLPermissions
