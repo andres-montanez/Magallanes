@@ -37,9 +37,8 @@ class CopyParametersTask extends SymfonyAbstractTask
         $envName = $this->getConfig()->deployment('environment');
 
         //First check if parameters.yml exists
-        $parametersYmlExistsCommand = $this->getReleasesAwareCommand('cd ./app/config && test -f parameters.yml && echo "y" || echo "n"');
-        if( $this->runCommandRemote($parametersYmlExistsCommand, $output) && $output == 'y') {
-            if($removeParametersCommand = $this->getReleasesAwareCommand('cd ./app/config && rm parameters.yml')) {
+        if( $this->runCommandRemote('cd ./app/config && test -f parameters.yml && echo "y" || echo "n"', $output) && $output == 'y') {
+            if($this->runCommandRemote('cd ./app/config && rm parameters.yml')) {
                 return $this->copyParameters($envName);
             } else {
                 return false;
@@ -55,9 +54,8 @@ class CopyParametersTask extends SymfonyAbstractTask
      * @return bool
      */
     public function copyParameters($envName) {
-        $environmentYmlExistsCommand = $this->getReleasesAwareCommand('cd ./app/config && test -f parameters-'.$envName.'.yml && echo "y" || echo "n"');
-        if( $this->runCommandRemote($environmentYmlExistsCommand, $output) && $output == 'y') {
-            return $this->getReleasesAwareCommand('cd ./app/config && cp -p parameters-'.$envName.'.yml parameters.yml');
+        if( $this->runCommandRemote('cd ./app/config && test -f parameters-'.$envName.'.yml && echo "y" || echo "n"', $output) && $output == 'y') {
+            return $this->runCommandRemote('cd ./app/config && cp -fp parameters-'.$envName.'.yml parameters.yml');
         } else {
             return false;
         }
