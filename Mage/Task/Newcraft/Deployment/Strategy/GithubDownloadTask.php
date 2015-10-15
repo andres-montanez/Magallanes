@@ -1,7 +1,8 @@
 <?php
 
-namespace Mage\Task\BuiltIn\Deployment\Strategy;
+namespace Mage\Task\Newcraft\Deployment\Strategy;
 
+use Mage\Task\BuiltIn\Deployment\Strategy\BaseStrategyTaskAbstract;
 use Mage\Task\Releases\IsReleaseAware;
 use Mage\Console;
 use Exception;
@@ -19,7 +20,7 @@ class GithubDownloadTask extends BaseStrategyTaskAbstract implements IsReleaseAw
      */
     public function getName()
     {
-        return 'Deploy via Github Download';
+        return 'Deploy via Github Download [newcraft]';
     }
 
     /**

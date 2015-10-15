@@ -8,7 +8,7 @@
 * file that was distributed with this source code.
 */
 
-namespace Mage\Task\BuiltIn\Deployment;
+namespace Mage\Task\Newcraft\Deployment;
 
 use Mage\Task\AbstractTask;
 use Mage\Task\Releases\IsReleaseAware;

@@ -1,6 +1,6 @@
 <?php
 
-namespace Mage\Task\BuiltIn\Composer;
+namespace Mage\Task\Newcraft\Composer;
 
 use Mage\Task\AbstractTask;
 

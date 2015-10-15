@@ -9,7 +9,7 @@
  * file that was distributed with this source code.
  */
 
-namespace Mage\Task\BuiltIn\Filesystem;
+namespace Mage\Task\Newcraft\Filesystem;
 
 use Mage\Task\AbstractTask;
 
