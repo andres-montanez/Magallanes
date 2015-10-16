@@ -20,8 +20,7 @@ class RebuildLayoutTask extends SymfonyAbstractTask
      */
     public function run()
     {
-        $command = $this->getAppPath() . ' bms:genLayout';
-        $result = $this->runCommandRemote($command, $output);
-        return $result;
+        $env = $this->getParameter('env', 'dev');
+        return $this->runCommandRemote($this->getAppPath() . ' bms:genLayout --env='.$env);
     }
 }
