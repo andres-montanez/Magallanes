@@ -9,7 +9,7 @@ use Mage\Task\Releases\IsReleaseAware;
 /**
  * Applies Facls to defined directories with the provided flags
  * Class ApplyFaclsTask
- * @package Mage\Task\BuiltIn\Filesystem
+ * @package Mage\Task\Newcraft\Filesystem
  */
 class ApplyFaclsTask extends AbstractTask implements IsReleaseAware
 {

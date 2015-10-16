@@ -7,7 +7,7 @@ use Mage\Task\Releases\IsReleaseAware;
 
 /**
  * Class RemoveCurrentDirectoryTask
- * @package Mage\Task\BuiltIn\Filesystem
+ * @package Mage\Task\Newcraft\Bms
  */
 class CreateLogsDirectoryTask extends AbstractTask implements IsReleaseAware
 {
@@ -31,7 +31,7 @@ class CreateLogsDirectoryTask extends AbstractTask implements IsReleaseAware
         //create logs folder if not exists
         $this->runCommandRemote('test ! -d '.$directoryName.' && rm -f '.$directoryName.' && mkdir '.$directoryName);
 
-        //set correct acls
+        //set correct acls, no problem if already done.
         $users = $this->getParameter('users', []);
         $usersCommandString = implode(' -m ',array_map(function($v){ return 'u:'.$v.':rwX'; }, $users));
 
