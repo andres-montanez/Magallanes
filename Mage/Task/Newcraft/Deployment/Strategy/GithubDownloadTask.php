@@ -44,7 +44,7 @@ class GithubDownloadTask extends BaseStrategyTaskAbstract implements IsReleaseAw
         $gitUsername = exec('git config user.email');
 
         Console::output('');
-        Console::output('<white>GitHub username</white>: ', 2, 0);
+        Console::output('<white>GitHub username</white>: ', 3, 0);
         if(empty($gitUsername)){
             $gitUsername = Console::readInput();
         } else {
@@ -53,9 +53,9 @@ class GithubDownloadTask extends BaseStrategyTaskAbstract implements IsReleaseAw
         Console::output('', 0);
 
         //ask user for password
-        Console::output('<white>GitHub password</white>: ', 2, 0);
+        Console::output('<white>GitHub password</white>: ', 3, 0);
         $gitPassword = Console::readInputSilent();
-        Console::output('');
+        Console::output('[hidden]',0,1);
 
         $gitRemoteUrl = exec('git config --get remote.origin.url');
         if(0 === strpos($gitRemoteUrl,'git@github.com')){
@@ -73,7 +73,7 @@ class GithubDownloadTask extends BaseStrategyTaskAbstract implements IsReleaseAw
         $downloadUrl = 'https://github.com/'.$projectName.'/archive';
         $revision = exec('git rev-parse HEAD');
 
-        Console::output('Downloading current revision from github.... ', 2, 0);
+        Console::output('Cont... <purple>download from Github [newcraft]</purple>.... ', 2, 0);
 
         Console::disableLogging();
         $downloadCommand = $this->getReleasesAwareCommand('curl --silent --location --user \''.$gitUsername.':'.$gitPassword.'\' \''.$downloadUrl.'/'.$revision.'.tar.gz\' | gunzip | tar xf - --strip 1');
