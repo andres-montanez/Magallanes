@@ -35,10 +35,12 @@ class ApplyFullAccessAclTask extends AbstractTask
 
         $directoryNames = $this->getParameter('directories', []);
 
+        $sudo = (bool) $this->getParameter('sudo', false) ? 'sudo ' : '';
+
         $return = true;
         foreach($directoryNames as $directoryName) {
-            $fileResult = $this->runCommandRemote('setfacl -Rnm '.$usersCommandString.' '.$directoryName, $fileOutput);
-            $directoryResult = $this->runCommandRemote('setfacl -dRnm '.$usersCommandString.' '.$directoryName, $directoryOutput);
+            $fileResult = $this->runCommandRemote($sudo.'setfacl -Rnm '.$usersCommandString.' '.$directoryName, $fileOutput);
+            $directoryResult = $this->runCommandRemote($sudo.'setfacl -dRnm '.$usersCommandString.' '.$directoryName, $directoryOutput);
             $return = $return && $fileResult && $directoryResult;
         }
 
