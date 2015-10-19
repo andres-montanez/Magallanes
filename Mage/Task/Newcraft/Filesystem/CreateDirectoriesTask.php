@@ -17,16 +17,26 @@ class CreateDirectoriesTask extends AbstractTask
     }
 
     /**
-     * Removes any directory named current so it can be replaced with a symlink
+     * Create directories
      * @see \Mage\Task\AbstractTask::run()
      */
     public function run()
     {
         $directoryNames = $this->getParameter('directories', []);
+        $permissions = $this->getParameter('permissions', null);
+
+        if(!is_numeric($permissions) && !preg_match('/^[ugoarwxX\-\+\= ]$/',$permissions)){
+            $permissions = null;
+        }
+
+        $sudo = (bool) $this->getParameter('sudo', false) ? 'sudo ' : '';
 
         $return = true;
         foreach($directoryNames as $directoryName) {
             $result = $this->runCommandRemote('mkdir -p '.$directoryName);
+            if(null !== $permissions){
+                $result = $result && $this->runCommandRemote($sudo.'chmod '.$permissions.' '.$directoryName);
+            }
             $return = $return && $result;
         }
 
