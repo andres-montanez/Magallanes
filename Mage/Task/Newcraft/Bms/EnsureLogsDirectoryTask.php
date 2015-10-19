@@ -9,7 +9,7 @@ use Mage\Task\Releases\IsReleaseAware;
  * Class RemoveCurrentDirectoryTask
  * @package Mage\Task\Newcraft\Bms
  */
-class CreateLogsDirectoryTask extends AbstractTask implements IsReleaseAware
+class EnsureLogsDirectoryTask extends AbstractTask implements IsReleaseAware
 {
 
     /**
@@ -17,7 +17,7 @@ class CreateLogsDirectoryTask extends AbstractTask implements IsReleaseAware
      */
     public function getName()
     {
-        return 'Creating logs folder if needed [newcraft]';
+        return 'Ensure logs directory is in place [newcraft]';
     }
 
     /**
@@ -28,6 +28,8 @@ class CreateLogsDirectoryTask extends AbstractTask implements IsReleaseAware
     {
         $directoryName = $this->getParameter('name', 'logs');
 
+        $sudo = (bool) $this->getParameter('sudo', false) ? 'sudo ' : '';
+
         //create logs folder if not exists
         $this->runCommandRemote('test ! -d '.$directoryName.' && rm -f '.$directoryName.' && mkdir '.$directoryName);
 
@@ -35,8 +37,9 @@ class CreateLogsDirectoryTask extends AbstractTask implements IsReleaseAware
         $users = $this->getParameter('users', []);
         $usersCommandString = implode(' -m ',array_map(function($v){ return 'u:'.$v.':rwX'; }, $users));
 
-        $this->runCommandRemote('setfacl -Rnm '.$usersCommandString.' '.$directoryName);
-        $this->runCommandRemote('setfacl -dRnm '.$usersCommandString.' '.$directoryName);
+        $this->runCommandRemote($sudo.'chmod -R 664 '.$directoryName);
+        $this->runCommandRemote($sudo.'setfacl -Rnm '.$usersCommandString.' '.$directoryName);
+        $this->runCommandRemote($sudo.'setfacl -dRnm '.$usersCommandString.' '.$directoryName);
 
         //create symlink from app/logs
         $symLinkCommand = $this->getReleasesAwareCommand('ln -snf ../../../'.$directoryName.' app/logs');
