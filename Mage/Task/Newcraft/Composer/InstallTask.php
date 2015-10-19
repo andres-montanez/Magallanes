@@ -4,9 +4,9 @@ namespace Mage\Task\Newcraft\Composer;
 
 use Mage\Task\BuiltIn\Composer\ComposerAbstractTask;
 use Mage\Task\ErrorWithMessageException;
-use Mage\Task\Releases\IsReleaseAware;
+use Mage\Console;
 
-class InstallTask extends ComposerAbstractTask implements IsReleaseAware
+class InstallTask extends ComposerAbstractTask
 {
     /**
      * Returns the Title of the Task
@@ -14,7 +14,7 @@ class InstallTask extends ComposerAbstractTask implements IsReleaseAware
      */
     public function getName()
     {
-        return 'Install vendors via Composer [built-in]';
+        return 'Install vendors via Composer [newcraft]';
     }
 
     /**
@@ -26,7 +26,16 @@ class InstallTask extends ComposerAbstractTask implements IsReleaseAware
     public function run()
     {
         $dev = $this->getParameter('dev', true);
-        $installCommand = $this->getReleasesAwareCommand($this->getComposerCmd() . ' install' . ($dev ? ' --dev' : ' --no-dev'));
-        return $this->runCommandRemote($installCommand);
+
+        if($this->getComposerCmd() === 'php composer.phar'){
+            $downloadCommand = 'curl -sS https://getcomposer.org/installer | php';
+            $composerCommand = 'test -f composer.phar && test -f composer.phar || '.$downloadCommand.'; '.$this->getComposerCmd();
+            Console::output('<purple>Adding dl command</purple> ... ', 0, 0);
+        } else {
+            $composerCommand = $this->getComposerCmd();
+        }
+
+
+        return $this->runCommandRemote($composerCommand . ' install' . ($dev ? ' --dev' : ' --no-dev --optimize-autoloader'));
     }
 }
