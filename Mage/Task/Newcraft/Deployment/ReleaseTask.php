@@ -15,9 +15,8 @@ use Mage\Task\Releases\IsReleaseAware;
 use Mage\Task\Releases\SkipOnOverride;
 
 /**
- * Task for Releasing a Deploy
+ * Task for Releasing a Deploy, modified so no chown command is used.
  *
- * @author Andrés Montañez <andres@andresmontanez.com>
  */
 class ReleaseTask extends AbstractTask implements IsReleaseAware, SkipOnOverride
 {
@@ -27,7 +26,7 @@ class ReleaseTask extends AbstractTask implements IsReleaseAware, SkipOnOverride
      */
     public function getName()
     {
-        return 'Releasing [built-in]';
+        return 'Releasing [newcraft]';
     }
 
     /**
@@ -36,7 +35,6 @@ class ReleaseTask extends AbstractTask implements IsReleaseAware, SkipOnOverride
      */
     public function run()
     {
-        $resultFetch = false;
         if ($this->getConfig()->release('enabled', false) === true) {
             $releasesDirectory = $this->getConfig()->release('directory', 'releases');
             $symlink = $this->getConfig()->release('symlink', 'current');
@@ -50,53 +48,15 @@ class ReleaseTask extends AbstractTask implements IsReleaseAware, SkipOnOverride
 
             $currentCopy = $releasesDirectory . '/' . $releaseId;
 
-            if ($chown) {
-                //Check if target user:group is specified
-                $userGroup = $this->getConfig()->deployment('owner');
-                // Fetch the user and group from base directory; defaults usergroup to 33:33
-                if (empty($userGroup)) {
-                    $user = '33';
-                    $group = '33';
-                    $directoryInfos = '';
-                    // Get raw directory info and parse it in php.
-                    // "stat" command don't behave the same on different systems, ls output format also varies
-                    // and awk parameters need special care depending on the executing shell
-                    $resultFetch = $this->runCommandRemote("ls -ld .", $directoryInfos);
-                    if (!empty($directoryInfos)) {
-                        //uniformize format as it depends on the system deployed on
-                        $directoryInfos = trim(str_replace(array("  ", "\t"), ' ', $directoryInfos));
-                        $infoArray = explode(' ', $directoryInfos);
-                        if (!empty($infoArray[2])) {
-                            $user = $infoArray[2];
-                        }
-                        if (!empty($infoArray[3])) {
-                            $group = $infoArray[3];
-                        }
-                        $userGroup = $user . ':' . $group;
-                    }
-                }
-
-                if ($resultFetch && $userGroup != '') {
-                    $command = 'chown -R ' . $userGroup . ' ' . $currentCopy
-                        . ' && '
-                        . 'chown ' . $userGroup . ' ' . $releasesDirectory;
-                    $result = $this->runCommandRemote($command);
-                    if (!$result) {
-                        return $result;
-                    }
-                }
-            }
-
-            // Switch symlink and change owner
-            $tmplink = $symlink . '.tmp';
-            $command = "ln -sfn {$currentCopy} {$tmplink}";
-            if ($chown && $resultFetch && $userGroup != '') {
-                $command.= " && chown -h {$userGroup} {$tmplink}";
-            }
-            $command.= " && mv -fT {$tmplink} {$symlink}";
-            $result = $this->runCommandRemote($command);
+            // Switch symlink and change owner. using `mv -T` is essential for some reason, don't just overwrite.
+            $command = 'ln -sfn '.$currentCopy.' '.$symlink.'.tmp && mv -fT '.$symlink.'.tmp '.$symlink;
+            $result = $this->runCommandRemote($command, $output);
 
             if ($result) {
+                //if this is a php-fpm setup (like vagrant), reload the service to clear opcache path.
+                if('vagrant' === $this->getConfig()->getEnvironment()) {
+                    $this->runCommandRemote('sudo service php5-fpm reload');
+                }
                 $this->cleanUpReleases();
             }
 
