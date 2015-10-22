@@ -37,10 +37,22 @@ class ApplyFullAccessAclTask extends AbstractTask
 
         $sudo = (bool) $this->getParameter('sudo', false) ? 'sudo ' : '';
 
+        $projectDirectory = rtrim($this->getConfig()->deployment('to'), '/');
+        $releaseDirectory = $projectDirectory . '/' . $this->getConfig()->release('directory', 'releases') . '/' . $this->getConfig()->getReleaseId();
+
         $return = true;
         foreach($directoryNames as $directoryName) {
-            $fileResult = $this->runCommandRemote($sudo.'setfacl -Rnm '.$usersCommandString.' '.$directoryName, $fileOutput);
-            $directoryResult = $this->runCommandRemote($sudo.'setfacl -dRnm '.$usersCommandString.' '.$directoryName, $directoryOutput);
+
+            if (0 === strpos($directoryName, '{release}')) {
+                $directoryPath = $releaseDirectory . '/' . ltrim(str_replace('{release}', '', $directoryName), '/');
+            } elseif (0 === strpos($directoryName, '{project}')) {
+                $directoryPath = $projectDirectory . '/' . ltrim(str_replace('{project}', '', $directoryName), '/');
+            } else {
+                $directoryPath = $directoryName;
+            }
+
+            $fileResult = $this->runCommandRemote($sudo.'setfacl -Rnm '.$usersCommandString.' '.$directoryPath, $fileOutput);
+            $directoryResult = $this->runCommandRemote($sudo.'setfacl -dRnm '.$usersCommandString.' '.$directoryPath, $directoryOutput);
             $return = $return && $fileResult && $directoryResult;
         }
 

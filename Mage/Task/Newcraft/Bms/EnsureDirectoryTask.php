@@ -45,9 +45,9 @@ class EnsureDirectoryTask extends AbstractTask implements IsReleaseAware
         if('n' === $output){
             Console::output('<yellow>creating directory</yellow> ... ', 0, 0);
             $directoryParameters = [
-              'directories' => [ '../../'.$directoryName ],
-              'permissions' => $this->getParameter('permissions', false),
-              'sudo' => $this->getParameter('sudo', false),
+                'directories' => [ '../../'.$directoryName ],
+                'permissions' => $this->getParameter('permissions', false),
+                'sudo' => $this->getParameter('sudo', false),
             ];
             $createDirectoryTask = new CreateDirectoriesTask($this->config,$this->inRollback(), $this->stage, $directoryParameters);
             $directoriesResult = $createDirectoryTask->run();
@@ -69,7 +69,7 @@ class EnsureDirectoryTask extends AbstractTask implements IsReleaseAware
 
         //set acls
         $aclParameters = [
-          'directories' => [ '../../'.$directoryName ],
+          'directories' => [ '{project}/'.$directoryName ],
           'users' => $this->getParameter('users', []),
           'sudo' => $this->getParameter('sudo', false),
         ];
