@@ -14,6 +14,8 @@ use Exception;
  */
 class GithubDownloadTask extends BaseStrategyTaskAbstract implements IsReleaseAware
 {
+
+    private static $passwords = [];
     /**
      * (non-PHPdoc)
      * @see \Mage\Task\AbstractTask::getName()
@@ -54,7 +56,12 @@ class GithubDownloadTask extends BaseStrategyTaskAbstract implements IsReleaseAw
 
         //ask user for password
         Console::output('<white>GitHub password</white>: ', 3, 0);
-        $gitPassword = Console::readInputSilent();
+        if(array_key_exists($gitUsername,self::$passwords)){
+            $gitPassword = self::$passwords[$gitUsername];
+        } else {
+            $gitPassword = Console::readInputSilent();
+            self::$passwords[$gitUsername] = $gitPassword;
+        }
         Console::output('[hidden]',0,1);
 
         $gitRemoteUrl = exec('git config --get remote.origin.url');
