@@ -25,7 +25,7 @@ class CreateDirectoriesTask extends AbstractTask
         $directoryNames = $this->getParameter('directories', []);
         $permissions = $this->getParameter('permissions', null);
 
-        if(!is_numeric($permissions) && !preg_match('/^[ugoarwxX\-\+\= ]$/',$permissions)){
+        if(!is_numeric($permissions) && !preg_match('/^[ugoarwxX\,\-\+\= ]$/',$permissions)){
             $permissions = null;
         }
 
