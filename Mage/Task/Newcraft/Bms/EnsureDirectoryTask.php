@@ -60,7 +60,7 @@ class EnsureDirectoryTask extends AbstractTask implements IsReleaseAware
         $subdirectoryNames = array_map(function($v) use ($directoryName) { return '../../'.$directoryName.'/'.$v; },$this->getParameter('subdirectories', []));
         $subdirectoriesParameters = [
             'directories' => $subdirectoryNames,
-            'permissions' => 775,
+            'permissions' => $this->getParameter('permissions', false),
             'sudo' => $this->getParameter('sudo', false),
         ];
 
@@ -70,6 +70,7 @@ class EnsureDirectoryTask extends AbstractTask implements IsReleaseAware
         //set acls
         $aclParameters = [
           'directories' => [ '{project}/'.$directoryName ],
+          'retroactive' => $this->getParameter('retroactive', null),
           'users' => $this->getParameter('users', []),
           'sudo' => $this->getParameter('sudo', false),
         ];

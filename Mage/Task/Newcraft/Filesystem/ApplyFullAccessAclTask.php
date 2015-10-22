@@ -35,6 +35,13 @@ class ApplyFullAccessAclTask extends AbstractTask
 
         $directoryNames = $this->getParameter('directories', []);
 
+        $retroactive = $this->getParameter('retroactive', null);
+        if(!preg_match('/^[ugoa]{1,4}$/',(string) $retroactive)) {
+            $retroactive = null;
+        } else if(false !== strpos($retroactive,'a')) {
+            $retroactive = 'a';
+        }
+
         $sudo = (bool) $this->getParameter('sudo', false) ? 'sudo ' : '';
 
         $projectDirectory = rtrim($this->getConfig()->deployment('to'), '/');
@@ -53,7 +60,14 @@ class ApplyFullAccessAclTask extends AbstractTask
 
             $fileResult = $this->runCommandRemote($sudo.'setfacl -Rnm '.$usersCommandString.' '.$directoryPath, $fileOutput);
             $directoryResult = $this->runCommandRemote($sudo.'setfacl -dRnm '.$usersCommandString.' '.$directoryPath, $directoryOutput);
+
             $return = $return && $fileResult && $directoryResult;
+
+            if(null !== $retroactive){
+                $retroactiveResult = $this->runCommandRemote($sudo.'chmod -R ' . $retroactive.'+rwX ' . $directoryPath, $retroactiveOutput);
+                $return = $return && $retroactiveResult;
+            }
+
         }
 
         return $return;
