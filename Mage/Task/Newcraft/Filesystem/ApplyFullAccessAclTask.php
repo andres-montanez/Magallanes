@@ -8,6 +8,12 @@ use Mage\Task\AbstractTask;
  * Applies full access Facls (read, write & execute on directories) to defined directories for defined users
  * Class ApplyFullAccessAclTask
  * @package Mage\Task\Newcraft\Filesystem
+ *
+ * For deploying to servers without sudo rights, the following NOPASSWD 3 sudoers rules exceptions need to be added.
+ * (with the correct usernames and chmod parameters, in the order in which they are defined in the config)
+ * setfacl -Rnm u:vagrant:rwX -m u:www-user:rwX /data/www/*
+ * setfacl -dRnm u:vagrant:rwX -m u:www-user:rwX /data/www/*
+ * chmod -R ug+rwX /data/www/*
  */
 class ApplyFullAccessAclTask extends AbstractTask
 {
