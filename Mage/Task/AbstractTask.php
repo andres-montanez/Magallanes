@@ -171,6 +171,46 @@ abstract class AbstractTask
         return Console::executeCommand($command, $output);
     }
 
+    final protected function getConnectCommand()
+    {
+        // if general.yml includes "ssy_needs_tty: true", then add "-t" to the ssh command
+        $needs_tty = ($this->getConfig()->general('ssh_needs_tty', false) ? '-t' : '');
+
+        $localCommand = 'ssh -A ' . $this->getConfig()->getHostIdentityFileOption() . $needs_tty . ' -p ' . $this->getConfig()->getHostPort() . ' '
+          . '-q -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no '
+          . $this->getConfig()->getConnectTimeoutOption()
+          . ($this->getConfig()->deployment('user') != '' ? $this->getConfig()->deployment('user') . '@' : '')
+          . $this->getConfig()->getHostName();
+
+        return $localCommand;
+    }
+
+    final protected function getCommandRemote($command, $cdToDirectoryFirst = true, &$fullRemoteCommand = null)
+    {
+        if ($this->getConfig()->release('enabled', false) === true) {
+            if ($this instanceof IsReleaseAware) {
+                $releasesDirectory = '';
+            } else {
+                $releasesDirectory = '/'
+                  . $this->getConfig()->release('directory', 'releases')
+                  . '/'
+                  . $this->getConfig()->getReleaseId();
+            }
+        } else {
+            $releasesDirectory = '';
+        }
+
+        $remoteCommand = str_replace('"', '\"', $command);
+        if ($cdToDirectoryFirst) {
+            $remoteCommand = 'cd ' . rtrim($this->getConfig()->deployment('to'), '/') . $releasesDirectory . ' && ' . $remoteCommand;
+        }
+
+        $localCommand = $this->getConnectCommand() . ' ' . '"sh -c \"' . $remoteCommand . '\""';
+
+        $fullRemoteCommand = $remoteCommand;
+        return $localCommand;
+    }
+
     /**
      * Runs a Shell Command on the Remote Host
      * @param string $command
@@ -180,35 +220,8 @@ abstract class AbstractTask
      */
     final protected function runCommandRemote($command, &$output = null, $cdToDirectoryFirst = true)
     {
-        if ($this->getConfig()->release('enabled', false) === true) {
-            if ($this instanceof IsReleaseAware) {
-                $releasesDirectory = '';
-            } else {
-                $releasesDirectory = '/'
-                    . $this->getConfig()->release('directory', 'releases')
-                    . '/'
-                    . $this->getConfig()->getReleaseId();
-            }
-        } else {
-            $releasesDirectory = '';
-        }
-
-        // if general.yml includes "ssy_needs_tty: true", then add "-t" to the ssh command
-        $needs_tty = ($this->getConfig()->general('ssh_needs_tty', false) ? '-t' : '');
-
-        $localCommand = 'ssh -A ' . $this->getConfig()->getHostIdentityFileOption() . $needs_tty . ' -p ' . $this->getConfig()->getHostPort() . ' '
-            . '-q -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no '
-            . $this->getConfig()->getConnectTimeoutOption()
-            . ($this->getConfig()->deployment('user') != '' ? $this->getConfig()->deployment('user') . '@' : '')
-            . $this->getConfig()->getHostName();
-
-        $remoteCommand = str_replace('"', '\"', $command);
-        if ($cdToDirectoryFirst) {
-            $remoteCommand = 'cd ' . rtrim($this->getConfig()->deployment('to'), '/') . $releasesDirectory . ' && ' . $remoteCommand;
-        }
-        $localCommand .= ' ' . '"sh -c \"' . $remoteCommand . '\""';
-
-        Console::log('Run remote command ' . $remoteCommand);
+        $localCommand = $this->getCommandRemote($command, $cdToDirectoryFirst, $fullRemoteCommand);
+        Console::log('Run remote command ' . $fullRemoteCommand);
 
         return $this->runCommandLocal($localCommand, $output);
     }
