@@ -27,13 +27,7 @@ class CopyParametersTask extends SymfonyAbstractTask
     public function run()
     {
         $envName = $this->getConfig()->deployment('environment');
-
-        //remove existing parameters file if needed.
-        $this->runCommandRemote('cd app/config && test -f parameters.yml && rm -f parameters.yml');
-
-        //copy environment specific parameters file
-        return $this->runCommandRemote('cd app/config && test -f parameters-'.$envName.'.yml && cp -fp parameters-'.$envName.'.yml parameters.yml');
-
+        return $this->runCommandRemote('cp -fp app/config/parameters-'.$envName.'.yml app/config/parameters.yml');
     }
 
 }
