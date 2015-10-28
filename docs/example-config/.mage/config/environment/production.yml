@@ -14,6 +14,8 @@ hosts:
   - s01.example.com
   - s02.example.com
 tasks:
+  pre-dryrun:
+#    - grunt
   pre-deploy:
     - scm/update
   on-deploy:

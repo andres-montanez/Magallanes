@@ -45,9 +45,7 @@ class ListTask extends AbstractTask implements IsReleaseAware
             $releases = ($output == '') ? array() : explode(PHP_EOL, $output);
 
             // Get Current
-            $result = $this->runCommandRemote('ls -l ' . $symlink, $output) && $result;
-            $currentRelease = explode('/', $output);
-            $currentRelease = trim(array_pop($currentRelease));
+            $currentRelease = $this->getCurrentRelease();
 
             if (count($releases) == 0) {
                 Console::output('<bold>No releases available</bold> ... ', 2);
@@ -90,6 +88,18 @@ class ListTask extends AbstractTask implements IsReleaseAware
             Console::output('');
             return false;
         }
+    }
+
+    /**
+     * Get the latest release.
+     */
+    public function getCurrentRelease()
+    {
+        $symlink = $this->getConfig()->release('symlink', 'current');
+        $this->runCommandRemote('ls -l ' . $symlink, $output);
+        $currentRelease = explode('/', $output);
+        $currentRelease = trim(array_pop($currentRelease));
+        return $currentRelease;
     }
 
     /**

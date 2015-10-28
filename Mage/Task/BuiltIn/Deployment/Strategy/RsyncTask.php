@@ -13,6 +13,7 @@ namespace Mage\Task\BuiltIn\Deployment\Strategy;
 use Mage\Console;
 use Mage\Task\BuiltIn\Deployment\Strategy\BaseStrategyTaskAbstract;
 use Mage\Task\Releases\IsReleaseAware;
+use Mage\Task\BuiltIn\Releases\ListTask;
 
 /**
  * Task for Sync the Local Code to the Remote Hosts via RSYNC
@@ -27,6 +28,9 @@ class RsyncTask extends BaseStrategyTaskAbstract implements IsReleaseAware
      */
     public function getName()
     {
+        if ($this->getConfig()->getParameter('dry-run', false) === true) {
+            return 'Dry-run via Rsync [built-in]';
+        }
         if ($this->getConfig()->release('enabled', false) === true) {
             if ($this->getConfig()->getParameter('overrideRelease', false) === true) {
                 return 'Deploy via Rsync (with Releases override) [built-in]';
@@ -43,27 +47,130 @@ class RsyncTask extends BaseStrategyTaskAbstract implements IsReleaseAware
         }
     }
 
+
+    /**
+     * @param bool|FALSE $dryRun
+     * @return string
+     */
+    protected function getDeployCommand($dryRun = false)
+    {
+        $deployToDirectory = $this->getDeployToDirectory($dryRun);
+
+        $excludes = $this->getExcludes();
+        $excludesListFilePath = $this->getConfig()->deployment('excludes_file', '');
+
+        $strategyFlags = $this->getConfig()->deployment('strategy_flags', $this->getConfig()->general('strategy_flags', array()));
+        if (isset($strategyFlags['rsync'])) {
+            $strategyFlags = $strategyFlags['rsync'];
+        } else {
+            $strategyFlags = '';
+        }
+
+        // Add two flags if we are in Dry run.
+        if ($dryRun === true) {
+            $dryRunFlags = array(
+              '--dry-run',
+              '--itemize-changes',
+              '--omit-dir-times'
+            );
+            $strategyFlags = str_replace($dryRunFlags, '', $strategyFlags);
+            $strategyFlags .= implode(' ', $dryRunFlags);
+        }
+
+        $command = 'rsync -avz '
+          . $strategyFlags . ' '
+          . '--rsh="ssh ' . $this->getConfig()->getHostIdentityFileOption() . '-p' . $this->getConfig()->getHostPort() . '" '
+          . $this->excludes($excludes) . ' '
+          . $this->excludesListFile($excludesListFilePath) . ' '
+          . $this->getConfig()->deployment('from') . ' '
+          . ($this->getConfig()->deployment('user') ? $this->getConfig()->deployment('user') . '@' : '')
+          . $this->getConfig()->getHostName() . ':' . $deployToDirectory;
+
+        return $command;
+    }
+
+    /**
+     * @param bool|FALSE $dryRun
+     * @return string
+     */
+    protected function getDeployToDirectory($dryRun = false)
+    {
+        $deployTo = rtrim($this->getConfig()->deployment('to'), '/');
+
+        // If releases aren't enabled, deploy dir is simply deploy to config.
+        if ($this->getConfig()->release('enabled', false) !== true) {
+            return $deployTo;
+        }
+
+        // If dryrun, check from the latest release.
+        if ($dryRun === true) {
+            $release = ListTask::getCurrentRelease();
+        }
+        else {
+            $release = $this->getConfig()->getReleaseId();
+        }
+        $releasesDirectory = $this->getConfig()->release('directory', 'releases');
+        $deployToDirectory = $deployTo . '/' . $releasesDirectory . '/' . $release;
+
+        return $deployToDirectory;
+    }
+
+    /**
+     * @return bool
+     */
+    public function dryRun()
+    {
+        Console::output('');
+        if ($this->getConfig()->release('enabled', false) === true) {
+            $currentRelease = ListTask::getCurrentRelease();
+            Console::output('Checking files on the latest release <purple>'.$currentRelease.'</purple> on host <purple>'.$this->getConfig()->getHostName().'</purple>...', 2, 1);
+        }
+        else {
+            Console::output('Checking files on host <purple>'.$this->getConfig()->getHostName().'</purple>...', 2, 1);
+        }
+
+        // Get deploy command with dryRun option (true).
+        $command = $this->getDeployCommand(true);
+        $result = $this->runCommandLocal($command, $output);
+
+        // Put each line in an array (CHR(10) = Carriage return).
+        $lines = explode(CHR(10), $output);
+        if (count($lines)) {
+            Console::output('');
+            Console::output('<yellow>---------- Dry run result ------------</yellow>', 2, 1);
+            foreach ($lines as $key => $line) {
+                Console::output($line, 2, 1);
+            }
+            Console::output('<yellow>---------- End Dry run ---------------</yellow></yellow>', 2, 1);
+        }
+        return $result;
+
+    }
+
     /**
      * Syncs the Local Code to the Remote Host
      * @see \Mage\Task\AbstractTask::run()
      */
     public function run()
     {
+        $excludes = $this->getExcludes();
+
+        // Launch dry run mode
+        if ($this->getConfig()->getParameter('dry-run') === true) {
+            return $this->dryRun();
+        }
+
         $this->checkOverrideRelease();
 
-        $excludes = $this->getExcludes();
-        $excludesListFilePath = $this->getConfig()->deployment('excludes_file', '');
-
         // If we are working with releases
-        $deployToDirectory = $this->getConfig()->deployment('to');
         if ($this->getConfig()->release('enabled', false) === true) {
+
             $releasesDirectory = $this->getConfig()->release('directory', 'releases');
             $symlink = $this->getConfig()->release('symlink', 'current');
 
             $currentRelease = false;
-            $deployToDirectory = rtrim($this->getConfig()->deployment('to'), '/')
-                               . '/' . $releasesDirectory
-                               . '/' . $this->getConfig()->getReleaseId();
+
+            $deployToDirectory = $this->getDeployToDirectory();
 
             Console::log('Deploy to ' . $deployToDirectory);
             $resultFetch = $this->runCommandRemote('ls -ld ' . $symlink . ' | cut -d"/" -f2', $currentRelease);
@@ -86,23 +193,7 @@ class RsyncTask extends BaseStrategyTaskAbstract implements IsReleaseAware
             }
         }
 
-        // Strategy Flags
-        $strategyFlags = $this->getConfig()->deployment('strategy_flags', $this->getConfig()->general('strategy_flags', array()));
-        if (isset($strategyFlags['rsync'])) {
-            $strategyFlags = $strategyFlags['rsync'];
-        } else {
-            $strategyFlags = '';
-        }
-
-        $command = 'rsync -avz '
-                 . $strategyFlags . ' '
-                 . '--rsh="ssh ' . $this->getConfig()->getHostIdentityFileOption() . '-p' . $this->getConfig()->getHostPort() . '" '
-                 . $this->excludes($excludes) . ' '
-                 . $this->excludesListFile($excludesListFilePath) . ' '
-                 . $this->getConfig()->deployment('from') . ' '
-                 . ($this->getConfig()->deployment('user') ? $this->getConfig()->deployment('user') . '@' : '')
-                 . $this->getConfig()->getHostName() . ':' . $deployToDirectory;
-
+        $command = $this->getDeployCommand();
         $result = $this->runCommandLocal($command);
 
         return $result;

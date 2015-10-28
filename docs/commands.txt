@@ -30,6 +30,9 @@ mage deploy to:production
 # Deploys Application to Production environment, overriding the current release
 mage deploy to:production --overrideRelease
 
+# Don't deploy application, only output the files to be deployed (works with Rsync strategy only).
+mage deploy to:production --dry-run
+
 # Locks deployment to Production environment
 mage lock to:production
 
