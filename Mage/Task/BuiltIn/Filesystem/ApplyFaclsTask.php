@@ -34,10 +34,18 @@ class ApplyFaclsTask extends AbstractTask implements IsReleaseAware
         }
 
         $folders = $this->getParameter('folders', array());
-        $recursive = $this->getParameter('recursive', false) ? ' -R ' : ' ';
+
+        $flags = array();
+        if ($this->getParameter('default', false)) {
+            $flags[] = 'd';
+        }
+        if ($this->getParameter('recursive', false)) {
+            $flags[] = 'R';
+        }
+        $flagStr = ($flags) ? ' -'.implode('', $flags).' ' : ' ';
 
         foreach ($folders as $folder) {
-            $this->runCommandRemote("setfacl$recursive-m $aclParam $currentCopy/$folder", $output);
+            $this->runCommandRemote("setfacl$flagStr-m $aclParam $currentCopy/$folder", $output);
         }
 
         return true;
