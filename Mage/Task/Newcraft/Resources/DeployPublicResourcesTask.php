@@ -31,7 +31,7 @@ class DeployPublicResourcesTask extends AbstractTask
             throw new SkipException();
         }
 
-        $basePath = rtrim($this->getParameter('basepath', 'src/App/TelBundle/Resources/public'), '/');
+        $basePath = rtrim($this->getParameter('basepath', 'web'), '/');
 
         $files = $this->getParameter('files', []);
 
