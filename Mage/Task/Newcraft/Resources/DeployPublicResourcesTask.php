@@ -4,6 +4,7 @@ namespace Mage\Task\Newcraft\Resources;
 
 use Mage\Task\AbstractTask;
 use Mage\Task\SkipException;
+use Mage\Console;
 
 /**
  * Class RemoveCurrentDirectoryTask
@@ -48,7 +49,7 @@ class DeployPublicResourcesTask extends AbstractTask
         if(0 < count($skipped)) {
             Console::output('');
             foreach($skipped as $file){
-                Console::output('skipping <white>' . $file . '</white>: ', 3, 0);
+                Console::output('skipping <white>' . $file . '</white> (not in git ignore): ', 3, 1);
             }
             Console::output('Cont... <purple>' . $this->getName() . '</purple>.... ', 2, 0);
         }
