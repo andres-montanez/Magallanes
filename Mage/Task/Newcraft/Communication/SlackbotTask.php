@@ -69,7 +69,7 @@ class SlackbotTask extends AbstractTask
 
         $message = strtr($this->getParameter('message', static::$defaultMessage),$replacementArray);
 
-        return $this->runCommandLocal('curl --silent --data ' . escapeshellarg($message) . ' $\'' . $callUrl . '\'');
+        return $this->runCommandLocal('curl --silent --data ' . escapeshellarg($message) . ' \'' . $callUrl . '\'');
     }
 
     protected static function getGithubProjectUrl(){
