@@ -62,6 +62,7 @@ class SlackbotTask extends AbstractTask
             '{commit}' => exec('git rev-parse --short HEAD'),
             '{branch}' => exec('git rev-parse --abbrev-ref HEAD'),
             '{tag}' => str_replace(PHP_EOL,', ',exec('git tag -l --contains HEAD')),
+	        '{username}' => exec('git config user.name')
         ];
         if(false !== strpos($message,'{commit-url')){
             $replacementArray['{commit-url}'] = static::getGithubProjectUrl() . '/commit/' . exec('git rev-parse HEAD');
