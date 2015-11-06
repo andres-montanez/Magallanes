@@ -36,6 +36,6 @@ class InstallTask extends ComposerAbstractTask
         }
 
 
-        return $this->runCommandRemote($composerCommand . ' install' . ($dev ? ' --dev' : ' --no-dev --optimize-autoloader'));
+        return $this->runCommandRemote($composerCommand . ' install --no-interaction' . ($dev ? ' --dev' : ' --no-dev --optimize-autoloader'));
     }
 }
