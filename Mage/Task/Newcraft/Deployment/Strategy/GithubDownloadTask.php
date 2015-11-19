@@ -42,6 +42,12 @@ class GithubDownloadTask extends BaseStrategyTaskAbstract implements IsReleaseAw
             $this->runCommandRemote('mkdir -p ' . $deployToDirectory);
         }
 
+        //see if branch is actually pushed, otherwise a download wont work.
+        $remoteSha = exec('git rev-parse @{u} 2>/dev/null');
+        if(empty($remoteSha)){
+            throw new Exception('Current commit is not pushed, cannot use Github download strategy.');
+        }
+
         //read username from git config or ask user
         $gitUsername = exec('git config user.email');
 
