@@ -61,6 +61,9 @@ class ReleaseTask extends AbstractTask implements IsReleaseAware, SkipOnOverride
                 // and awk parameters need special care depending on the executing shell
                 $resultFetch = $this->runCommandRemote("ls -ld .", $directoryInfos);
                 if (!empty($directoryInfos)) {
+                    // Check if chown is available
+                    $resultFetch = $this->runCommandRemote('type chown');
+                    
                     //uniformize format as it depends on the system deployed on
                     $directoryInfos = trim(str_replace(array("  ", "\t"), ' ', $directoryInfos));
                     $infoArray = explode(' ', $directoryInfos);
