@@ -44,19 +44,19 @@ class Factory
         $instance = null;
         $taskName = ucwords(str_replace('-', ' ', $taskName));
         $taskName = str_replace(' ', '', $taskName);
-        $taskName = str_replace('/', '\\', $taskName);
+        $taskName = ucwords(str_replace('/', ' ', $taskName));
+        $taskName = str_replace(' ', '\\', $taskName);
 
         $className = $taskName;
         $patterns  = array(
             'Task\\%s',
             '%s\\Task',
-            'Mage\\Task\\BuiltIn\\%s\\Task',
+            'Mage\\Task\\BuiltIn\\%sTask',
             '%s',
         );
 
         foreach ($patterns as $classNamePattern) {
             $className = sprintf($classNamePattern, $taskName);
-
             if (class_exists($className)) {
                 break;
             }
