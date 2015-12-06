@@ -47,12 +47,12 @@ class Factory
         $taskName = str_replace('/', '\\', $taskName);
 
         $className = $taskName;
-        $patterns  = [
+        $patterns  = array(
             'Task\\%s',
             '%s\\Task',
             'Mage\\Task\\BuiltIn\\%s\\Task',
             '%s',
-        ];
+        );
 
         foreach ($patterns as $classNamePattern) {
             $className = sprintf($classNamePattern, $taskName);
