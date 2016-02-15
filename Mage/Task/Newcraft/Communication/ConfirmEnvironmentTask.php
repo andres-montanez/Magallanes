@@ -24,9 +24,9 @@ class ConfirmEnvironmentTask extends AbstractTask
     public function run()
     {
         Console::output('');
-        Console::output('Deploying to <white>'.$this->getConfig()->getEnvironment().'</white>! Sure? (Y/N)... ', 3, 0);
-        $answer = strtoupper(Console::readInput());
+        Console::output('Deploying to <white>'.$this->getConfig()->getEnvironment().'</white>! Sure? (yes/no)... ', 3, 0);
+        $answer = strtolower(Console::readInput());
         Console::output('Cont... <purple>'.$this->getName().'</purple> ... ', 2, 0);
-        return 'Y' === $answer;
+        return 'yes' === $answer;
     }
 }
