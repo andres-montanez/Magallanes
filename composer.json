@@ -1,9 +1,27 @@
 {
-    "name": "andres-montanez/magallanes",
+  "name": "cyberhouse/magallanes",
     "description": "A Deployment Tool for PHP Applications",
     "homepage": "http://magephp.com",
     "license": "MIT",
     "type": "library",
+    "authors": [
+        {
+            "name": "Andrés Montañez",
+            "role": "Developer"
+        },
+        {
+            "name": "Johannes Pichler",
+            "email": "johannes.pichler@cyberhouse.at",
+            "homepage": "https://www.cyberhouse.at",
+            "role": "Developer"
+        },
+        {
+            "name": "Georg Großberger",
+            "email": "georg.grossberger@cyberhouse.ats",
+            "homepage": "https://www.cyberhouse.at",
+            "role": "Developer"
+        }
+    ],
     "keywords": ["deployment"],
     "require": {
         "php": ">=5.3"
