@@ -1,8 +1,5 @@
 # Magallanes #
-
-[![SensioLabsInsight](https://insight.sensiolabs.com/projects/ed0de53a-a12e-459b-9464-34def5907b56/mini.png)](https://insight.sensiolabs.com/projects/ed0de53a-a12e-459b-9464-34def5907b56)
-[![Build Status](https://travis-ci.org/andres-montanez/Magallanes.svg?branch=master)](https://travis-ci.org/andres-montanez/Magallanes)
-[![Coverage Status](https://coveralls.io/repos/andres-montanez/Magallanes/badge.svg?branch=master)](https://coveralls.io/r/andres-montanez/Magallanes?branch=master)
+This repository is a fork of [andres-montanez/Magallanes](https://github.com/andres-montanez/Magallanes) due to project inactivity.
 
 ### What's Magallanes? ###
 Magallanes is a deployment tool for PHP applications; it's quite simple to use and manage.
