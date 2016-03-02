@@ -157,18 +157,13 @@ class Config
     }
 
     /**
-     * Returns the default deployment configuration from general configuration
+     * Returns the default environment configuration from general configuration
      *
-     * @return array the default deployment configuration
+     * @return array the default environment configuration
      */
     protected function getDefaultEnvironment() {
         $defaults = $this->general('defaults', null);
-
-        if(!empty($defaults) && array_key_exists('deployment', $defaults)) {
-            return $defaults['deployment'];
-        }
-
-        return array();
+        return !empty($defaults) ? $defaults : array();
     }
 
     /**
