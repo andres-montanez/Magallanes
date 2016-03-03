@@ -1,9 +1,11 @@
 # Magallanes #
 This repository is a fork of [andres-montanez/Magallanes](https://github.com/andres-montanez/Magallanes) due to project inactivity.
 
-**Master:** [![Build Status](https://travis-ci.org/cyberhouse/Magallanes.svg?branch=master)](https://travis-ci.org/cyberhouse/Magallanes)
-
-**Develop:** [![Build Status](https://travis-ci.org/cyberhouse/Magallanes.svg?branch=develop)](https://travis-ci.org/cyberhouse/Magallanes)
+### Project Status
+| Branch  | Build Status | Code Coverage |
+| ------- |:------------:|:-------------:|
+| Master  | [![Build Status](https://travis-ci.org/cyberhouse/Magallanes.svg?branch=master)](https://travis-ci.org/cyberhouse/Magallanes) | [![Coverage Status](https://coveralls.io/repos/github/cyberhouse/Magallanes/badge.svg?branch=master)](https://coveralls.io/github/cyberhouse/Magallanes?branch=master) |
+| Develop | [![Build Status](https://travis-ci.org/cyberhouse/Magallanes.svg?branch=develop)](https://travis-ci.org/cyberhouse/Magallanes) | [![Coverage Status](https://coveralls.io/repos/github/cyberhouse/Magallanes/badge.svg?branch=develop)](https://coveralls.io/github/cyberhouse/Magallanes?branch=develop) |
 
 ### What's Magallanes? ###
 Magallanes is a deployment tool for PHP applications; it's quite simple to use and manage.
