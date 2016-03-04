@@ -1,7 +1,12 @@
 language: php
 
 notifications:
-  slack: magallanesteam:o1tIx9lVTyoGy677Dgm7HRap
+  webhooks:
+    urls:
+      - https://webhooks.gitter.im/e/edf0bb825450673efbf5
+    on_success: change
+    on_failure: always
+    on_start: never
 
 php:
   - 5.3
