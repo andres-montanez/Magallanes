@@ -1,5 +1,8 @@
 language: php
 
+notifications:
+  slack: magallanesteam:o1tIx9lVTyoGy677Dgm7HRap
+
 php:
   - 5.3
   - 5.4
