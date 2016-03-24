@@ -37,6 +37,7 @@ class DeployCommand extends AbstractCommand implements RequiresEnvironment
     const DEPLOY_STRATEGY_TARGZ = 'targz';
     const DEPLOY_STRATEGY_GIT_REBASE = 'git-rebase';
     const DEPLOY_STRATEGY_GIT_REMOTE_CACHE = 'git-remote-cache';
+    const DEPLOY_STRATEGY_GIT_CLONE = 'git-clone';
     const DEPLOY_STRATEGY_GUESS = 'guess';
     const DEFAULT_DEPLOY_STRATEGY = self::DEPLOY_STRATEGY_GUESS;
 
@@ -209,11 +210,11 @@ class DeployCommand extends AbstractCommand implements RequiresEnvironment
         if (self::$failedTasks === 0) {
             $exitCode = 0;
         }
-        
+
         if (self::$deployStatus === self::FAILED) {
             $exitCode = 1;
         }
-        
+
         return $exitCode;
     }
 
@@ -615,6 +616,10 @@ class DeployCommand extends AbstractCommand implements RequiresEnvironment
 
             case self::DEPLOY_STRATEGY_GIT_REMOTE_CACHE:
                 $deployStrategy = 'deployment/strategy/git-remote-cache';
+                break;
+
+            case self::DEPLOY_STRATEGY_GIT_CLONE:
+                $deployStrategy = 'deployment/strategy/git-clone';
                 break;
 
             case self::DEPLOY_STRATEGY_GUESS:
