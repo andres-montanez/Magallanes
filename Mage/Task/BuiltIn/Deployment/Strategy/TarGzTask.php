@@ -96,6 +96,7 @@ class TarGzTask extends BaseStrategyTaskAbstract implements IsReleaseAware
         $command = 'scp ' . $strategyFlags . ' ' . $this->getConfig()->getHostIdentityFileOption()
             . $this->getConfig()->getConnectTimeoutOption() . '-P ' . $this->getConfig()->getHostPort()
             . " -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no "
+            . ($this->getConfig()->getSshProxy() ? sprintf('-o ProxyCommand="ssh -W %%h:%%p %s" ', $this->getConfig()->getSshProxy()) : '')
             . ' ' . $localTarGz . '.tar.gz '
             . $this->getConfig()->deployment('user') . '@' . $this->getConfig()->getHostName() . ':'
             . $deployToDirectory;

@@ -389,6 +389,15 @@ class Config
     }
 
     /**
+     * Get additional ssh proxy
+     *
+     * @return string
+     */
+    public function getSshProxy()
+    {
+        return $this->deployment('ssh-proxy') ? $this->deployment('ssh-proxy') : '';
+    }
+    /**
      * Get the ConnectTimeout option
      *
      * @return string
