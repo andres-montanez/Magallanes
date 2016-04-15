@@ -215,7 +215,7 @@ class DeployCommand extends AbstractCommand implements RequiresEnvironment
         Console::output('Total time: <bold>' . $timeText . '</bold>.', 1, 2);
 
         // Send Notifications
-        $this->sendNotification(self::$failedTasks > 0 ? false : true);
+        $this->sendNotification(self::$deployStatus === self::SUCCEDED);
 
         // Unlock
         if (file_exists(getcwd() . '/.mage/~working.lock')) {
