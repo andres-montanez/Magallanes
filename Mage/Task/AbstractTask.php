@@ -198,7 +198,7 @@ abstract class AbstractTask
 
         $localCommand = 'ssh ' . $this->getConfig()->getHostIdentityFileOption() . $needs_tty . ' -p ' . $this->getConfig()->getHostPort() . ' '
             . '-q -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no '
-            . ($this->getConfig()->getSshProxy() ? sprintf('-o ProxyCommand="ssh -W %%h:%%p %s" ', $this->getConfig()->getSshProxy()) : '')
+            . ($this->getConfig()->getSshProxy() ? sprintf('-o ProxyCommand="ssh -W %%h:%%p -o StrictHostKeyChecking=no %s" ', $this->getConfig()->getSshProxy()) : '')
             . $this->getConfig()->getConnectTimeoutOption()
             . ($this->getConfig()->deployment('user') != '' ? $this->getConfig()->deployment('user') . '@' : '')
             . $this->getConfig()->getHostName();
