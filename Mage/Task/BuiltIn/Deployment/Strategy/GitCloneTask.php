@@ -26,13 +26,14 @@ class GitCloneTask extends BaseStrategyTaskAbstract implements IsReleaseAware
 
     public function run()
     {
+        $repository = $this->getConfig()->deployment('repository');
+        $branch = $this->getConfig()->deployment('branch', 'master');
+        $deployToDirectory = $this->getConfig()->deployment('to');
 
-        $repository = $this->getConfig()->deployment('git-repository');
-        $branch = $this->getConfig()->deployment('git-branch', 'master');
+        if (!$repository or !$branch or !$deployToDirectory) return false;
 
         $this->checkOverrideRelease();
 
-        $deployToDirectory = $this->getConfig()->deployment('to');
         if ($this->getConfig()->release('enabled', false) === true) {
             $releasesDirectory = $this->getConfig()->release('directory', 'releases');
 
