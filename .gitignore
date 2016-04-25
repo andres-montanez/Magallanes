@@ -1,15 +1,8 @@
-vendor
-mage.phar
-bin
-!bin/mage
+/vendor/
+/bin/
 
-# OS generated files # // GitHub Recommendation
-######################
-.DS_Store*
-ehthumbs.db
-Icon?
-Thumbs.db
+# Exceptions
+!/bin/mage
 
-# IDE generated files
-.idea
-nbproject
+# Ide files
+/.idea/
