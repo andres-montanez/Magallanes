@@ -4,14 +4,11 @@ namespace MageTest\Command\BuiltIn;
 
 use Mage\Command\BuiltIn\DeployCommand;
 use MageTest\TestHelper\BaseTest;
-use malkusch\phpmock\MockBuilder;
 
 /**
  * Class DeployCommandTest
  * @package MageTest\Command\BuiltIn
  * @coversDefaultClass Mage\Command\BuiltIn\DeployCommand
- * @uses malkusch\phpmock\MockBuilder
- * @uses malkusch\phpmock\Mock
  */
 class DeployCommandTest extends BaseTest
 {
