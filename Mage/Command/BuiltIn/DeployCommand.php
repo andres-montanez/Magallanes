@@ -215,7 +215,7 @@ class DeployCommand extends AbstractCommand implements RequiresEnvironment
         Console::output('Total time: <bold>' . $timeText . '</bold>.', 1, 2);
 
         // Send Notifications
-        $this->sendNotification(self::$failedTasks > 0 ? false : true);
+        $this->sendNotification(self::$failedTasks > 0 ? false : true, new Mailer());
 
         // Unlock
         if (file_exists(getcwd() . '/.mage/~working.lock')) {
@@ -583,9 +583,10 @@ class DeployCommand extends AbstractCommand implements RequiresEnvironment
     /**
      * Send Email Notification if enabled
      * @param boolean $result
+     * @param mixed $mailer
      * @return boolean
      */
-    protected function sendNotification($result)
+    protected function sendNotification($result, $mailer)
     {
         $projectName = $this->getConfig()->general('name', false);
         $projectEmail = $this->getConfig()->general('email', false);
@@ -597,7 +598,6 @@ class DeployCommand extends AbstractCommand implements RequiresEnvironment
             return false;
         }
 
-        $mailer = new Mailer;
         $mailer->setAddress($projectEmail)
             ->setProject($projectName)
             ->setLogFile(Console::getLogFile())
