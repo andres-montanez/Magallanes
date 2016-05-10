@@ -225,11 +225,11 @@ class DeployCommand extends AbstractCommand implements RequiresEnvironment
         if (self::$failedTasks === 0) {
             $exitCode = 0;
         }
-        
+
         if (self::$deployStatus === self::FAILED) {
             $exitCode = 1;
         }
-        
+
         return $exitCode;
     }
 
@@ -590,6 +590,8 @@ class DeployCommand extends AbstractCommand implements RequiresEnvironment
         $projectName = $this->getConfig()->general('name', false);
         $projectEmail = $this->getConfig()->general('email', false);
         $notificationsEnabled = $this->getConfig()->general('notifications', false);
+        $ccEmail = $this->getConfig()->general('email_options.cc', null);
+        $bccEmail = $this->getConfig()->general('email_options.bcc', null);
 
         // We need notifications enabled, and a project name and email to send the notification
         if (!$projectName || !$projectEmail || !$notificationsEnabled) {
@@ -600,8 +602,17 @@ class DeployCommand extends AbstractCommand implements RequiresEnvironment
         $mailer->setAddress($projectEmail)
             ->setProject($projectName)
             ->setLogFile(Console::getLogFile())
-            ->setEnvironment($this->getConfig()->getEnvironment())
-            ->send($result);
+            ->setEnvironment($this->getConfig()->getEnvironment());
+
+        if ($ccEmail) {
+            $mailer->setCc($ccEmail);
+        }
+
+        if ($bccEmail) {
+            $mailer->setBcc($bccEmail);
+        }
+
+        $mailer->send($result);
 
         return true;
     }
