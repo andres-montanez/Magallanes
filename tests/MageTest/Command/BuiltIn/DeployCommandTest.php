@@ -16,11 +16,6 @@ use malkusch\phpmock\MockBuilder;
 class DeployCommandTest extends BaseTest
 {
     /**
-     * @var DeployCommand
-     */
-    private $deployCommand;
-
-    /**
      * @covers ::__construct
      * @covers ::sendNotification
      */
