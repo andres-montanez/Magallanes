@@ -16,7 +16,6 @@ use malkusch\phpmock\MockBuilder;
 class MailerTest extends BaseTest
 {
     /**
-     * @covers ::__construct
      * @covers ::send
      */
     public function testRegularSend()
