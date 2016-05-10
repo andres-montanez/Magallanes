@@ -14,6 +14,7 @@ namespace Mage;
  * Mailer Helper.
  *
  * @author Andrés Montañez <andres@andresmontanez.com>
+ * @author César Suárez <suarez.ortega.cesar@gmail.com>
  */
 class Mailer
 {
@@ -24,6 +25,8 @@ class Mailer
     protected $project;
     protected $environment;
     protected $logFile;
+    protected $cc;
+    protected $bcc;
 
     public function setAddress($address)
     {
@@ -49,6 +52,18 @@ class Mailer
         return $this;
     }
 
+    public function setBcc($bcc)
+    {
+        $this->bcc = $bcc;
+        return $this;
+    }
+
+    public function setCc($cc)
+    {
+        $this->cc = $cc;
+        return $this;
+    }
+
     public function send($result)
     {
         $boundary = md5(date('r', time()));
@@ -60,6 +75,14 @@ class Mailer
             . 'MIME-Version: 1.0'
             . self::EOL
             . 'Content-Type: multipart/mixed; boundary=Mage-mixed-' . $boundary;
+
+        if ($this->cc) {
+            $headers .= self::EOL . 'Cc: ' . $this->cc;
+        }
+
+        if ($this->bcc) {
+            $headers .= self::EOL . 'Bcc: ' . $this->bcc;
+        }
 
         $subject = str_replace(
             array('{project}', '{environment}', '{result}'),
