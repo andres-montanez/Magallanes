@@ -9,6 +9,8 @@ use MageTest\TestHelper\BaseTest;
  * Class DeployCommandTest
  * @package MageTest\Command\BuiltIn
  * @coversDefaultClass Mage\Command\BuiltIn\DeployCommand
+ * @uses Mage\Console
+ * @uses Mage\Command\AbstractCommand
  */
 class DeployCommandTest extends BaseTest
 {

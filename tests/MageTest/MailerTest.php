@@ -10,8 +10,8 @@ use malkusch\phpmock\MockBuilder;
  * Class MailerTest
  * @package MageTest\Command\BuiltIn
  * @coversDefaultClass Mage\Mailer
+ * @uses Mage\Console
  * @uses malkusch\phpmock\MockBuilder
- * @uses malkusch\phpmock\Mock
  */
 class MailerTest extends BaseTest
 {
