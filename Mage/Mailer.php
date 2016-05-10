@@ -106,6 +106,6 @@ class Mailer
             . $attachment . self::EOL
             . '--Mage-mixed-' . $boundary . '--' . self::EOL;
 
-        mail($this->address, $subject, $message, $headers);
+        return mail($this->address, $subject, $message, $headers);
     }
 }
