@@ -11,12 +11,14 @@ use malkusch\phpmock\MockBuilder;
  * @package MageTest\Command\BuiltIn
  * @coversDefaultClass Mage\Mailer
  * @uses Mage\Console
+ * @uses malkusch\phpmock\Mock
  * @uses malkusch\phpmock\MockBuilder
  */
 class MailerTest extends BaseTest
 {
     /**
      * @covers ::send
+     * @covers ::setLogFile
      */
     public function testRegularSend()
     {
