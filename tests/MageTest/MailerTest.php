@@ -9,7 +9,7 @@ use malkusch\phpmock\MockBuilder;
 /**
  * Class MailerTest
  * @package MageTest\Command\BuiltIn
- * @coversDefaultClass Mage\Command\BuiltIn\DeployCommand
+ * @coversDefaultClass Mage\Mailer
  * @uses malkusch\phpmock\MockBuilder
  * @uses malkusch\phpmock\Mock
  */
