@@ -590,8 +590,7 @@ class DeployCommand extends AbstractCommand implements RequiresEnvironment
         $projectName = $this->getConfig()->general('name', false);
         $projectEmail = $this->getConfig()->general('email', false);
         $notificationsEnabled = $this->getConfig()->general('notifications', false);
-        $ccEmail = $this->getConfig()->general('email_options.cc', null);
-        $bccEmail = $this->getConfig()->general('email_options.bcc', null);
+        $emailOptions = $this->getConfig()->general('email_options', array());
 
         // We need notifications enabled, and a project name and email to send the notification
         if (!$projectName || !$projectEmail || !$notificationsEnabled) {
@@ -604,12 +603,12 @@ class DeployCommand extends AbstractCommand implements RequiresEnvironment
             ->setLogFile(Console::getLogFile())
             ->setEnvironment($this->getConfig()->getEnvironment());
 
-        if ($ccEmail) {
-            $mailer->setCc($ccEmail);
+        if (isset($emailOptions['cc'])) {
+            $mailer->setCc($emailOptions['cc']);
         }
 
-        if ($bccEmail) {
-            $mailer->setBcc($bccEmail);
+        if (isset($emailOptions['bcc'])) {
+            $mailer->setBcc($emailOptions['bcc']);
         }
 
         $mailer->send($result);
