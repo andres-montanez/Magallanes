@@ -73,11 +73,11 @@ class GithubDownloadTask extends BaseStrategyTaskAbstract implements IsReleaseAw
         $gitRemoteUrl = exec('git config --get remote.origin.url');
         if(0 === strpos($gitRemoteUrl,'git@github.com')){
             $projectName = substr($gitRemoteUrl,strpos($gitRemoteUrl,':')+1,-4);
-        } elseif(0 === strpos($gitRemoteUrl,'https://github.com')){
-            $projectName = substr($gitRemoteUrl,strpos($gitRemoteUrl,'/',8)+1,-4);
+        } elseif(preg_match('/^https:\/\/([a-zA-Z0-9._-]+@)?github.com/', $gitRemoteUrl)){
+            $projectName = substr($gitRemoteUrl,strpos($gitRemoteUrl,'github.com/',8)+11,-4);
         } elseif(empty($gitRemoteUrl)) {
             throw new Exception('cannot determine remote url.');
-        } elseif(false === strpos($gitRemoteUrl,'github.com' === 0)) {
+        } elseif(false === strpos($gitRemoteUrl, 'github.com')) {
             throw new Exception('repository not hosted on github, cannot use this strategy.');
         } else {
             throw new Exception('cannot parse remote url.');
