@@ -389,6 +389,16 @@ class Config
     }
 
     /**
+     * Get UserKnownHostsFile & StrictHostKeyChecking options
+     *
+     * @return string
+     */
+    public function getStrictHostCheckingOption()
+    {
+        return $this->general('ssh-strict-host-key-checking', true) ? '' : ' -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no ';
+    }
+
+    /**
      * Get the ConnectTimeout option
      *
      * @return string

@@ -197,7 +197,7 @@ abstract class AbstractTask
         $needs_tty = ($this->getConfig()->general('ssh_needs_tty', false) ? '-t' : '');
 
         $localCommand = 'ssh ' . $this->getConfig()->getHostIdentityFileOption() . $needs_tty . ' -p ' . $this->getConfig()->getHostPort() . ' '
-            . '-q -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no '
+            . $this->getConfig()->getStrictHostCheckingOption()
             . $this->getConfig()->getConnectTimeoutOption()
             . ($this->getConfig()->deployment('user') != '' ? $this->getConfig()->deployment('user') . '@' : '')
             . $this->getConfig()->getHostName();
