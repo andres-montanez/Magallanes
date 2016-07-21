@@ -250,7 +250,7 @@ class EncryptTask extends AbstractTask
          *
          */
         if (isset($this->mageConfig ['checkignoreextens'])) {
-            $this->checkIgnoreExtens = array_merge($this->ignoreExtens, $this->mageConfig['ignoreextens']);
+            $this->checkIgnoreExtens = array_merge($this->checkIgnoreExtens, $this->mageConfig['checkignoreextens']);
         }
 
         /*
