@@ -471,7 +471,7 @@ class EncryptTask extends AbstractTask
         if (isset($this->mageConfig ['keeptemp'])) {
             return;
         }
-        Console::log('Deleting tempory files :', 1);
+        Console::log('Deleting tempory files :');
         $ret1 = Console::executeCommand('rm -Rf ' . $this->ionSource, $out1);
         $ret2 = Console::executeCommand('rm ' . $this->projectFile, $out2);
         if ($ret1 && $ret2) {
