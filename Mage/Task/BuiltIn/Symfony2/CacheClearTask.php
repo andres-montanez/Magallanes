@@ -10,8 +10,6 @@
 
 namespace Mage\Task\BuiltIn\Symfony2;
 
-use Mage\Task\BuiltIn\Symfony2\SymfonyAbstractTask;
-
 /**
  * Task for Clearing the Cache
  *

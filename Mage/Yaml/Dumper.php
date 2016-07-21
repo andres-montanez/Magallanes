@@ -11,8 +11,6 @@
 
 namespace Mage\Yaml;
 
-use Mage\Yaml\Inline;
-
 /**
  * Dumper dumps PHP variables to YAML strings.
  *

@@ -11,8 +11,6 @@
 
 namespace Mage\Yaml;
 
-use Mage\Yaml\Escaper;
-use Mage\Yaml\Unescaper;
 use Mage\Yaml\Exception\ParseException;
 use Mage\Yaml\Exception\DumpException;
 
