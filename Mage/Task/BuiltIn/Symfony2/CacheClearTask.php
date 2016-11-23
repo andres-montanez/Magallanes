@@ -43,10 +43,14 @@ class CacheClearTask extends SymfonyAbstractTask
         $env = $this->getParameter('env', 'dev');
         $optional = $this->getParameter('optional', '');
 
-        $command = $this->getAppPath() . ' cache:clear --env=' . $env . ' ' . $optional;
+        $command = $this->getAppPath() . " cache:clear --env={$env}";
+        if (!empty($optional)) {
+            $command .= ' ' . $optional;
+        }
 
         $result = $this->runCommand($command);
 
         return $result;
     }
 }
+

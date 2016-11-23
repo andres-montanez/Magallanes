@@ -36,10 +36,8 @@ class AsseticDumpTask extends SymfonyAbstractTask
     {
         // Options
         $env = $this->getParameter('env', 'dev');
-
         $command = $this->getAppPath() . ' assetic:dump --env=' . $env;
         $result = $this->runCommand($command);
-
         return $result;
     }
 }

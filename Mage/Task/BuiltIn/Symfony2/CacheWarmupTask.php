@@ -43,3 +43,4 @@ class CacheWarmupTask extends SymfonyAbstractTask
         return $result;
     }
 }
+
