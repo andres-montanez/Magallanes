@@ -43,7 +43,7 @@ class ApplyFaclsTask extends AbstractTask implements IsReleaseAware
         if (empty($localuser)) {
             throw new SkipException('Parameter localuser not set.');
         }
-        $folders = $this->getParameter('folders', []);
+        $folders = $this->getParameter('folders', array());
 
         foreach ($folders as $folder) {
             $folderPath = $currentCopy."/".$folder;
