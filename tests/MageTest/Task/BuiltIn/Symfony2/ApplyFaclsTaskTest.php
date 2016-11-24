@@ -76,14 +76,14 @@ class ApplyFaclsTaskTest extends PHPUnit_Framework_TestCase
 
     public function provider_createFaclsCommand()
     {
-        return [
-            'no facls options' => [
+        return array(
+            'no facls options' => array(
                 '', 'www-data', 'deployer', 'var', 'setfacl  -m u:www-data:rwX -m u:deployer:rwX var'
-            ],
-            'with facls options' => [
+            ),
+            'with facls options' => array(
                 '-dR', 'www-data', 'deployer', 'var', 'setfacl -dR -m u:www-data:rwX -m u:deployer:rwX var'
-            ]
-        ];
+            )
+        );
     }
 
     /**
