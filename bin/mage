@@ -1,0 +1,11 @@
+#!/usr/bin/env php
+<?php
+date_default_timezone_set('UTC');
+
+require __DIR__ . '/../vendor/autoload.php';
+
+use Mage\MageApplication;
+
+$mage = new MageApplication();
+$mage->configure(__DIR__ . '/../.mage.yml');
+$mage->run();

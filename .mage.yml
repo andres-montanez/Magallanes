@@ -1,0 +1,34 @@
+magephp:
+#    composer:
+#        path: composer
+    symfony:
+#        console: bin/console
+#    log_dir: app/logs
+    environments:
+        production:
+            user: root
+#            ssh: -p 22 -q -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no
+#            scp: -P 22 -p -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no
+            branch: test
+            host_path: /var/www/test
+            releases: 4
+            exclude:
+                - vendor
+                - app/cache
+                - app/log
+                - web/app_dev.php
+            hosts:
+                - webserver
+            pre-deploy:
+                - git/update
+#                - composer/install #: { flags: '--optimize' }
+#                - composer/generate-autoload
+            on-deploy:
+#                - symfony/cache-clear: { env: 'dev' }
+#                - symfony/cache-warmup: { env: 'dev' }
+#                - symfony/assets-install: { env: 'dev' }
+#                - symfony/assetic-dump: { env: 'dev' }
+            on-release:
+            post-release:
+            post-deploy:
+

@@ -1,0 +1,32 @@
+{
+  "name": "andres-montanez/magallanes",
+  "description": "A Deployment Tool for PHP Applications",
+  "homepage": "http://magephp.com",
+  "license": "MIT",
+  "type": "library",
+  "keywords": ["deployment"],
+  "authors": [
+    {
+      "name": "Andrés Montañez",
+      "email": "andresmontanez@gmail.com"
+    }
+  ],
+  "require": {
+    "php": ">=5.5.9",
+    "monolog/monolog": "^1.0",
+    "symfony/console": "^3.0",
+    "symfony/filesystem": "^3.0",
+    "symfony/finder": "^3.0",
+    "symfony/yaml": "^3.0",
+    "symfony/process": "^3.0"
+  },
+  "autoload": {
+    "psr-4": {
+      "Symfony\\Component\\": "src/Symfony/Component/"
+    },
+    "psr-0": { "": "src/" },
+    "exclude-from-classmap": [
+      "**/Tests/"
+    ]
+  }
+}
