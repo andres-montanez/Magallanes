@@ -22,9 +22,8 @@
   },
   "autoload": {
     "psr-4": {
-      "Symfony\\Component\\": "src/Symfony/Component/"
+      "Mage\\": "src/Mage/"
     },
-    "psr-0": { "": "src/" },
     "exclude-from-classmap": [
       "**/Tests/"
     ]

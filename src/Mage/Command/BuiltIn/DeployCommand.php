@@ -242,7 +242,7 @@ class DeployCommand extends AbstractCommand
             return true;
         }
 
-        if ($this->runtime->getWorkingHost() != null) {
+        if ($this->runtime->getWorkingHost()) {
             $output->writeln(sprintf('    Starting <fg=black;options=bold>%s</> tasks on host <fg=black;options=bold>%s</>:', $this->getStageName(), $this->runtime->getWorkingHost()));
         } else {
             $output->writeln(sprintf('    Starting <fg=black;options=bold>%s</> tasks:', $this->getStageName()));
