@@ -58,6 +58,9 @@ abstract class AbstractTask
      */
     public function setOptions($options = [])
     {
+        if (!is_array($options)) {
+            $options = [];
+        }
         $this->options = $options;
         return $this;
     }

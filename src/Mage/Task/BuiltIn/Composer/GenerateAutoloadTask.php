@@ -35,9 +35,10 @@ class GenerateAutoloadTask extends AbstractTask
 
     protected function getOptions()
     {
+        $userOptions = $this->runtime->getConfigOptions('composer', []);
         $options = array_merge(
             ['path' => 'composer', 'flags' => '--optimize'],
-            $this->runtime->getConfigOptions('composer', []),
+            (is_array($userOptions) ? $userOptions : []),
             $this->options
         );
 

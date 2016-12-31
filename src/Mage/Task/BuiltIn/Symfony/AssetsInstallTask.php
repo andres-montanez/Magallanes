@@ -43,9 +43,10 @@ class AssetsInstallTask extends AbstractTask
 
     protected function getOptions()
     {
+        $userOptions = $this->runtime->getConfigOptions('symfony', []);
         $options = array_merge(
             ['path' => 'bin/console', 'env' => 'dev', 'target' => 'web', 'flags' => '--symlink --relative'],
-            $this->runtime->getConfigOptions('symfony', []),
+            (is_array($userOptions) ? $userOptions : []),
             $this->options
         );
 
