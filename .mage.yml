@@ -31,4 +31,3 @@ magephp:
             on-release:
             post-release:
             post-deploy:
-
