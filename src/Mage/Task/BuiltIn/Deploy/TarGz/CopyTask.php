@@ -39,7 +39,7 @@ class CopyTask extends AbstractTask
 
         $user = $this->runtime->getEnvironmentConfig('user');
         $host = $this->runtime->getWorkingHost();
-        $scpFlags = $this->runtime->getEnvironmentConfig('scp', '-P 22 -q -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no');
+        $sshConfig = $sshConfig = $this->runtime->getSSHConfig();
         $hostPath = rtrim($this->runtime->getEnvironmentConfig('host_path'), '/');
         $currentReleaseId = $this->runtime->getReleaseId();
 
@@ -48,13 +48,13 @@ class CopyTask extends AbstractTask
         $tarGzLocal = $this->runtime->getVar('targz_local');
         $tarGzRemote = basename($tarGzLocal);
 
-        $cmdCopy = sprintf('scp %s %s %s@%s:%s/%s', $scpFlags, $tarGzLocal, $user, $host, $targetDir, $tarGzRemote);
+        $cmdCopy = sprintf('scp -P %d %s %s %s@%s:%s/%s', $sshConfig['port'], $sshConfig['flags'], $tarGzLocal, $user, $host, $targetDir, $tarGzRemote);
 
         /** @var Process $process */
         $process = $this->runtime->runLocalCommand($cmdCopy, 300);
         if ($process->isSuccessful()) {
-            $cmdUntar = sprintf('cd %s && tar xfz %s', $targetDir, $tarGzRemote);
-            $process = $this->runtime->runRemoteCommand($cmdUntar, false, 600);
+            $cmdUnTar = sprintf('cd %s && tar xfz %s', $targetDir, $tarGzRemote);
+            $process = $this->runtime->runRemoteCommand($cmdUnTar, false, 600);
             if ($process->isSuccessful()) {
                 $cmdDelete = sprintf('rm %s/%s', $targetDir, $tarGzRemote);
                 $process = $this->runtime->runRemoteCommand($cmdDelete, false);

@@ -1,14 +1,15 @@
 magephp:
 #    composer:
 #        path: composer
-    symfony:
+#    symfony:
 #        console: bin/console
 #    log_dir: app/logs
     environments:
         production:
             user: root
-#            ssh: -p 22 -q -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no
-#            scp: -P 22 -p -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no
+#            ssh:
+#                port: 22
+#                flags: -q -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no
             branch: test
             host_path: /var/www/test
             releases: 4
@@ -18,7 +19,9 @@ magephp:
                 - app/log
                 - web/app_dev.php
             hosts:
-                - webserver
+                - webserver1
+                - webserver2
+                - webserver3
             pre-deploy:
                 - git/update
 #                - composer/install #: { flags: '--optimize' }

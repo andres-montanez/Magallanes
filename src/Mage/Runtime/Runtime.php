@@ -378,7 +378,7 @@ class Runtime
     {
         $user = $this->getEnvironmentConfig('user');
         $host = $this->getWorkingHost();
-        $sshFlags = $this->getEnvironmentConfig('ssh', '-p 22 -q -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no');
+        $sshConfig = $this->getSSHConfig();
 
         $cmdDelegate = $cmd;
         if ($jail) {
@@ -391,8 +391,23 @@ class Runtime
         }
 
         $cmdRemote = str_replace(['"', '&', ';'], ['\"', '\&', '\;'], $cmdDelegate);
-        $cmdLocal = sprintf('ssh %s %s@%s sh -c \"%s\"', $sshFlags, $user, $host, $cmdRemote);
+        $cmdLocal = sprintf('ssh -p %d %s %s@%s sh -c \"%s\"', $sshConfig['port'], $sshConfig['flags'], $user, $host, $cmdRemote);
 
         return $this->runLocalCommand($cmdLocal, $timeout);
+    }
+
+    public function getSSHConfig()
+    {
+        $sshConfig = $this->getEnvironmentConfig('ssh', ['port' => '22', 'flags' => '-q -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no']);
+
+        if (!array_key_exists('port', $sshConfig)) {
+            $sshConfig['port'] = '22';
+        }
+
+        if (!array_key_exists('flags', $sshConfig)) {
+            $sshConfig['flags'] = '-q -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no';
+        }
+
+        return $sshConfig;
     }
 }
