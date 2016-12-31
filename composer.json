@@ -29,10 +29,8 @@
       "**/Tests/"
     ]
   },
-    "config": {
+  "config": {
     "bin-dir": "bin"
   },
-  "bin": [
-    "bin/mage"
-  ]
+  "bin": ["bin/mage"]
 }
