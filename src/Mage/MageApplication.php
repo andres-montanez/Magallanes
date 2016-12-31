@@ -40,6 +40,10 @@ class MageApplication extends Application
      */
     public function configure($file)
     {
+        if (!file_exists($file) || !is_readable($file)) {
+            throw new RuntimeException(sprintf('The file "%s" does not exists or is not readable.', $file));
+        }
+
         $config = Yaml::parse(file_get_contents($file));
         if (array_key_exists('magephp', $config)) {
             $this->configuration = $config['magephp'];
@@ -61,7 +65,7 @@ class MageApplication extends Application
      *
      * @param InputInterface $input
      * @param OutputInterface $output
-     * @throws Exception
+     * @throws RuntimeException
      */
     public function run(InputInterface $input = null, OutputInterface $output = null)
     {
