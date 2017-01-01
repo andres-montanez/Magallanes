@@ -48,17 +48,18 @@ class MageApplication extends Application
         if (array_key_exists('magephp', $config)) {
             $config = $config['magephp'];
 
+            $logger = null;
             if (array_key_exists('log_dir', $config)) {
                 $logfile = sprintf('%s/%s.log', $config['log_dir'], date('Ymd_His'));
                 $config['log_file'] = $logfile;
 
                 $logger = new Logger('magephp');
                 $logger->pushHandler(new StreamHandler($logfile));
-
-                $this->runtime = new Runtime();
-                $this->runtime->setConfiguration($config);
-                $this->runtime->setLogger($logger);
             }
+
+            $this->runtime = new Runtime();
+            $this->runtime->setConfiguration($config);
+            $this->runtime->setLogger($logger);
         } else {
             throw new RuntimeException(sprintf('The file "%s" does not have a valid Magallanes configuration.', $file));
         }

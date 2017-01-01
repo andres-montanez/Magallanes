@@ -19,7 +19,7 @@ use Exception;
  */
 class ErrorException extends Exception
 {
-    public function getTrimmedMessage($maxLength = 20)
+    public function getTrimmedMessage($maxLength = 80)
     {
         $message = $this->getMessage();
 

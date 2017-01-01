@@ -10,6 +10,7 @@
 
 namespace Mage\Task\BuiltIn\Deploy;
 
+use Mage\Task\ErrorException;
 use Symfony\Component\Process\Process;
 use Mage\Task\AbstractTask;
 
@@ -38,7 +39,7 @@ class RsyncTask extends AbstractTask
         $targetDir = rtrim($hostPath, '/');
 
         if ($this->runtime->getEnvironmentConfig('releases', false)) {
-            $targetDir = sprintf('%s/releases/%s', $hostPath, $this->runtime->getReleaseId());
+            throw new ErrorException('Can\'t be used with Releases, use "deploy/targz/copy"');
         }
 
         $excludes = $this->getExcludes();

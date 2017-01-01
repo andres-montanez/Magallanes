@@ -33,6 +33,11 @@ use Mage\Command\AbstractCommand;
 class DeployCommand extends AbstractCommand
 {
     /**
+     * @var int
+     */
+    protected $statusCode = 0;
+
+    /**
      * @var TaskFactory
      */
     protected $taskFactory;
@@ -93,7 +98,7 @@ class DeployCommand extends AbstractCommand
 
         $output->writeln('Finished <fg=blue>Magallanes</>');
 
-        return 0;
+        return $this->statusCode;
     }
 
     /**
@@ -133,19 +138,20 @@ class DeployCommand extends AbstractCommand
             $this->runtime->setStage(Runtime::ON_DEPLOY);
             $onDeployTasks = $this->runtime->getTasks();
 
-            if ($this->runtime->getEnvironmentConfig('releases', false) && !$this->runtime->inRollback()) {
+            if (!$this->runtime->inRollback()) {
+            }
+
+            if ($this->runtime->getEnvironmentConfig('releases', false)) {
                 if (!in_array('deploy/targz/copy', $onDeployTasks)) {
                     array_unshift($onDeployTasks, 'deploy/targz/copy');
                 }
-            } else {
-                if (!in_array('deploy/rsync', $onDeployTasks) && !$this->runtime->inRollback()) {
-                    array_unshift($onDeployTasks, 'deploy/rsync');
-                }
-            }
 
-            if ($this->runtime->getEnvironmentConfig('releases', false) && !$this->runtime->inRollback()) {
                 if (!in_array('deploy/release/prepare', $onDeployTasks)) {
                     array_unshift($onDeployTasks, 'deploy/release/prepare');
+                }
+            } else {
+                if (!in_array('deploy/rsync', $onDeployTasks)) {
+                    array_unshift($onDeployTasks, 'deploy/rsync');
                 }
             }
 
@@ -269,6 +275,7 @@ class DeployCommand extends AbstractCommand
                         $this->log(sprintf('Task %s (%s) finished with OK', $task->getDescription(), $task->getName()));
                     } else {
                         $output->writeln('<fg=red>FAIL</>');
+                        $this->statusCode = 500;
                         $this->log(sprintf('Task %s (%s) finished with FAIL', $task->getDescription(), $task->getName()));
                     }
                 } catch (SkipException $exception) {
@@ -276,8 +283,9 @@ class DeployCommand extends AbstractCommand
                     $output->writeln('<fg=yellow>SKIPPED</>');
                     $this->log(sprintf('Task %s (%s) finished with SKIPPED, thrown SkipException', $task->getDescription(), $task->getName()));
                 } catch (ErrorException $exception) {
-                    $output->writeln(sprintf('<fg=red>FAIL</> [%s]', $exception->getTrimmedMessage()));
+                    $output->writeln(sprintf('<fg=red>ERROR</> [%s]', $exception->getTrimmedMessage()));
                     $this->log(sprintf('Task %s (%s) finished with FAIL, with Error "%s"', $task->getDescription(), $task->getName(), $exception->getMessage()));
+                    $this->statusCode = $exception->getCode();
                 }
             }
         }

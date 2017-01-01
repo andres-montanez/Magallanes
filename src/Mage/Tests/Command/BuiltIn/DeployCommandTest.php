@@ -124,6 +124,169 @@ class DeployCommandTest extends TestCase
         foreach ($testCase as $index => $command) {
             $this->assertEquals($ranCommands[$index], $command);
         }
+
+        $this->assertEquals($tester->getStatusCode(), 0);
+    }
+
+    public function testDeploymentWithErrorTaskCommands()
+    {
+        $application = new MageTestApplication();
+        $application->add(new DeployCommand());
+
+        $runtime = new RuntimeMockup();
+        $runtime->setConfiguration(array(
+                'environments' =>
+                    array(
+                        'test' =>
+                            array(
+                                'user' => 'tester',
+                                'branch' => 'test',
+                                'host_path' => '/var/www/test',
+                                'releases' => 4,
+                                'exclude' =>
+                                    array(
+                                        0 => 'vendor',
+                                        1 => 'app/cache',
+                                        2 => 'app/log',
+                                        3 => 'web/app_dev.php',
+                                    ),
+                                'hosts' =>
+                                    array(
+                                        0 => 'testhost',
+                                    ),
+                                'pre-deploy' =>
+                                    array(
+                                        0 => 'git/update',
+                                        1 => 'composer/install',
+                                        2 => 'composer/generate-autoload',
+                                    ),
+                                'on-deploy' =>
+                                    array(
+                                        0 => 'deploy/rsync',
+                                    ),
+                                'on-release' => null,
+                                'post-release' => null,
+                                'post-deploy' => null,
+                            ),
+                    ),
+            )
+        );
+
+        $runtime->setReleaseId('20170101015120');
+
+        /** @var AbstractCommand $command */
+        $command = $application->find('deploy');
+        $command->setRuntime($runtime);
+
+        $tester = new CommandTester($command);
+        $tester->execute(['command' => $command->getName(), 'environment' => 'test']);
+
+        $ranCommands = $runtime->getRanCommands();
+
+        $testCase = array(
+            0 => 'git branch | grep "*"',
+            1 => 'git checkout test',
+            2 => 'git pull',
+            3 => 'composer install --dev',
+            4 => 'composer dumpautoload --optimize',
+            5 => 'tar cfz /tmp/mageXYZ --exclude=.git --exclude=vendor --exclude=app/cache --exclude=app/log --exclude=web/app_dev.php ./',
+            6 => 'ssh -p 22 -q -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no tester@testhost sh -c \\"mkdir -p /var/www/test/releases/1234567890\\"',
+            7 => 'scp -P 22 -q -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no /tmp/mageXYZ tester@testhost:/var/www/test/releases/1234567890/mageXYZ',
+            8 => 'ssh -p 22 -q -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no tester@testhost sh -c \\"cd /var/www/test/releases/1234567890 \\&\\& tar xfz mageXYZ\\"',
+            9 => 'ssh -p 22 -q -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no tester@testhost sh -c \\"rm /var/www/test/releases/1234567890/mageXYZ\\"',
+        );
+
+        // Check total of Executed Commands
+        $this->assertEquals(count($ranCommands), count($testCase));
+
+        // Check Generated Commands
+        foreach ($testCase as $index => $command) {
+            $this->assertEquals($ranCommands[$index], $command);
+        }
+
+        $this->assertTrue(strpos($tester->getDisplay(), 'ERROR') !== false);
+
+        $this->assertNotEquals($tester->getStatusCode(), 0);
+    }
+
+    public function testDeploymentWithFailingPostDeployTaskCommands()
+    {
+        $application = new MageTestApplication();
+        $application->add(new DeployCommand());
+
+        $runtime = new RuntimeMockup();
+        $runtime->setConfiguration(array(
+                'environments' =>
+                    array(
+                        'test' =>
+                            array(
+                                'user' => 'tester',
+                                'branch' => 'test',
+                                'host_path' => '/var/www/test',
+                                'exclude' =>
+                                    array(
+                                        0 => 'vendor',
+                                        1 => 'app/cache',
+                                        2 => 'app/log',
+                                        3 => 'web/app_dev.php',
+                                    ),
+                                'hosts' =>
+                                    array(
+                                        0 => 'testhost',
+                                    ),
+                                'pre-deploy' =>
+                                    array(
+                                        0 => 'git/update',
+                                        1 => 'composer/install',
+                                        2 => 'composer/generate-autoload',
+                                    ),
+                                'on-deploy' =>
+                                    array(
+                                        0 => 'deploy/rsync',
+                                    ),
+                                'on-release' => null,
+                                'post-release' => null,
+                                'post-deploy' =>
+                                    array(
+                                        0 => 'deploy/targz/cleanup',
+                                    ),
+                            ),
+                    ),
+            )
+        );
+
+        $runtime->setReleaseId('20170101015120');
+
+        /** @var AbstractCommand $command */
+        $command = $application->find('deploy');
+        $command->setRuntime($runtime);
+
+        $tester = new CommandTester($command);
+        $tester->execute(['command' => $command->getName(), 'environment' => 'test']);
+
+        $ranCommands = $runtime->getRanCommands();
+
+        $testCase = array(
+            0 => 'git branch | grep "*"',
+            1 => 'git checkout test',
+            2 => 'git pull',
+            3 => 'composer install --dev',
+            4 => 'composer dumpautoload --optimize',
+            5 => 'rsync -avz --exclude=.git --exclude=vendor --exclude=app/cache --exclude=app/log --exclude=web/app_dev.php ./ tester@testhost:/var/www/test',
+            6 => 'git checkout master',
+        );
+
+        // Check total of Executed Commands
+        $this->assertEquals(count($ranCommands), count($testCase));
+
+        // Check Generated Commands
+        foreach ($testCase as $index => $command) {
+            $this->assertEquals($ranCommands[$index], $command);
+        }
+
+        $this->assertTrue(strpos($tester->getDisplay(), 'ERROR') !== false);
+
+        $this->assertNotEquals($tester->getStatusCode(), 0);
     }
 
     public function testDeploymentWithoutReleasesCommands()
@@ -228,6 +391,8 @@ class DeployCommandTest extends TestCase
         foreach ($testCase as $index => $command) {
             $this->assertEquals($ranCommands[$index], $command);
         }
+
+        $this->assertEquals($tester->getStatusCode(), 0);
     }
 
     public function testDeploymentWithSkippingTask()
@@ -333,5 +498,7 @@ class DeployCommandTest extends TestCase
         }
 
         $this->assertTrue(strpos($tester->getDisplay(), 'SKIPPED') !== false);
+
+        $this->assertEquals($tester->getStatusCode(), 0);
     }
 }
