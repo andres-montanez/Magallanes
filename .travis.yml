@@ -6,7 +6,7 @@ php:
   - '7.1'
 
 install:
-  - composer install --prefer-source
+  - composer install
 
 script:
-  - phpunit
+  - vendor/bin/phpunit
