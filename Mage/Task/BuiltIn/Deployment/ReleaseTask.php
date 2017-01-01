@@ -61,6 +61,26 @@ class ReleaseTask extends AbstractTask implements IsReleaseAware, SkipOnOverride
                 // and awk parameters need special care depending on the executing shell
                 $resultFetch = $this->runCommandRemote("ls -ld .", $directoryInfos);
                 if (!empty($directoryInfos)) {
+
+
+                    // break $directoryInfos by line break
+                    // to exclude unwanted line(s)
+                    $lines = explode("\n", $directoryInfos);
+                    $filtered_lines = array();
+                    foreach ($lines as $line) {
+
+                        // exclude line that starts with 'Identity added'
+                        // e.g.: from ssh with ProxyCommand / proxy jump
+                        if (stripos($line, "Identity added") !== FALSE) {
+                            continue;
+                        }
+
+                        $filtered_lines[] = $line;
+                    }
+                    // reconstruct $directoryInfos using the filtered lines
+                    $directoryInfos = implode("\n", $filtered_lines);
+
+
                     //uniformize format as it depends on the system deployed on
                     $directoryInfos = trim(str_replace(array("  ", "\t"), ' ', $directoryInfos));
                     $infoArray = explode(' ', $directoryInfos);
