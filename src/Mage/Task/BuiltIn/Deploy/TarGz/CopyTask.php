@@ -34,7 +34,7 @@ class CopyTask extends AbstractTask
     public function execute()
     {
         if (!$this->runtime->getEnvironmentConfig('releases', false)) {
-            throw new DeploymentException('This task is only available with releases enabled', 400);
+            throw new DeploymentException('This task is only available with releases enabled', 40);
         }
 
         $user = $this->runtime->getEnvironmentConfig('user');

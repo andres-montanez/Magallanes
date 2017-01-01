@@ -34,7 +34,7 @@ class CleanupTask extends AbstractTask
     public function execute()
     {
         if (!$this->runtime->getEnvironmentConfig('releases', false)) {
-            throw new ErrorException('This task is only available with releases enabled', 400);
+            throw new ErrorException('This task is only available with releases enabled', 40);
         }
 
         $tarGzLocal = $this->runtime->getVar('targz_local');

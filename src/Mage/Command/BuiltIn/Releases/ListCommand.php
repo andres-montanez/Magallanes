@@ -61,7 +61,7 @@ class ListCommand extends AbstractCommand
         }
 
         if (!$this->runtime->getEnvironmentConfig('releases', false)) {
-            throw new DeploymentException('Releases are not enabled', 700);
+            throw new DeploymentException('Releases are not enabled', 70);
         }
 
         $output->writeln(sprintf('    Environment: <fg=green>%s</>', $this->runtime->getEnvironment()));
@@ -89,7 +89,7 @@ class ListCommand extends AbstractCommand
                 /** @var Process $process */
                 $process = $this->runtime->runRemoteCommand($cmdListReleases, false);
                 if (!$process->isSuccessful()) {
-                    throw new RuntimeException(sprintf('Unable to retrieve releases from host %s', $host), 800);
+                    throw new RuntimeException(sprintf('Unable to retrieve releases from host %s', $host), 80);
                 }
 
                 $releases = explode(PHP_EOL, trim($process->getOutput()));
@@ -104,7 +104,7 @@ class ListCommand extends AbstractCommand
                     /** @var Process $process */
                     $process = $this->runtime->runRemoteCommand($cmdCurrentRelease, false);
                     if (!$process->isSuccessful()) {
-                        throw new RuntimeException(sprintf('Unable to retrieve current release from host %s', $host), 850);
+                        throw new RuntimeException(sprintf('Unable to retrieve current release from host %s', $host), 85);
                     }
 
                     $currentReleaseId = explode('/', trim($process->getOutput()));

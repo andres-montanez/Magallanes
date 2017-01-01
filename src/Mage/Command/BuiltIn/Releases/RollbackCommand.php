@@ -60,7 +60,7 @@ class RollbackCommand extends DeployCommand
         }
 
         if (!$this->runtime->getEnvironmentConfig('releases', false)) {
-            throw new DeploymentException('Releases are not enabled', 700);
+            throw new DeploymentException('Releases are not enabled', 70);
         }
 
         // Check if the Release exists in all hosts
@@ -90,7 +90,7 @@ class RollbackCommand extends DeployCommand
                 return $exception->getCode();
             }
         } else {
-            throw new DeploymentException(sprintf('Release %s is not available on all hosts', $releaseToRollback), 720);
+            throw new DeploymentException(sprintf('Release %s is not available on all hosts', $releaseToRollback), 72);
         }
 
         $output->writeln('Finished <fg=blue>Magallanes</>');

@@ -126,7 +126,7 @@ class DeployCommand extends AbstractCommand
         }
 
         if (!$this->runTasks($output, $preDeployTasks)) {
-            throw new DeploymentException(sprintf('    Tasks failed on %s stage, halting deployment', $this->getStageName()), 500);
+            throw new DeploymentException(sprintf('    Tasks failed on %s stage, halting deployment', $this->getStageName()), 50);
         }
 
         // Run On Deploy Tasks
@@ -158,7 +158,7 @@ class DeployCommand extends AbstractCommand
             foreach ($hosts as $host) {
                 $this->runtime->setWorkingHost($host);
                 if (!$this->runTasks($output, $onDeployTasks)) {
-                    throw new DeploymentException(sprintf('    Tasks failed on <fg=black;options=bold>%s</> stage, halting deployment', $this->getStageName()), 500);
+                    throw new DeploymentException(sprintf('    Tasks failed on <fg=black;options=bold>%s</> stage, halting deployment', $this->getStageName()), 50);
                 }
                 $this->runtime->setWorkingHost(null);
             }
@@ -182,7 +182,7 @@ class DeployCommand extends AbstractCommand
             foreach ($hosts as $host) {
                 $this->runtime->setWorkingHost($host);
                 if (!$this->runTasks($output, $onReleaseTasks)) {
-                    throw new DeploymentException(sprintf('    Tasks failed on <fg=black;options=bold>%s</> stage, halting deployment', $this->getStageName()), 500);
+                    throw new DeploymentException(sprintf('    Tasks failed on <fg=black;options=bold>%s</> stage, halting deployment', $this->getStageName()), 50);
                 }
                 $this->runtime->setWorkingHost(null);
             }
@@ -206,7 +206,7 @@ class DeployCommand extends AbstractCommand
             foreach ($hosts as $host) {
                 $this->runtime->setWorkingHost($host);
                 if (!$this->runTasks($output, $postReleaseTasks)) {
-                    throw new DeploymentException(sprintf('    Tasks failed on <fg=black;options=bold>%s</> stage, halting deployment', $this->getStageName()), 500);
+                    throw new DeploymentException(sprintf('    Tasks failed on <fg=black;options=bold>%s</> stage, halting deployment', $this->getStageName()), 50);
                 }
                 $this->runtime->setWorkingHost(null);
             }
@@ -228,7 +228,7 @@ class DeployCommand extends AbstractCommand
         }
 
         if (!$this->runTasks($output, $postDeployTasks)) {
-            throw new DeploymentException(sprintf('    Tasks failed on <fg=black;options=bold>%s</> stage, halting deployment', $this->getStageName()), 500);
+            throw new DeploymentException(sprintf('    Tasks failed on <fg=black;options=bold>%s</> stage, halting deployment', $this->getStageName()), 50);
         }
     }
 

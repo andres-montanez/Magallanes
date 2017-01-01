@@ -244,7 +244,7 @@ class Runtime
             return $this;
         }
 
-        throw new InvalidEnvironmentException(sprintf('The environment "%s" does not exists.', $environment), 1000);
+        throw new InvalidEnvironmentException(sprintf('The environment "%s" does not exists.', $environment), 100);
     }
 
     /**
