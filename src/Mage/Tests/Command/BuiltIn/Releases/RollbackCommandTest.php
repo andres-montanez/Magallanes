@@ -16,66 +16,66 @@ class RollbackCommandTest extends TestCase
         $application->add(new RollbackCommand());
 
         $runtime = new RuntimeMockup();
-        $runtime->setConfiguration(array (
+        $runtime->setConfiguration(array(
                 'environments' =>
-                    array (
+                    array(
                         'test' =>
-                            array (
+                            array(
                                 'user' => 'tester',
                                 'branch' => 'test',
                                 'host_path' => '/var/www/test',
                                 'releases' => 4,
                                 'exclude' =>
-                                    array (
+                                    array(
                                         0 => 'vendor',
                                         1 => 'app/cache',
                                         2 => 'app/log',
                                         3 => 'web/app_dev.php',
                                     ),
                                 'hosts' =>
-                                    array (
+                                    array(
                                         0 => 'testhost',
                                     ),
                                 'pre-deploy' =>
-                                    array (
+                                    array(
                                         0 => 'git/update',
                                         1 => 'composer/install',
                                         2 => 'composer/generate-autoload',
                                     ),
                                 'on-deploy' =>
-                                    array (
+                                    array(
                                         0 =>
-                                            array (
+                                            array(
                                                 'symfony/cache-clear' =>
-                                                    array (
+                                                    array(
                                                         'env' => 'dev',
                                                     ),
                                             ),
                                         1 =>
-                                            array (
+                                            array(
                                                 'symfony/cache-warmup' =>
-                                                    array (
+                                                    array(
                                                         'env' => 'dev',
                                                     ),
                                             ),
                                         2 =>
-                                            array (
+                                            array(
                                                 'symfony/assets-install' =>
-                                                    array (
+                                                    array(
                                                         'env' => 'dev',
                                                     ),
                                             ),
                                         3 =>
-                                            array (
+                                            array(
                                                 'symfony/assetic-dump' =>
-                                                    array (
+                                                    array(
                                                         'env' => 'dev',
                                                     ),
                                             ),
                                     ),
-                                'on-release' => NULL,
-                                'post-release' => NULL,
-                                'post-deploy' => NULL,
+                                'on-release' => null,
+                                'post-release' => null,
+                                'post-deploy' => null,
                             ),
                     ),
             )
@@ -90,7 +90,7 @@ class RollbackCommandTest extends TestCase
 
         $ranCommands = $runtime->getRanCommands();
 
-        $testCase = array (
+        $testCase = array(
             0 => 'ssh -p 22 -q -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no tester@testhost sh -c \\"ls -1 /var/www/test/releases\\"',
             1 => 'ssh -p 22 -q -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no tester@testhost sh -c \\"cd /var/www/test \\&\\& ln -snf releases/20170101015115 current\\"',
         );
@@ -103,5 +103,4 @@ class RollbackCommandTest extends TestCase
             $this->assertEquals($ranCommands[$index], $command);
         }
     }
-
 }

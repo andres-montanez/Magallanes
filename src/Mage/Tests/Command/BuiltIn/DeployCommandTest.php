@@ -1,7 +1,6 @@
 <?php
 namespace Mage\Tests\Command\BuiltIn;
 
-
 use Mage\Command\BuiltIn\DeployCommand;
 use Mage\Command\AbstractCommand;
 use Mage\Tests\MageTestApplication;
@@ -17,66 +16,66 @@ class DeployCommandTest extends TestCase
         $application->add(new DeployCommand());
 
         $runtime = new RuntimeMockup();
-        $runtime->setConfiguration(array (
+        $runtime->setConfiguration(array(
                 'environments' =>
-                    array (
+                    array(
                         'test' =>
-                            array (
+                            array(
                                 'user' => 'tester',
                                 'branch' => 'test',
                                 'host_path' => '/var/www/test',
                                 'releases' => 4,
                                 'exclude' =>
-                                    array (
+                                    array(
                                         0 => 'vendor',
                                         1 => 'app/cache',
                                         2 => 'app/log',
                                         3 => 'web/app_dev.php',
                                     ),
                                 'hosts' =>
-                                    array (
+                                    array(
                                         0 => 'testhost',
                                     ),
                                 'pre-deploy' =>
-                                    array (
+                                    array(
                                         0 => 'git/update',
                                         1 => 'composer/install',
                                         2 => 'composer/generate-autoload',
                                     ),
                                 'on-deploy' =>
-                                    array (
+                                    array(
                                         0 =>
-                                            array (
+                                            array(
                                                 'symfony/cache-clear' =>
-                                                    array (
+                                                    array(
                                                         'env' => 'dev',
                                                     ),
                                             ),
                                         1 =>
-                                            array (
+                                            array(
                                                 'symfony/cache-warmup' =>
-                                                    array (
+                                                    array(
                                                         'env' => 'dev',
                                                     ),
                                             ),
                                         2 =>
-                                            array (
+                                            array(
                                                 'symfony/assets-install' =>
-                                                    array (
+                                                    array(
                                                         'env' => 'dev',
                                                     ),
                                             ),
                                         3 =>
-                                            array (
+                                            array(
                                                 'symfony/assetic-dump' =>
-                                                    array (
+                                                    array(
                                                         'env' => 'dev',
                                                     ),
                                             ),
                                     ),
-                                'on-release' => NULL,
-                                'post-release' => NULL,
-                                'post-deploy' => NULL,
+                                'on-release' => null,
+                                'post-release' => null,
+                                'post-deploy' => null,
                             ),
                     ),
             )
@@ -93,7 +92,7 @@ class DeployCommandTest extends TestCase
 
         $ranCommands = $runtime->getRanCommands();
 
-        $testCase = array (
+        $testCase = array(
             0 => 'git branch | grep "*"',
             1 => 'git checkout test',
             2 => 'git pull',
@@ -133,65 +132,65 @@ class DeployCommandTest extends TestCase
         $application->add(new DeployCommand());
 
         $runtime = new RuntimeMockup();
-        $runtime->setConfiguration(array (
+        $runtime->setConfiguration(array(
                 'environments' =>
-                    array (
+                    array(
                         'test' =>
-                            array (
+                            array(
                                 'user' => 'tester',
                                 'branch' => 'test',
                                 'host_path' => '/var/www/test',
                                 'exclude' =>
-                                    array (
+                                    array(
                                         0 => 'vendor',
                                         1 => 'app/cache',
                                         2 => 'app/log',
                                         3 => 'web/app_dev.php',
                                     ),
                                 'hosts' =>
-                                    array (
+                                    array(
                                         0 => 'testhost',
                                     ),
                                 'pre-deploy' =>
-                                    array (
+                                    array(
                                         0 => 'git/update',
                                         1 => 'composer/install',
                                         2 => 'composer/generate-autoload',
                                     ),
                                 'on-deploy' =>
-                                    array (
+                                    array(
                                         0 =>
-                                            array (
+                                            array(
                                                 'symfony/cache-clear' =>
-                                                    array (
+                                                    array(
                                                         'env' => 'dev',
                                                     ),
                                             ),
                                         1 =>
-                                            array (
+                                            array(
                                                 'symfony/cache-warmup' =>
-                                                    array (
+                                                    array(
                                                         'env' => 'dev',
                                                     ),
                                             ),
                                         2 =>
-                                            array (
+                                            array(
                                                 'symfony/assets-install' =>
-                                                    array (
+                                                    array(
                                                         'env' => 'dev',
                                                     ),
                                             ),
                                         3 =>
-                                            array (
+                                            array(
                                                 'symfony/assetic-dump' =>
-                                                    array (
+                                                    array(
                                                         'env' => 'dev',
                                                     ),
                                             ),
                                     ),
-                                'on-release' => NULL,
-                                'post-release' => NULL,
-                                'post-deploy' => NULL,
+                                'on-release' => null,
+                                'post-release' => null,
+                                'post-deploy' => null,
                             ),
                     ),
             )
@@ -208,7 +207,7 @@ class DeployCommandTest extends TestCase
 
         $ranCommands = $runtime->getRanCommands();
 
-        $testCase = array (
+        $testCase = array(
             0 => 'git branch | grep "*"',
             1 => 'git checkout test',
             2 => 'git pull',

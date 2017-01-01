@@ -20,7 +20,6 @@ class ProcessMockup extends Process
 
     public function run($callback = null)
     {
-
     }
 
     public function isSuccessful()

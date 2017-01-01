@@ -1,7 +1,6 @@
 <?php
 namespace Mage\Tests\Command\BuiltIn;
 
-
 use Mage\Command\BuiltIn\VersionCommand;
 use Mage\Command\AbstractCommand;
 use Mage\Tests\MageTestApplication;
