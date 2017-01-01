@@ -67,7 +67,8 @@ class Utils
             $releaseId[6], $releaseId[7],
             $releaseId[8], $releaseId[9],
             $releaseId[10], $releaseId[11],
-            $releaseId[12], $releaseId[13]);
+            $releaseId[12], $releaseId[13]
+        );
 
         return new DateTime($formatted);
     }
@@ -83,6 +84,7 @@ class Utils
         $textDiff = '';
         $now = new DateTime();
         $diff = $now->diff($releaseDate);
+
         if ($diff->format('%a') <= 7) {
             if ($diff->format('%d') == 7) {
                 $textDiff = 'a week ago';
@@ -100,9 +102,9 @@ class Utils
                 } else {
                     $textDiff = $hours . ' hours ago';
                 }
-            } elseif ($diff->format('%d') == 0 && $diff->format('%h') == 0) {
+            } elseif ($diff->format('%d') == 0 && $diff->format('%h') == 0 && $diff->format('%i') > 0) {
                 $minutes = $diff->format('%i');
-                if ($minutes <= 1) {
+                if ($minutes == 1) {
                     $textDiff = 'one minute ago';
                 } else {
                     $textDiff = $minutes . ' minutes ago';
@@ -110,12 +112,13 @@ class Utils
             } elseif ($diff->format('%d') == 0 && $diff->format('%h') == 0 && $diff->format('%i') == 0) {
                 $seconds = $diff->format('%s');
                 if ($seconds < 10) {
-                    $textDiff = 'just now!';
+                    $textDiff = 'just now';
                 } else {
                     $textDiff = $seconds . ' seconds ago';
                 }
             }
         }
+
         return $textDiff;
     }
 }

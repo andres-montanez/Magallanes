@@ -22,5 +22,5 @@ $ vendor/bin/mage version
 ### What happend to version 2? ###
 There is no version 2. I've skipped it and jumpped stright from v1 to v3. This new version of **Magallanes** is quite radical and different from it's successor. The whole application has been rewritten using **_Symfony3 Components_**, so naming it v3 makes a lot of sense.
 
-### Codename... Nostromo? ###
+### Codename Nostromo ###
 Each new mayor version of **Magallanes** will have a codename (like Ubuntu), and in the current version it is **_Nostromo_**, like the spaceship from the movie *Alien (1979)*.
