@@ -63,6 +63,17 @@ class Runtime implements RuntimeInterface
     protected $rollback = false;
 
     /**
+     * Generate the Release ID
+     *
+     * @return RuntimeInterface
+     */
+    public function generateReleaseId()
+    {
+        $this->setReleaseId(date('YmdHis'));
+        return $this;
+    }
+
+    /**
      * Sets the Release ID
      *
      * @param string $releaseId Release ID
@@ -408,5 +419,15 @@ class Runtime implements RuntimeInterface
         }
 
         return $sshConfig;
+    }
+
+    /**
+     * Gets a Temporal File name
+     *
+     * @return string
+     */
+    public function getTempFile()
+    {
+        return tempnam(sys_get_temp_dir(), 'mage');
     }
 }

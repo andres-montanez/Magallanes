@@ -29,6 +29,13 @@ interface RuntimeInterface
     const POST_RELEASE = 'post-release';
 
     /**
+     * Generate the Release ID
+     *
+     * @return RuntimeInterface
+     */
+    public function generateReleaseId();
+
+    /**
      * Sets the Release ID
      *
      * @param string $releaseId Release ID
@@ -217,4 +224,11 @@ interface RuntimeInterface
      * @return array
      */
     public function getSSHConfig();
+
+    /**
+     * Gets a Temporal File name
+     *
+     * @return string
+     */
+    public function getTempFile();
 }

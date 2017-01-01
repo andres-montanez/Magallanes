@@ -37,7 +37,7 @@ class PrepareTask extends AbstractTask
             throw new DeploymentException('This task is only available with releases enabled', 400);
         }
 
-        $tarGzLocal = tempnam(sys_get_temp_dir(), 'mage');
+        $tarGzLocal = $this->runtime->getTempFile();
         $this->runtime->setVar('targz_local', $tarGzLocal);
 
         $excludes = $this->getExcludes();

@@ -118,7 +118,7 @@ class RollbackCommand extends DeployCommand
             $cmdListReleases = sprintf('ls -1 %s/releases', $hostPath);
 
             /** @var Process $process */
-            $process = $this->runtime->runRemoteCommand($cmdListReleases, true);
+            $process = $this->runtime->runRemoteCommand($cmdListReleases, false);
             if (!$process->isSuccessful()) {
                 $releases = [];
             } else {

@@ -72,7 +72,7 @@ class DeployCommand extends AbstractCommand
         $this->log(sprintf('Environment: %s', $this->runtime->getEnvironment()));
 
         if ($this->runtime->getEnvironmentConfig('releases', false)) {
-            $this->runtime->setReleaseId(date('YmdHis'));
+            $this->runtime->generateReleaseId();
             $output->writeln(sprintf('    Release ID: <fg=green>%s</>', $this->runtime->getReleaseId()));
             $this->log(sprintf('Release ID: %s', $this->runtime->getReleaseId()));
         }

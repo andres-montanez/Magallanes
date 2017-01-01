@@ -87,7 +87,7 @@ class ListCommand extends AbstractCommand
                 $cmdListReleases = sprintf('ls -1 %s/releases', $hostPath);
 
                 /** @var Process $process */
-                $process = $this->runtime->runRemoteCommand($cmdListReleases, true);
+                $process = $this->runtime->runRemoteCommand($cmdListReleases, false);
                 if (!$process->isSuccessful()) {
                     throw new RuntimeException(sprintf('Unable to retrieve releases from host %s', $host), 800);
                 }
@@ -102,7 +102,7 @@ class ListCommand extends AbstractCommand
                     $cmdCurrentRelease = sprintf('readlink -f %s/current', $hostPath);
 
                     /** @var Process $process */
-                    $process = $this->runtime->runRemoteCommand($cmdCurrentRelease, true);
+                    $process = $this->runtime->runRemoteCommand($cmdCurrentRelease, false);
                     if (!$process->isSuccessful()) {
                         throw new RuntimeException(sprintf('Unable to retrieve current release from host %s', $host), 850);
                     }
