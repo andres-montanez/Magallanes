@@ -11,7 +11,6 @@
 namespace Mage\Command;
 
 use Mage\Runtime\Runtime;
-use Psr\Log\LoggerInterface;
 use Psr\Log\LogLevel;
 use Symfony\Component\Console\Command\Command;
 
