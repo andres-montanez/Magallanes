@@ -10,7 +10,7 @@
 
 namespace Mage;
 
-use Mage\Runtime\Runtime;
+use Mage\Runtime\RuntimeInterface;
 use DateTime;
 
 /**
@@ -29,23 +29,23 @@ class Utils
     public static function getStageName($stage)
     {
         switch ($stage) {
-            case Runtime::PRE_DEPLOY:
+            case RuntimeInterface::PRE_DEPLOY:
                 return 'Pre Deployment';
                 break;
 
-            case Runtime::ON_DEPLOY:
+            case RuntimeInterface::ON_DEPLOY:
                 return 'On Deployment';
                 break;
 
-            case Runtime::POST_DEPLOY:
+            case RuntimeInterface::POST_DEPLOY:
                 return 'Post Deployment';
                 break;
 
-            case Runtime::ON_RELEASE:
+            case RuntimeInterface::ON_RELEASE:
                 return 'On Release';
                 break;
 
-            case Runtime::POST_RELEASE:
+            case RuntimeInterface::POST_RELEASE:
                 return 'Post Release';
                 break;
         }

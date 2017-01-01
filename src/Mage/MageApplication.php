@@ -11,6 +11,7 @@
 namespace Mage;
 
 use Mage\Command\AbstractCommand;
+use Mage\Runtime\Runtime;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Finder\Finder;
@@ -28,8 +29,7 @@ use Mage\Runtime\Exception\RuntimeException;
  */
 class MageApplication extends Application
 {
-    private $configuration;
-    protected $logger;
+    protected $runtime;
 
     /**
      * Configure the Magallanes Application
@@ -46,14 +46,18 @@ class MageApplication extends Application
 
         $config = Yaml::parse(file_get_contents($file));
         if (array_key_exists('magephp', $config)) {
-            $this->configuration = $config['magephp'];
+            $config = $config['magephp'];
 
-            if (array_key_exists('log_dir', $this->configuration)) {
-                $logfile = sprintf('%s/%s.log', $this->configuration['log_dir'], date('Ymd_His'));
-                $this->configuration['log_file'] = $logfile;
+            if (array_key_exists('log_dir', $config)) {
+                $logfile = sprintf('%s/%s.log', $config['log_dir'], date('Ymd_His'));
+                $config['log_file'] = $logfile;
 
-                $this->logger = new Logger('magephp');
-                $this->logger->pushHandler(new StreamHandler($logfile));
+                $logger = new Logger('magephp');
+                $logger->pushHandler(new StreamHandler($logfile));
+
+                $this->runtime = new Runtime();
+                $this->runtime->setConfiguration($config);
+                $this->runtime->setLogger($logger);
             }
         } else {
             throw new RuntimeException(sprintf('The file "%s" does not have a valid Magallanes configuration.', $file));
@@ -89,8 +93,7 @@ class MageApplication extends Application
                 $command = new $class();
 
                 if ($command instanceof AbstractCommand) {
-                    $command->setLogger($this->logger);
-                    $command->setConfiguration($this->configuration);
+                    $command->setRuntime($this->runtime);
                     $this->add($command);
                 }
             }

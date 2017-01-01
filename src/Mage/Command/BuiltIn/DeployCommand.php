@@ -13,7 +13,7 @@ namespace Mage\Command\BuiltIn;
 use Mage\Runtime\Exception\DeploymentException;
 use Mage\Runtime\Exception\InvalidEnvironmentException;
 use Mage\Runtime\Exception\RuntimeException;
-use Mage\Runtime\Runtime;
+use Mage\Runtime\RuntimeInterface;
 use Mage\Task\ErrorException;
 use Mage\Task\ExecuteOnRollbackInterface;
 use Mage\Task\AbstractTask;
@@ -105,7 +105,7 @@ class DeployCommand extends AbstractCommand
     protected function runDeployment(OutputInterface $output)
     {
         // Run Pre Deploy Tasks
-        $this->runtime->setStage(Runtime::PRE_DEPLOY);
+        $this->runtime->setStage(RuntimeInterface::PRE_DEPLOY);
         $preDeployTasks = $this->runtime->getTasks();
 
         if ($this->runtime->getEnvironmentConfig('branch', false) && !$this->runtime->inRollback()) {
@@ -130,7 +130,7 @@ class DeployCommand extends AbstractCommand
             $output->writeln('    No hosts defined, skipping On Deploy tasks');
             $output->writeln('');
         } else {
-            $this->runtime->setStage(Runtime::ON_DEPLOY);
+            $this->runtime->setStage(RuntimeInterface::ON_DEPLOY);
             $onDeployTasks = $this->runtime->getTasks();
 
             if ($this->runtime->getEnvironmentConfig('releases', false) && !$this->runtime->inRollback()) {
@@ -164,7 +164,7 @@ class DeployCommand extends AbstractCommand
             $output->writeln('    No hosts defined, skipping On Release tasks');
             $output->writeln('');
         } else {
-            $this->runtime->setStage(Runtime::ON_RELEASE);
+            $this->runtime->setStage(RuntimeInterface::ON_RELEASE);
             $onReleaseTasks = $this->runtime->getTasks();
 
             if ($this->runtime->getEnvironmentConfig('releases', false)) {
@@ -188,7 +188,7 @@ class DeployCommand extends AbstractCommand
             $output->writeln('    No hosts defined, skipping Post Release tasks');
             $output->writeln('');
         } else {
-            $this->runtime->setStage(Runtime::POST_RELEASE);
+            $this->runtime->setStage(RuntimeInterface::POST_RELEASE);
             $postReleaseTasks = $this->runtime->getTasks();
 
             if ($this->runtime->getEnvironmentConfig('releases', false) && !$this->runtime->inRollback()) {
@@ -207,7 +207,7 @@ class DeployCommand extends AbstractCommand
         }
 
         // Run Post Deploy Tasks
-        $this->runtime->setStage(Runtime::POST_DEPLOY);
+        $this->runtime->setStage(RuntimeInterface::POST_DEPLOY);
         $postDeployTasks = $this->runtime->getTasks();
         if ($this->runtime->getEnvironmentConfig('releases', false) && !$this->runtime->inRollback()) {
             if (!in_array('deploy/targz/cleanup', $postDeployTasks)) {

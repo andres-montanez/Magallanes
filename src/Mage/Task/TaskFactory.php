@@ -10,7 +10,7 @@
 
 namespace Mage\Task;
 
-use Mage\Runtime\Runtime;
+use Mage\Runtime\RuntimeInterface;
 use Mage\Runtime\Exception\RuntimeException;
 use Symfony\Component\Finder\Finder;
 use Symfony\Component\Finder\SplFileInfo;
@@ -23,7 +23,7 @@ use Symfony\Component\Finder\SplFileInfo;
 class TaskFactory
 {
     /**
-     * @var Runtime
+     * @var RuntimeInterface
      */
     protected $runtime;
 
@@ -35,9 +35,9 @@ class TaskFactory
     /**
      * Constructor
      *
-     * @param Runtime $runtime
+     * @param RuntimeInterface $runtime
      */
-    public function __construct(Runtime $runtime)
+    public function __construct(RuntimeInterface $runtime)
     {
         $this->runtime = $runtime;
         $this->loadBuiltInTasks();

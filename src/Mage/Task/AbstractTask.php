@@ -10,7 +10,7 @@
 
 namespace Mage\Task;
 
-use Mage\Runtime\Runtime;
+use Mage\Runtime\RuntimeInterface;
 
 /**
  * Abstract base class for Magallanes Tasks
@@ -25,7 +25,7 @@ abstract class AbstractTask
     protected $options = [];
 
     /**
-     * @var Runtime
+     * @var RuntimeInterface
      */
     protected $runtime;
 
@@ -68,10 +68,10 @@ abstract class AbstractTask
     /**
      * Set the Runtime instance
      *
-     * @param Runtime $runtime
+     * @param RuntimeInterface $runtime
      * @return AbstractTask
      */
-    public function setRuntime(Runtime $runtime)
+    public function setRuntime(RuntimeInterface $runtime)
     {
         $this->runtime = $runtime;
         return $this;
