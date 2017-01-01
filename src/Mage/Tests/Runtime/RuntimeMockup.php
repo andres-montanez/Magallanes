@@ -2,7 +2,6 @@
 namespace Mage\Tests\Runtime;
 
 use Mage\Runtime\Runtime;
-use Mage\Runtime\RuntimeInterface;
 use Symfony\Component\Process\Process;
 
 class RuntimeMockup extends Runtime
@@ -17,7 +16,7 @@ class RuntimeMockup extends Runtime
     /**
      * Generate the Release ID
      *
-     * @return RuntimeInterface
+     * @return Runtime
      */
     public function generateReleaseId()
     {

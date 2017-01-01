@@ -10,7 +10,7 @@
 
 namespace Mage\Command;
 
-use Mage\Runtime\RuntimeInterface;
+use Mage\Runtime\Runtime;
 use Psr\Log\LoggerInterface;
 use Psr\Log\LogLevel;
 use Symfony\Component\Console\Command\Command;
@@ -23,17 +23,17 @@ use Symfony\Component\Console\Command\Command;
 abstract class AbstractCommand extends Command
 {
     /**
-     * @var RuntimeInterface Current Runtime instance
+     * @var Runtime Current Runtime instance
      */
     protected $runtime;
 
     /**
      * Set the Runtime configuration
      *
-     * @param RuntimeInterface $runtime Runtime container
+     * @param Runtime $runtime Runtime container
      * @return AbstractCommand
      */
-    public function setRuntime(RuntimeInterface $runtime)
+    public function setRuntime(Runtime $runtime)
     {
         $this->runtime = $runtime;
 

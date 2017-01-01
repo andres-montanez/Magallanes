@@ -20,8 +20,14 @@ use Mage\Runtime\Exception\InvalidEnvironmentException;
  *
  * @author Andrés Montañez <andresmontanez@gmail.com>
  */
-class Runtime implements RuntimeInterface
+class Runtime
 {
+    const PRE_DEPLOY = 'pre-deploy';
+    const ON_DEPLOY = 'on-deploy';
+    const POST_DEPLOY = 'post-deploy';
+    const ON_RELEASE = 'on-release';
+    const POST_RELEASE = 'post-release';
+
     /**
      * @var array Magallanes configuration
      */
@@ -65,7 +71,7 @@ class Runtime implements RuntimeInterface
     /**
      * Generate the Release ID
      *
-     * @return RuntimeInterface
+     * @return Runtime
      */
     public function generateReleaseId()
     {
@@ -77,7 +83,7 @@ class Runtime implements RuntimeInterface
      * Sets the Release ID
      *
      * @param string $releaseId Release ID
-     * @return RuntimeInterface
+     * @return Runtime
      */
     public function setReleaseId($releaseId)
     {
@@ -99,7 +105,7 @@ class Runtime implements RuntimeInterface
      * Sets the Runtime in Rollback mode On or Off
      *
      * @param bool $inRollback
-     * @return RuntimeInterface
+     * @return Runtime
      */
     public function setRollback($inRollback)
     {
@@ -122,7 +128,7 @@ class Runtime implements RuntimeInterface
      *
      * @param mixed $key Variable name
      * @param mixed $value Variable value
-     * @return RuntimeInterface
+     * @return Runtime
      */
     public function setVar($key, $value)
     {
@@ -150,7 +156,7 @@ class Runtime implements RuntimeInterface
      * Sets the Logger instance
      *
      * @param LoggerInterface $logger Logger instance
-     * @return RuntimeInterface
+     * @return Runtime
      */
     public function setLogger(LoggerInterface $logger = null)
     {
@@ -162,7 +168,7 @@ class Runtime implements RuntimeInterface
      * Sets the Magallanes Configuration to the Runtime
      *
      * @param array $configuration Configuration
-     * @return RuntimeInterface
+     * @return Runtime
      */
     public function setConfiguration($configuration)
     {
@@ -228,7 +234,7 @@ class Runtime implements RuntimeInterface
      * Sets the working Environment
      *
      * @param string $environment Environment name
-     * @return RuntimeInterface
+     * @return Runtime
      * @throws InvalidEnvironmentException
      */
     public function setEnvironment($environment)
@@ -255,7 +261,7 @@ class Runtime implements RuntimeInterface
      * Sets the working stage
      *
      * @param string $stage Stage code
-     * @return RuntimeInterface
+     * @return Runtime
      */
     public function setStage($stage)
     {
@@ -295,7 +301,7 @@ class Runtime implements RuntimeInterface
      * Sets the working Host
      *
      * @param string $host Host name
-     * @return RuntimeInterface
+     * @return Runtime
      */
     public function setWorkingHost($host)
     {
@@ -336,9 +342,9 @@ class Runtime implements RuntimeInterface
     public function runCommand($cmd, $timeout = 120)
     {
         switch ($this->getStage()) {
-            case RuntimeInterface::ON_DEPLOY:
-            case RuntimeInterface::ON_RELEASE:
-            case RuntimeInterface::POST_RELEASE:
+            case self::ON_DEPLOY:
+            case self::ON_RELEASE:
+            case self::POST_RELEASE:
                 return $this->runRemoteCommand($cmd, true, $timeout);
                 break;
             default:
