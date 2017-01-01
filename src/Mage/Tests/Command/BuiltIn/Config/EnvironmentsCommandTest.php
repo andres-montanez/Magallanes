@@ -1,4 +1,13 @@
 <?php
+/*
+ * This file is part of the Magallanes package.
+ *
+ * (c) Andrés Montañez <andres@andresmontanez.com>
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
+
 namespace Mage\Tests\Command\BuiltIn\Config;
 
 use Mage\Command\BuiltIn\Config\EnvironmentsCommand;
@@ -88,6 +97,6 @@ class EnvironmentsCommandTest extends TestCase
         $tester = new CommandTester($command);
         $tester->execute(['command' => $command->getName()]);
 
-        $this->assertEquals($tester->getStatusCode(), 0);
+        $this->assertEquals(0, $tester->getStatusCode());
     }
 }

@@ -1,4 +1,13 @@
 <?php
+/*
+ * This file is part of the Magallanes package.
+ *
+ * (c) Andrés Montañez <andres@andresmontanez.com>
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
+
 namespace Mage\Tests\Command\BuiltIn\Releases;
 
 use Mage\Command\BuiltIn\Releases\RollbackCommand;
@@ -96,11 +105,11 @@ class RollbackCommandTest extends TestCase
         );
 
         // Check total of Executed Commands
-        $this->assertEquals(count($ranCommands), count($testCase));
+        $this->assertEquals(count($testCase), count($ranCommands));
 
         // Check Generated Commands
         foreach ($testCase as $index => $command) {
-            $this->assertEquals($ranCommands[$index], $command);
+            $this->assertEquals($command, $ranCommands[$index]);
         }
     }
 }

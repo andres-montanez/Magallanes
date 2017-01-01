@@ -1,4 +1,13 @@
 <?php
+/*
+ * This file is part of the Magallanes package.
+ *
+ * (c) Andrés Montañez <andres@andresmontanez.com>
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
+
 namespace Mage\Tests\Command\BuiltIn;
 
 use Mage\Command\BuiltIn\DeployCommand;
@@ -118,14 +127,14 @@ class DeployCommandTest extends TestCase
         );
 
         // Check total of Executed Commands
-        $this->assertEquals(count($ranCommands), count($testCase));
+        $this->assertEquals(count($testCase), count($ranCommands));
 
         // Check Generated Commands
         foreach ($testCase as $index => $command) {
-            $this->assertEquals($ranCommands[$index], $command);
+            $this->assertEquals($command, $ranCommands[$index]);
         }
 
-        $this->assertEquals($tester->getStatusCode(), 0);
+        $this->assertEquals(0, $tester->getStatusCode());
     }
 
     public function testDeploymentWithErrorTaskCommands()
@@ -197,16 +206,16 @@ class DeployCommandTest extends TestCase
         );
 
         // Check total of Executed Commands
-        $this->assertEquals(count($ranCommands), count($testCase));
+        $this->assertEquals(count($testCase), count($ranCommands));
 
         // Check Generated Commands
         foreach ($testCase as $index => $command) {
-            $this->assertEquals($ranCommands[$index], $command);
+            $this->assertEquals($command, $ranCommands[$index]);
         }
 
         $this->assertTrue(strpos($tester->getDisplay(), 'ERROR') !== false);
 
-        $this->assertNotEquals($tester->getStatusCode(), 0);
+        $this->assertNotEquals(0, $tester->getStatusCode());
     }
 
     public function testDeploymentWithFailingPostDeployTaskCommands()
@@ -255,8 +264,6 @@ class DeployCommandTest extends TestCase
             )
         );
 
-        $runtime->setReleaseId('20170101015120');
-
         /** @var AbstractCommand $command */
         $command = $application->find('deploy');
         $command->setRuntime($runtime);
@@ -277,16 +284,16 @@ class DeployCommandTest extends TestCase
         );
 
         // Check total of Executed Commands
-        $this->assertEquals(count($ranCommands), count($testCase));
+        $this->assertEquals(count($testCase), count($ranCommands));
 
         // Check Generated Commands
         foreach ($testCase as $index => $command) {
-            $this->assertEquals($ranCommands[$index], $command);
+            $this->assertEquals($command, $ranCommands[$index]);
         }
 
         $this->assertTrue(strpos($tester->getDisplay(), 'ERROR') !== false);
 
-        $this->assertNotEquals($tester->getStatusCode(), 0);
+        $this->assertNotEquals(0, $tester->getStatusCode());
     }
 
     public function testDeploymentWithoutReleasesCommands()
@@ -359,8 +366,6 @@ class DeployCommandTest extends TestCase
             )
         );
 
-        $runtime->setReleaseId('1234567890');
-
         /** @var AbstractCommand $command */
         $command = $application->find('deploy');
         $command->setRuntime($runtime);
@@ -377,22 +382,22 @@ class DeployCommandTest extends TestCase
             3 => 'composer install --dev',
             4 => 'composer dumpautoload --optimize',
             5 => 'rsync -avz --exclude=.git --exclude=vendor --exclude=app/cache --exclude=app/log --exclude=web/app_dev.php ./ tester@testhost:/var/www/test',
-            6 => 'ssh -p 22 -q -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no tester@testhost sh -c \\"cd /var/www/test/releases/1234567890 \\&\\& bin/console cache:clear --env=dev \\"',
-            7 => 'ssh -p 22 -q -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no tester@testhost sh -c \\"cd /var/www/test/releases/1234567890 \\&\\& bin/console cache:warmup --env=dev \\"',
-            8 => 'ssh -p 22 -q -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no tester@testhost sh -c \\"cd /var/www/test/releases/1234567890 \\&\\& bin/console assets:install --env=dev --symlink --relative web\\"',
-            9 => 'ssh -p 22 -q -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no tester@testhost sh -c \\"cd /var/www/test/releases/1234567890 \\&\\& bin/console assetic:dump --env=dev \\"',
+            6 => 'ssh -p 22 -q -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no tester@testhost sh -c \\"cd /var/www/test \\&\\& bin/console cache:clear --env=dev \\"',
+            7 => 'ssh -p 22 -q -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no tester@testhost sh -c \\"cd /var/www/test \\&\\& bin/console cache:warmup --env=dev \\"',
+            8 => 'ssh -p 22 -q -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no tester@testhost sh -c \\"cd /var/www/test \\&\\& bin/console assets:install --env=dev --symlink --relative web\\"',
+            9 => 'ssh -p 22 -q -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no tester@testhost sh -c \\"cd /var/www/test \\&\\& bin/console assetic:dump --env=dev \\"',
             10 => 'git checkout master',
         );
 
         // Check total of Executed Commands
-        $this->assertEquals(count($ranCommands), count($testCase));
+        $this->assertEquals(count($testCase), count($ranCommands));
 
         // Check Generated Commands
         foreach ($testCase as $index => $command) {
-            $this->assertEquals($ranCommands[$index], $command);
+            $this->assertEquals($command, $ranCommands[$index]);
         }
 
-        $this->assertEquals($tester->getStatusCode(), 0);
+        $this->assertEquals(0, $tester->getStatusCode());
     }
 
     public function testDeploymentWithSkippingTask()
@@ -465,8 +470,6 @@ class DeployCommandTest extends TestCase
             )
         );
 
-        $runtime->setReleaseId('1234567890');
-
         /** @var AbstractCommand $command */
         $command = $application->find('deploy');
         $command->setRuntime($runtime);
@@ -482,23 +485,23 @@ class DeployCommandTest extends TestCase
             2 => 'composer install --dev',
             3 => 'composer dumpautoload --optimize',
             4 => 'rsync -avz --exclude=.git --exclude=vendor --exclude=app/cache --exclude=app/log --exclude=web/app_dev.php ./ tester@testhost:/var/www/test',
-            5 => 'ssh -p 22 -q -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no tester@testhost sh -c \\"cd /var/www/test/releases/1234567890 \\&\\& bin/console cache:clear --env=dev \\"',
-            6 => 'ssh -p 22 -q -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no tester@testhost sh -c \\"cd /var/www/test/releases/1234567890 \\&\\& bin/console cache:warmup --env=dev \\"',
-            7 => 'ssh -p 22 -q -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no tester@testhost sh -c \\"cd /var/www/test/releases/1234567890 \\&\\& bin/console assets:install --env=dev --symlink --relative web\\"',
-            8 => 'ssh -p 22 -q -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no tester@testhost sh -c \\"cd /var/www/test/releases/1234567890 \\&\\& bin/console assetic:dump --env=dev \\"',
+            5 => 'ssh -p 22 -q -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no tester@testhost sh -c \\"cd /var/www/test \\&\\& bin/console cache:clear --env=dev \\"',
+            6 => 'ssh -p 22 -q -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no tester@testhost sh -c \\"cd /var/www/test \\&\\& bin/console cache:warmup --env=dev \\"',
+            7 => 'ssh -p 22 -q -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no tester@testhost sh -c \\"cd /var/www/test \\&\\& bin/console assets:install --env=dev --symlink --relative web\\"',
+            8 => 'ssh -p 22 -q -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no tester@testhost sh -c \\"cd /var/www/test \\&\\& bin/console assetic:dump --env=dev \\"',
             9 => 'git branch | grep "*"',
         );
 
         // Check total of Executed Commands
-        $this->assertEquals(count($ranCommands), count($testCase));
+        $this->assertEquals(count($testCase), count($ranCommands));
 
         // Check Generated Commands
         foreach ($testCase as $index => $command) {
-            $this->assertEquals($ranCommands[$index], $command);
+            $this->assertEquals($command, $ranCommands[$index]);
         }
 
         $this->assertTrue(strpos($tester->getDisplay(), 'SKIPPED') !== false);
 
-        $this->assertEquals($tester->getStatusCode(), 0);
+        $this->assertEquals(0, $tester->getStatusCode());
     }
 }

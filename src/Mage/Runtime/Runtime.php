@@ -31,7 +31,7 @@ class Runtime
     /**
      * @var array Magallanes configuration
      */
-    protected $configuration;
+    protected $configuration = [];
 
     /**
      * @var string|null Environment being deployed
@@ -214,6 +214,10 @@ class Runtime
      */
     public function getEnvironmentConfig($key = null, $default = null)
     {
+        if (!array_key_exists('environments', $this->configuration) || !is_array($this->configuration['environments'])) {
+            return [];
+        }
+
         if (!array_key_exists($this->environment, $this->configuration['environments'])) {
             return [];
         }
