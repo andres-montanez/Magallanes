@@ -7,7 +7,7 @@ use Mage\Tests\MageTestApplication;
 use Mage\Tests\Runtime\RuntimeMockup;
 use Mage\Mage;
 use Symfony\Component\Console\Tester\CommandTester;
-use PHPUnit\Framework\TestCase;
+use PHPUnit_Framework_TestCase as TestCase;
 
 class VersionCommandTest extends TestCase
 {

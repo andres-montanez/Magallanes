@@ -9,4 +9,5 @@ install:
   - composer install
 
 script:
-  - vendor/bin/phpunit
+  - mkdir -p build/logs
+  - vendor/bin/phpunit --coverage-clover build/logs/coverage.xml

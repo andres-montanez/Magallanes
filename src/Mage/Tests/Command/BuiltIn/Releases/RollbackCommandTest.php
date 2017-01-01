@@ -6,7 +6,7 @@ use Mage\Command\AbstractCommand;
 use Mage\Tests\MageTestApplication;
 use Mage\Tests\Runtime\RuntimeMockup;
 use Symfony\Component\Console\Tester\CommandTester;
-use PHPUnit\Framework\TestCase;
+use PHPUnit_Framework_TestCase as TestCase;
 
 class RollbackCommandTest extends TestCase
 {
