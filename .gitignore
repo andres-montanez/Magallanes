@@ -3,6 +3,9 @@ mage.phar
 bin
 !bin/mage
 
+# development tools
+.php_cs.cache
+
 # OS generated files # // GitHub Recommendation
 ######################
 .DS_Store*
