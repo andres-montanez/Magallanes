@@ -20,6 +20,12 @@ use Mage\Console;
  */
 class VersionCommand extends AbstractCommand
 {
+    public function __construct()
+    {
+        $this->setName('Version command')
+            ->setHelpMessage('Displays the current version of Magallanes')
+            ->setSyntaxMessage('mage version');
+    }
     /**
      * Display the Magallanes Version
      * @see \Mage\Command\AbstractCommand::run()

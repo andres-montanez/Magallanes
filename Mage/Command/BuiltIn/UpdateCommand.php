@@ -21,6 +21,13 @@ use Mage\Console;
  */
 class UpdateCommand extends AbstractCommand
 {
+    public function __construct()
+    {
+        $this->setName('Update command')
+            ->setHelpMessage('Updates the SCM base code')
+            ->setSyntaxMessage('mage update');
+    }
+
     /**
      * Updates the SCM Base Code
      * @see \Mage\Command\AbstractCommand::run()

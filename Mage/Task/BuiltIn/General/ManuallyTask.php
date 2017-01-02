@@ -32,7 +32,6 @@ use Mage\Task\AbstractTask;
  */
 class ManuallyTask extends AbstractTask
 {
-
     /**
      * (non-PHPdoc)
      * @see \Mage\Task\AbstractTask::getName()

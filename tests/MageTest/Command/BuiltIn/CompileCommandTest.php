@@ -16,6 +16,7 @@ use malkusch\phpmock\MockBuilder;
  * @uses malkusch\phpmock\MockBuilder
  * @uses Mage\Console
  * @uses Mage\Console\Colors
+ * @uses Mage\Command\AbstractCommand
  */
 class CompileCommandTest extends BaseTest
 {

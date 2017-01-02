@@ -23,6 +23,21 @@ use Exception;
  */
 class AddCommand extends AbstractCommand
 {
+    public function __construct()
+    {
+        $this->setName('Add command')
+            ->setHelpMessage('Generates new config for Magallanes. For now, only adding a environment is possible')
+            ->setSyntaxMessage('mage add [environment] [--name=env_name] [--enableReleases]')
+            ->addUsageExample(
+                'mage add environment --name=production',
+                'Add a production environment'
+            )
+            ->addUsageExample(
+                'mage add environment --name=qa --enableReleases',
+                'Add a QA environment and enable releasing'
+            );
+    }
+
     /**
      * Adds new Configuration Elements
      * @see \Mage\Command\AbstractCommand::run()

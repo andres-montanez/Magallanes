@@ -20,6 +20,13 @@ use Mage\Console;
  */
 class UpgradeCommand extends AbstractCommand
 {
+    public function __construct()
+    {
+        $this->setName('Upgrade command')
+            ->setHelpMessage('Upgrades Magallanes')
+            ->setSyntaxMessage('mage upgrade');
+    }
+
     /**
      * Source for downloading
      * @var string

@@ -4,7 +4,7 @@
         "Read more about it at http://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "caa09089c7b57461ed42e97a4449f2c6",
+    "hash": "38a662749dc90d3cd6bb06c095ec14f1",
     "packages": [],
     "packages-dev": [
         {
@@ -154,17 +154,17 @@
             "time": "2014-08-11 04:32:36"
         },
         {
-            "name": "malkusch/php-mock",
-            "version": "dev-php-5.3",
+            "name": "php-mock/php-mock",
+            "version": "0.1.1",
             "source": {
                 "type": "git",
-                "url": "https://github.com/malkusch/php-mock.git",
-                "reference": "37b301b4b479601232f3919920451c6e777c3264"
+                "url": "https://github.com/php-mock/php-mock.git",
+                "reference": "b48b05bfd43d8b051103a4515ab5613cb90e71da"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/malkusch/php-mock/zipball/37b301b4b479601232f3919920451c6e777c3264",
-                "reference": "37b301b4b479601232f3919920451c6e777c3264",
+                "url": "https://api.github.com/repos/php-mock/php-mock/zipball/b48b05bfd43d8b051103a4515ab5613cb90e71da",
+                "reference": "b48b05bfd43d8b051103a4515ab5613cb90e71da",
                 "shasum": ""
             },
             "require": {
@@ -199,7 +199,7 @@
                 "stub",
                 "test"
             ],
-            "time": "2014-12-01 18:01:18"
+            "time": "2015-04-14 18:12:12"
         },
         {
             "name": "phpunit/php-code-coverage",
@@ -1256,9 +1256,7 @@
     ],
     "aliases": [],
     "minimum-stability": "stable",
-    "stability-flags": {
-        "malkusch/php-mock": 20
-    },
+    "stability-flags": [],
     "prefer-stable": false,
     "prefer-lowest": false,
     "platform": {

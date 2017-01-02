@@ -90,18 +90,16 @@ class ReleaseTask extends AbstractTask implements IsReleaseAware, SkipOnOverride
                     if (!empty($infoArray[3])) {
                         $group = $infoArray[3];
                     }
-                    $userGroup = $user . ':' . $group;
                 }
+                $userGroup = $user . ':' . $group;
             }
 
-            if ($resultFetch && $userGroup != '') {
-                $command = 'chown -R ' . $userGroup . ' ' . $currentCopy
-                    . ' && '
-                    . 'chown ' . $userGroup . ' ' . $releasesDirectory;
-                $result = $this->runCommandRemote($command);
-                if (!$result) {
-                    return $result;
-                }
+            $command = 'chown -R ' . $userGroup . ' ' . $currentCopy
+                . ' && '
+                . 'chown ' . $userGroup . ' ' . $releasesDirectory;
+            $result = $this->runCommandRemote($command);
+            if (!$result) {
+                return $result;
             }
 
             // Switch symlink and change owner

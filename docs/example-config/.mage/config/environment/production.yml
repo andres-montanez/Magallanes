@@ -22,3 +22,6 @@ tasks:
     - sampleTask
     - sampleTaskRollbackAware
 verbose_logging: true
+env:
+  variables:
+    symfony_env: prod

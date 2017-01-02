@@ -103,6 +103,22 @@ class DeployCommand extends AbstractCommand implements RequiresEnvironment
      */
     protected static $failedTasks = 0;
 
+    public function __construct()
+    {
+        $this->setName('Deploy command')
+            ->setHelpMessage('Deploys the project into target environment')
+            ->setSyntaxMessage('mage deploy to:[environment_name]')
+            ->addUsageExample(
+                'mage deploy to:production',
+                'Deploy the project into <bold>production</bold> environment'
+            )
+            ->addUsageExample(
+                'mage deploy to:production --overrideRelease',
+                'Deploy the project into <bold>production</bold> environment '
+                . 'but skip <bold>SkipOnOverride</bold> aware tasks'
+            );
+    }
+
     /**
      * Returns the Status of the Deployment
      *
@@ -199,7 +215,7 @@ class DeployCommand extends AbstractCommand implements RequiresEnvironment
         Console::output('Total time: <bold>' . $timeText . '</bold>.', 1, 2);
 
         // Send Notifications
-        $this->sendNotification(self::$failedTasks > 0 ? false : true);
+        $this->sendNotification(self::$failedTasks > 0 ? false : true, new Mailer());
 
         // Unlock
         if (file_exists(getcwd() . '/.mage/~working.lock')) {
@@ -209,11 +225,11 @@ class DeployCommand extends AbstractCommand implements RequiresEnvironment
         if (self::$failedTasks === 0) {
             $exitCode = 0;
         }
-        
+
         if (self::$deployStatus === self::FAILED) {
             $exitCode = 1;
         }
-        
+
         return $exitCode;
     }
 
@@ -251,7 +267,7 @@ class DeployCommand extends AbstractCommand implements RequiresEnvironment
 
             // Change Branch Back
             if ($config->deployment('scm', false)) {
-                array_unshift($tasksToRun, 'scm/change-branch');
+                array_push($tasksToRun, 'scm/change-branch');
                 $config->addParameter('_changeBranchRevert');
             }
 
@@ -567,25 +583,35 @@ class DeployCommand extends AbstractCommand implements RequiresEnvironment
     /**
      * Send Email Notification if enabled
      * @param boolean $result
+     * @param mixed $mailer
      * @return boolean
      */
-    protected function sendNotification($result)
+    protected function sendNotification($result, $mailer)
     {
         $projectName = $this->getConfig()->general('name', false);
         $projectEmail = $this->getConfig()->general('email', false);
         $notificationsEnabled = $this->getConfig()->general('notifications', false);
+        $emailOptions = $this->getConfig()->general('email_options', array());
 
         // We need notifications enabled, and a project name and email to send the notification
         if (!$projectName || !$projectEmail || !$notificationsEnabled) {
             return false;
         }
 
-        $mailer = new Mailer;
         $mailer->setAddress($projectEmail)
             ->setProject($projectName)
             ->setLogFile(Console::getLogFile())
-            ->setEnvironment($this->getConfig()->getEnvironment())
-            ->send($result);
+            ->setEnvironment($this->getConfig()->getEnvironment());
+
+        if (isset($emailOptions['cc'])) {
+            $mailer->setCc($emailOptions['cc']);
+        }
+
+        if (isset($emailOptions['bcc'])) {
+            $mailer->setBcc($emailOptions['bcc']);
+        }
+
+        $mailer->send($result);
 
         return true;
     }
