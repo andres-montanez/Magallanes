@@ -66,7 +66,6 @@ class Mailer
             array($this->project, $this->environment, $result ? 'SUCCESS' : 'FAILURE'),
             self::SUBJECT
         );
-        $attachment = chunk_split(base64_encode(file_get_contents($this->logFile)));
 
         $message = 'This is a multi-part message in MIME format.' . self::EOL
             . '--Mage-mixed-' . $boundary . self::EOL
@@ -74,14 +73,17 @@ class Mailer
             . 'Content-Transfer-Encoding: quoted-printable' . self::EOL
             . self::EOL
             . strip_tags(Console::getOutput()) . self::EOL
-            . self::EOL
-            . '--Mage-mixed-' . $boundary . self::EOL
+            . self::EOL;
+        if ($this->logFile) {
+            $attachment = chunk_split(base64_encode(file_get_contents($this->logFile)));
+            $message .= '--Mage-mixed-' . $boundary . self::EOL
             . 'Content-Type: text/plain; name="log.txt"' . self::EOL
             . 'Content-Transfer-Encoding: base64' . self::EOL
             . 'Content-Disposition: attachment' . self::EOL
             . self::EOL
             . $attachment . self::EOL
             . '--Mage-mixed-' . $boundary . '--' . self::EOL;
+        }
 
         mail($this->address, $subject, $message, $headers);
     }
