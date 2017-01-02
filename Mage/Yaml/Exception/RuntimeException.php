@@ -11,8 +11,6 @@
 
 namespace Mage\Yaml\Exception;
 
-use Mage\Yaml\Exception\ExceptionInterface;
-
 /**
  * Exception class thrown when an error occurs during parsing.
  *

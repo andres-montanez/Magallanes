@@ -11,7 +11,6 @@
 namespace Mage\Task;
 
 use Mage\Config;
-use Mage\Task\AbstractTask;
 use Exception;
 
 /**

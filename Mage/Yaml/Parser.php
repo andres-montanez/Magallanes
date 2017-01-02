@@ -11,7 +11,6 @@
 
 namespace Mage\Yaml;
 
-use Mage\Yaml\Inline;
 use Mage\Yaml\Exception\ParseException;
 
 /**
