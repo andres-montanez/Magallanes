@@ -61,10 +61,9 @@ class LinkSharedFilesTask extends AbstractTask implements IsReleaseAware
      */
     public function run()
     {
-        $linkedEntities = array_merge(
-            $this->getParameter(self::LINKED_FILES, array()),
-            $this->getParameter(self::LINKED_FOLDERS, array())
-        );
+        $linkedFiles = $this->getParameter(self::LINKED_FILES, array());
+        $linkedFolders = $this->getParameter(self::LINKED_FOLDERS, array());
+        $linkedEntities = array_merge($linkedFiles, $linkedFolders);
 
         if (empty($linkedEntities)) {
             throw new SkipException('No files and folders configured for sym-linking.');
@@ -83,7 +82,7 @@ class LinkSharedFilesTask extends AbstractTask implements IsReleaseAware
             } else {
                 $target = $sharedFolderPath . '/' . $entityPath;
             }
-            $command = 'mkdir -p ' . escapeshellarg(dirname($target));
+            $command = 'mkdir -p ' . escapeshellarg(in_array($ePath, $linkedFolders) ? $target : dirname($target));
             $this->runCommandRemote($command);
             $command = 'ln -nfs ' . escapeshellarg($target) . ' ' . escapeshellarg($currentCopy . '/' . $entityPath);
             $this->runCommandRemote($command);
