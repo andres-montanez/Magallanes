@@ -85,6 +85,8 @@ class RollbackTask extends AbstractTask implements IsReleaseAware
                         $releaseIsAvailable = true;
                     }
                 }
+                
+                $currentCopy = $releasesDirectory . '/' . $releaseId;
 
                 $currentCopy = rtrim($releasesDirectory, '/') . '/' . $releaseId;
 
