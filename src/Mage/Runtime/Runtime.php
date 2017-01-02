@@ -392,10 +392,16 @@ class Runtime
     public function runRemoteCommand($cmd, $jail = true, $timeout = 120)
     {
         $user = $this->getEnvironmentConfig('user');
+        $sudo = $this->getEnvironmentConfig('sudo', false);
         $host = $this->getWorkingHost();
         $sshConfig = $this->getSSHConfig();
 
-        $cmdDelegate = $cmd;
+        if ($sudo === true) {
+            $cmdDelegate = sprintf('sudo %s', $cmd);
+        } else {
+            $cmdDelegate = $cmd;
+        }
+
         if ($jail) {
             $hostPath = rtrim($this->getEnvironmentConfig('host_path'), '/');
             if ($this->getReleaseId()) {
