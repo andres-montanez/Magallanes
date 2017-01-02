@@ -449,6 +449,13 @@ class Config
      */
     public function deployment($option, $default = false)
     {
+        // Environment variable override
+        $envValue = getenv('MAGE_DEPLOYMENT_' . strtoupper($option));
+
+        if ($envValue !== false) {
+            return $envValue;
+        }
+
         // Host Config
         if (is_array($this->hostConfig) && isset($this->hostConfig['deployment'])) {
             if (isset($this->hostConfig['deployment'][$option])) {
@@ -483,6 +490,13 @@ class Config
      */
     public function release($option, $default = false)
     {
+        // Environment variable override
+        $envValue = getenv('MAGE_RELEASE_' . strtoupper($option));
+
+        if ($envValue !== false) {
+            return $envValue;
+        }
+
         // Host Config
         if (is_array($this->hostConfig) && isset($this->hostConfig['releases'])) {
             if (isset($this->hostConfig['releases'][$option])) {
