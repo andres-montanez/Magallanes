@@ -70,7 +70,10 @@ class TarGzTask extends BaseStrategyTaskAbstract implements IsReleaseAware
         $excludeFromFileCmd = $this->excludesListFile($excludesListFilePath);
 
         // Strategy Flags
-        $strategyFlags = $this->getConfig()->deployment('strategy_flags', $this->getConfig()->general('strategy_flags', array()));
+        $strategyFlags = $this->getConfig()->deployment(
+            'strategy_flags',
+            $this->getConfig()->general('strategy_flags', array())
+        );
         if (isset($strategyFlags['targz']) && isset($strategyFlags['targz']['create'])) {
             $strategyFlags = $strategyFlags['targz']['create'];
         } else {
@@ -80,15 +83,27 @@ class TarGzTask extends BaseStrategyTaskAbstract implements IsReleaseAware
         // remove h option only if dump-symlinks is allowed in the release config part
         $dumpSymlinks = $this->getConfig()->release('dump-symlinks') ? '' : 'h';
 
-        $command = 'tar cfz'. $dumpSymlinks . $strategyFlags . ' ' . $localTarGz . '.tar.gz ' . $excludeCmd . $excludeFromFileCmd . ' -C ' . $this->getConfig()->deployment('from') . ' .';
+        $command = 'tar cfz'. $dumpSymlinks . $strategyFlags . ' ' . $localTarGz . '.tar.gz '
+            . $excludeCmd . $excludeFromFileCmd . ' -C ' . $this->getConfig()->deployment('from') . ' .';
         $result = $this->runCommandLocal($command);
 
         // Strategy Flags
-        $strategyFlags = $this->getConfig()->deployment('strategy_flags', $this->getConfig()->general('strategy_flags', array()));
+        $strategyFlags = $this->getConfig()->deployment(
+            'strategy_flags',
+            $this->getConfig()->general('strategy_flags', array())
+        );
         if (isset($strategyFlags['targz']) && isset($strategyFlags['targz']['exctract'])) {
             $strategyFlags = $strategyFlags['targz']['exctract'];
         } else {
             $strategyFlags = '';
+        }
+
+        $sudo = $this->getConfig()->deployment('use-sudo', false);
+
+        $uploadDirectory = $deployToDirectory;
+
+        if ($sudo) {
+            $uploadDirectory = "/tmp";
         }
 
         // Copy Tar Gz  to Remote Host
@@ -97,11 +112,20 @@ class TarGzTask extends BaseStrategyTaskAbstract implements IsReleaseAware
             . " -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no "
             . ' ' . $localTarGz . '.tar.gz '
             . $this->getConfig()->deployment('user') . '@' . $this->getConfig()->getHostName() . ':'
-            . $deployToDirectory;
+            . $uploadDirectory;
         $result = $this->runCommandLocal($command) && $result;
 
+        if ($sudo) {
+            $tarGzFileName = $remoteTarGz . '.tar.gz';
+            $command = $this->getReleasesAwareCommand('mv /tmp/' . $tarGzFileName . ' ' . $deployToDirectory);
+            $result = $this->runCommandRemote($command) && $result;
+        }
+
         // Strategy Flags
-        $strategyFlags = $this->getConfig()->deployment('strategy_flags', $this->getConfig()->general('strategy_flags', array()));
+        $strategyFlags = $this->getConfig()->deployment(
+            'strategy_flags',
+            $this->getConfig()->general('strategy_flags', array())
+        );
         if (isset($strategyFlags['targz']) && isset($strategyFlags['targz']['scp'])) {
             $strategyFlags = $strategyFlags['targz']['scp'];
         } else {
@@ -131,7 +155,10 @@ class TarGzTask extends BaseStrategyTaskAbstract implements IsReleaseAware
     protected function excludesListFile($excludesFile)
     {
         $excludesListFileRsync = '';
-        if (!empty($excludesFile) && file_exists($excludesFile) && is_file($excludesFile) && is_readable($excludesFile)) {
+        if (!empty($excludesFile)
+            && file_exists($excludesFile)
+            && is_file($excludesFile)
+            && is_readable($excludesFile)) {
             $excludesListFileRsync = ' --exclude-from=' . $excludesFile;
         }
         return $excludesListFileRsync;
