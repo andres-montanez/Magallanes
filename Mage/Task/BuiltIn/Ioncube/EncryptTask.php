@@ -435,7 +435,7 @@ class EncryptTask extends AbstractTask
     private function checkFileCoding($filename)
     {
         // check to see if this is an encrypted file
-        $ioncube = ioncube_read_file($filename, $ioncubeType);
+        $ioncube = ioncube_read_file($filename);
         if (is_int($ioncube)) {
             // we got an error from ioncube, so its encrypted
             return true;
