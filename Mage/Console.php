@@ -132,10 +132,14 @@ class Console
             try {
                 $command = Factory::get($commandName, $config);
 
-                if ($command instanceof RequiresEnvironment) {
-                    if ($config->getEnvironment() === false) {
-                        throw new Exception('You must specify an environment for this command.');
-                    }
+                if ($config->getParameter('help')) {
+                    self::output($command->getInfoMessage(), 2);
+
+                    return 0;
+                }
+
+                if ($command instanceof RequiresEnvironment && $config->getEnvironment() === false) {
+                    throw new Exception('You must specify an environment for this command.');
                 }
 
                 // Run the Command
@@ -204,7 +208,7 @@ class Console
 
         $return = 1;
         $log = array();
-        exec($command . ' 2>&1', $log, $return);
+        exec(escapeshellcmd($command . ' 2>&1'), $log, $return);
         $log = implode(PHP_EOL, $log);
 
         if (!$return) {

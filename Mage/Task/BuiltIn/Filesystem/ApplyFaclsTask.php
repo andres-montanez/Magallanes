@@ -33,7 +33,7 @@ class ApplyFaclsTask extends AbstractTask implements IsReleaseAware
             throw new SkipException('Parameter acl_param not set.');
         }
 
-        $folders = $this->getParameter('folders', []);
+        $folders = $this->getParameter('folders', array());
         $recursive = $this->getParameter('recursive', false) ? ' -R ' : ' ';
 
         foreach ($folders as $folder) {

@@ -103,6 +103,22 @@ class DeployCommand extends AbstractCommand implements RequiresEnvironment
      */
     protected static $failedTasks = 0;
 
+    public function __construct()
+    {
+        $this->setName('Deploy command')
+            ->setHelpMessage('Deploys the project into target environment')
+            ->setSyntaxMessage('mage deploy to:[environment_name]')
+            ->addUsageExample(
+                'mage deploy to:production',
+                'Deploy the project into <bold>production</bold> environment'
+            )
+            ->addUsageExample(
+                'mage deploy to:production --overrideRelease',
+                'Deploy the project into <bold>production</bold> environment '
+                . 'but skip <bold>SkipOnOverride</bold> aware tasks'
+            );
+    }
+
     /**
      * Returns the Status of the Deployment
      *
@@ -227,7 +243,6 @@ class DeployCommand extends AbstractCommand implements RequiresEnvironment
     protected function runNonDeploymentTasks($stage, Config $config, $title)
     {
         $tasksToRun = $config->getTasks($stage);
-        self::$failedTasks = 0;
 
         // PreDeployment Hook
         if ($stage == AbstractTask::STAGE_PRE_DEPLOY) {
@@ -251,7 +266,7 @@ class DeployCommand extends AbstractCommand implements RequiresEnvironment
 
             // Change Branch Back
             if ($config->deployment('scm', false)) {
-                array_unshift($tasksToRun, 'scm/change-branch');
+                array_push($tasksToRun, 'scm/change-branch');
                 $config->addParameter('_changeBranchRevert');
             }
 
@@ -268,6 +283,7 @@ class DeployCommand extends AbstractCommand implements RequiresEnvironment
 
             $tasks = 0;
             $completedTasks = 0;
+            self::$failedTasks = 0;
 
             foreach ($tasksToRun as $taskData) {
                 $tasks++;

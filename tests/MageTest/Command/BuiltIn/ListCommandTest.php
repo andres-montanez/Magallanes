@@ -93,6 +93,7 @@ class ListCommandTest extends BaseTest
     }
 
     /**
+     * @covers ::__construct
      * @covers ::run
      * @covers ::listEnvironments
      * @dataProvider listEnvironmentsProvider
@@ -109,6 +110,7 @@ class ListCommandTest extends BaseTest
     }
 
     /**
+     * @covers ::__construct
      * @covers ::run
      */
     public function testRunWithInvalidCommand()

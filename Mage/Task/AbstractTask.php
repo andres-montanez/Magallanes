@@ -222,6 +222,7 @@ abstract class AbstractTask
      */
     final protected function runCommand($command, &$output = null)
     {
+        $command = ltrim($this->getEnvVarsString() . ' ' . $command);
         if ($this->getStage() == self::STAGE_DEPLOY || $this->getStage() == self::STAGE_POST_RELEASE) {
             return $this->runCommandRemote($command, $output);
         } else {
@@ -304,5 +305,57 @@ abstract class AbstractTask
             return $result;
         }
         return $result;
+    }
+
+    /**
+     * Returns the array of environment variables
+     * Returned array contains both system variables and variables set in config
+     * WARNING: To access system's variables you need to set proper value in your php.ini at variables_order key
+     * @see http://php.net/manual/en/ini.core.php#ini.variables-order
+     *
+     * @return array
+     */
+    protected function getEnvVariables()
+    {
+        $configVars = array_merge(
+            $this->getConfig()->general('env', array()),
+            $this->getConfig()->environmentConfig('env', array()),
+            $this->getConfig()->getParameter('env', array()),
+            array(
+                'variables' => $this->getConfig()->getParameter('env.variables', array())
+            )
+        );
+
+        if (isset($configVars['variables'])) {
+            $configVars = $configVars['variables'];
+        }
+
+        $envVariables = array_merge(
+            $_ENV,
+            $configVars
+        );
+
+        return $envVariables;
+    }
+
+    /**
+     * Returns ready to inject environment string
+     * The string is build from env vars array in schema:
+     *  key1=value1 key2=value3 ...
+     *
+     * @return string
+     */
+    protected function getEnvVarsString()
+    {
+        $envVarsArray = $this->getEnvVariables();
+        $envVars = array_map(
+            function ($key, $value) {
+                return "$key=$value";
+            },
+            array_keys($envVarsArray),
+            $this->getEnvVariables()
+        );
+
+        return join(' ', $envVars);
     }
 }

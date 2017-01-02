@@ -20,6 +20,20 @@ use Mage\Console;
  */
 class InitCommand extends AbstractCommand
 {
+    public function __construct()
+    {
+        $this->setName('Initialize command')
+            ->setHelpMessage('Initialize Magallanes project, create .mage directory with starter configs')
+            ->setSyntaxMessage('mage init --name=[project_name] [--email=[author_email]]')
+            ->addUsageExample(
+                'mage init --name="My awesome project"',
+                'Initialize "My awesome project" configuration'
+            )
+            ->addUsageExample(
+                'mage init --name="My project" --email="john.smith@example.com"',
+                'Initialize "My project" configuration with email notification enabled for john.smith@example.com'
+            );
+    }
 
     /**
      * Command for Initalize a new Configuration Proyect

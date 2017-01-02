@@ -23,6 +23,17 @@ use Exception;
  */
 class ListCommand extends AbstractCommand
 {
+    public function __construct()
+    {
+        $this->setName('List command')
+            ->setHelpMessage('List available configurations. For now, only environments listing available')
+            ->setSyntaxMessage('mage list [environments]')
+            ->addUsageExample(
+                'mage list environments',
+                'List currently configured environments'
+            );
+    }
+
     /**
      * Command for Listing Configuration Elements
      * @see \Mage\Command\AbstractCommand::run()

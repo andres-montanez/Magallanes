@@ -21,7 +21,6 @@ use RecursiveDirectoryIterator;
  */
 class Compiler
 {
-
     /**
      * Compiles the library
      *

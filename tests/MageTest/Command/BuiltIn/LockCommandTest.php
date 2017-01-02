@@ -173,6 +173,7 @@ class LockCommandTest extends BaseTest
     }
 
     /**
+     * @covers ::__construct
      * @covers ::run
      * @dataProvider lockCommandProvider
      */

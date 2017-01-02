@@ -33,6 +33,10 @@ class CompileCommand extends AbstractCommand
         }
 
         $this->compiler = $compiler;
+
+        $this->setName('Compile command')
+            ->setHelpMessage('Compiles Magallanes to mage.phar file')
+            ->setSyntaxMessage('mage compile');
     }
 
     /**
