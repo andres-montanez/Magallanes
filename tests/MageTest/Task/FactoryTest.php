@@ -50,19 +50,30 @@ class FactoryTest extends PHPUnit_Framework_TestCase
      */
     public function testGetCustomTask()
     {
-        $this->getMockBuilder('Mage\\Task\\AbstractTask')
-            ->setConstructorArgs(array($this->config))
-            ->setMockClassName('MyTask')
-            ->getMock();
+        $tasks = array(
+            'Task\\MyFirstTask' => 'my-first-task',
+            'MySecond\\Task' => 'my-second',
+            'Mage\\Task\\BuiltIn\\CustomThirdTask' => 'custom-third',
+            'Mage\\Task\\BuiltIn\\Custom\\FourthTask' => 'custom/fourth',
+            'My\\Fifth\\TaskClass' => 'my/fifth/task-class',
+        );
 
-        /*
-         * current workaround
-         * @link https://github.com/sebastianbergmann/phpunit-mock-objects/issues/134
-         */
-        class_alias('MyTask', 'Task\\MyTask');
+        foreach ($tasks as $taskClass => $taskName) {
+            $alias = uniqid('DummyTask');
+            $this->getMockBuilder('Mage\\Task\\AbstractTask')
+                ->setConstructorArgs(array($this->config))
+                ->setMockClassName($alias)
+                ->getMock();
 
-        $task = Factory::get('my-task', $this->config);
-        $this->assertInstanceOf('Task\\MyTask', $task);
+            /*
+             * current workaround
+             * @link https://github.com/sebastianbergmann/phpunit-mock-objects/issues/134
+             */
+            class_alias($alias, $taskClass);
+
+            $task = Factory::get($taskName, $this->config);
+            $this->assertInstanceOf($taskClass, $task);
+        }
     }
 
     /**
