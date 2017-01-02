@@ -73,6 +73,8 @@ class ChangeBranchTask extends AbstractTask
                     $command = $preCommand . 'git branch | grep \'*\' | cut -d\' \' -f 2';
                     $currentBranch = 'master';
                     $result = $this->runCommandLocal($command, $currentBranch);
+                    
+                    self::$startingBranch = $currentBranch;
 
                     $scmData = $this->getConfig()->deployment('scm', false);
 
@@ -88,8 +90,6 @@ class ChangeBranchTask extends AbstractTask
                         $branch = $this->getParameter('branch', $scmData['branch']);
                         $command = $preCommand . 'git checkout ' . $branch;
                         $result = $this->runCommandLocal($command) && $result;
-
-                        self::$startingBranch = $currentBranch;
                     } else {
                         throw new SkipException;
                     }
