@@ -21,6 +21,12 @@ tasks:
     - privileges
     - sampleTask
     - sampleTaskRollbackAware
+    - symfony2/apply-facls:
+        httpuser: www-data
+        localuser: deployer
+        folders:
+          - var
+          - web
 verbose_logging: true
 env:
   variables:
