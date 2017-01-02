@@ -11,6 +11,7 @@ namespace MageTest\TestHelper;
  *
  * @package MageTest\TestHelper
  * @author Jakub Turek <ja@kubaturek.pl>
+ * @author César Suárez <suarez.ortega.cesar@gmail.com>
  */
 abstract class BaseTest extends \PHPUnit_Framework_TestCase
 {
@@ -41,6 +42,20 @@ abstract class BaseTest extends \PHPUnit_Framework_TestCase
         $configProperty = new \ReflectionProperty($object, $propertyName);
         $configProperty->setAccessible(true);
         $configProperty->setValue($object, $value);
+    }
+
+    /**
+     * Calls a protected/private methord
+     * @param  object $object Object instance
+     * @param  string $methodName Name of the method
+     * @param  array  $args Arguments for the method
+     * @return mixed The output of the method
+     */
+    final protected static function callMethod($object, $methodName, array $args) {
+        $class = new \ReflectionClass($object);
+        $method = $class->getMethod($methodName);
+        $method->setAccessible(true);
+        return $method->invokeArgs($object, $args);
     }
 
     /**
