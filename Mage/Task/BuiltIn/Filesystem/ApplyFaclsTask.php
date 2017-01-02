@@ -24,9 +24,12 @@ class ApplyFaclsTask extends AbstractTask implements IsReleaseAware
      */
     public function run()
     {
-        $releasesDirectory = $this->getConfig()->release('directory', 'releases');
-        $currentCopy = $releasesDirectory . '/' . $this->getConfig()->getReleaseId();
-
+        if ($this->getConfig()->release('enabled')) {
+            $releasesDirectory = $this->getConfig()->release('directory', 'releases');
+            $currentCopy = $releasesDirectory.'/'.$this->getConfig()->getReleaseId();
+        } else {
+            $currentCopy = $this->getConfig()->deployment('to', '.');
+        }
 
         $aclParam = $this->getParameter('acl_param', '');
         if (empty($aclParam)) {
