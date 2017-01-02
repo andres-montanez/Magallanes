@@ -130,6 +130,24 @@ class DeployCommand extends AbstractCommand implements RequiresEnvironment
     }
 
     /**
+     * Launch a Dry run command for Rsync strategy
+     * Without others sub tasks.
+     */
+    public function dryRun()
+    {
+        if ($this->getConfig()->deployment('strategy') != 'rsync') {
+            Console::output('<red>Error : Dry-run task is only available when using Rsync strategy.</red>', 1, 1);
+            return 232;
+        }
+        else {
+            // Launch Pre-DryRun tasks.
+            $this->runNonDeploymentTasks(AbstractTask::STAGE_PRE_DRYRUN, $this->getConfig(), 'Pre-DryRun');
+            // Launch Deployment in dryrun mode (true).
+            $this->runDeploymentTasks(TRUE);
+        }
+    }
+
+    /**
      * Deploys the Application
      * @see \Mage\Command\AbstractCommand::run()
      */
@@ -151,6 +169,11 @@ class DeployCommand extends AbstractCommand implements RequiresEnvironment
             return 230;
         } else {
             touch(getcwd() . '/.mage/~working.lock');
+        }
+
+        // If we are in dry run only
+        if ($this->getConfig()->getParameter('dry-run') === true) {
+            return $this->dryRun();
         }
 
         // Release ID
@@ -229,7 +252,7 @@ class DeployCommand extends AbstractCommand implements RequiresEnvironment
         if (self::$deployStatus === self::FAILED) {
             $exitCode = 1;
         }
-        
+
         return $exitCode;
     }
 
@@ -306,7 +329,7 @@ class DeployCommand extends AbstractCommand implements RequiresEnvironment
         }
     }
 
-    protected function runDeploymentTasks()
+    protected function runDeploymentTasks($dryrun = false)
     {
         if (self::$deployStatus == self::FAILED) {
             return;
@@ -340,7 +363,11 @@ class DeployCommand extends AbstractCommand implements RequiresEnvironment
 
                 Console::output('Deploying to <bold>' . $this->getConfig()->getHost() . '</bold>');
 
-                $tasksToRun = $this->getConfig()->getTasks();
+                $tasksToRun = array();
+
+                if ($dryrun !== false) {
+                    $tasksToRun = $this->getConfig()->getTasks();
+                }
 
                 $deployStrategy = $this->chooseDeployStrategy();
 
@@ -382,7 +409,7 @@ class DeployCommand extends AbstractCommand implements RequiresEnvironment
             }
 
             // Releasing
-            if (self::$deployStatus == self::SUCCEDED && $this->getConfig()->release('enabled', false) === true) {
+            if (self::$deployStatus == self::SUCCEDED && $dryrun !== true && $this->getConfig()->release('enabled', false) === true) {
                 // Execute the Releases
                 Console::output('Starting the <bold>Releasing</bold>');
                 $completedTasks = 0;
@@ -522,7 +549,6 @@ class DeployCommand extends AbstractCommand implements RequiresEnvironment
         if ($runTask === true) {
             try {
                 $result = $task->run();
-
                 if ($result === true) {
                     Console::output('<green>OK</green>', 0);
                     $result = true;

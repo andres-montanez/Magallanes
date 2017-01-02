@@ -29,6 +29,12 @@ abstract class AbstractTask
     const STAGE_PRE_DEPLOY = 'pre-deploy';
 
     /**
+     * Stage Constant for Pre Dry-Run
+     * @var string
+     */
+    const STAGE_PRE_DRYRUN = 'pre-dryrun';
+
+    /**
      * Stage Constant for Deployment
      * @var string
      */
