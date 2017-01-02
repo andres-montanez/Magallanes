@@ -100,6 +100,9 @@ class Console
 
         // Command Option
         $commandName = $config->getArgument(0);
+        
+        // Timezone for logging
+        @date_default_timezone_set($config->general('timezone', 'UTC'));
 
         // Logging
         $showGreetings = true;
