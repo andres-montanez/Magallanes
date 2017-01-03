@@ -146,8 +146,9 @@ class RuntimeTest extends TestCase
 
         /** @var Process $process */
         $process = $runtime->runLocalCommand('date +%s');
+        $timestamp = time();
         $this->assertTrue($process->isSuccessful());
-        $this->assertEquals(time(), trim($process->getOutput()));
+        $this->assertEquals($timestamp, trim($process->getOutput()));
 
         /** @var Process $process */
         $process = $runtime->runLocalCommand('false');
