@@ -49,7 +49,7 @@ class MageApplication extends Application
             $config = $config['magephp'];
 
             $logger = null;
-            if (array_key_exists('log_dir', $config)) {
+            if (array_key_exists('log_dir', $config) && file_exists($config['log_dir']) && is_dir($config['log_dir'])) {
                 $logfile = sprintf('%s/%s.log', $config['log_dir'], date('Ymd_His'));
                 $config['log_file'] = $logfile;
 
