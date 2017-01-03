@@ -7,3 +7,27 @@ verbose_logging: false
 scm:
   type: git
   url:  git://github.com/andres-montanez/Zend-Framework-Twig-example-app.git
+defaults:
+  deployment:
+    user: root
+    from: ./
+    to: /var/www/vhosts/example.com/www
+    excludes:
+      - application/data/cache/twig/*
+  releases:
+    enabled: true
+    max: 5
+    symlink: current
+    directory: releases
+  hosts:
+    - s01.example.com
+    - s02.example.com
+  tasks:
+    pre-deploy:
+      - scm/update
+    on-deploy:
+      - symfony2/cache-warmup: { env: prod }
+      - privileges
+      - sampleTask
+      - sampleTaskRollbackAware
+  verbose_logging: true

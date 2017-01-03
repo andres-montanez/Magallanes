@@ -147,11 +147,23 @@ class Config
             $configFilePath = getcwd() . '/.mage/config/environment/' . $environment . '.yml';
 
             try {
-                $this->environmentConfig = $this->loadEnvironment($configFilePath);
+                $defaults = $this->getDefaultEnvironment();
+                $environmentConfig = $this->loadEnvironment($configFilePath);
+                $this->environmentConfig = array_replace_recursive($defaults, $environmentConfig);
             } catch (ConfigNotFoundException $e) {
                 throw new RequiredConfigNotFoundException("Not found required config $configFilePath for environment $environment", 0, $e);
             }
         }
+    }
+
+    /**
+     * Returns the default environment configuration from general configuration
+     *
+     * @return array the default environment configuration
+     */
+    protected function getDefaultEnvironment() {
+        $defaults = $this->general('defaults', null);
+        return !empty($defaults) ? $defaults : array();
     }
 
     /**

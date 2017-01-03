@@ -45,13 +45,31 @@ class Factory
         $taskName = ucwords(str_replace('-', ' ', $taskName));
         $taskName = str_replace(' ', '', $taskName);
 
-        if (strpos($taskName, '/') === false) {
-            $className = 'Task\\' . $taskName;
-        } else {
-            $className = 'Mage\\Task\\BuiltIn\\' . str_replace(' ', '\\', ucwords(str_replace('/', ' ', $taskName))) . 'Task';
+        $patterns = [];
+
+        if (is_array($taskConfig->general('taskPatterns'))) {
+            $patterns = $taskConfig->general('taskPatterns');
         }
 
-        if (!class_exists($className)) {
+        $patterns[] = 'Task\\%s';
+        $patterns[] = 'Mage\\Task\\BuiltIn\\%sTask';
+
+        $className = null;
+
+        $taskClass = trim($taskName, '/\\');
+        $taskClass = str_replace(' ', '\\', ucwords(str_replace('/', ' ', $taskClass)));
+        $taskClass = str_replace(' ', '', ucwords(str_replace('-', ' ', $taskClass)));
+
+        foreach ($patterns as $pattern) {
+            $possibleClass = sprintf($pattern, $taskClass);
+
+            if (class_exists($possibleClass)) {
+                $className = $possibleClass;
+                break;
+            }
+        }
+
+        if (!$className) {
             throw new Exception('Task "' . $taskName . '" not found.');
         }
 
