@@ -18,17 +18,26 @@ use Monolog\Handler\TestHandler;
 use PHPUnit_Framework_TestCase as TestCase;
 use Psr\Log\LogLevel;
 use Symfony\Component\Process\Process;
+use DateTime;
 
 class RuntimeTest extends TestCase
 {
     public function testReleaseIdGeneration()
     {
-        $releaseId = date('YmdHis');
+        // Given that this is a time based operation, lets conform that at least the format is right
+        // and the time diff is less than 2 seconds
+
+        $now = new DateTime();
 
         $runtime = new Runtime();
         $runtime->generateReleaseId();
+        $releaseId = $runtime->getReleaseId();
 
-        $this->assertEquals($releaseId, $runtime->getReleaseId());
+        $releaseDate = DateTime::createFromFormat('YmdHis', $releaseId);
+        $this->assertTrue($releaseDate instanceof DateTime);
+
+        $dateDiff = $releaseDate->diff($now);
+        $this->assertLessThanOrEqual(2, $dateDiff->s);
     }
 
     public function testEmptyEnvironmentConfig()
@@ -65,6 +74,8 @@ class RuntimeTest extends TestCase
 
         $this->assertNotEquals('', $tempFile);
         $this->assertTrue(file_exists($tempFile));
+        $this->assertTrue(is_readable($tempFile));
+        $this->assertTrue(is_writable($tempFile));
         $this->assertEquals(0, filesize($tempFile));
     }
 
