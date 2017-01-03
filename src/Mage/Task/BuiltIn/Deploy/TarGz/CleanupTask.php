@@ -43,10 +43,6 @@ class CleanupTask extends AbstractTask
 
         /** @var Process $process */
         $process = $this->runtime->runLocalCommand($cmdDeleteTarGz);
-        if ($process->isSuccessful()) {
-            return true;
-        }
-
-        return false;
+        return $process->isSuccessful();
     }
 }
