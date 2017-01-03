@@ -18,6 +18,9 @@ use Symfony\Component\Finder\Finder;
 use Symfony\Component\Finder\SplFileInfo;
 use Monolog\Logger;
 use Monolog\Handler\StreamHandler;
+use Symfony\Component\EventDispatcher\EventDispatcher;
+use Symfony\Component\Console\Event\ConsoleExceptionEvent;
+use Symfony\Component\Console\ConsoleEvents;
 use Symfony\Component\Console\Application;
 use Symfony\Component\Yaml\Yaml;
 use Mage\Runtime\Exception\RuntimeException;
@@ -30,6 +33,22 @@ use Mage\Runtime\Exception\RuntimeException;
 class MageApplication extends Application
 {
     protected $runtime;
+
+    public function __construct()
+    {
+        $dispatcher = new EventDispatcher();
+
+        $dispatcher->addListener(ConsoleEvents::EXCEPTION, function (ConsoleExceptionEvent $event) {
+            $output = $event->getOutput();
+            $command = $event->getCommand();
+            $output->writeln(sprintf('Oops, exception thrown while running command <info>%s</info>', $command->getName()));
+            $exitCode = $event->getExitCode();
+            $event->setException(new \LogicException('Caught exception', $exitCode, $event->getException()));
+        });
+
+        $this->setDispatcher($dispatcher);
+        parent::__construct('Magallanes', Mage::VERSION);
+    }
 
     /**
      * Configure the Magallanes Application
