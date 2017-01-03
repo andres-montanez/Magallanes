@@ -54,7 +54,7 @@ class PrepareTask extends AbstractTask
         $excludes = array_merge(['.git'], $excludes);
 
         foreach ($excludes as &$exclude) {
-            $exclude = '--exclude=' . $exclude;
+            $exclude = '--exclude="' . $exclude . '"';
         }
 
         return implode(' ', $excludes);
