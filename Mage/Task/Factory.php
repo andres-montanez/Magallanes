@@ -42,13 +42,25 @@ class Factory
         }
 
         $instance = null;
-        $taskName = ucwords(str_replace('-', ' ', $taskName));
-        $taskName = str_replace(' ', '', $taskName);
 
         if (strpos($taskName, '/') === false) {
             $className = 'Task\\' . $taskName;
         } else {
-            $className = 'Mage\\Task\\BuiltIn\\' . str_replace(' ', '\\', ucwords(str_replace('/', ' ', $taskName))) . 'Task';
+            //dashes to CamelCase
+            $CamelCaseTaskName = ucfirst(str_replace(' ', '', ucwords(str_replace('-', ' ', $taskName))));
+
+            $dirNames = array_map(function($path){ return substr($path, strrpos($path, '/') + 1); },glob(__DIR__ . '/*', GLOB_ONLYDIR));
+
+            //make BuiltIn last entry of array for easy overriding.
+            unset($dirNames[array_search('BuiltIn',$dirNames)]);
+            $dirNames[] = 'BuiltIn';
+
+            foreach ($dirNames as $dirName) {
+                $className = 'Mage\\Task\\' . $dirName . '\\' . str_replace(' ', '\\', ucwords(str_replace('/', ' ', $CamelCaseTaskName))) . 'Task';
+                if (class_exists($className)) {
+                    break;
+                }
+            }
         }
 
         if (!class_exists($className)) {

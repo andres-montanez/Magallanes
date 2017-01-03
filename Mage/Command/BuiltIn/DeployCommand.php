@@ -618,12 +618,37 @@ class DeployCommand extends AbstractCommand implements RequiresEnvironment
                 break;
 
             case self::DEPLOY_STRATEGY_GUESS:
-            default:
+            case self::DEFAULT_DEPLOY_STRATEGY:
                 if ($this->getConfig()->release('enabled', false) === true) {
                     $deployStrategy = 'deployment/strategy/tar-gz';
                 } else {
                     $deployStrategy = 'deployment/strategy/rsync';
                 }
+                break;
+
+            default:
+                $strategyName = $this->getConfig()->deployment('strategy', self::DEFAULT_DEPLOY_STRATEGY);
+
+                //dashes to CamelCase
+                $CamelCaseStrategyName = ucfirst(str_replace(' ', '', ucwords(str_replace('-', ' ', $strategyName))));
+
+                $dirNames = array_map(function($path){ return substr($path, strrpos($path, '/') + 1); },glob(__DIR__ . '/../../Task/*', GLOB_ONLYDIR));
+
+                //make BuiltIn last entry of array for easy overriding.
+                unset($dirNames[array_search('BuiltIn',$dirNames)]);
+                $dirNames[] = 'BuiltIn';
+
+                foreach ($dirNames as $dirName) {
+                    if(class_exists('Mage\\Task\\'.$dirName.'\\Deployment\\Strategy\\'.$CamelCaseStrategyName.'Task')){
+                        $deployStrategy = 'deployment/strategy/' . $strategyName;
+                        break;
+                    }
+                }
+
+                if(!isset($deployStrategy)){
+                    throw new Exception('Deployment Strategy "' . $strategyName . '" not found.');
+                }
+
                 break;
         }
         return $deployStrategy;
