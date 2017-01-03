@@ -46,8 +46,7 @@ class TarGzTask extends BaseStrategyTaskAbstract implements IsReleaseAware
         $this->checkOverrideRelease();
 
         $excludes = $this->getExcludes();
-        $excludesListFilePath   = $this->getConfig()->deployment('excludes_file', '');
-        ;
+        $excludesListFilePath = $this->getConfig()->deployment('excludes_file', '');
 
         // If we are working with releases
         $deployToDirectory = $this->getConfig()->deployment('to');
@@ -65,6 +64,10 @@ class TarGzTask extends BaseStrategyTaskAbstract implements IsReleaseAware
         $remoteTarGz = basename($localTarGz);
         $excludeCmd = '';
         foreach ($excludes as $excludeFile) {
+            if (strpos($excludeFile, '*') !== false) {
+                $excludeFile = '"' . $excludeFile . '"';
+            }
+
             $excludeCmd .= ' --exclude=' . $excludeFile;
         }
 
