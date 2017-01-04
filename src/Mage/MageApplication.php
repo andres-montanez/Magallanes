@@ -12,8 +12,6 @@ namespace Mage;
 
 use Mage\Command\AbstractCommand;
 use Mage\Runtime\Runtime;
-use Symfony\Component\Console\Input\InputInterface;
-use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Finder\Finder;
 use Symfony\Component\Finder\SplFileInfo;
 use Monolog\Logger;
