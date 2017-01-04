@@ -505,6 +505,110 @@ class DeployCommandTest extends TestCase
         $this->assertEquals(0, $tester->getStatusCode());
     }
 
+    public function testDeploymentWithBranchOverwrite()
+    {
+        $application = new MageTestApplication();
+        $application->add(new DeployCommand());
+
+        $runtime = new RuntimeMockup();
+        $runtime->setConfiguration(array(
+                'environments' =>
+                    array(
+                        'test' =>
+                            array(
+                                'user' => 'tester',
+                                'branch' => 'test',
+                                'host_path' => '/var/www/test',
+                                'exclude' =>
+                                    array(
+                                        0 => 'vendor',
+                                        1 => 'app/cache',
+                                        2 => 'app/log',
+                                        3 => 'web/app_dev.php',
+                                    ),
+                                'hosts' =>
+                                    array(
+                                        0 => 'testhost',
+                                    ),
+                                'pre-deploy' =>
+                                    array(
+                                        0 => 'git/update',
+                                        1 => 'composer/install',
+                                        2 => 'composer/generate-autoload',
+                                    ),
+                                'on-deploy' =>
+                                    array(
+                                        0 =>
+                                            array(
+                                                'symfony/cache-clear' =>
+                                                    array(
+                                                        'env' => 'dev',
+                                                    ),
+                                            ),
+                                        1 =>
+                                            array(
+                                                'symfony/cache-warmup' =>
+                                                    array(
+                                                        'env' => 'dev',
+                                                    ),
+                                            ),
+                                        2 =>
+                                            array(
+                                                'symfony/assets-install' =>
+                                                    array(
+                                                        'env' => 'dev',
+                                                    ),
+                                            ),
+                                        3 =>
+                                            array(
+                                                'symfony/assetic-dump' =>
+                                                    array(
+                                                        'env' => 'dev',
+                                                    ),
+                                            ),
+                                    ),
+                                'on-release' => null,
+                                'post-release' => null,
+                                'post-deploy' => null,
+                            ),
+                    ),
+            )
+        );
+
+        /** @var AbstractCommand $command */
+        $command = $application->find('deploy');
+        $command->setRuntime($runtime);
+
+        $tester = new CommandTester($command);
+        $tester->execute(['command' => $command->getName(), 'environment' => 'test', '--branch' => 'maintenance']);
+
+        $ranCommands = $runtime->getRanCommands();
+
+        $testCase = array(
+            0 => 'git branch | grep "*"',
+            1 => 'git checkout maintenance',
+            2 => 'git pull',
+            3 => 'composer install --dev',
+            4 => 'composer dumpautoload --optimize',
+            5 => 'rsync -e "ssh -p 22 -q -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no" -avz --exclude=.git --exclude=vendor --exclude=app/cache --exclude=app/log --exclude=web/app_dev.php ./ tester@testhost:/var/www/test',
+            6 => 'ssh -p 22 -q -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no tester@testhost sh -c \\"cd /var/www/test \\&\\& bin/console cache:clear --env=dev \\"',
+            7 => 'ssh -p 22 -q -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no tester@testhost sh -c \\"cd /var/www/test \\&\\& bin/console cache:warmup --env=dev \\"',
+            8 => 'ssh -p 22 -q -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no tester@testhost sh -c \\"cd /var/www/test \\&\\& bin/console assets:install --env=dev --symlink --relative web\\"',
+            9 => 'ssh -p 22 -q -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no tester@testhost sh -c \\"cd /var/www/test \\&\\& bin/console assetic:dump --env=dev \\"',
+            10 => 'git checkout master',
+        );
+
+        // Check total of Executed Commands
+        $this->assertEquals(count($testCase), count($ranCommands));
+
+        // Check Generated Commands
+        foreach ($testCase as $index => $command) {
+            $this->assertEquals($command, $ranCommands[$index]);
+        }
+
+        $this->assertEquals(0, $tester->getStatusCode());
+    }
+
     public function testDeploymentWithSkippingTask()
     {
         $application = new MageTestApplication();
@@ -606,6 +710,75 @@ class DeployCommandTest extends TestCase
         }
 
         $this->assertTrue(strpos($tester->getDisplay(), 'SKIPPED') !== false);
+
+        $this->assertEquals(0, $tester->getStatusCode());
+    }
+
+    public function testDeploymentWithCustomTask()
+    {
+        $application = new MageTestApplication();
+        $application->add(new DeployCommand());
+
+        $runtime = new RuntimeMockup();
+        $runtime->setConfiguration(array(
+                'environments' =>
+                    array(
+                        'test' =>
+                            array(
+                                'user' => 'tester',
+                                'host_path' => '/var/www/test',
+                                'exclude' =>
+                                    array(
+                                        0 => 'vendor',
+                                        1 => 'app/cache',
+                                        2 => 'app/log',
+                                        3 => 'web/app_dev.php',
+                                    ),
+                                'hosts' =>
+                                    array(
+                                        0 => 'testhost',
+                                    ),
+                                'pre-deploy' =>
+                                    array(
+                                        1 => 'composer/install',
+                                        2 => 'composer/generate-autoload',
+                                    ),
+                                'on-deploy' =>
+                                    array(
+                                        0 => 'Mage\\Tests\\Task\\CustomTask',
+                                    ),
+                                'on-release' => null,
+                                'post-release' => null,
+                                'post-deploy' => null,
+                            ),
+                    ),
+            )
+        );
+
+        /** @var AbstractCommand $command */
+        $command = $application->find('deploy');
+        $command->setRuntime($runtime);
+
+        $tester = new CommandTester($command);
+        $tester->execute(['command' => $command->getName(), 'environment' => 'test']);
+
+        $ranCommands = $runtime->getRanCommands();
+
+        $testCase = array(
+            0 => 'composer install --dev',
+            1 => 'composer dumpautoload --optimize',
+            2 => 'rsync -e "ssh -p 22 -q -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no" -avz --exclude=.git --exclude=vendor --exclude=app/cache --exclude=app/log --exclude=web/app_dev.php ./ tester@testhost:/var/www/test',
+        );
+
+        // Check total of Executed Commands
+        $this->assertEquals(count($testCase), count($ranCommands));
+
+        // Check Generated Commands
+        foreach ($testCase as $index => $command) {
+            $this->assertEquals($command, $ranCommands[$index]);
+        }
+
+        $this->assertTrue(strpos($tester->getDisplay(), '[Custom] Dummy Task') !== false);
 
         $this->assertEquals(0, $tester->getStatusCode());
     }
