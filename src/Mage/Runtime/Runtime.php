@@ -446,4 +446,15 @@ class Runtime
     {
         return tempnam(sys_get_temp_dir(), 'mage');
     }
+
+    /**
+     * Get the current user
+     *
+     * @return string
+     */
+    public function getCurrentUser()
+    {
+        $userData = posix_getpwuid(posix_geteuid());
+        return $userData['name'];
+    }
 }

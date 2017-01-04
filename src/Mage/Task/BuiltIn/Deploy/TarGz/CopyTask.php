@@ -37,7 +37,7 @@ class CopyTask extends AbstractTask
             throw new DeploymentException('This task is only available with releases enabled', 40);
         }
 
-        $user = $this->runtime->getEnvironmentConfig('user');
+        $user = $this->runtime->getEnvironmentConfig('user', $this->runtime->getCurrentUser());
         $host = $this->runtime->getWorkingHost();
         $sshConfig = $sshConfig = $this->runtime->getSSHConfig();
         $hostPath = rtrim($this->runtime->getEnvironmentConfig('host_path'), '/');
