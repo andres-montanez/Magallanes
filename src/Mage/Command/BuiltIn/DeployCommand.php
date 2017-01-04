@@ -22,6 +22,7 @@ use Mage\Task\TaskFactory;
 use Mage\Utils;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputArgument;
+use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Mage\Command\AbstractCommand;
 
@@ -51,6 +52,7 @@ class DeployCommand extends AbstractCommand
             ->setName('deploy')
             ->setDescription('Deploy code to hosts')
             ->addArgument('environment', InputArgument::REQUIRED, 'Name of the environment to deploy to')
+            ->addOption('branch', null, InputOption::VALUE_REQUIRED, 'Force to switch to a branch other than the one defined', false)
         ;
     }
 
@@ -89,6 +91,11 @@ class DeployCommand extends AbstractCommand
         $output->writeln('');
 
         try {
+            // Check if Branch is forced
+            if ($input->getOption('branch') !== false) {
+                $this->runtime->setEnvironmentConfig('branch', $input->getOption('branch'));
+            }
+
             $this->taskFactory = new TaskFactory($this->runtime);
             $this->runDeployment($output);
         } catch (DeploymentException $exception) {

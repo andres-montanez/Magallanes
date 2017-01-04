@@ -235,6 +235,24 @@ class Runtime
     }
 
     /**
+     * Overwrites an Environment configuration option
+     *
+     * @param $key
+     * @param $value
+     * @return Runtime
+     */
+    public function setEnvironmentConfig($key, $value)
+    {
+        if (array_key_exists('environments', $this->configuration) && is_array($this->configuration['environments'])) {
+            if (array_key_exists($this->environment, $this->configuration['environments'])) {
+                $this->configuration['environments'][$this->environment][$key] = $value;
+            }
+        }
+
+        return $this;
+    }
+
+    /**
      * Sets the working Environment
      *
      * @param string $environment Environment name
