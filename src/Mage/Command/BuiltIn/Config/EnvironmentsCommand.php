@@ -46,7 +46,7 @@ class EnvironmentsCommand extends AbstractCommand
         $output->writeln('');
 
         $table = new Table($output);
-        $table->setHeaders(['Environment', 'Branch', 'User', 'Hosts']);
+        $table->setHeaders(['Environment', 'User', 'Branch', 'Hosts']);
 
         $configuration = $this->runtime->getConfigOptions('environments');
         foreach ($configuration as $environment => $config) {
