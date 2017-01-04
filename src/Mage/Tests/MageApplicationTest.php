@@ -45,5 +45,4 @@ class MageApplicationTest extends TestCase
             $this->assertEquals(sprintf('The file "%s" does not exists or is not readable.', __DIR__ . '/Resources/this-does-not-exists.yml'), $exception->getMessage());
         }
     }
-
 }

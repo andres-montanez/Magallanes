@@ -79,7 +79,6 @@ class MageApplication extends Application
             $this->runtime->setLogger($logger);
 
             $this->loadBuiltInCommands();
-
         } else {
             throw new RuntimeException(sprintf('The file "%s" does not have a valid Magallanes configuration.', $file));
         }
