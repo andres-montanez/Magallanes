@@ -79,23 +79,12 @@ class MageApplication extends Application
             $this->runtime = new Runtime();
             $this->runtime->setConfiguration($config);
             $this->runtime->setLogger($logger);
+
+            $this->loadBuiltInCommands();
+
         } else {
             throw new RuntimeException(sprintf('The file "%s" does not have a valid Magallanes configuration.', $file));
         }
-    }
-
-    /**
-     * Run the Application
-     *
-     * @param InputInterface $input
-     * @param OutputInterface $output
-     * @throws RuntimeException
-     */
-    public function run(InputInterface $input = null, OutputInterface $output = null)
-    {
-        $this->loadBuiltInCommands();
-
-        parent::run();
     }
 
     /**
