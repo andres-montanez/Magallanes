@@ -149,11 +149,11 @@ class DeployCommand extends AbstractCommand
             }
 
             if ($this->runtime->getEnvironmentConfig('releases', false)) {
-                if (!in_array('deploy/targz/copy', $onDeployTasks)) {
+                if (!in_array('deploy/targz/copy', $onDeployTasks) && !$this->runtime->inRollback()) {
                     array_unshift($onDeployTasks, 'deploy/targz/copy');
                 }
 
-                if (!in_array('deploy/release/prepare', $onDeployTasks)) {
+                if (!in_array('deploy/release/prepare', $onDeployTasks) && !$this->runtime->inRollback()) {
                     array_unshift($onDeployTasks, 'deploy/release/prepare');
                 }
             } else {
@@ -250,7 +250,7 @@ class DeployCommand extends AbstractCommand
     protected function runTasks(OutputInterface $output, $tasks)
     {
         if (count($tasks) == 0) {
-            $output->writeln(sprintf('    No tasks defined for <fg=black;options=bold>%s</>', $this->getStageName()));
+            $output->writeln(sprintf('    No tasks defined for <fg=black;options=bold>%s</> stage', $this->getStageName()));
             $output->writeln('');
             return true;
         }
