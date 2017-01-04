@@ -1,9 +1,9 @@
 # Magallanes #
 [![SensioLabsInsight](https://insight.sensiolabs.com/projects/ed0de53a-a12e-459b-9464-34def5907b56/mini.png)](https://insight.sensiolabs.com/projects/ed0de53a-a12e-459b-9464-34def5907b56)
 [![Build Status](https://travis-ci.org/andres-montanez/Magallanes.svg?branch=nostromo)](https://travis-ci.org/andres-montanez/Magallanes)
-[![Coverage Status](https://coveralls.io/repos/github/andres-montanez/Magallanes/badge.png?branch=nostromo)](https://coveralls.io/github/andres-montanez/Magallanes?branch=nostromo)
+[![Coverage Status](https://coveralls.io/repos/github/andres-montanez/Magallanes/badge.svg?branch=nostromo)](https://coveralls.io/github/andres-montanez/Magallanes?branch=nostromo)
 ### What's Magallanes? ###
-**Magallanes** is a deployment tool for made with PHP for PHP applications; it's quite simple to use and manage. For more information and documentation please visit http://www.magephp.com/v3
+**Magallanes** is a deployment tool for made with PHP for PHP applications; it's quite simple to use and manage. For more information and documentation please visit http://v3.magephp.com
 
 ### Installing ###
 Simply add the following dependency to your project’s composer.json file:
