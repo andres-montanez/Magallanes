@@ -11,9 +11,11 @@
 namespace Mage\Tests\Command\BuiltIn\Releases;
 
 use Mage\Command\BuiltIn\Releases\ListCommand;
+use Mage\Runtime\Exception\DeploymentException;
 use Mage\Command\AbstractCommand;
 use Mage\Tests\MageApplicationMockup;
 use Symfony\Component\Console\Tester\CommandTester;
+use Exception;
 use PHPUnit_Framework_TestCase as TestCase;
 
 class ListCommandTest extends TestCase
@@ -43,6 +45,41 @@ class ListCommandTest extends TestCase
         // Check Generated Commands
         foreach ($testCase as $index => $command) {
             $this->assertEquals($command, $ranCommands[$index]);
+        }
+    }
+
+    public function testListReleasesWithInvalidEnvironment()
+    {
+        $application = new MageApplicationMockup();
+        $application->configure(__DIR__ . '/../../../Resources/testhost.yml');
+
+        /** @var AbstractCommand $command */
+        $command = $application->find('releases:list');
+        $this->assertTrue($command instanceof ListCommand);
+
+        $tester = new CommandTester($command);
+        $tester->execute(['command' => $command->getName(), 'environment' => 'developers']);
+
+        $this->assertNotEquals(0, $tester->getStatusCode());
+        $this->assertContains('The environment "developers" does not exists.', $tester->getDisplay());
+    }
+
+    public function testListReleasesWithoutReleases()
+    {
+        $application = new MageApplicationMockup();
+        $application->configure(__DIR__ . '/../../../Resources/testhost-without-releases.yml');
+
+        /** @var AbstractCommand $command */
+        $command = $application->find('releases:list');
+        $this->assertTrue($command instanceof ListCommand);
+
+        $tester = new CommandTester($command);
+
+        try {
+            $tester->execute(['command' => $command->getName(), 'environment' => 'test']);
+        } catch (Exception $exception) {
+            $this->assertTrue($exception instanceof DeploymentException);
+            $this->assertEquals('Releases are not enabled', $exception->getMessage());
         }
     }
 }

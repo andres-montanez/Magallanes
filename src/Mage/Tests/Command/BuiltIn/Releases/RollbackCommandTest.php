@@ -12,8 +12,10 @@ namespace Mage\Tests\Command\BuiltIn\Releases;
 
 use Mage\Command\BuiltIn\Releases\RollbackCommand;
 use Mage\Command\AbstractCommand;
+use Mage\Runtime\Exception\DeploymentException;
 use Mage\Tests\MageApplicationMockup;
 use Symfony\Component\Console\Tester\CommandTester;
+use Exception;
 use PHPUnit_Framework_TestCase as TestCase;
 
 class RollbackCommandTest extends TestCase
@@ -43,6 +45,40 @@ class RollbackCommandTest extends TestCase
         // Check Generated Commands
         foreach ($testCase as $index => $command) {
             $this->assertEquals($command, $ranCommands[$index]);
+        }
+    }
+
+    public function testRollbackReleaseWithInvalidEnvironment()
+    {
+        $application = new MageApplicationMockup();
+        $application->configure(__DIR__ . '/../../../Resources/testhost.yml');
+
+        /** @var AbstractCommand $command */
+        $command = $application->find('releases:rollback');
+        $this->assertTrue($command instanceof RollbackCommand);
+
+        $tester = new CommandTester($command);
+        $tester->execute(['command' => $command->getName(), 'environment' => 'developers', 'release' => '20170101015115']);
+
+        $this->assertNotEquals(0, $tester->getStatusCode());
+        $this->assertContains('The environment "developers" does not exists.', $tester->getDisplay());
+    }
+
+    public function testRollbackReleaseWithoutReleases()
+    {
+        $application = new MageApplicationMockup();
+        $application->configure(__DIR__ . '/../../../Resources/testhost-without-releases.yml');
+
+        /** @var AbstractCommand $command */
+        $command = $application->find('releases:rollback');
+        $this->assertTrue($command instanceof RollbackCommand);
+
+        try {
+            $tester = new CommandTester($command);
+            $tester->execute(['command' => $command->getName(), 'environment' => 'test', 'release' => '20170101015115']);
+        } catch (Exception $exception) {
+            $this->assertTrue($exception instanceof DeploymentException);
+            $this->assertEquals('Releases are not enabled', $exception->getMessage());
         }
     }
 }

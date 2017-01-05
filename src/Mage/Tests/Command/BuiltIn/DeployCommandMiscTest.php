@@ -39,10 +39,11 @@ class DeployCommandMiscTest extends TestCase
             3 => 'composer install',
             4 => 'composer dumpautoload --optimize',
             5 => 'rsync -e "ssh -p 22 -q -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no" -avz --exclude=.git --exclude=./var/cache/* --exclude=./var/log/* --exclude=./web/app_dev.php ./ tester@testhost:/var/www/test',
-            6 => 'ssh -p 22 -q -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no tester@testhost sh -c \\"cd /var/www/test \\&\\& sudo bin/console cache:warmup --env=dev \\"',
-            7 => 'ssh -p 22 -q -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no tester@testhost sh -c \\"cd /var/www/test \\&\\& sudo bin/console assets:install --env=dev --symlink --relative web\\"',
-            8 => 'ssh -p 22 -q -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no tester@testhost sh -c \\"cd /var/www/test \\&\\& sudo bin/console assetic:dump --env=dev \\"',
-            9 => 'git checkout master',
+            6 => 'ssh -p 22 -q -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no tester@testhost sh -c \\"cd /var/www/test \\&\\& sudo bin/console cache:clear --env=dev \\"',
+            7 => 'ssh -p 22 -q -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no tester@testhost sh -c \\"cd /var/www/test \\&\\& sudo bin/console cache:warmup --env=dev \\"',
+            8 => 'ssh -p 22 -q -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no tester@testhost sh -c \\"cd /var/www/test \\&\\& sudo bin/console assets:install --env=dev --symlink --relative web\\"',
+            9 => 'ssh -p 22 -q -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no tester@testhost sh -c \\"cd /var/www/test \\&\\& sudo bin/console assetic:dump --env=dev \\"',
+            10 => 'git checkout master',
         );
 
         // Check total of Executed Commands
@@ -206,7 +207,6 @@ class DeployCommandMiscTest extends TestCase
 
         $this->assertNotEquals(0, $tester->getStatusCode());
     }
-
 
     public function testDeploymentWithSkippingTask()
     {
