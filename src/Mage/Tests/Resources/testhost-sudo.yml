@@ -15,7 +15,7 @@ magephp:
             pre-deploy:
                 - git/update
                 - composer/install
-                - composer/generate-autoload
+                - composer/dump-autoload
             on-deploy:
                 - symfony/cache-clear: { env: 'dev' }
                 - symfony/cache-warmup: { env: 'dev' }

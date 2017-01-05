@@ -18,25 +18,25 @@ use Mage\Task\AbstractTask;
  *
  * @author Andrés Montañez <andresmontanez@gmail.com>
  */
-class GenerateAutoloadTask extends AbstractTask
+class DumpAutoloadTask extends AbstractTask
 {
     public function getName()
     {
-        return 'composer/generate-autoload';
+        return 'composer/dump-autoload';
     }
 
     public function getDescription()
     {
-        return '[Composer] Generate Autoload';
+        return '[Composer] Dump Autoload';
     }
 
     public function execute()
     {
         $options = $this->getOptions();
-        $command = $options['path'] . ' dumpautoload ' . $options['flags'];
+        $command = sprintf('%s dump-autoload %s', $options['path'], $options['flags']);
 
         /** @var Process $process */
-        $process = $this->runtime->runCommand($command);
+        $process = $this->runtime->runCommand(trim($command));
 
         return $process->isSuccessful();
     }

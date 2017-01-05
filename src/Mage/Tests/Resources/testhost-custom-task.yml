@@ -12,7 +12,7 @@ magephp:
                 - testhost
             pre-deploy:
                 - composer/install
-                - composer/generate-autoload
+                - composer/dump-autoload
             on-deploy:
                 - Mage\Tests\Task\CustomTask
             on-release:

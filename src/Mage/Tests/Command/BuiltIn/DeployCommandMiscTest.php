@@ -36,13 +36,13 @@ class DeployCommandMiscTest extends TestCase
             0 => 'git branch | grep "*"',
             1 => 'git checkout test',
             2 => 'git pull',
-            3 => 'composer install',
-            4 => 'composer dumpautoload --optimize',
+            3 => 'composer install --optimize-autoloader',
+            4 => 'composer dump-autoload --optimize',
             5 => 'rsync -e "ssh -p 22 -q -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no" -avz --exclude=.git --exclude=./var/cache/* --exclude=./var/log/* --exclude=./web/app_dev.php ./ tester@testhost:/var/www/test',
-            6 => 'ssh -p 22 -q -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no tester@testhost sh -c \\"cd /var/www/test \\&\\& sudo bin/console cache:clear --env=dev \\"',
-            7 => 'ssh -p 22 -q -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no tester@testhost sh -c \\"cd /var/www/test \\&\\& sudo bin/console cache:warmup --env=dev \\"',
-            8 => 'ssh -p 22 -q -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no tester@testhost sh -c \\"cd /var/www/test \\&\\& sudo bin/console assets:install --env=dev --symlink --relative web\\"',
-            9 => 'ssh -p 22 -q -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no tester@testhost sh -c \\"cd /var/www/test \\&\\& sudo bin/console assetic:dump --env=dev \\"',
+            6 => 'ssh -p 22 -q -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no tester@testhost sh -c \\"cd /var/www/test \\&\\& sudo bin/console cache:clear --env=dev\\"',
+            7 => 'ssh -p 22 -q -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no tester@testhost sh -c \\"cd /var/www/test \\&\\& sudo bin/console cache:warmup --env=dev\\"',
+            8 => 'ssh -p 22 -q -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no tester@testhost sh -c \\"cd /var/www/test \\&\\& sudo bin/console assets:install web --env=dev --symlink --relative\\"',
+            9 => 'ssh -p 22 -q -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no tester@testhost sh -c \\"cd /var/www/test \\&\\& sudo bin/console assetic:dump --env=dev\\"',
             10 => 'git checkout master',
         );
 
@@ -75,12 +75,12 @@ class DeployCommandMiscTest extends TestCase
             0 => 'git branch | grep "*"',
             1 => 'git checkout maintenance',
             2 => 'git pull',
-            3 => 'composer install',
-            4 => 'composer dumpautoload --optimize',
+            3 => 'composer install --optimize-autoloader',
+            4 => 'composer dump-autoload --optimize',
             5 => 'rsync -e "ssh -p 22 -q -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no" -avz --exclude=.git --exclude=./var/cache/* --exclude=./var/log/* --exclude=./web/app_dev.php ./ tester@testhost:/var/www/test',
-            6 => 'ssh -p 22 -q -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no tester@testhost sh -c \\"cd /var/www/test \\&\\& bin/console cache:warmup --env=dev \\"',
-            7 => 'ssh -p 22 -q -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no tester@testhost sh -c \\"cd /var/www/test \\&\\& bin/console assets:install --env=dev --symlink --relative web\\"',
-            8 => 'ssh -p 22 -q -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no tester@testhost sh -c \\"cd /var/www/test \\&\\& bin/console assetic:dump --env=dev \\"',
+            6 => 'ssh -p 22 -q -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no tester@testhost sh -c \\"cd /var/www/test \\&\\& bin/console cache:warmup --env=dev\\"',
+            7 => 'ssh -p 22 -q -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no tester@testhost sh -c \\"cd /var/www/test \\&\\& bin/console assets:install web --env=dev --symlink --relative\\"',
+            8 => 'ssh -p 22 -q -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no tester@testhost sh -c \\"cd /var/www/test \\&\\& bin/console assetic:dump --env=dev\\"',
             9 => 'git checkout master',
         );
 
@@ -111,8 +111,8 @@ class DeployCommandMiscTest extends TestCase
         $ranCommands = $application->getRuntime()->getRanCommands();
 
         $testCase = array(
-            0 => 'composer install',
-            1 => 'composer dumpautoload --optimize',
+            0 => 'composer install --optimize-autoloader',
+            1 => 'composer dump-autoload --optimize',
             2 => 'rsync -e "ssh -p 22 -q -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no" -avz --exclude=.git --exclude=./var/cache/* --exclude=./var/log/* --exclude=./web/app_dev.php ./ tester@testhost:/var/www/test',
         );
 
@@ -149,8 +149,8 @@ class DeployCommandMiscTest extends TestCase
             0 => 'git branch | grep "*"',
             1 => 'git checkout test',
             2 => 'git pull',
-            3 => 'composer install',
-            4 => 'composer dumpautoload --optimize',
+            3 => 'composer install --optimize-autoloader',
+            4 => 'composer dump-autoload --optimize',
             5 => 'tar cfz /tmp/mageXYZ --exclude=".git" --exclude="./var/cache/*" --exclude="./var/log/*" --exclude="./web/app_dev.php" ./',
             6 => 'ssh -p 22 -q -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no tester@testhost sh -c \\"mkdir -p /var/www/test/releases/1234567890\\"',
             7 => 'scp -P 22 -q -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no /tmp/mageXYZ tester@testhost:/var/www/test/releases/1234567890/mageXYZ',
@@ -189,8 +189,8 @@ class DeployCommandMiscTest extends TestCase
             0 => 'git branch | grep "*"',
             1 => 'git checkout test',
             2 => 'git pull',
-            3 => 'composer install',
-            4 => 'composer dumpautoload --optimize',
+            3 => 'composer install --optimize-autoloader',
+            4 => 'composer dump-autoload --optimize',
             5 => 'rsync -e "ssh -p 22 -q -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no" -avz --exclude=.git --exclude=./var/cache/* --exclude=./var/log/* --exclude=./web/app_dev.php ./ tester@testhost:/var/www/test',
             6 => 'git checkout master',
         );
@@ -225,12 +225,12 @@ class DeployCommandMiscTest extends TestCase
         $testCase = array(
             0 => 'git branch | grep "*"',
             1 => 'git pull',
-            2 => 'composer install',
-            3 => 'composer dumpautoload --optimize',
+            2 => 'composer install --optimize-autoloader',
+            3 => 'composer dump-autoload --optimize',
             4 => 'rsync -e "ssh -p 22 -q -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no" -avz --exclude=.git --exclude=./var/cache/* --exclude=./var/log/* --exclude=./web/app_dev.php ./ tester@testhost:/var/www/test',
-            5 => 'ssh -p 22 -q -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no tester@testhost sh -c \\"cd /var/www/test \\&\\& bin/console cache:warmup --env=dev \\"',
-            6 => 'ssh -p 22 -q -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no tester@testhost sh -c \\"cd /var/www/test \\&\\& bin/console assets:install --env=dev --symlink --relative web\\"',
-            7 => 'ssh -p 22 -q -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no tester@testhost sh -c \\"cd /var/www/test \\&\\& bin/console assetic:dump --env=dev \\"',
+            5 => 'ssh -p 22 -q -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no tester@testhost sh -c \\"cd /var/www/test \\&\\& bin/console cache:warmup --env=dev\\"',
+            6 => 'ssh -p 22 -q -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no tester@testhost sh -c \\"cd /var/www/test \\&\\& bin/console assets:install web --env=dev --symlink --relative\\"',
+            7 => 'ssh -p 22 -q -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no tester@testhost sh -c \\"cd /var/www/test \\&\\& bin/console assetic:dump --env=dev\\"',
             8 => 'git branch | grep "*"',
         );
 

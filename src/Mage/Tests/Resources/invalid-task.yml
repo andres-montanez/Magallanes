@@ -3,7 +3,6 @@ magephp:
     environments:
         test:
             user: tester
-            branch: test
             host_path: /var/www/test
             exclude:
                 - ./var/cache/*
@@ -12,12 +11,4 @@ magephp:
             hosts:
                 - testhost
             pre-deploy:
-                - git/update
-                - composer/install
-                - composer/dump-autoload
-            on-deploy:
-                - deploy/rsync
-            on-release:
-            post-release:
-            post-deploy:
-                - deploy/targz/cleanup
+                - invalid/task
