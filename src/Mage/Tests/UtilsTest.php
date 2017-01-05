@@ -24,6 +24,7 @@ class UtilsTest extends TestCase
         $this->assertEquals('Post Deployment', Utils::getStageName(Runtime::POST_DEPLOY));
         $this->assertEquals('On Release', Utils::getStageName(Runtime::ON_RELEASE));
         $this->assertEquals('Post Release', Utils::getStageName(Runtime::POST_RELEASE));
+        $this->assertEquals('invalid-stage', Utils::getStageName('invalid-stage'));
     }
 
     public function testReleaseDate()

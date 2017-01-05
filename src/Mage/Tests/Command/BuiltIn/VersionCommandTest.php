@@ -10,10 +10,9 @@
 
 namespace Mage\Tests\Command\BuiltIn;
 
-use Mage\Command\BuiltIn\VersionCommand;
 use Mage\Command\AbstractCommand;
-use Mage\Tests\MageTestApplication;
-use Mage\Tests\Runtime\RuntimeMockup;
+use Mage\Command\BuiltIn\VersionCommand;
+use Mage\Tests\MageApplicationMockup;
 use Mage\Mage;
 use Symfony\Component\Console\Tester\CommandTester;
 use PHPUnit_Framework_TestCase as TestCase;
@@ -22,12 +21,12 @@ class VersionCommandTest extends TestCase
 {
     public function testVersionOutput()
     {
-        $application = new MageTestApplication();
-        $application->add(new VersionCommand());
+        $application = new MageApplicationMockup();
+        $application->configure(__DIR__ . '/../../Resources/basic.yml');
         
         /** @var AbstractCommand $command */
         $command = $application->find('version');
-        $command->setRuntime(new RuntimeMockup());
+        $this->assertTrue($command instanceof VersionCommand);
 
         $tester = new CommandTester($command);
         $tester->execute(['command' => $command->getName()]);

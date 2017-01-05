@@ -49,6 +49,17 @@ class RuntimeTest extends TestCase
         $this->assertEquals(0, count($config));
     }
 
+    public function testInvalidEnvironmentConfig()
+    {
+        $runtime = new RuntimeMockup();
+        $runtime->setConfiguration(['environments' => ['valid' => []]]);
+        $runtime->setInvalidEnvironment('invalid');
+        $config = $runtime->getEnvironmentConfig();
+
+        $this->assertTrue(is_array($config));
+        $this->assertEquals(0, count($config));
+    }
+
     public function testInvalidEnvironments()
     {
         try {

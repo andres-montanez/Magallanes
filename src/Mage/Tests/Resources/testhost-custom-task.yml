@@ -1,0 +1,20 @@
+magephp:
+    log_dir: /tmp
+    environments:
+        test:
+            user: tester
+            host_path: /var/www/test
+            exclude:
+                - ./var/cache/*
+                - ./var/log/*
+                - ./web/app_dev.php
+            hosts:
+                - testhost
+            pre-deploy:
+                - composer/install
+                - composer/generate-autoload
+            on-deploy:
+                - Mage\Tests\Task\CustomTask
+            on-release:
+            post-release:
+            post-deploy:

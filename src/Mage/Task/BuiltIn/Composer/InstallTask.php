@@ -33,7 +33,7 @@ class InstallTask extends AbstractTask
     public function execute()
     {
         $options = $this->getOptions();
-        $command = $options['path'] . ' install ' . $options['flags'];
+        $command = trim($options['path'] . ' install ' . $options['flags']);
 
         /** @var Process $process */
         $process = $this->runtime->runCommand($command);
@@ -45,7 +45,7 @@ class InstallTask extends AbstractTask
     {
         $userOptions = $this->runtime->getConfigOptions('composer', []);
         $options = array_merge(
-            ['path' => 'composer', 'flags' => '--dev'],
+            ['path' => 'composer', 'flags' => ''],
             (is_array($userOptions) ? $userOptions : []),
             $this->options
         );

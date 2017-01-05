@@ -60,4 +60,16 @@ class RuntimeMockup extends Runtime
     {
         return '/tmp/mageXYZ';
     }
+
+    /**
+     * Allows to set an invalid environments
+     *
+     * @param string $environment
+     * @return Runtime
+     */
+    public function setInvalidEnvironment($environment)
+    {
+        $this->environment = $environment;
+        return $this;
+    }
 }

@@ -74,7 +74,7 @@ class MageApplication extends Application
                 $logger->pushHandler(new StreamHandler($logfile));
             }
 
-            $this->runtime = new Runtime();
+            $this->runtime = $this->instantiateRuntime();
             $this->runtime->setConfiguration($config);
             $this->runtime->setLogger($logger);
 
@@ -104,5 +104,25 @@ class MageApplication extends Application
                 }
             }
         }
+    }
+
+    /**
+     * Gets the Runtime instance to use
+     *
+     * @return Runtime
+     */
+    protected function instantiateRuntime()
+    {
+        return new Runtime();
+    }
+
+    /**
+     * Get the Runtime instance
+     *
+     * @return Runtime
+     */
+    public function getRuntime()
+    {
+        return $this->runtime;
     }
 }
