@@ -54,7 +54,7 @@ class MageApplicationTest extends TestCase
         $application->configure(__DIR__ . '/Resources/basic.yml');
         $this->assertTrue($application instanceof MageApplication);
 
-        $application->register('foo')->setCode(function() {
+        $application->register('foo')->setCode(function () {
             throw new \RuntimeException('foo');
         });
 

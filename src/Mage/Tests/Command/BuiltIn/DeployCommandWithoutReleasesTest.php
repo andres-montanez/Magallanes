@@ -32,7 +32,7 @@ class DeployCommandWithoutReleasesTest extends TestCase
 
         $ranCommands = $application->getRuntime()->getRanCommands();
 
-        $testCase = array (
+        $testCase = array(
             0 => 'git branch | grep "*"',
             1 => 'git checkout test',
             2 => 'git pull',
@@ -55,5 +55,4 @@ class DeployCommandWithoutReleasesTest extends TestCase
 
         $this->assertEquals(0, $tester->getStatusCode());
     }
-
- }
+}
