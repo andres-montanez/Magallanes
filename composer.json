@@ -1,0 +1,34 @@
+{
+    "name": "andres-montanez/magallanes",
+    "description": "A Deployment Tool for PHP Applications",
+    "homepage": "http://magephp.com",
+    "license": "MIT",
+    "type": "library",
+    "keywords": ["deployment"],
+    "require": {
+        "php": ">=5.4"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "4.8.*",
+        "satooshi/php-coveralls": "~1.0",
+        "php-mock/php-mock": "^0.1"
+    },
+    "autoload": {
+        "psr-4": {
+            "Mage\\": "./Mage",
+            "Task\\": [".mage/tasks", "../../../.mage/tasks"],
+            "Command\\": [".mage/tasks", "../../../.mage/commands"]
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "MageTest\\": "./tests/MageTest"
+        }
+    },
+    "config": {
+        "bin-dir": "bin"
+    },
+    "bin": [
+        "bin/mage"
+    ]
+}
