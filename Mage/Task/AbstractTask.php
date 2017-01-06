@@ -222,7 +222,6 @@ abstract class AbstractTask
      */
     final protected function runCommand($command, &$output = null)
     {
-        $command = ltrim($this->getEnvVarsString() . ' ' . $command);
         if ($this->getStage() == self::STAGE_DEPLOY || $this->getStage() == self::STAGE_POST_RELEASE) {
             return $this->runCommandRemote($command, $output);
         } else {
