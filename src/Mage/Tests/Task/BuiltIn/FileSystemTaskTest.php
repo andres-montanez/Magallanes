@@ -30,6 +30,8 @@ class FileSystemTaskTest extends TestCase
         $task->setOptions(['from' => 'a.txt', 'to' => 'b.txt']);
         $task->setRuntime($runtime);
 
+        $this->assertContains('a.txt', $task->getDescription());
+        $this->assertContains('b.txt', $task->getDescription());
         $task->execute();
 
         $ranCommands = $runtime->getRanCommands();
@@ -57,12 +59,45 @@ class FileSystemTaskTest extends TestCase
         $task->setOptions(['from' => '%environment%.txt', 'to' => 'b.txt']);
         $task->setRuntime($runtime);
 
+        $this->assertContains('test.txt', $task->getDescription());
+        $this->assertContains('b.txt', $task->getDescription());
         $task->execute();
 
         $ranCommands = $runtime->getRanCommands();
 
         $testCase = array(
             0 => 'cp -p test.txt b.txt',
+        );
+
+        // Check total of Executed Commands
+        $this->assertEquals(count($testCase), count($ranCommands));
+
+        // Check Generated Commands
+        foreach ($testCase as $index => $command) {
+            $this->assertEquals($command, $ranCommands[$index]);
+        }
+    }
+
+    public function testCopyMultipleReplaceTask()
+    {
+        $runtime = new RuntimeMockup();
+        $runtime->setConfiguration(['environments' => ['test' => []]]);
+        $runtime->setEnvironment('test');
+        $runtime->setReleaseId('1234');
+        $runtime->setWorkingHost('localhost');
+
+        $task = new CopyTask();
+        $task->setOptions(['from' => '%host%.txt', 'to' => '%release%.yml']);
+        $task->setRuntime($runtime);
+
+        $this->assertContains('localhost.txt', $task->getDescription());
+        $this->assertContains('1234.yml', $task->getDescription());
+        $task->execute();
+
+        $ranCommands = $runtime->getRanCommands();
+
+        $testCase = array(
+            0 => 'cp -p localhost.txt 1234.yml',
         );
 
         // Check total of Executed Commands
@@ -103,6 +138,8 @@ class FileSystemTaskTest extends TestCase
         $task->setOptions(['from' => 'a.txt', 'to' => 'b.txt']);
         $task->setRuntime($runtime);
 
+        $this->assertContains('a.txt', $task->getDescription());
+        $this->assertContains('b.txt', $task->getDescription());
         $task->execute();
 
         $ranCommands = $runtime->getRanCommands();
@@ -130,6 +167,8 @@ class FileSystemTaskTest extends TestCase
         $task->setOptions(['from' => '%environment%.txt', 'to' => 'b.txt']);
         $task->setRuntime($runtime);
 
+        $this->assertContains('test.txt', $task->getDescription());
+        $this->assertContains('b.txt', $task->getDescription());
         $task->execute();
 
         $ranCommands = $runtime->getRanCommands();
@@ -176,6 +215,7 @@ class FileSystemTaskTest extends TestCase
         $task->setOptions(['file' => 'a.txt']);
         $task->setRuntime($runtime);
 
+        $this->assertContains('a.txt', $task->getDescription());
         $task->execute();
 
         $ranCommands = $runtime->getRanCommands();
@@ -203,6 +243,7 @@ class FileSystemTaskTest extends TestCase
         $task->setOptions(['file' => '%environment%.txt']);
         $task->setRuntime($runtime);
 
+        $this->assertContains('test.txt', $task->getDescription());
         $task->execute();
 
         $ranCommands = $runtime->getRanCommands();
