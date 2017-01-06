@@ -73,12 +73,34 @@ class RollbackCommandTest extends TestCase
         $command = $application->find('releases:rollback');
         $this->assertTrue($command instanceof RollbackCommand);
 
+        $tester = new CommandTester($command);
+
         try {
-            $tester = new CommandTester($command);
             $tester->execute(['command' => $command->getName(), 'environment' => 'test', 'release' => '20170101015115']);
+            $this->assertTrue(false, 'Command did not failed');
         } catch (Exception $exception) {
             $this->assertTrue($exception instanceof DeploymentException);
             $this->assertEquals('Releases are not enabled', $exception->getMessage());
+        }
+    }
+
+    public function testRollbackReleaseNotAvailable()
+    {
+        $application = new MageApplicationMockup();
+        $application->configure(__DIR__ . '/../../../Resources/testhost-not-have-release.yml');
+
+        /** @var AbstractCommand $command */
+        $command = $application->find('releases:rollback');
+        $this->assertTrue($command instanceof RollbackCommand);
+
+        $tester = new CommandTester($command);
+
+        try {
+            $tester->execute(['command' => $command->getName(), 'environment' => 'test', 'release' => '20170101015115']);
+            $this->assertTrue(false, 'Command did not failed');
+        } catch (Exception $exception) {
+            $this->assertTrue($exception instanceof DeploymentException);
+            $this->assertEquals('Release "20170101015115" is not available on all hosts', $exception->getMessage());
         }
     }
 }

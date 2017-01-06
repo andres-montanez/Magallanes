@@ -68,4 +68,68 @@ class DeployCommandWithReleasesTest extends TestCase
 
         $this->assertEquals(0, $tester->getStatusCode());
     }
+
+    public function testDeploymentWithoutReleasesTarPrepare()
+    {
+        $application = new MageApplicationMockup();
+        $application->configure(__DIR__ . '/../../Resources/testhost-force-tar1.yml');
+
+        /** @var AbstractCommand $command */
+        $command = $application->find('deploy');
+        $this->assertTrue($command instanceof DeployCommand);
+
+        $tester = new CommandTester($command);
+        $tester->execute(['command' => $command->getName(), 'environment' => 'test']);
+
+        $this->assertContains('This task is only available with releases enabled', $tester->getDisplay());
+        $this->assertNotEquals(0, $tester->getStatusCode());
+    }
+
+    public function testDeploymentWithoutReleasesTarCopy()
+    {
+        $application = new MageApplicationMockup();
+        $application->configure(__DIR__ . '/../../Resources/testhost-force-tar2.yml');
+
+        /** @var AbstractCommand $command */
+        $command = $application->find('deploy');
+        $this->assertTrue($command instanceof DeployCommand);
+
+        $tester = new CommandTester($command);
+        $tester->execute(['command' => $command->getName(), 'environment' => 'test']);
+
+        $this->assertContains('This task is only available with releases enabled', $tester->getDisplay());
+        $this->assertNotEquals(0, $tester->getStatusCode());
+    }
+
+    public function testDeploymentWithoutReleasesTarCleanup()
+    {
+        $application = new MageApplicationMockup();
+        $application->configure(__DIR__ . '/../../Resources/testhost-force-tar3.yml');
+
+        /** @var AbstractCommand $command */
+        $command = $application->find('deploy');
+        $this->assertTrue($command instanceof DeployCommand);
+
+        $tester = new CommandTester($command);
+        $tester->execute(['command' => $command->getName(), 'environment' => 'test']);
+
+        $this->assertContains('This task is only available with releases enabled', $tester->getDisplay());
+        $this->assertNotEquals(0, $tester->getStatusCode());
+    }
+
+    public function testDeploymentFailCopyCommands()
+    {
+        $application = new MageApplicationMockup();
+        $application->configure(__DIR__ . '/../../Resources/testhost-fail-copy-tar.yml');
+
+        /** @var AbstractCommand $command */
+        $command = $application->find('deploy');
+        $this->assertTrue($command instanceof DeployCommand);
+
+        $tester = new CommandTester($command);
+        $tester->execute(['command' => $command->getName(), 'environment' => 'test']);
+
+        $this->assertContains('Copying files with TarGZ ... FAIL', $tester->getDisplay());
+        $this->assertNotEquals(0, $tester->getStatusCode());
+    }
 }

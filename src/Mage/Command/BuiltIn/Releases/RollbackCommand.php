@@ -90,7 +90,7 @@ class RollbackCommand extends DeployCommand
                 return $exception->getCode();
             }
         } else {
-            throw new DeploymentException(sprintf('Release %s is not available on all hosts', $releaseToRollback), 72);
+            throw new DeploymentException(sprintf('Release "%s" is not available on all hosts', $releaseToRollback), 72);
         }
 
         $output->writeln('Finished <fg=blue>Magallanes</>');
@@ -106,11 +106,10 @@ class RollbackCommand extends DeployCommand
      */
     protected function checkReleaseAvailability($releaseToRollback)
     {
-        $releaseIdCandidate = false;
         $hosts = $this->runtime->getEnvironmentConfig('hosts');
         $hostPath = rtrim($this->runtime->getEnvironmentConfig('host_path'), '/');
 
-        $releaseAvailableInAllHosts = true;
+        $releaseAvailableInHosts = 0;
         foreach ($hosts as $host) {
             $this->runtime->setWorkingHost($host);
 
@@ -127,20 +126,14 @@ class RollbackCommand extends DeployCommand
             }
 
             if (in_array($releaseToRollback, $releases)) {
-                if ($releaseIdCandidate === false) {
-                    $releaseIdCandidate = $releaseToRollback;
-                } else {
-                    if ($releaseIdCandidate != $releaseToRollback) {
-                        $releaseAvailableInAllHosts = false;
-                    }
-                }
+                $releaseAvailableInHosts++;
             }
 
             $this->runtime->setWorkingHost(null);
         }
 
-        if ($releaseAvailableInAllHosts) {
-            return $releaseIdCandidate;
+        if ($releaseAvailableInHosts === count($hosts)) {
+            return $releaseToRollback;
         }
 
         return false;

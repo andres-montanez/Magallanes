@@ -10,7 +10,7 @@
 
 namespace Mage\Task\BuiltIn\Deploy\TarGz;
 
-use Mage\Runtime\Exception\DeploymentException;
+use Mage\Task\ErrorException;
 use Symfony\Component\Process\Process;
 use Mage\Task\AbstractTask;
 
@@ -34,7 +34,7 @@ class CopyTask extends AbstractTask
     public function execute()
     {
         if (!$this->runtime->getEnvironmentConfig('releases', false)) {
-            throw new DeploymentException('This task is only available with releases enabled', 40);
+            throw new ErrorException('This task is only available with releases enabled', 40);
         }
 
         $user = $this->runtime->getEnvironmentConfig('user', $this->runtime->getCurrentUser());

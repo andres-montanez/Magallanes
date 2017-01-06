@@ -78,6 +78,7 @@ class ListCommandTest extends TestCase
 
         try {
             $tester->execute(['command' => $command->getName(), 'environment' => 'test']);
+            $this->assertTrue(false, 'Command did not failed');
         } catch (Exception $exception) {
             $this->assertTrue($exception instanceof DeploymentException);
             $this->assertEquals('Releases are not enabled', $exception->getMessage());
@@ -97,6 +98,7 @@ class ListCommandTest extends TestCase
 
         try {
             $tester->execute(['command' => $command->getName(), 'environment' => 'test']);
+            $this->assertTrue(false, 'Command did not failed');
         } catch (Exception $exception) {
             $this->assertTrue($exception instanceof RuntimeException);
             $this->assertEquals('Unable to retrieve current release from host "host1"', $exception->getMessage());
@@ -131,6 +133,7 @@ class ListCommandTest extends TestCase
 
         try {
             $tester->execute(['command' => $command->getName(), 'environment' => 'test']);
+            $this->assertTrue(false, 'Command did not failed');
         } catch (Exception $exception) {
             $this->assertTrue($exception instanceof RuntimeException);
             $this->assertEquals('Unable to retrieve releases from host "host3"', $exception->getMessage());

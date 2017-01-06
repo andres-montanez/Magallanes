@@ -93,9 +93,11 @@ class DeployCommandMiscTasksTest extends TestCase
         $command = $application->find('deploy');
         $this->assertTrue($command instanceof DeployCommand);
 
+        $tester = new CommandTester($command);
+
         try {
-            $tester = new CommandTester($command);
             $tester->execute(['command' => $command->getName(), 'environment' => 'test']);
+            $this->assertTrue(false, 'Command did not failed');
         } catch (Exception $exception) {
             $this->assertTrue($exception instanceof RuntimeException);
             $this->assertEquals('Invalid task name "invalid/task"', $exception->getMessage());
