@@ -58,9 +58,7 @@ class CopyTask extends AbstractTask
             if ($process->isSuccessful()) {
                 $cmdDelete = sprintf('rm %s/%s', $targetDir, $tarGzRemote);
                 $process = $this->runtime->runRemoteCommand($cmdDelete, false);
-                if ($process->isSuccessful()) {
-                    return true;
-                }
+                return $process->isSuccessful();
             }
         }
 
