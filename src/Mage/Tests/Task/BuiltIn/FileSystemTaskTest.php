@@ -12,6 +12,7 @@ namespace Mage\Tests\Task\BuiltIn;
 
 use Mage\Runtime\Exception\RuntimeException;
 use Mage\Task\BuiltIn\FS\CopyTask;
+use Mage\Task\BuiltIn\FS\LinkTask;
 use Mage\Task\BuiltIn\FS\MoveTask;
 use Mage\Task\BuiltIn\FS\RemoveTask;
 use Exception;
@@ -277,6 +278,83 @@ class FileSystemTaskTest extends TestCase
         } catch (Exception $exception) {
             $this->assertTrue($exception instanceof RuntimeException);
             $this->assertEquals('Parameter "file" is not defined', $exception->getMessage());
+        }
+    }
+
+    public function testLinkTask()
+    {
+        $runtime = new RuntimeMockup();
+        $runtime->setConfiguration(['environments' => ['test' => []]]);
+        $runtime->setEnvironment('test');
+
+        $task = new LinkTask();
+        $task->setOptions(['from' => 'a.txt', 'to' => 'b.txt']);
+        $task->setRuntime($runtime);
+
+        $this->assertContains('a.txt', $task->getDescription());
+        $this->assertContains('b.txt', $task->getDescription());
+        $task->execute();
+
+        $ranCommands = $runtime->getRanCommands();
+
+        $testCase = array(
+            0 => 'ln -snf a.txt b.txt',
+        );
+
+        // Check total of Executed Commands
+        $this->assertEquals(count($testCase), count($ranCommands));
+
+        // Check Generated Commands
+        foreach ($testCase as $index => $command) {
+            $this->assertEquals($command, $ranCommands[$index]);
+        }
+    }
+
+    public function testLinkReplaceTask()
+    {
+        $runtime = new RuntimeMockup();
+        $runtime->setConfiguration(['environments' => ['test' => []]]);
+        $runtime->setEnvironment('test');
+
+        $task = new LinkTask();
+        $task->setOptions(['from' => '%environment%.txt', 'to' => 'b.txt']);
+        $task->setRuntime($runtime);
+
+        $this->assertContains('test.txt', $task->getDescription());
+        $this->assertContains('b.txt', $task->getDescription());
+        $task->execute();
+
+        $ranCommands = $runtime->getRanCommands();
+
+        $testCase = array(
+            0 => 'ln -snf test.txt b.txt',
+        );
+
+        // Check total of Executed Commands
+        $this->assertEquals(count($testCase), count($ranCommands));
+
+        // Check Generated Commands
+        foreach ($testCase as $index => $command) {
+            $this->assertEquals($command, $ranCommands[$index]);
+        }
+    }
+
+    public function testLinkBadOptionsTask()
+    {
+        $runtime = new RuntimeMockup();
+        $runtime->setConfiguration(['environments' => ['test' => []]]);
+        $runtime->setEnvironment('test');
+
+        $task = new LinkTask();
+        $task->setOptions(['form' => 'a.txt', 'to' => 'b.txt']);
+        $task->setRuntime($runtime);
+
+        try {
+            $task->execute();
+            $this->assertTrue(false, 'Task did not failed');
+        } catch (Exception $exception) {
+            $this->assertTrue($exception instanceof RuntimeException);
+            $this->assertEquals('Parameter "from" is not defined', $exception->getMessage());
         }
     }
 }
