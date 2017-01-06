@@ -56,7 +56,7 @@ class CloneTask extends AbstractTask
 
         // Create temporal directory for clone
         if (is_array($this->source)) {
-            if (trim($this->source['temporal']) == '') {
+            if (!isset($this->source['temporal']) || trim($this->source['temporal']) == '') {
                 $this->source['temporal'] = sys_get_temp_dir();
             }
             $this->source['temporal'] = rtrim($this->source['temporal'], '/') . '/' . md5(microtime()) . '/';
