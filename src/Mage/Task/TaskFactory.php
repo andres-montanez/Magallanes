@@ -14,6 +14,7 @@ use Mage\Runtime\Runtime;
 use Mage\Runtime\Exception\RuntimeException;
 use Symfony\Component\Finder\Finder;
 use Symfony\Component\Finder\SplFileInfo;
+use ReflectionClass;
 
 /**
  * Task Factory
@@ -78,11 +79,14 @@ class TaskFactory
             $task->setOptions($options);
             return $task;
         } elseif (class_exists($name)) {
-            $task = new $name();
-            if ($task instanceof AbstractTask) {
-                $task->setOptions($options);
-                $this->add($task);
-                return $task;
+            $reflex = new ReflectionClass($name);
+            if ($reflex->isInstantiable()) {
+                $task = new $name();
+                if ($task instanceof AbstractTask) {
+                    $task->setOptions($options);
+                    $this->add($task);
+                    return $task;
+                }
             }
         }
 
@@ -101,10 +105,12 @@ class TaskFactory
         foreach ($finder as $file) {
             $class = substr('\\Mage\\Task\\BuiltIn\\' . str_replace('/', '\\', $file->getRelativePathname()), 0, -4);
             if (class_exists($class)) {
-                $task = new $class();
-
-                if ($task instanceof AbstractTask) {
-                    $this->add($task);
+                $reflex = new ReflectionClass($class);
+                if ($reflex->isInstantiable()) {
+                    $task = new $class();
+                    if ($task instanceof AbstractTask) {
+                        $this->add($task);
+                    }
                 }
             }
         }

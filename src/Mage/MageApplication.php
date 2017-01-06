@@ -21,6 +21,7 @@ use Symfony\Component\Console\Event\ConsoleExceptionEvent;
 use Symfony\Component\Console\ConsoleEvents;
 use Symfony\Component\Console\Application;
 use Symfony\Component\Yaml\Yaml;
+use ReflectionClass;
 use Mage\Runtime\Exception\RuntimeException;
 
 /**
@@ -96,11 +97,13 @@ class MageApplication extends Application
         foreach ($finder as $file) {
             $class = substr('\\Mage\\Command\\BuiltIn\\' . str_replace('/', '\\', $file->getRelativePathname()), 0, -4);
             if (class_exists($class)) {
-                $command = new $class();
-
-                if ($command instanceof AbstractCommand) {
-                    $command->setRuntime($this->runtime);
-                    $this->add($command);
+                $reflex = new ReflectionClass($class);
+                if ($reflex->isInstantiable()) {
+                    $command = new $class();
+                    if ($command instanceof AbstractCommand) {
+                        $command->setRuntime($this->runtime);
+                        $this->add($command);
+                    }
                 }
             }
         }
