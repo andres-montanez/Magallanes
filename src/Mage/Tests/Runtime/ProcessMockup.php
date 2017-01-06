@@ -16,6 +16,7 @@ class ProcessMockup extends Process
 {
     protected $commandline;
     protected $timeout;
+    protected $success = true;
 
     public function __construct($commandline, $cwd = null, array $env = null, $input = null, $timeout = 60, array $options = array())
     {
@@ -29,11 +30,18 @@ class ProcessMockup extends Process
 
     public function run($callback = null)
     {
+        if ($this->commandline == 'ssh -p 22 -q -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no tester@host1 sh -c \"readlink -f /var/www/test/current\"') {
+            $this->success = false;
+        }
+
+        if ($this->commandline == 'ssh -p 22 -q -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no tester@host3 sh -c \"ls -1 /var/www/test/releases\"') {
+            $this->success = false;
+        }
     }
 
     public function isSuccessful()
     {
-        return true;
+        return $this->success;
     }
 
     public function getErrorOutput()
@@ -52,7 +60,15 @@ class ProcessMockup extends Process
         }
 
         if ($this->commandline == 'ssh -p 22 -q -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no tester@testhost sh -c \"readlink -f /var/www/test/current\"') {
-            return '/var/www/test/releases/20170101015120';
+            return '/var/www/test/releases/20170101015117';
+        }
+
+        if ($this->commandline == 'ssh -p 22 -q -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no tester@host1 sh -c \"ls -1 /var/www/test/releases\"') {
+            return implode(PHP_EOL, ['20170101015110', '20170101015111', '20170101015112', '20170101015113', '20170101015114', '20170101015115', '20170101015116', '20170101015117']);
+        }
+
+        if ($this->commandline == 'ssh -p 22 -q -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no tester@host2 sh -c \"ls -1 /var/www/test/releases\"') {
+            return '';
         }
 
         return '';

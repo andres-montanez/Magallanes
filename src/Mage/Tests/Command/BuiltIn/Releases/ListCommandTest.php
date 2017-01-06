@@ -12,6 +12,7 @@ namespace Mage\Tests\Command\BuiltIn\Releases;
 
 use Mage\Command\BuiltIn\Releases\ListCommand;
 use Mage\Runtime\Exception\DeploymentException;
+use Mage\Runtime\Exception\RuntimeException;
 use Mage\Command\AbstractCommand;
 use Mage\Tests\MageApplicationMockup;
 use Symfony\Component\Console\Tester\CommandTester;
@@ -81,5 +82,73 @@ class ListCommandTest extends TestCase
             $this->assertTrue($exception instanceof DeploymentException);
             $this->assertEquals('Releases are not enabled', $exception->getMessage());
         }
+    }
+
+    public function testFailToGetCurrentRelease()
+    {
+        $application = new MageApplicationMockup();
+        $application->configure(__DIR__ . '/../../../Resources/testhost-fail-get-current.yml');
+
+        /** @var AbstractCommand $command */
+        $command = $application->find('releases:list');
+        $this->assertTrue($command instanceof ListCommand);
+
+        $tester = new CommandTester($command);
+
+        try {
+            $tester->execute(['command' => $command->getName(), 'environment' => 'test']);
+        } catch (Exception $exception) {
+            $this->assertTrue($exception instanceof RuntimeException);
+            $this->assertEquals('Unable to retrieve current release from host "host1"', $exception->getMessage());
+        }
+    }
+
+    public function testNoReleasesAvailable()
+    {
+        $application = new MageApplicationMockup();
+        $application->configure(__DIR__ . '/../../../Resources/testhost-no-releases.yml');
+
+        /** @var AbstractCommand $command */
+        $command = $application->find('releases:list');
+        $this->assertTrue($command instanceof ListCommand);
+
+        $tester = new CommandTester($command);
+
+        $tester->execute(['command' => $command->getName(), 'environment' => 'test']);
+        $this->assertContains('No releases available on host host2', $tester->getDisplay());
+    }
+
+    public function testFailGetReleases()
+    {
+        $application = new MageApplicationMockup();
+        $application->configure(__DIR__ . '/../../../Resources/testhost-fail-get-releases.yml');
+
+        /** @var AbstractCommand $command */
+        $command = $application->find('releases:list');
+        $this->assertTrue($command instanceof ListCommand);
+
+        $tester = new CommandTester($command);
+
+        try {
+            $tester->execute(['command' => $command->getName(), 'environment' => 'test']);
+        } catch (Exception $exception) {
+            $this->assertTrue($exception instanceof RuntimeException);
+            $this->assertEquals('Unable to retrieve releases from host "host3"', $exception->getMessage());
+        }
+    }
+
+    public function testNoHosts()
+    {
+        $application = new MageApplicationMockup();
+        $application->configure(__DIR__ . '/../../../Resources/testhost-no-hosts.yml');
+
+        /** @var AbstractCommand $command */
+        $command = $application->find('releases:list');
+        $this->assertTrue($command instanceof ListCommand);
+
+        $tester = new CommandTester($command);
+
+        $tester->execute(['command' => $command->getName(), 'environment' => 'test']);
+        $this->assertContains('No hosts defined', $tester->getDisplay());
     }
 }

@@ -59,7 +59,8 @@ We use [PSR2](http://www.php-fig.org/psr/psr-2/) as PHP coding standard.
 ## Testing and quality
 We use PHPUnit to test our code. Most of the project is covered with tests, so if you want your code to be merged push it with proper testing and coverage (at least 95%). To execute the tests with code coverage report:
 ```
-vendor/bin/phpunit --coverage-text
+vendor/bin/phpunit --coverage-clover build/logs/coverage.xml
+vendor/bin/coveralls -v --coverage_clover build/logs/coverage.xml
 ```
 
 Tests structure follow almost the same structure as production code with `Test` suffix in class and file name. Follow the tests already made as guidelines.

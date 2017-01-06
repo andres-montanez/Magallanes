@@ -89,11 +89,15 @@ class ListCommand extends AbstractCommand
                 /** @var Process $process */
                 $process = $this->runtime->runRemoteCommand($cmdListReleases, false);
                 if (!$process->isSuccessful()) {
-                    throw new RuntimeException(sprintf('Unable to retrieve releases from host %s', $host), 80);
+                    throw new RuntimeException(sprintf('Unable to retrieve releases from host "%s"', $host), 80);
                 }
 
-                $releases = explode(PHP_EOL, trim($process->getOutput()));
-                rsort($releases);
+                if (trim($process->getOutput()) != '') {
+                    $releases = explode(PHP_EOL, trim($process->getOutput()));
+                    rsort($releases);
+                } else {
+                    $releases = [];
+                }
 
                 if (count($releases) == 0) {
                     $output->writeln(sprintf('    No releases available on host <fg=black;options=bold>%s</>:', $host));
@@ -104,7 +108,7 @@ class ListCommand extends AbstractCommand
                     /** @var Process $process */
                     $process = $this->runtime->runRemoteCommand($cmdCurrentRelease, false);
                     if (!$process->isSuccessful()) {
-                        throw new RuntimeException(sprintf('Unable to retrieve current release from host %s', $host), 85);
+                        throw new RuntimeException(sprintf('Unable to retrieve current release from host "%s"', $host), 85);
                     }
 
                     $currentReleaseId = explode('/', trim($process->getOutput()));

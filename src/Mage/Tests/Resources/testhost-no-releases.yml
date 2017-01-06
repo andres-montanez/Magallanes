@@ -1,0 +1,14 @@
+magephp:
+    log_dir: /tmp
+    environments:
+        test:
+            user: tester
+            branch: test
+            host_path: /var/www/test
+            releases: 4
+            exclude:
+                - ./var/cache/*
+                - ./var/log/*
+                - ./web/app_dev.php
+            hosts:
+                - host2
