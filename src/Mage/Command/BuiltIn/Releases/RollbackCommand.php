@@ -83,7 +83,6 @@ class RollbackCommand extends DeployCommand
 
             $this->taskFactory = new TaskFactory($this->runtime);
             $this->runDeployment($output);
-
         } catch (RuntimeException $exception) {
             $output->writeln(sprintf('<error>%s</error>', $exception->getMessage()));
             $this->statusCode = $exception->getCode();

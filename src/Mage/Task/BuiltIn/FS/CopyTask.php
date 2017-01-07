@@ -29,7 +29,6 @@ class CopyTask extends AbstractFileTask
     {
         try {
             return sprintf('[FS] Copy "%s" to "%s"', $this->getFile('from'), $this->getFile('to'));
-
         } catch (Exception $exception) {
             return '[FS] Copy [missing parameters]';
         }

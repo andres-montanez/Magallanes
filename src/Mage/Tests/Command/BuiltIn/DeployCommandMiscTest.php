@@ -18,6 +18,25 @@ use PHPUnit_Framework_TestCase as TestCase;
 
 class DeployCommandMiscTest extends TestCase
 {
+    public function testDeploymentWithNoHosts()
+    {
+        $application = new MageApplicationMockup();
+        $application->configure(__DIR__ . '/../../Resources/no-hosts.yml');
+
+        /** @var AbstractCommand $command */
+        $command = $application->find('deploy');
+        $this->assertTrue($command instanceof DeployCommand);
+
+        $tester = new CommandTester($command);
+        $tester->execute(['command' => $command->getName(), 'environment' => 'test']);
+
+        $this->assertContains('No hosts defined, skipping On Deploy tasks', $tester->getDisplay());
+        $this->assertContains('No hosts defined, skipping On Release tasks', $tester->getDisplay());
+        $this->assertContains('No hosts defined, skipping Post Release tasks', $tester->getDisplay());
+
+        $this->assertEquals(0, $tester->getStatusCode());
+    }
+
     public function testDeploymentWithSudo()
     {
         $application = new MageApplicationMockup();

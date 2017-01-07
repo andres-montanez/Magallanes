@@ -132,4 +132,20 @@ class DeployCommandWithReleasesTest extends TestCase
         $this->assertContains('Copying files with TarGZ ... FAIL', $tester->getDisplay());
         $this->assertNotEquals(0, $tester->getStatusCode());
     }
+
+    public function testDeploymentWithoutReleasesForceRelease()
+    {
+        $application = new MageApplicationMockup();
+        $application->configure(__DIR__ . '/../../Resources/testhost-force-release.yml');
+
+        /** @var AbstractCommand $command */
+        $command = $application->find('deploy');
+        $this->assertTrue($command instanceof DeployCommand);
+
+        $tester = new CommandTester($command);
+        $tester->execute(['command' => $command->getName(), 'environment' => 'test']);
+
+        $this->assertContains('This task is only available with releases enabled', $tester->getDisplay());
+        $this->assertNotEquals(0, $tester->getStatusCode());
+    }
 }

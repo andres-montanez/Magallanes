@@ -29,7 +29,6 @@ class RemoveTask extends AbstractFileTask
     {
         try {
             return sprintf('[FS] Remove "%s"', $this->getFile('file'));
-
         } catch (Exception $exception) {
             return '[FS] Remove [missing parameters]';
         }

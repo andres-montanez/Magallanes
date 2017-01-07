@@ -29,7 +29,6 @@ class MoveTask extends AbstractFileTask
     {
         try {
             return sprintf('[FS] Move "%s" to "%s"', $this->getFile('from'), $this->getFile('to'));
-
         } catch (Exception $exception) {
             return '[FS] Move [missing parameters]';
         }

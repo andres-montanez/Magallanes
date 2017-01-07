@@ -29,7 +29,6 @@ class LinkTask extends AbstractFileTask
     {
         try {
             return sprintf('[FS] Link "%s" to "%s"', $this->getFile('from'), $this->getFile('to'));
-
         } catch (Exception $exception) {
             return '[FS] Link [missing parameters]';
         }

@@ -94,7 +94,6 @@ class DeployCommand extends AbstractCommand
 
             $this->taskFactory = new TaskFactory($this->runtime);
             $this->runDeployment($output);
-
         } catch (RuntimeException $exception) {
             $output->writeln('');
             $output->writeln(sprintf('<error>%s</error>', $exception->getMessage()));
@@ -287,12 +286,10 @@ class DeployCommand extends AbstractCommand
                         $this->statusCode = 180;
                         $this->log(sprintf('Task %s (%s) finished with FAIL', $task->getDescription(), $task->getName()));
                     }
-
                 } catch (SkipException $exception) {
                     $succeededTasks++;
                     $output->writeln('<fg=yellow>SKIPPED</>');
                     $this->log(sprintf('Task %s (%s) finished with SKIPPED, thrown SkipException', $task->getDescription(), $task->getName()));
-
                 } catch (ErrorException $exception) {
                     $output->writeln(sprintf('<fg=red>ERROR</> [%s]', $exception->getTrimmedMessage()));
                     $this->log(sprintf('Task %s (%s) finished with FAIL, with Error "%s"', $task->getDescription(), $task->getName(), $exception->getMessage()));

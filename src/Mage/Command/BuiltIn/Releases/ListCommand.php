@@ -134,7 +134,6 @@ class ListCommand extends AbstractCommand
                     $output->writeln('');
                 }
             }
-
         } catch (RuntimeException $exception) {
             $output->writeln(sprintf('<error>%s</error>', $exception->getMessage()));
             $this->statusCode = $exception->getCode();
