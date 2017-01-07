@@ -104,7 +104,7 @@ class RollbackCommand extends DeployCommand
         $hosts = $this->runtime->getEnvironmentConfig('hosts');
         $hostPath = rtrim($this->runtime->getEnvironmentConfig('host_path'), '/');
 
-        $releaseAvailableInHosts = 0;
+        $availableInHosts = 0;
         foreach ($hosts as $host) {
             $this->runtime->setWorkingHost($host);
 
@@ -121,13 +121,13 @@ class RollbackCommand extends DeployCommand
             }
 
             if (in_array($releaseToRollback, $releases)) {
-                $releaseAvailableInHosts++;
+                $availableInHosts++;
             }
 
             $this->runtime->setWorkingHost(null);
         }
 
-        if ($releaseAvailableInHosts === count($hosts)) {
+        if ($availableInHosts === count($hosts)) {
             return $releaseToRollback;
         }
 

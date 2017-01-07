@@ -36,10 +36,10 @@ class MoveTask extends AbstractFileTask
 
     public function execute()
     {
-        $from = $this->getFile('from');
-        $to = $this->getFile('to');
+        $moveFrom = $this->getFile('from');
+        $moveTo = $this->getFile('to');
 
-        $cmd = sprintf('mv %s %s', $from, $to);
+        $cmd = sprintf('mv %s %s', $moveFrom, $moveTo);
 
         /** @var Process $process */
         $process = $this->runtime->runCommand($cmd);

@@ -44,11 +44,11 @@ class CacheWarmupTask extends AbstractTask
     protected function getOptions()
     {
         $userGlobalOptions = $this->runtime->getConfigOptions('symfony', []);
-        $userEnvironmentOptions = $this->runtime->getEnvironmentConfig('symfony', []);
+        $userEnvOptions = $this->runtime->getEnvironmentConfig('symfony', []);
         $options = array_merge(
             ['console' => 'bin/console', 'env' => 'dev', 'flags' => ''],
             (is_array($userGlobalOptions) ? $userGlobalOptions : []),
-            (is_array($userEnvironmentOptions) ? $userEnvironmentOptions : []),
+            (is_array($userEnvOptions) ? $userEnvOptions : []),
             $this->options
         );
 

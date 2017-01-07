@@ -36,10 +36,10 @@ class CopyTask extends AbstractFileTask
 
     public function execute()
     {
-        $from = $this->getFile('from');
-        $to = $this->getFile('to');
+        $copyFrom = $this->getFile('from');
+        $copyTo = $this->getFile('to');
 
-        $cmd = sprintf('cp -p %s %s', $from, $to);
+        $cmd = sprintf('cp -p %s %s', $copyFrom, $copyTo);
 
         /** @var Process $process */
         $process = $this->runtime->runCommand($cmd);

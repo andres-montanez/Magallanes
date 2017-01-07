@@ -36,10 +36,10 @@ class LinkTask extends AbstractFileTask
 
     public function execute()
     {
-        $from = $this->getFile('from');
-        $to = $this->getFile('to');
+        $linkFrom = $this->getFile('from');
+        $linkTo = $this->getFile('to');
 
-        $cmd = sprintf('ln -snf %s %s', $from, $to);
+        $cmd = sprintf('ln -snf %s %s', $linkFrom, $linkTo);
 
         /** @var Process $process */
         $process = $this->runtime->runCommand($cmd);
