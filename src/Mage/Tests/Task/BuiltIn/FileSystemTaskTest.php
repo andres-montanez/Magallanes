@@ -10,7 +10,7 @@
 
 namespace Mage\Tests\Task\BuiltIn;
 
-use Mage\Runtime\Exception\RuntimeException;
+use Mage\Task\Exception\ErrorException;
 use Mage\Task\BuiltIn\FS\CopyTask;
 use Mage\Task\BuiltIn\FS\LinkTask;
 use Mage\Task\BuiltIn\FS\MoveTask;
@@ -121,10 +121,11 @@ class FileSystemTaskTest extends TestCase
         $task->setRuntime($runtime);
 
         try {
+            $this->assertContains('[missing parameters]', $task->getDescription());
             $task->execute();
             $this->assertTrue(false, 'Task did not failed');
         } catch (Exception $exception) {
-            $this->assertTrue($exception instanceof RuntimeException);
+            $this->assertTrue($exception instanceof ErrorException);
             $this->assertEquals('Parameter "from" is not defined', $exception->getMessage());
         }
     }
@@ -198,10 +199,11 @@ class FileSystemTaskTest extends TestCase
         $task->setRuntime($runtime);
 
         try {
+            $this->assertContains('[missing parameters]', $task->getDescription());
             $task->execute();
             $this->assertTrue(false, 'Task did not failed');
         } catch (Exception $exception) {
-            $this->assertTrue($exception instanceof RuntimeException);
+            $this->assertTrue($exception instanceof ErrorException);
             $this->assertEquals('Parameter "from" is not defined', $exception->getMessage());
         }
     }
@@ -273,10 +275,11 @@ class FileSystemTaskTest extends TestCase
         $task->setRuntime($runtime);
 
         try {
+            $this->assertContains('[missing parameters]', $task->getDescription());
             $task->execute();
             $this->assertTrue(false, 'Task did not failed');
         } catch (Exception $exception) {
-            $this->assertTrue($exception instanceof RuntimeException);
+            $this->assertTrue($exception instanceof ErrorException);
             $this->assertEquals('Parameter "file" is not defined', $exception->getMessage());
         }
     }
@@ -350,10 +353,11 @@ class FileSystemTaskTest extends TestCase
         $task->setRuntime($runtime);
 
         try {
+            $this->assertContains('[missing parameters]', $task->getDescription());
             $task->execute();
             $this->assertTrue(false, 'Task did not failed');
         } catch (Exception $exception) {
-            $this->assertTrue($exception instanceof RuntimeException);
+            $this->assertTrue($exception instanceof ErrorException);
             $this->assertEquals('Parameter "from" is not defined', $exception->getMessage());
         }
     }

@@ -10,7 +10,7 @@
 
 namespace Mage\Task\BuiltIn\Git;
 
-use Mage\Task\SkipException;
+use Mage\Task\Exception\SkipException;
 use Symfony\Component\Process\Process;
 use Mage\Task\AbstractTask;
 

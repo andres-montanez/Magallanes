@@ -13,8 +13,6 @@ namespace Mage\Tests\Command\BuiltIn;
 use Mage\Command\BuiltIn\DeployCommand;
 use Mage\Tests\MageApplicationMockup;
 use Mage\Command\AbstractCommand;
-use Mage\Runtime\Exception\RuntimeException;
-use Exception;
 use Symfony\Component\Console\Tester\CommandTester;
 use PHPUnit_Framework_TestCase as TestCase;
 
@@ -95,12 +93,8 @@ class DeployCommandMiscTasksTest extends TestCase
 
         $tester = new CommandTester($command);
 
-        try {
-            $tester->execute(['command' => $command->getName(), 'environment' => 'test']);
-            $this->assertTrue(false, 'Command did not failed');
-        } catch (Exception $exception) {
-            $this->assertTrue($exception instanceof RuntimeException);
-            $this->assertEquals('Invalid task name "invalid/task"', $exception->getMessage());
-        }
+        $tester->execute(['command' => $command->getName(), 'environment' => 'test']);
+        $this->assertEquals(7, $tester->getStatusCode());
+        $this->assertContains('Invalid task name "invalid/task"', $tester->getDisplay());
     }
 }

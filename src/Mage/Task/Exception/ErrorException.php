@@ -8,7 +8,7 @@
  * file that was distributed with this source code.
  */
 
-namespace Mage\Task;
+namespace Mage\Task\Exception;
 
 use Exception;
 

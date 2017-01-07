@@ -10,8 +10,8 @@
 
 namespace Mage\Tests\Runtime;
 
+use Mage\Runtime\Exception\RuntimeException;
 use Mage\Runtime\Runtime;
-use Mage\Runtime\Exception\InvalidEnvironmentException;
 use Exception;
 use Monolog\Logger;
 use Monolog\Handler\TestHandler;
@@ -66,7 +66,7 @@ class RuntimeTest extends TestCase
             $runtime = new Runtime();
             $runtime->setEnvironment('invalid');
         } catch (Exception $exception) {
-            $this->assertTrue($exception instanceof InvalidEnvironmentException);
+            $this->assertTrue($exception instanceof RuntimeException);
         }
 
         try {
@@ -74,7 +74,7 @@ class RuntimeTest extends TestCase
             $runtime->setConfiguration(['environments' => ['valid' => []]]);
             $runtime->setEnvironment('invalid');
         } catch (Exception $exception) {
-            $this->assertTrue($exception instanceof InvalidEnvironmentException);
+            $this->assertTrue($exception instanceof RuntimeException);
         }
     }
 

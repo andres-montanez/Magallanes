@@ -10,7 +10,7 @@
 
 namespace Mage\Tests\Task;
 
-use Mage\Task\ErrorException;
+use Mage\Task\Exception\ErrorException;
 use Exception;
 use PHPUnit_Framework_TestCase as TestCase;
 

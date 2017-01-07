@@ -10,7 +10,7 @@
 
 namespace Mage\Task\BuiltIn\Deploy\TarGz;
 
-use Mage\Task\ErrorException;
+use Mage\Task\Exception\ErrorException;
 use Symfony\Component\Process\Process;
 use Mage\Task\AbstractTask;
 

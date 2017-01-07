@@ -11,6 +11,7 @@
 namespace Mage\Task\BuiltIn\FS;
 
 use Symfony\Component\Process\Process;
+use Exception;
 
 /**
  * File System Task - Copy a File
@@ -26,7 +27,12 @@ class CopyTask extends AbstractFileTask
 
     public function getDescription()
     {
-        return sprintf('[FS] Copy "%s" to "%s"', $this->getFile('from'), $this->getFile('to'));
+        try {
+            return sprintf('[FS] Copy "%s" to "%s"', $this->getFile('from'), $this->getFile('to'));
+
+        } catch (Exception $exception) {
+            return '[FS] Copy [missing parameters]';
+        }
     }
 
     public function execute()

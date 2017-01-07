@@ -10,14 +10,12 @@
 
 namespace Mage\Command\BuiltIn;
 
-use Mage\Runtime\Exception\DeploymentException;
-use Mage\Runtime\Exception\InvalidEnvironmentException;
 use Mage\Runtime\Exception\RuntimeException;
 use Mage\Runtime\Runtime;
-use Mage\Task\ErrorException;
 use Mage\Task\ExecuteOnRollbackInterface;
 use Mage\Task\AbstractTask;
-use Mage\Task\SkipException;
+use Mage\Task\Exception\ErrorException;
+use Mage\Task\Exception\SkipException;
 use Mage\Task\TaskFactory;
 use Mage\Utils;
 use Symfony\Component\Console\Input\InputInterface;
@@ -70,37 +68,38 @@ class DeployCommand extends AbstractCommand
 
         try {
             $this->runtime->setEnvironment($input->getArgument('environment'));
-        } catch (InvalidEnvironmentException $exception) {
-            $output->writeln(sprintf('<error>%s</error>', $exception->getMessage()));
-            return $exception->getCode();
-        }
 
-        $output->writeln(sprintf('    Environment: <fg=green>%s</>', $this->runtime->getEnvironment()));
-        $this->log(sprintf('Environment: %s', $this->runtime->getEnvironment()));
+            $output->writeln(sprintf('    Environment: <fg=green>%s</>', $this->runtime->getEnvironment()));
+            $this->log(sprintf('Environment: %s', $this->runtime->getEnvironment()));
 
-        if ($this->runtime->getEnvironmentConfig('releases', false)) {
-            $this->runtime->generateReleaseId();
-            $output->writeln(sprintf('    Release ID: <fg=green>%s</>', $this->runtime->getReleaseId()));
-            $this->log(sprintf('Release ID: %s', $this->runtime->getReleaseId()));
-        }
+            if ($this->runtime->getEnvironmentConfig('releases', false)) {
+                $this->runtime->generateReleaseId();
+                $output->writeln(sprintf('    Release ID: <fg=green>%s</>', $this->runtime->getReleaseId()));
+                $this->log(sprintf('Release ID: %s', $this->runtime->getReleaseId()));
+            }
 
-        if ($this->runtime->getConfigOptions('log_file', false)) {
-            $output->writeln(sprintf('    Logfile: <fg=green>%s</>', $this->runtime->getConfigOptions('log_file')));
-        }
+            if ($this->runtime->getConfigOptions('log_file', false)) {
+                $output->writeln(sprintf('    Logfile: <fg=green>%s</>', $this->runtime->getConfigOptions('log_file')));
+            }
 
-        $output->writeln('');
-
-        try {
-            // Check if Branch is forced
             if ($input->getOption('branch') !== false) {
                 $this->runtime->setEnvironmentConfig('branch', $input->getOption('branch'));
             }
 
+            if ($this->runtime->getEnvironmentConfig('branch', false)) {
+                $output->writeln(sprintf('    Branch: <fg=green>%s</>', $this->runtime->getEnvironmentConfig('branch')));
+            }
+
+            $output->writeln('');
+
             $this->taskFactory = new TaskFactory($this->runtime);
             $this->runDeployment($output);
-        } catch (DeploymentException $exception) {
+
+        } catch (RuntimeException $exception) {
+            $output->writeln('');
             $output->writeln(sprintf('<error>%s</error>', $exception->getMessage()));
-            return $exception->getCode();
+            $output->writeln('');
+            $this->statusCode = 7;
         }
 
         $output->writeln('Finished <fg=blue>Magallanes</>');
@@ -112,11 +111,11 @@ class DeployCommand extends AbstractCommand
      * Run the Deployment Process
      *
      * @param OutputInterface $output
-     * @throws DeploymentException
+     * @throws RuntimeException
      */
     protected function runDeployment(OutputInterface $output)
     {
-        // Run Pre Deploy Tasks
+        // Run "Pre Deploy" Tasks
         $this->runtime->setStage(Runtime::PRE_DEPLOY);
         $preDeployTasks = $this->runtime->getTasks();
 
@@ -133,10 +132,10 @@ class DeployCommand extends AbstractCommand
         }
 
         if (!$this->runTasks($output, $preDeployTasks)) {
-            throw new DeploymentException(sprintf('    Tasks failed on %s stage, halting deployment', $this->getStageName()), 50);
+            throw new RuntimeException(sprintf('Stage "%s" did not finished successfully, halting command.', $this->getStageName()), 50);
         }
 
-        // Run On Deploy Tasks
+        // Run "On Deploy" Tasks
         $hosts = $this->runtime->getEnvironmentConfig('hosts');
         if (count($hosts) == 0) {
             $output->writeln('    No hosts defined, skipping On Deploy tasks');
@@ -165,13 +164,14 @@ class DeployCommand extends AbstractCommand
             foreach ($hosts as $host) {
                 $this->runtime->setWorkingHost($host);
                 if (!$this->runTasks($output, $onDeployTasks)) {
-                    throw new DeploymentException(sprintf('    Tasks failed on <fg=black;options=bold>%s</> stage, halting deployment', $this->getStageName()), 50);
+                    $this->runtime->setWorkingHost(null);
+                    throw new RuntimeException(sprintf('Stage "%s" did not finished successfully, halting command.', $this->getStageName()), 50);
                 }
                 $this->runtime->setWorkingHost(null);
             }
         }
 
-        // Run On Release Tasks
+        // Run "On Release" Tasks
         $hosts = $this->runtime->getEnvironmentConfig('hosts');
         if (count($hosts) == 0) {
             $output->writeln('    No hosts defined, skipping On Release tasks');
@@ -189,13 +189,14 @@ class DeployCommand extends AbstractCommand
             foreach ($hosts as $host) {
                 $this->runtime->setWorkingHost($host);
                 if (!$this->runTasks($output, $onReleaseTasks)) {
-                    throw new DeploymentException(sprintf('    Tasks failed on <fg=black;options=bold>%s</> stage, halting deployment', $this->getStageName()), 50);
+                    $this->runtime->setWorkingHost(null);
+                    throw new RuntimeException(sprintf('Stage "%s" did not finished successfully, halting command.', $this->getStageName()), 50);
                 }
                 $this->runtime->setWorkingHost(null);
             }
         }
 
-        // Run Post Release Tasks
+        // Run "Post Release" Tasks
         $hosts = $this->runtime->getEnvironmentConfig('hosts');
         if (count($hosts) == 0) {
             $output->writeln('    No hosts defined, skipping Post Release tasks');
@@ -213,13 +214,14 @@ class DeployCommand extends AbstractCommand
             foreach ($hosts as $host) {
                 $this->runtime->setWorkingHost($host);
                 if (!$this->runTasks($output, $postReleaseTasks)) {
-                    throw new DeploymentException(sprintf('    Tasks failed on <fg=black;options=bold>%s</> stage, halting deployment', $this->getStageName()), 50);
+                    $this->runtime->setWorkingHost(null);
+                    throw new RuntimeException(sprintf('Stage "%s" did not finished successfully, halting command.', $this->getStageName()), 50);
                 }
                 $this->runtime->setWorkingHost(null);
             }
         }
 
-        // Run Post Deploy Tasks
+        // Run "Post Deploy" Tasks
         $this->runtime->setStage(Runtime::POST_DEPLOY);
         $postDeployTasks = $this->runtime->getTasks();
         if ($this->runtime->getEnvironmentConfig('releases', false) && !$this->runtime->inRollback()) {
@@ -235,7 +237,7 @@ class DeployCommand extends AbstractCommand
         }
 
         if (!$this->runTasks($output, $postDeployTasks)) {
-            throw new DeploymentException(sprintf('    Tasks failed on <fg=black;options=bold>%s</> stage, halting deployment', $this->getStageName()), 50);
+            throw new RuntimeException(sprintf('Stage "%s" did not finished successfully, halting command.', $this->getStageName()), 50);
         }
     }
 
@@ -282,18 +284,24 @@ class DeployCommand extends AbstractCommand
                         $this->log(sprintf('Task %s (%s) finished with OK', $task->getDescription(), $task->getName()));
                     } else {
                         $output->writeln('<fg=red>FAIL</>');
-                        $this->statusCode = 500;
+                        $this->statusCode = 180;
                         $this->log(sprintf('Task %s (%s) finished with FAIL', $task->getDescription(), $task->getName()));
                     }
+
                 } catch (SkipException $exception) {
                     $succeededTasks++;
                     $output->writeln('<fg=yellow>SKIPPED</>');
                     $this->log(sprintf('Task %s (%s) finished with SKIPPED, thrown SkipException', $task->getDescription(), $task->getName()));
+
                 } catch (ErrorException $exception) {
                     $output->writeln(sprintf('<fg=red>ERROR</> [%s]', $exception->getTrimmedMessage()));
                     $this->log(sprintf('Task %s (%s) finished with FAIL, with Error "%s"', $task->getDescription(), $task->getName(), $exception->getMessage()));
-                    $this->statusCode = $exception->getCode();
+                    $this->statusCode = 190;
                 }
+            }
+
+            if ($this->statusCode !== 0) {
+                break;
             }
         }
 
@@ -303,7 +311,7 @@ class DeployCommand extends AbstractCommand
             $alertColor = 'green';
         }
 
-        $output->writeln(sprintf('    Finished <fg=black;options=bold>%s</> tasks: <fg=%s>%d/%d</> done.', $this->getStageName(), $alertColor, $succeededTasks, $totalTasks));
+        $output->writeln(sprintf('    Finished <fg=%s>%d/%d</> tasks for <fg=black;options=bold>%s</>.', $alertColor, $succeededTasks, $totalTasks, $this->getStageName()));
         $output->writeln('');
 
         return ($succeededTasks == $totalTasks);

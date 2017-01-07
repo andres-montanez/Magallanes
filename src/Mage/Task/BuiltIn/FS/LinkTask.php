@@ -11,6 +11,7 @@
 namespace Mage\Task\BuiltIn\FS;
 
 use Symfony\Component\Process\Process;
+use Exception;
 
 /**
  * File System Task - Symlink a File
@@ -26,7 +27,12 @@ class LinkTask extends AbstractFileTask
 
     public function getDescription()
     {
-        return sprintf('[FS] Link "%s" to "%s"', $this->getFile('from'), $this->getFile('to'));
+        try {
+            return sprintf('[FS] Link "%s" to "%s"', $this->getFile('from'), $this->getFile('to'));
+
+        } catch (Exception $exception) {
+            return '[FS] Link [missing parameters]';
+        }
     }
 
     public function execute()

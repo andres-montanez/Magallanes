@@ -11,6 +11,7 @@
 namespace Mage\Task\BuiltIn\FS;
 
 use Symfony\Component\Process\Process;
+use Exception;
 
 /**
  * File System Task - Move a File
@@ -26,7 +27,12 @@ class MoveTask extends AbstractFileTask
 
     public function getDescription()
     {
-        return sprintf('[FS] Move "%s" to "%s"', $this->getFile('from'), $this->getFile('to'));
+        try {
+            return sprintf('[FS] Move "%s" to "%s"', $this->getFile('from'), $this->getFile('to'));
+
+        } catch (Exception $exception) {
+            return '[FS] Move [missing parameters]';
+        }
     }
 
     public function execute()

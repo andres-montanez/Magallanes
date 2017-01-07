@@ -11,6 +11,7 @@
 namespace Mage\Task\BuiltIn\FS;
 
 use Symfony\Component\Process\Process;
+use Exception;
 
 /**
  * File System Task - Remove a File
@@ -26,7 +27,12 @@ class RemoveTask extends AbstractFileTask
 
     public function getDescription()
     {
-        return sprintf('[FS] Remove "%s"', $this->getFile('file'));
+        try {
+            return sprintf('[FS] Remove "%s"', $this->getFile('file'));
+
+        } catch (Exception $exception) {
+            return '[FS] Remove [missing parameters]';
+        }
     }
 
     public function execute()

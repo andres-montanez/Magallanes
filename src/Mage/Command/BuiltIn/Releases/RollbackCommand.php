@@ -11,8 +11,7 @@
 namespace Mage\Command\BuiltIn\Releases;
 
 use Mage\Task\TaskFactory;
-use Mage\Runtime\Exception\InvalidEnvironmentException;
-use Mage\Runtime\Exception\DeploymentException;
+use Mage\Runtime\Exception\RuntimeException;
 use Symfony\Component\Process\Process;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputArgument;
@@ -26,6 +25,11 @@ use Mage\Command\BuiltIn\DeployCommand;
  */
 class RollbackCommand extends DeployCommand
 {
+    /**
+     * @var int
+     */
+    protected $statusCode = 0;
+
     /**
      * Configure the Command
      */
@@ -45,7 +49,6 @@ class RollbackCommand extends DeployCommand
      * @param InputInterface $input
      * @param OutputInterface $output
      * @return int|mixed
-     * @throws DeploymentException
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
@@ -54,24 +57,22 @@ class RollbackCommand extends DeployCommand
 
         try {
             $this->runtime->setEnvironment($input->getArgument('environment'));
-        } catch (InvalidEnvironmentException $exception) {
-            $output->writeln(sprintf('<error>%s</error>', $exception->getMessage()));
-            return $exception->getCode();
-        }
 
-        if (!$this->runtime->getEnvironmentConfig('releases', false)) {
-            throw new DeploymentException('Releases are not enabled', 70);
-        }
+            if (!$this->runtime->getEnvironmentConfig('releases', false)) {
+                throw new RuntimeException('Releases are not enabled', 70);
+            }
 
-        // Check if the Release exists in all hosts
-        $releaseToRollback = $input->getArgument('release');
-        if ($releaseId = $this->checkReleaseAvailability($releaseToRollback)) {
+            $releaseToRollback = $input->getArgument('release');
+            if (($releaseId = $this->checkReleaseAvailability($releaseToRollback)) === false) {
+                throw new RuntimeException(sprintf('Release "%s" is not available on all hosts', $releaseToRollback), 72);
+            }
+
             $this->runtime->setReleaseId($releaseId)->setRollback(true);
 
             $output->writeln(sprintf('    Environment: <fg=green>%s</>', $this->runtime->getEnvironment()));
             $this->log(sprintf('Environment: %s', $this->runtime->getEnvironment()));
 
-            $output->writeln(sprintf('    Rollback to Release ID: <fg=green>%s</>', $this->runtime->getReleaseId()));
+            $output->writeln(sprintf('    Rollback to Release Id: <fg=green>%s</>', $this->runtime->getReleaseId()));
             $this->log(sprintf('Release ID: %s', $this->runtime->getReleaseId()));
 
             if ($this->runtime->getConfigOptions('log_file', false)) {
@@ -80,22 +81,17 @@ class RollbackCommand extends DeployCommand
 
             $output->writeln('');
 
-            // Get the Task Factory
             $this->taskFactory = new TaskFactory($this->runtime);
+            $this->runDeployment($output);
 
-            try {
-                $this->runDeployment($output);
-            } catch (DeploymentException $exception) {
-                $output->writeln(sprintf('<error>%s</error>', $exception->getMessage()));
-                return $exception->getCode();
-            }
-        } else {
-            throw new DeploymentException(sprintf('Release "%s" is not available on all hosts', $releaseToRollback), 72);
+        } catch (RuntimeException $exception) {
+            $output->writeln(sprintf('<error>%s</error>', $exception->getMessage()));
+            $this->statusCode = $exception->getCode();
         }
 
         $output->writeln('Finished <fg=blue>Magallanes</>');
 
-        return 0;
+        return $this->statusCode;
     }
 
     /**

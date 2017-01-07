@@ -19,9 +19,9 @@ class UtilsTest extends TestCase
 {
     public function testStageNames()
     {
-        $this->assertEquals('Pre Deployment', Utils::getStageName(Runtime::PRE_DEPLOY));
-        $this->assertEquals('On Deployment', Utils::getStageName(Runtime::ON_DEPLOY));
-        $this->assertEquals('Post Deployment', Utils::getStageName(Runtime::POST_DEPLOY));
+        $this->assertEquals('Pre Deploy', Utils::getStageName(Runtime::PRE_DEPLOY));
+        $this->assertEquals('On Deploy', Utils::getStageName(Runtime::ON_DEPLOY));
+        $this->assertEquals('Post Deploy', Utils::getStageName(Runtime::POST_DEPLOY));
         $this->assertEquals('On Release', Utils::getStageName(Runtime::ON_RELEASE));
         $this->assertEquals('Post Release', Utils::getStageName(Runtime::POST_RELEASE));
         $this->assertEquals('invalid-stage', Utils::getStageName('invalid-stage'));

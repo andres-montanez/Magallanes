@@ -192,7 +192,6 @@ class DeployCommandMiscTest extends TestCase
             3 => 'composer install --optimize-autoloader',
             4 => 'composer dump-autoload --optimize',
             5 => 'rsync -e "ssh -p 22 -q -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no" -avz --exclude=.git --exclude=./var/cache/* --exclude=./var/log/* --exclude=./web/app_dev.php ./ tester@testhost:/var/www/test',
-            6 => 'git checkout master',
         );
 
         // Check total of Executed Commands

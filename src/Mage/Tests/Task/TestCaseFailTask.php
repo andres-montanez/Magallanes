@@ -10,7 +10,7 @@
 
 namespace Mage\Tests\Task;
 
-use Mage\Task\ErrorException;
+use Mage\Task\Exception\ErrorException;
 use Mage\Task\AbstractTask;
 
 class TestCaseFailTask extends AbstractTask

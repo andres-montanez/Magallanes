@@ -11,8 +11,6 @@
 namespace Mage\Command\BuiltIn\Releases;
 
 use Mage\Utils;
-use Mage\Runtime\Exception\InvalidEnvironmentException;
-use Mage\Runtime\Exception\DeploymentException;
 use Mage\Runtime\Exception\RuntimeException;
 use Symfony\Component\Process\Process;
 use Symfony\Component\Console\Input\InputInterface;
@@ -27,6 +25,11 @@ use Mage\Command\AbstractCommand;
  */
 class ListCommand extends AbstractCommand
 {
+    /**
+     * @var int
+     */
+    protected $statusCode = 0;
+
     /**
      * Configure the Command
      */
@@ -45,8 +48,6 @@ class ListCommand extends AbstractCommand
      * @param InputInterface $input
      * @param OutputInterface $output
      * @return int|mixed
-     * @throws DeploymentException
-     * @throws RuntimeException
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
@@ -55,91 +56,92 @@ class ListCommand extends AbstractCommand
 
         try {
             $this->runtime->setEnvironment($input->getArgument('environment'));
-        } catch (InvalidEnvironmentException $exception) {
-            $output->writeln(sprintf('<error>%s</error>', $exception->getMessage()));
-            return $exception->getCode();
-        }
 
-        if (!$this->runtime->getEnvironmentConfig('releases', false)) {
-            throw new DeploymentException('Releases are not enabled', 70);
-        }
+            if (!$this->runtime->getEnvironmentConfig('releases', false)) {
+                throw new RuntimeException('Releases are not enabled', 70);
+            }
 
-        $output->writeln(sprintf('    Environment: <fg=green>%s</>', $this->runtime->getEnvironment()));
-        $this->log(sprintf('Environment: %s', $this->runtime->getEnvironment()));
+            $output->writeln(sprintf('    Environment: <fg=green>%s</>', $this->runtime->getEnvironment()));
+            $this->log(sprintf('Environment: %s', $this->runtime->getEnvironment()));
 
-        if ($this->runtime->getConfigOptions('log_file', false)) {
-            $output->writeln(sprintf('    Logfile: <fg=green>%s</>', $this->runtime->getConfigOptions('log_file')));
-        }
+            if ($this->runtime->getConfigOptions('log_file', false)) {
+                $output->writeln(sprintf('    Logfile: <fg=green>%s</>', $this->runtime->getConfigOptions('log_file')));
+            }
 
-        $output->writeln('');
-
-        $hosts = $this->runtime->getEnvironmentConfig('hosts');
-        if (count($hosts) == 0) {
-            $output->writeln('No hosts defined');
             $output->writeln('');
-        } else {
-            $hostPath = rtrim($this->runtime->getEnvironmentConfig('host_path'), '/');
 
-            foreach ($hosts as $host) {
-                $this->runtime->setWorkingHost($host);
+            $hosts = $this->runtime->getEnvironmentConfig('hosts');
+            if (count($hosts) == 0) {
+                $output->writeln('No hosts defined');
+                $output->writeln('');
+            } else {
+                $hostPath = rtrim($this->runtime->getEnvironmentConfig('host_path'), '/');
 
-                // Get List of Releases
-                $cmdListReleases = sprintf('ls -1 %s/releases', $hostPath);
+                foreach ($hosts as $host) {
+                    $this->runtime->setWorkingHost($host);
 
-                /** @var Process $process */
-                $process = $this->runtime->runRemoteCommand($cmdListReleases, false);
-                if (!$process->isSuccessful()) {
-                    throw new RuntimeException(sprintf('Unable to retrieve releases from host "%s"', $host), 80);
-                }
-
-                if (trim($process->getOutput()) != '') {
-                    $releases = explode(PHP_EOL, trim($process->getOutput()));
-                    rsort($releases);
-                } else {
-                    $releases = [];
-                }
-
-                if (count($releases) == 0) {
-                    $output->writeln(sprintf('    No releases available on host <fg=black;options=bold>%s</>:', $host));
-                } else {
-                    // Get Current Release
-                    $cmdCurrentRelease = sprintf('readlink -f %s/current', $hostPath);
+                    // Get List of Releases
+                    $cmdListReleases = sprintf('ls -1 %s/releases', $hostPath);
 
                     /** @var Process $process */
-                    $process = $this->runtime->runRemoteCommand($cmdCurrentRelease, false);
+                    $process = $this->runtime->runRemoteCommand($cmdListReleases, false);
                     if (!$process->isSuccessful()) {
-                        throw new RuntimeException(sprintf('Unable to retrieve current release from host "%s"', $host), 85);
+                        throw new RuntimeException(sprintf('Unable to retrieve releases from host "%s"', $host), 80);
                     }
 
-                    $currentReleaseId = explode('/', trim($process->getOutput()));
-                    $currentReleaseId = $currentReleaseId[count($currentReleaseId) - 1];
+                    if (trim($process->getOutput()) != '') {
+                        $releases = explode(PHP_EOL, trim($process->getOutput()));
+                        rsort($releases);
+                    } else {
+                        $releases = [];
+                    }
 
-                    $output->writeln(sprintf('    Releases on host <fg=black;options=bold>%s</>:', $host));
+                    if (count($releases) == 0) {
+                        $output->writeln(sprintf('    No releases available on host <fg=black;options=bold>%s</>:', $host));
+                    } else {
+                        // Get Current Release
+                        $cmdCurrentRelease = sprintf('readlink -f %s/current', $hostPath);
 
-                    foreach ($releases as $releaseId) {
-                        $releaseDate = Utils::getReleaseDate($releaseId);
+                        /** @var Process $process */
+                        $process = $this->runtime->runRemoteCommand($cmdCurrentRelease, false);
+                        if (!$process->isSuccessful()) {
+                            throw new RuntimeException(sprintf('Unable to retrieve current release from host "%s"', $host), 85);
+                        }
 
-                        $output->write(sprintf('        Release ID: <fg=magenta>%s</> - Date: <fg=black;options=bold>%s</> [%s]',
-                            $releaseId,
-                            $releaseDate->format('Y-m-d H:i:s'),
-                            Utils::getTimeDiff($releaseDate)
-                        ));
+                        $currentReleaseId = explode('/', trim($process->getOutput()));
+                        $currentReleaseId = $currentReleaseId[count($currentReleaseId) - 1];
 
-                        if ($releaseId == $currentReleaseId) {
-                            $output->writeln(' <fg=red;options=bold>[current]</>');
-                        } else {
-                            $output->writeln('');
+                        $output->writeln(sprintf('    Releases on host <fg=black;options=bold>%s</>:', $host));
+
+                        foreach ($releases as $releaseId) {
+                            $releaseDate = Utils::getReleaseDate($releaseId);
+
+                            $output->write(sprintf('        Release ID: <fg=magenta>%s</> - Date: <fg=black;options=bold>%s</> [%s]',
+                                $releaseId,
+                                $releaseDate->format('Y-m-d H:i:s'),
+                                Utils::getTimeDiff($releaseDate)
+                            ));
+
+                            if ($releaseId == $currentReleaseId) {
+                                $output->writeln(' <fg=red;options=bold>[current]</>');
+                            } else {
+                                $output->writeln('');
+                            }
                         }
                     }
-                }
 
-                $this->runtime->setWorkingHost(null);
-                $output->writeln('');
+                    $this->runtime->setWorkingHost(null);
+                    $output->writeln('');
+                }
             }
+
+        } catch (RuntimeException $exception) {
+            $output->writeln(sprintf('<error>%s</error>', $exception->getMessage()));
+            $this->statusCode = $exception->getCode();
         }
 
         $output->writeln('Finished <fg=blue>Magallanes</>');
 
-        return 0;
+        return $this->statusCode;
     }
 }

@@ -10,6 +10,7 @@
 
 namespace Mage\Task\BuiltIn\Deploy;
 
+use Mage\Task\Exception\ErrorException;
 use Mage\Task\ExecuteOnRollbackInterface;
 use Symfony\Component\Process\Process;
 use Mage\Task\AbstractTask;
@@ -33,6 +34,10 @@ class ReleaseTask extends AbstractTask implements ExecuteOnRollbackInterface
 
     public function execute()
     {
+        if (!$this->runtime->getEnvironmentConfig('releases', false)) {
+            throw new ErrorException('This task is only available with releases enabled', 40);
+        }
+
         $hostPath = rtrim($this->runtime->getEnvironmentConfig('host_path'), '/');
         $releaseId = $this->runtime->getReleaseId();
 

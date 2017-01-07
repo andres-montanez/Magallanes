@@ -8,13 +8,15 @@
  * file that was distributed with this source code.
  */
 
-namespace Mage\Runtime\Exception;
+namespace Mage\Task\Exception;
+
+use Exception;
 
 /**
- * The provided Environment is invalid
+ * The Task will be Skipped
  *
  * @author Andrés Montañez <andresmontanez@gmail.com>
  */
-class InvalidEnvironmentException extends RuntimeException
+class SkipException extends Exception
 {
 }

@@ -10,7 +10,7 @@
 
 namespace Mage\Task\BuiltIn\FS;
 
-use Mage\Runtime\Exception\RuntimeException;
+use Mage\Task\Exception\ErrorException;
 use Mage\Task\AbstractTask;
 
 /**
@@ -26,7 +26,7 @@ abstract class AbstractFileTask extends AbstractTask
 
         foreach ($mandatory as $parameter) {
             if (!array_key_exists($parameter, $this->options)) {
-                throw new RuntimeException(sprintf('Parameter "%s" is not defined', $parameter));
+                throw new ErrorException(sprintf('Parameter "%s" is not defined', $parameter));
             }
         }
 

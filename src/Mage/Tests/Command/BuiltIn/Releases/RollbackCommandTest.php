@@ -75,13 +75,9 @@ class RollbackCommandTest extends TestCase
 
         $tester = new CommandTester($command);
 
-        try {
-            $tester->execute(['command' => $command->getName(), 'environment' => 'test', 'release' => '20170101015115']);
-            $this->assertTrue(false, 'Command did not failed');
-        } catch (Exception $exception) {
-            $this->assertTrue($exception instanceof DeploymentException);
-            $this->assertEquals('Releases are not enabled', $exception->getMessage());
-        }
+        $tester->execute(['command' => $command->getName(), 'environment' => 'test', 'release' => '20170101015115']);
+        $this->assertNotEquals(0, $tester->getStatusCode());
+        $this->assertContains('Releases are not enabled', $tester->getDisplay());
     }
 
     public function testRollbackReleaseNotAvailable()
@@ -95,12 +91,8 @@ class RollbackCommandTest extends TestCase
 
         $tester = new CommandTester($command);
 
-        try {
-            $tester->execute(['command' => $command->getName(), 'environment' => 'test', 'release' => '20170101015115']);
-            $this->assertTrue(false, 'Command did not failed');
-        } catch (Exception $exception) {
-            $this->assertTrue($exception instanceof DeploymentException);
-            $this->assertEquals('Release "20170101015115" is not available on all hosts', $exception->getMessage());
-        }
+        $tester->execute(['command' => $command->getName(), 'environment' => 'test', 'release' => '20170101015115']);
+        $this->assertNotEquals(0, $tester->getStatusCode());
+        $this->assertContains('Release "20170101015115" is not available on all hosts', $tester->getDisplay());
     }
 }

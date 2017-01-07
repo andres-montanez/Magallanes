@@ -13,7 +13,7 @@ namespace Mage\Runtime;
 use Psr\Log\LoggerInterface;
 use Psr\Log\LogLevel;
 use Symfony\Component\Process\Process;
-use Mage\Runtime\Exception\InvalidEnvironmentException;
+use Mage\Runtime\Exception\RuntimeException;
 
 /**
  * Runtime is a container of all run in time configuration, stages of progress, hosts being deployed, etc.
@@ -210,7 +210,6 @@ class Runtime
      * @param mixed $key Section name
      * @param mixed $default Default value
      * @return mixed
-     * @throws InvalidEnvironmentException
      */
     public function getEnvironmentConfig($key = null, $default = null)
     {
@@ -257,7 +256,7 @@ class Runtime
      *
      * @param string $environment Environment name
      * @return Runtime
-     * @throws InvalidEnvironmentException
+     * @throws RuntimeException
      */
     public function setEnvironment($environment)
     {
@@ -266,7 +265,7 @@ class Runtime
             return $this;
         }
 
-        throw new InvalidEnvironmentException(sprintf('The environment "%s" does not exists.', $environment), 100);
+        throw new RuntimeException(sprintf('The environment "%s" does not exists.', $environment), 100);
     }
 
     /**
@@ -305,7 +304,6 @@ class Runtime
      * Retrieve the defined Tasks for the current Environment and Stage
      *
      * @return array
-     * @throws InvalidEnvironmentException
      */
     public function getTasks()
     {
@@ -405,7 +403,6 @@ class Runtime
      * @param bool $jail Jail the command
      * @param int $timeout Seconds to wait
      * @return Process
-     * @throws InvalidEnvironmentException
      */
     public function runRemoteCommand($cmd, $jail = true, $timeout = 120)
     {
