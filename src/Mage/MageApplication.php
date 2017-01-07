@@ -20,7 +20,8 @@ use Symfony\Component\EventDispatcher\EventDispatcher;
 use Symfony\Component\Console\Event\ConsoleExceptionEvent;
 use Symfony\Component\Console\ConsoleEvents;
 use Symfony\Component\Console\Application;
-use Symfony\Component\Yaml\Yaml;
+use Symfony\Component\Yaml\Parser;
+use Symfony\Component\Yaml\Exception\ParseException;
 use ReflectionClass;
 use Mage\Runtime\Exception\RuntimeException;
 
@@ -62,7 +63,13 @@ class MageApplication extends Application
             throw new RuntimeException(sprintf('The file "%s" does not exists or is not readable.', $file));
         }
 
-        $config = Yaml::parse(file_get_contents($file));
+        try {
+            $parser = new Parser();
+            $config = $parser->parse(file_get_contents($file));
+        } catch (ParseException $exception) {
+            throw new RuntimeException(sprintf('Error parsing the file "%s".', $file));
+        }
+
         if (array_key_exists('magephp', $config)) {
             $config = $config['magephp'];
 
@@ -80,9 +87,10 @@ class MageApplication extends Application
             $this->runtime->setLogger($logger);
 
             $this->loadBuiltInCommands();
-        } else {
-            throw new RuntimeException(sprintf('The file "%s" does not have a valid Magallanes configuration.', $file));
+            return true;
         }
+
+        throw new RuntimeException(sprintf('The file "%s" does not have a valid Magallanes configuration.', $file));
     }
 
     /**

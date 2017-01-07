@@ -36,6 +36,17 @@ class MageApplicationTest extends TestCase
         }
     }
 
+    public function testParserError()
+    {
+        try {
+            $application = new MageApplication();
+            $application->configure(__DIR__ . '/Resources/invalid-yaml.yml');
+        } catch (Exception $exception) {
+            $this->assertTrue($exception instanceof RuntimeException);
+            $this->assertEquals(sprintf('Error parsing the file "%s".', __DIR__ . '/Resources/invalid-yaml.yml'), $exception->getMessage());
+        }
+    }
+
     public function testInvalidFile()
     {
         try {
