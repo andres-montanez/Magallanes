@@ -54,7 +54,7 @@ We use [PSR2](http://www.php-fig.org/psr/psr-2/) as PHP coding standard.
 2. [PHP Mess Detector](https://phpmd.org/)
 3. PHP Copy/Paste Detector
 4. PHP Dead Code Detector
-5. [PHP Coding Standards Fixer](http://cs.sensiolabs.org)
+5. [PHP Coding Standards Fixer](http://cs.sensiolabs.org) with --level=psr2
 
 ## Testing and quality
 We use PHPUnit to test our code. Most of the project is covered with tests, so if you want your code to be merged push it with proper testing and coverage (at least 95%). To execute the tests with code coverage report:
