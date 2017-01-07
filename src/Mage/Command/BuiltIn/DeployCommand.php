@@ -17,7 +17,6 @@ use Mage\Task\AbstractTask;
 use Mage\Task\Exception\ErrorException;
 use Mage\Task\Exception\SkipException;
 use Mage\Task\TaskFactory;
-use Mage\Utils;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputOption;
@@ -31,11 +30,6 @@ use Mage\Command\AbstractCommand;
  */
 class DeployCommand extends AbstractCommand
 {
-    /**
-     * @var int
-     */
-    protected $statusCode = 0;
-
     /**
      * @var TaskFactory
      */
@@ -312,15 +306,5 @@ class DeployCommand extends AbstractCommand
         $output->writeln('');
 
         return ($succeededTasks == $totalTasks);
-    }
-
-    /**
-     * Get the Human friendly Stage name
-     *
-     * @return string
-     */
-    protected function getStageName()
-    {
-        return Utils::getStageName($this->runtime->getStage());
     }
 }

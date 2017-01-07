@@ -10,6 +10,7 @@
 
 namespace Mage\Command;
 
+use Mage\Utils;
 use Mage\Runtime\Runtime;
 use Psr\Log\LogLevel;
 use Symfony\Component\Console\Command\Command;
@@ -21,6 +22,11 @@ use Symfony\Component\Console\Command\Command;
  */
 abstract class AbstractCommand extends Command
 {
+    /**
+     * @var int
+     */
+    protected $statusCode = 0;
+
     /**
      * @var Runtime Current Runtime instance
      */
@@ -48,5 +54,15 @@ abstract class AbstractCommand extends Command
     public function log($message, $level = LogLevel::DEBUG)
     {
         $this->runtime->log($message, $level);
+    }
+
+    /**
+     * Get the Human friendly Stage name
+     *
+     * @return string
+     */
+    protected function getStageName()
+    {
+        return Utils::getStageName($this->runtime->getStage());
     }
 }
