@@ -50,8 +50,8 @@ We use [PSR2](http://www.php-fig.org/psr/psr-2/) as PHP coding standard.
 
 ### Tools you can use to ensure your code quality
 
-1. **PHP-CodeSniffer**
-2. **PHP Mess Detector**
+1. PHP-CodeSniffer
+2. [PHP Mess Detector](https://phpmd.org/)
 3. PHP Copy/Paste Detector
 4. PHP Dead Code Detector
 5. [PHP Coding Standards Fixer](http://cs.sensiolabs.org)
