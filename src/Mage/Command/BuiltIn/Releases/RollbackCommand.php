@@ -106,6 +106,7 @@ class RollbackCommand extends DeployCommand
 
         $availableInHosts = 0;
         foreach ($hosts as $host) {
+            $releases = [];
             $this->runtime->setWorkingHost($host);
 
             // Get List of Releases
@@ -113,9 +114,7 @@ class RollbackCommand extends DeployCommand
 
             /** @var Process $process */
             $process = $this->runtime->runRemoteCommand($cmdListReleases, false);
-            if (!$process->isSuccessful()) {
-                $releases = [];
-            } else {
+            if ($process->isSuccessful()) {
                 $releases = explode(PHP_EOL, trim($process->getOutput()));
                 rsort($releases);
             }
