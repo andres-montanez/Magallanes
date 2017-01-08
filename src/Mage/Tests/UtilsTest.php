@@ -19,18 +19,20 @@ class UtilsTest extends TestCase
 {
     public function testStageNames()
     {
-        $this->assertEquals('Pre Deploy', Utils::getStageName(Runtime::PRE_DEPLOY));
-        $this->assertEquals('On Deploy', Utils::getStageName(Runtime::ON_DEPLOY));
-        $this->assertEquals('Post Deploy', Utils::getStageName(Runtime::POST_DEPLOY));
-        $this->assertEquals('On Release', Utils::getStageName(Runtime::ON_RELEASE));
-        $this->assertEquals('Post Release', Utils::getStageName(Runtime::POST_RELEASE));
-        $this->assertEquals('invalid-stage', Utils::getStageName('invalid-stage'));
+        $utils = new Utils();
+        $this->assertEquals('Pre Deploy', $utils->getStageName(Runtime::PRE_DEPLOY));
+        $this->assertEquals('On Deploy', $utils->getStageName(Runtime::ON_DEPLOY));
+        $this->assertEquals('Post Deploy', $utils->getStageName(Runtime::POST_DEPLOY));
+        $this->assertEquals('On Release', $utils->getStageName(Runtime::ON_RELEASE));
+        $this->assertEquals('Post Release', $utils->getStageName(Runtime::POST_RELEASE));
+        $this->assertEquals('invalid-stage', $utils->getStageName('invalid-stage'));
     }
 
     public function testReleaseDate()
     {
+        $utils = new Utils();
         $releaseId = '20170102031530';
-        $dateTime = Utils::getReleaseDate($releaseId);
+        $dateTime = $utils->getReleaseDate($releaseId);
 
         $this->assertTrue($dateTime instanceof DateTime);
 
@@ -39,44 +41,45 @@ class UtilsTest extends TestCase
 
     public function testTimeDiffs()
     {
+        $utils = new Utils();
         $dateTime = new DateTime();
         $dateTime->modify('-1 second');
-        $this->assertEquals('just now', Utils::getTimeDiff($dateTime));
+        $this->assertEquals('just now', $utils->getTimeDiff($dateTime));
 
         $dateTime = new DateTime();
         $dateTime->modify('-45 seconds');
-        $this->assertEquals('45 seconds ago', Utils::getTimeDiff($dateTime));
+        $this->assertEquals('45 seconds ago', $utils->getTimeDiff($dateTime));
 
         $dateTime = new DateTime();
         $dateTime->modify('-90 seconds');
-        $this->assertEquals('one minute ago', Utils::getTimeDiff($dateTime));
+        $this->assertEquals('one minute ago', $utils->getTimeDiff($dateTime));
 
         $dateTime = new DateTime();
         $dateTime->modify('-30 minutes');
-        $this->assertEquals('30 minutes ago', Utils::getTimeDiff($dateTime));
+        $this->assertEquals('30 minutes ago', $utils->getTimeDiff($dateTime));
 
         $dateTime = new DateTime();
         $dateTime->modify('-1 hour');
-        $this->assertEquals('one hour ago', Utils::getTimeDiff($dateTime));
+        $this->assertEquals('one hour ago', $utils->getTimeDiff($dateTime));
 
         $dateTime = new DateTime();
         $dateTime->modify('-10 hours');
-        $this->assertEquals('10 hours ago', Utils::getTimeDiff($dateTime));
+        $this->assertEquals('10 hours ago', $utils->getTimeDiff($dateTime));
 
         $dateTime = new DateTime();
         $dateTime->modify('-1 day');
-        $this->assertEquals('one day ago', Utils::getTimeDiff($dateTime));
+        $this->assertEquals('one day ago', $utils->getTimeDiff($dateTime));
 
         $dateTime = new DateTime();
         $dateTime->modify('-3 days');
-        $this->assertEquals('3 days ago', Utils::getTimeDiff($dateTime));
+        $this->assertEquals('3 days ago', $utils->getTimeDiff($dateTime));
 
         $dateTime = new DateTime();
         $dateTime->modify('-7 days');
-        $this->assertEquals('a week ago', Utils::getTimeDiff($dateTime));
+        $this->assertEquals('a week ago', $utils->getTimeDiff($dateTime));
 
         $dateTime = new DateTime();
         $dateTime->modify('-10 days');
-        $this->assertEquals('', Utils::getTimeDiff($dateTime));
+        $this->assertEquals('', $utils->getTimeDiff($dateTime));
     }
 }

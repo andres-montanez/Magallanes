@@ -51,6 +51,7 @@ class ListCommand extends AbstractCommand
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
+        $utils = new Utils();
         $output->writeln('Starting <fg=blue>Magallanes</>');
         $output->writeln('');
 
@@ -114,12 +115,12 @@ class ListCommand extends AbstractCommand
                         $output->writeln(sprintf('    Releases on host <fg=black;options=bold>%s</>:', $host));
 
                         foreach ($releases as $releaseId) {
-                            $releaseDate = Utils::getReleaseDate($releaseId);
+                            $releaseDate = $utils->getReleaseDate($releaseId);
 
                             $output->write(sprintf('        Release ID: <fg=magenta>%s</> - Date: <fg=black;options=bold>%s</> [%s]',
                                 $releaseId,
                                 $releaseDate->format('Y-m-d H:i:s'),
-                                Utils::getTimeDiff($releaseDate)
+                                $utils->getTimeDiff($releaseDate)
                             ));
 
                             if ($releaseId == $currentReleaseId) {

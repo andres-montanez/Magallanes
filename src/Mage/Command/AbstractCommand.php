@@ -63,6 +63,7 @@ abstract class AbstractCommand extends Command
      */
     protected function getStageName()
     {
-        return Utils::getStageName($this->runtime->getStage());
+        $utils = new Utils();
+        return $utils->getStageName($this->runtime->getStage());
     }
 }

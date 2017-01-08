@@ -26,7 +26,7 @@ class Utils
      * @param string $stage
      * @return string
      */
-    public static function getStageName($stage)
+    public function getStageName($stage)
     {
         switch ($stage) {
             case Runtime::PRE_DEPLOY:
@@ -59,7 +59,7 @@ class Utils
      * @param string $releaseId The Release ID
      * @return DateTime
      */
-    public static function getReleaseDate($releaseId)
+    public function getReleaseDate($releaseId)
     {
         $formatted = sprintf('%d%d%d%d-%d%d-%d%d %d%d:%d%d:%d%d',
             $releaseId[0],  $releaseId[1], $releaseId[2], $releaseId[3],
@@ -79,7 +79,7 @@ class Utils
      * @param DateTime $releaseDate
      * @return string
      */
-    public static function getTimeDiff(DateTime $releaseDate)
+    public function getTimeDiff(DateTime $releaseDate)
     {
         $textDiff = '';
         $now = new DateTime();
