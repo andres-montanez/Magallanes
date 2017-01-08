@@ -426,7 +426,7 @@ class Runtime
             }
         }
 
-        $cmdRemote = str_replace(['"', '&', ';'], ['\"', '\&', '\;'], $cmdDelegate);
+        $cmdRemote = str_replace(['"', '&', ';', '|'], ['\"', '\&', '\;', '\|'], $cmdDelegate);
         $cmdLocal = sprintf('ssh -p %d %s %s@%s sh -c \"%s\"', $sshConfig['port'], $sshConfig['flags'], $user, $host, $cmdRemote);
 
         return $this->runLocalCommand($cmdLocal, $timeout);
