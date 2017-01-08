@@ -65,12 +65,11 @@ class TaskFactory
      */
     public function get($name)
     {
+        $options = [];
         if (is_array($name)) {
             $options = $name;
             list($name) = array_keys($name);
             $options = $options[$name];
-        } else {
-            $options = [];
         }
 
         if (array_key_exists($name, $this->registeredTasks)) {
