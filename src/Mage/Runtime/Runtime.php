@@ -126,8 +126,8 @@ class Runtime
     /**
      * Sets a value in the Vars bag
      *
-     * @param mixed $key Variable name
-     * @param mixed $value Variable value
+     * @param string $key Variable name
+     * @param string $value Variable value
      * @return Runtime
      */
     public function setVar($key, $value)
@@ -139,9 +139,9 @@ class Runtime
     /**
      * Retrieve a value from the Vars bag
      *
-     * @param mixed $key Variable name
-     * @param mixed $default Variable default value, returned if not found
-     * @return mixed
+     * @param string $key Variable name
+     * @param string $default Variable default value, returned if not found
+     * @return string
      */
     public function getVar($key, $default = null)
     {
@@ -207,7 +207,7 @@ class Runtime
      * If $key is provided, it will be returned only that section, if not found the default value will be returned,
      * if $key is not provided, the whole Environment's configuration will be returned
      *
-     * @param mixed $key Section name
+     * @param string $key Section name
      * @param mixed $default Default value
      * @return mixed
      */
