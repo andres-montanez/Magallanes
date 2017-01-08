@@ -41,26 +41,24 @@ class ChangeBranchTask extends AbstractTask
     public function execute()
     {
         $options = $this->getOptions();
-        $branch = $options['branch'];
+        $branch = $this->runtime->getVar('git_revert_branch', false);
 
-        if (!$this->runtime->getVar('git_revert_branch', false)) {
+        if ($branch === false) {
             $cmdGetCurrent = sprintf('%s branch | grep "*"', $options['path']);
 
             /** @var Process $process */
             $process = $this->runtime->runLocalCommand($cmdGetCurrent);
-            if ($process->isSuccessful()) {
-                $initialBranch = str_replace('* ', '', trim($process->getOutput()));
-
-                if ($initialBranch == $branch) {
-                    throw new SkipException();
-                } else {
-                    $this->runtime->setVar('git_revert_branch', $initialBranch);
-                }
-            } else {
+            if (!$process->isSuccessful()) {
                 return false;
             }
-        } else {
-            $branch = $this->runtime->getVar('git_revert_branch');
+
+            $currentBranch = str_replace('* ', '', trim($process->getOutput()));
+            if ($currentBranch == $options['branch']) {
+                throw new SkipException();
+            }
+
+            $branch = $options['branch'];
+            $this->runtime->setVar('git_revert_branch', $currentBranch);
         }
 
         $cmdChange = sprintf('%s checkout %s', $options['path'], $branch);
