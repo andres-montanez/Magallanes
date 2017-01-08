@@ -97,4 +97,61 @@ class DeployCommandMiscTasksTest extends TestCase
         $this->assertEquals(7, $tester->getStatusCode());
         $this->assertContains('Invalid task name "invalid/task"', $tester->getDisplay());
     }
+
+    public function testBrokenGitBranch()
+    {
+        $application = new MageApplicationMockup();
+        $application->configure(__DIR__ . '/../../Resources/broken-git-branch.yml');
+
+        /** @var AbstractCommand $command */
+        $command = $application->find('deploy');
+        $this->assertTrue($command instanceof DeployCommand);
+
+        $tester = new CommandTester($command);
+
+        $application->getRuntime()->forceFail('git branch | grep "*"');
+
+        $tester->execute(['command' => $command->getName(), 'environment' => 'test']);
+
+        $this->assertContains('Running [Git] Change Branch (broken-test) ... FAIL', $tester->getDisplay());
+        $this->assertNotEquals(0, $tester->getStatusCode());
+    }
+
+    public function testBrokenGitCheckout()
+    {
+        $application = new MageApplicationMockup();
+        $application->configure(__DIR__ . '/../../Resources/broken-git-branch.yml');
+
+        /** @var AbstractCommand $command */
+        $command = $application->find('deploy');
+        $this->assertTrue($command instanceof DeployCommand);
+
+        $tester = new CommandTester($command);
+
+        $application->getRuntime()->forceFail('git checkout broken-test');
+
+        $tester->execute(['command' => $command->getName(), 'environment' => 'test']);
+
+        $this->assertContains('Running [Git] Change Branch (broken-test) ... FAIL', $tester->getDisplay());
+        $this->assertNotEquals(0, $tester->getStatusCode());
+    }
+
+    public function testBrokenGitUpdate()
+    {
+        $application = new MageApplicationMockup();
+        $application->configure(__DIR__ . '/../../Resources/broken-git-branch.yml');
+
+        /** @var AbstractCommand $command */
+        $command = $application->find('deploy');
+        $this->assertTrue($command instanceof DeployCommand);
+
+        $tester = new CommandTester($command);
+
+        $application->getRuntime()->forceFail('git pull');
+
+        $tester->execute(['command' => $command->getName(), 'environment' => 'test']);
+
+        $this->assertContains('Running [Git] Update ... FAIL', $tester->getDisplay());
+        $this->assertNotEquals(0, $tester->getStatusCode());
+    }
 }

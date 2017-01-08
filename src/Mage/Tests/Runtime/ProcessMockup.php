@@ -14,6 +14,7 @@ use Symfony\Component\Process\Process;
 
 class ProcessMockup extends Process
 {
+    public $forceFail = [];
     protected $commandline;
     protected $timeout;
     protected $success = true;
@@ -30,6 +31,10 @@ class ProcessMockup extends Process
 
     public function run($callback = null)
     {
+        if (in_array($this->commandline, $this->forceFail)) {
+            $this->success = false;
+        }
+
         if ($this->commandline == 'ssh -p 22 -q -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no tester@host1 sh -c \"readlink -f /var/www/test/current\"') {
             $this->success = false;
         }

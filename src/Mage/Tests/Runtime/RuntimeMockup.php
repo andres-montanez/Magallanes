@@ -16,6 +16,7 @@ use Symfony\Component\Process\Process;
 class RuntimeMockup extends Runtime
 {
     protected $ranCommands = [];
+    protected $forceFail = [];
 
     public function getRanCommands()
     {
@@ -45,6 +46,7 @@ class RuntimeMockup extends Runtime
         $this->ranCommands[] = $cmd;
 
         $process = new ProcessMockup($cmd);
+        $process->forceFail = $this->forceFail;
         $process->setTimeout($timeout);
         $process->run();
 
@@ -71,5 +73,10 @@ class RuntimeMockup extends Runtime
     {
         $this->environment = $environment;
         return $this;
+    }
+
+    public function forceFail($cmd)
+    {
+        $this->forceFail[] = $cmd;
     }
 }

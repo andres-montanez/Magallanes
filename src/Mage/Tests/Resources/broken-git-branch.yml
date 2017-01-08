@@ -1,0 +1,15 @@
+magephp:
+    log_dir: /tmp
+    environments:
+        test:
+            user: tester
+            branch: broken-test
+            host_path: /var/www/test
+            exclude:
+                - ./var/cache/*
+                - ./var/log/*
+                - ./web/app_dev.php
+            hosts:
+                - githost1
+            pre-deploy:
+                - git/update
