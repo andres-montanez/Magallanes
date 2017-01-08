@@ -55,4 +55,41 @@ class DeployCommandWithoutReleasesTest extends TestCase
 
         $this->assertEquals(0, $tester->getStatusCode());
     }
+
+    public function testDeploymentFailMidway()
+    {
+        $application = new MageApplicationMockup();
+        $application->configure(__DIR__ . '/../../Resources/testhost-without-releases.yml');
+
+        /** @var AbstractCommand $command */
+        $command = $application->find('deploy');
+        $this->assertTrue($command instanceof DeployCommand);
+
+        $application->getRuntime()->forceFail('rsync -e "ssh -p 22 -q -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no" -avz --exclude=.git --exclude=./var/cache/* --exclude=./var/log/* --exclude=./web/app_dev.php ./ tester@testhost:/var/www/test');
+
+        $tester = new CommandTester($command);
+        $tester->execute(['command' => $command->getName(), 'environment' => 'test']);
+
+        $ranCommands = $application->getRuntime()->getRanCommands();
+
+        $testCase = array(
+            0 => 'git branch | grep "*"',
+            1 => 'git checkout test',
+            2 => 'git pull',
+            3 => 'composer install --optimize-autoloader',
+            4 => 'composer dump-autoload --optimize',
+            5 => 'rsync -e "ssh -p 22 -q -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no" -avz --exclude=.git --exclude=./var/cache/* --exclude=./var/log/* --exclude=./web/app_dev.php ./ tester@testhost:/var/www/test',
+        );
+
+        // Check total of Executed Commands
+        $this->assertEquals(count($testCase), count($ranCommands));
+
+        // Check Generated Commands
+        foreach ($testCase as $index => $command) {
+            $this->assertEquals($command, $ranCommands[$index]);
+        }
+
+        $this->assertContains('Stage "On Deploy" did not finished successfully, halting command.', $tester->getDisplay());
+        $this->assertNotEquals(0, $tester->getStatusCode());
+    }
 }
