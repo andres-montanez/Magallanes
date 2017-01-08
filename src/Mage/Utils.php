@@ -12,6 +12,7 @@ namespace Mage;
 
 use Mage\Runtime\Runtime;
 use DateTime;
+use DateInterval;
 
 /**
  * Utility class for resolving trivial operations
@@ -81,44 +82,47 @@ class Utils
      */
     public function getTimeDiff(DateTime $releaseDate)
     {
-        $textDiff = '';
         $now = new DateTime();
+
+        /** @var DateInterval $diff */
         $diff = $now->diff($releaseDate);
 
-        if ($diff->format('%a') <= 7) {
-            if ($diff->format('%d') == 7) {
-                $textDiff = 'a week ago';
-            } elseif ($diff->format('%d') > 0 && $diff->format('%d') < 7) {
-                $days = $diff->format('%d');
-                if ($days <= 1) {
-                    $textDiff = 'one day ago';
-                } else {
-                    $textDiff = $days . ' days ago';
-                }
-            } elseif ($diff->format('%d') == 0 && $diff->format('%h') > 0) {
-                $hours = $diff->format('%h');
-                if ($hours <= 1) {
-                    $textDiff = 'one hour ago';
-                } else {
-                    $textDiff = $hours . ' hours ago';
-                }
-            } elseif ($diff->format('%d') == 0 && $diff->format('%h') == 0 && $diff->format('%i') > 0) {
-                $minutes = $diff->format('%i');
-                if ($minutes == 1) {
-                    $textDiff = 'one minute ago';
-                } else {
-                    $textDiff = $minutes . ' minutes ago';
-                }
-            } elseif ($diff->format('%d') == 0 && $diff->format('%h') == 0 && $diff->format('%i') == 0) {
-                $seconds = $diff->format('%s');
-                if ($seconds < 10) {
-                    $textDiff = 'just now';
-                } else {
-                    $textDiff = $seconds . ' seconds ago';
-                }
-            }
+        if ($diff->days > 7) {
+            return '';
         }
 
-        return $textDiff;
+        if ($diff->days == 7) {
+            return 'a week ago';
+        }
+
+        if ($diff->days > 1) {
+            return sprintf('%d days ago', $diff->days);
+        }
+
+        if ($diff->days == 1) {
+            return 'one day ago';
+        }
+
+        if ($diff->h > 1) {
+            return sprintf('%d hours ago', $diff->h);
+        }
+
+        if ($diff->h == 1) {
+            return 'one hour ago';
+        }
+
+        if ($diff->i > 1) {
+            return sprintf('%d minutes ago', $diff->i);
+        }
+
+        if ($diff->i == 1) {
+            return 'one minute ago';
+        }
+
+        if ($diff->s >= 10) {
+            return sprintf('%d seconds ago', $diff->s);
+        }
+
+        return 'just now';
     }
 }
