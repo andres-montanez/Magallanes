@@ -20,6 +20,12 @@ use Mage\Task\AbstractTask;
  */
 abstract class AbstractFileTask extends AbstractTask
 {
+    /**
+     * Returns the Task options
+     *
+     * @return array
+     * @throws ErrorException
+     */
     protected function getOptions()
     {
         $mandatory = $this->getParameters();
@@ -33,8 +39,20 @@ abstract class AbstractFileTask extends AbstractTask
         return $this->options;
     }
 
+    /**
+     * Returns the mandatory parameters
+     *
+     * @return array
+     */
     abstract protected function getParameters();
 
+    /**
+     * Returns a file with the placeholders replaced
+     *
+     * @param string $file
+     * @return string
+     * @throws ErrorException
+     */
     protected function getFile($file)
     {
         $mapping = [

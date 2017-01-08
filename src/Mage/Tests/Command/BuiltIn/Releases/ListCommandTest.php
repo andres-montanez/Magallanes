@@ -11,12 +11,9 @@
 namespace Mage\Tests\Command\BuiltIn\Releases;
 
 use Mage\Command\BuiltIn\Releases\ListCommand;
-use Mage\Runtime\Exception\DeploymentException;
-use Mage\Runtime\Exception\RuntimeException;
 use Mage\Command\AbstractCommand;
 use Mage\Tests\MageApplicationMockup;
 use Symfony\Component\Console\Tester\CommandTester;
-use Exception;
 use PHPUnit_Framework_TestCase as TestCase;
 
 class ListCommandTest extends TestCase

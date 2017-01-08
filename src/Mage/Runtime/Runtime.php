@@ -189,7 +189,7 @@ class Runtime
     /**
      * Retrieves the Configuration options for a specific section in the configuration
      *
-     * @param mixed $key Section name
+     * @param string $key Section name
      * @param mixed $default Default value
      * @return mixed
      */
@@ -236,8 +236,8 @@ class Runtime
     /**
      * Overwrites an Environment configuration option
      *
-     * @param $key
-     * @param $value
+     * @param string $key
+     * @param mixed $value
      * @return Runtime
      */
     public function setEnvironmentConfig($key, $value)

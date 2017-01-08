@@ -12,10 +12,8 @@ namespace Mage\Tests\Command\BuiltIn\Releases;
 
 use Mage\Command\BuiltIn\Releases\RollbackCommand;
 use Mage\Command\AbstractCommand;
-use Mage\Runtime\Exception\DeploymentException;
 use Mage\Tests\MageApplicationMockup;
 use Symfony\Component\Console\Tester\CommandTester;
-use Exception;
 use PHPUnit_Framework_TestCase as TestCase;
 
 class RollbackCommandTest extends TestCase

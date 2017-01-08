@@ -63,7 +63,7 @@ class Utils
     public function getReleaseDate($releaseId)
     {
         $formatted = sprintf('%d%d%d%d-%d%d-%d%d %d%d:%d%d:%d%d',
-            $releaseId[0],  $releaseId[1], $releaseId[2], $releaseId[3],
+            $releaseId[0], $releaseId[1], $releaseId[2], $releaseId[3],
             $releaseId[4], $releaseId[5],
             $releaseId[6], $releaseId[7],
             $releaseId[8], $releaseId[9],
