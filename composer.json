@@ -33,5 +33,11 @@
       "**/Tests/"
     ]
   },
-  "bin": ["bin/mage"]
+  "bin": ["bin/mage"],
+  "extra": {
+    "branch-alias": {
+      "dev-master": "3.0.x-dev",
+      "dev-nostromo": "3.x-dev"
+    }
+  }
 }
