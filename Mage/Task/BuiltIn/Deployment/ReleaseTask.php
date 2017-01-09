@@ -108,7 +108,7 @@ class ReleaseTask extends AbstractTask implements IsReleaseAware, SkipOnOverride
             if ($resultFetch && $userGroup != '') {
                 $command.= " && chown -h {$userGroup} {$tmplink}";
             }
-            $command.= " && mv -fT {$tmplink} {$symlink}";
+            $command.= " && rm -rf {$symlink} && mv -f {$tmplink} {$symlink}";
             $result = $this->runCommandRemote($command);
 
             if ($result) {
