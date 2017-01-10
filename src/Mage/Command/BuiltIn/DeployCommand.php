@@ -137,9 +137,6 @@ class DeployCommand extends AbstractCommand
             $this->runtime->setStage(Runtime::ON_DEPLOY);
             $onDeployTasks = $this->runtime->getTasks();
 
-            if (!$this->runtime->inRollback()) {
-            }
-
             if ($this->runtime->getEnvironmentConfig('releases', false)) {
                 if (!in_array('deploy/targz/copy', $onDeployTasks) && !$this->runtime->inRollback()) {
                     array_unshift($onDeployTasks, 'deploy/targz/copy');
@@ -149,7 +146,7 @@ class DeployCommand extends AbstractCommand
                     array_unshift($onDeployTasks, 'deploy/release/prepare');
                 }
             } else {
-                if (!in_array('deploy/rsync', $onDeployTasks)) {
+                if (!in_array('deploy/rsync', $onDeployTasks) && !$this->runtime->inRollback()) {
                     array_unshift($onDeployTasks, 'deploy/rsync');
                 }
             }
