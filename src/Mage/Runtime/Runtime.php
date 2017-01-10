@@ -291,7 +291,7 @@ class Runtime
     }
 
     /**
-     * Retrieve the current wokring Stage
+     * Retrieve the current working Stage
      *
      * @return string
      */
