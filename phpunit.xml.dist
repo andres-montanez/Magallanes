@@ -15,7 +15,7 @@
 
     <testsuites>
         <testsuite name="Magallanes Test Suite">
-            <directory>./src/Mage/Tests/</directory>
+            <directory>./tests/</directory>
         </testsuite>
     </testsuites>
 
@@ -28,9 +28,9 @@
 
     <filter>
         <whitelist>
-            <directory>./src/Mage/</directory>
+            <directory>./src/</directory>
             <exclude>
-                <directory>./src/Mage/Tests/</directory>
+                <directory>./tests/</directory>
             </exclude>
         </whitelist>
     </filter>

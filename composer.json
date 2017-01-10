@@ -27,11 +27,13 @@
   },
   "autoload": {
     "psr-4": {
-      "Mage\\": "src/Mage/"
-    },
-    "exclude-from-classmap": [
-      "**/Tests/"
-    ]
+      "Mage\\": "src/"
+    }
+  },
+  "autoload-dev": {
+    "psr-4": {
+      "Mage\\Tests\\": "tests/"
+    }
   },
   "bin": ["bin/mage"],
   "extra": {
