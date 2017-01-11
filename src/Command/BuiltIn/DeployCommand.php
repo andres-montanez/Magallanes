@@ -70,7 +70,7 @@ class DeployCommand extends AbstractCommand
             $output->writeln(sprintf('    Environment: <fg=green>%s</>', $this->runtime->getEnvironment()));
             $this->log(sprintf('Environment: %s', $this->runtime->getEnvironment()));
 
-            if ($this->runtime->getEnvironmentConfig('releases', false)) {
+            if ($this->runtime->getEnvParam('releases', false)) {
                 $this->runtime->generateReleaseId();
                 $output->writeln(sprintf('    Release ID: <fg=green>%s</>', $this->runtime->getReleaseId()));
                 $this->log(sprintf('Release ID: %s', $this->runtime->getReleaseId()));
@@ -86,8 +86,8 @@ class DeployCommand extends AbstractCommand
                 $this->runtime->setEnvironmentConfig('branch', $input->getOption('branch'));
             }
 
-            if ($this->runtime->getEnvironmentConfig('branch', false)) {
-                $output->writeln(sprintf('    Branch: <fg=green>%s</>', $this->runtime->getEnvironmentConfig('branch')));
+            if ($this->runtime->getEnvParam('branch', false)) {
+                $output->writeln(sprintf('    Branch: <fg=green>%s</>', $this->runtime->getEnvParam('branch')));
             }
 
             $output->writeln('');
@@ -140,7 +140,7 @@ class DeployCommand extends AbstractCommand
 
     protected function runOnHosts(OutputInterface $output, $tasks)
     {
-        $hosts = $this->runtime->getEnvironmentConfig('hosts');
+        $hosts = $this->runtime->getEnvParam('hosts');
         if (count($hosts) == 0) {
             $output->writeln(sprintf('    No hosts defined, skipping %s tasks', $this->getStageName()));
             $output->writeln('');

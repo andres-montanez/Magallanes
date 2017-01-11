@@ -35,12 +35,12 @@ class RsyncTask extends AbstractTask
     {
         $flags = $this->runtime->getConfigOptions('rsync', '-avz');
         $sshConfig = $this->runtime->getSSHConfig();
-        $user = $this->runtime->getEnvironmentConfig('user', $this->runtime->getCurrentUser());
+        $user = $this->runtime->getEnvParam('user', $this->runtime->getCurrentUser());
         $host = $this->runtime->getWorkingHost();
-        $hostPath = rtrim($this->runtime->getEnvironmentConfig('host_path'), '/');
+        $hostPath = rtrim($this->runtime->getEnvParam('host_path'), '/');
         $targetDir = rtrim($hostPath, '/');
 
-        if ($this->runtime->getEnvironmentConfig('releases', false)) {
+        if ($this->runtime->getEnvParam('releases', false)) {
             throw new ErrorException('Can\'t be used with Releases, use "deploy/targz/copy"');
         }
 
@@ -54,7 +54,7 @@ class RsyncTask extends AbstractTask
 
     protected function getExcludes()
     {
-        $excludes = $this->runtime->getEnvironmentConfig('exclude', []);
+        $excludes = $this->runtime->getEnvParam('exclude', []);
         $excludes = array_merge(['.git'], $excludes);
 
         foreach ($excludes as &$exclude) {

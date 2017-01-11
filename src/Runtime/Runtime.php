@@ -207,14 +207,10 @@ class Runtime
 
     /**
      * Returns the configuration for the current Environment
-     * If $key is provided, it will be returned only that section, if not found the default value will be returned,
-     * if $key is not provided, the whole Environment's configuration will be returned
      *
-     * @param string $key Section name
-     * @param mixed $default Default value
-     * @return mixed
+     * @return array
      */
-    public function getEnvironmentConfig($key = null, $default = null)
+    public function getEnvironmentConfig()
     {
         if (!array_key_exists('environments', $this->configuration) || !is_array($this->configuration['environments'])) {
             return [];
@@ -224,16 +220,31 @@ class Runtime
             return [];
         }
 
-        $config = $this->configuration['environments'][$this->environment];
-        if ($key !== null) {
-            if (array_key_exists($key, $config)) {
-                return $config[$key];
-            } else {
-                return $default;
-            }
+        return $this->configuration['environments'][$this->environment];
+    }
+
+    /**
+     * Returns the configuration parameter for the current Environment
+     *
+     * @param string $key Section/Parameter name
+     * @param mixed $default Default value
+     * @return mixed
+     */
+    public function getEnvParam($key, $default = null)
+    {
+        if (!array_key_exists('environments', $this->configuration) || !is_array($this->configuration['environments'])) {
+            return $default;
         }
 
-        return $config;
+        if (!array_key_exists($this->environment, $this->configuration['environments'])) {
+            return $default;
+        }
+
+        if (array_key_exists($key, $this->configuration['environments'][$this->environment])) {
+            return $this->configuration['environments'][$this->environment][$key];
+        }
+
+        return $default;
     }
 
     /**
@@ -409,8 +420,8 @@ class Runtime
      */
     public function runRemoteCommand($cmd, $jail = true, $timeout = 120)
     {
-        $user = $this->getEnvironmentConfig('user');
-        $sudo = $this->getEnvironmentConfig('sudo', false);
+        $user = $this->getEnvParam('user');
+        $sudo = $this->getEnvParam('sudo', false);
         $host = $this->getWorkingHost();
         $sshConfig = $this->getSSHConfig();
 
@@ -420,7 +431,7 @@ class Runtime
         }
 
         if ($jail) {
-            $hostPath = rtrim($this->getEnvironmentConfig('host_path'), '/');
+            $hostPath = rtrim($this->getEnvParam('host_path'), '/');
             if ($this->getReleaseId()) {
                 $cmdDelegate = sprintf('cd %s/releases/%s && %s', $hostPath, $this->getReleaseId(), $cmdDelegate);
             } else {
@@ -441,7 +452,7 @@ class Runtime
      */
     public function getSSHConfig()
     {
-        $sshConfig = $this->getEnvironmentConfig('ssh', ['port' => '22', 'flags' => '-q -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no']);
+        $sshConfig = $this->getEnvParam('ssh', ['port' => '22', 'flags' => '-q -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no']);
 
         if (!array_key_exists('port', $sshConfig)) {
             $sshConfig['port'] = '22';
@@ -482,7 +493,7 @@ class Runtime
      */
     public function getBranch()
     {
-        return $this->getEnvironmentConfig('branch', false);
+        return $this->getEnvParam('branch', false);
     }
 
     /**
@@ -494,7 +505,7 @@ class Runtime
     {
         $strategy = new RsyncStrategy();
 
-        if ($this->getEnvironmentConfig('releases', false)) {
+        if ($this->getEnvParam('releases', false)) {
             $strategy = new ReleasesStrategy();
         }
 

@@ -34,11 +34,11 @@ class ReleaseTask extends AbstractTask implements ExecuteOnRollbackInterface
 
     public function execute()
     {
-        if (!$this->runtime->getEnvironmentConfig('releases', false)) {
+        if (!$this->runtime->getEnvParam('releases', false)) {
             throw new ErrorException('This task is only available with releases enabled', 40);
         }
 
-        $hostPath = rtrim($this->runtime->getEnvironmentConfig('host_path'), '/');
+        $hostPath = rtrim($this->runtime->getEnvParam('host_path'), '/');
         $releaseId = $this->runtime->getReleaseId();
 
         $cmdLinkRelease = sprintf('cd %s && ln -snf releases/%s current', $hostPath, $releaseId);

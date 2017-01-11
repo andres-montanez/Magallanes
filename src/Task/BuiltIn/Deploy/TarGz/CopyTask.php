@@ -33,14 +33,14 @@ class CopyTask extends AbstractTask
 
     public function execute()
     {
-        if (!$this->runtime->getEnvironmentConfig('releases', false)) {
+        if (!$this->runtime->getEnvParam('releases', false)) {
             throw new ErrorException('This task is only available with releases enabled', 40);
         }
 
-        $user = $this->runtime->getEnvironmentConfig('user', $this->runtime->getCurrentUser());
+        $user = $this->runtime->getEnvParam('user', $this->runtime->getCurrentUser());
         $host = $this->runtime->getWorkingHost();
         $sshConfig = $sshConfig = $this->runtime->getSSHConfig();
-        $hostPath = rtrim($this->runtime->getEnvironmentConfig('host_path'), '/');
+        $hostPath = rtrim($this->runtime->getEnvParam('host_path'), '/');
         $currentReleaseId = $this->runtime->getReleaseId();
 
         $targetDir = sprintf('%s/releases/%s', $hostPath, $currentReleaseId);

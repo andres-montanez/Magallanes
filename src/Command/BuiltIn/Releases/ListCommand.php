@@ -58,7 +58,7 @@ class ListCommand extends AbstractCommand
         try {
             $this->runtime->setEnvironment($input->getArgument('environment'));
 
-            if (!$this->runtime->getEnvironmentConfig('releases', false)) {
+            if (!$this->runtime->getEnvParam('releases', false)) {
                 throw new RuntimeException('Releases are not enabled', 70);
             }
 
@@ -71,12 +71,12 @@ class ListCommand extends AbstractCommand
 
             $output->writeln('');
 
-            $hosts = $this->runtime->getEnvironmentConfig('hosts');
+            $hosts = $this->runtime->getEnvParam('hosts');
             if (count($hosts) == 0) {
                 $output->writeln('No hosts defined');
                 $output->writeln('');
             } else {
-                $hostPath = rtrim($this->runtime->getEnvironmentConfig('host_path'), '/');
+                $hostPath = rtrim($this->runtime->getEnvParam('host_path'), '/');
 
                 foreach ($hosts as $host) {
                     $this->runtime->setWorkingHost($host);

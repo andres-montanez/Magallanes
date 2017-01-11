@@ -33,7 +33,7 @@ class PrepareTask extends AbstractTask
 
     public function execute()
     {
-        if (!$this->runtime->getEnvironmentConfig('releases', false)) {
+        if (!$this->runtime->getEnvParam('releases', false)) {
             throw new ErrorException('This task is only available with releases enabled', 40);
         }
 
@@ -50,7 +50,7 @@ class PrepareTask extends AbstractTask
 
     protected function getExcludes()
     {
-        $excludes = $this->runtime->getEnvironmentConfig('exclude', []);
+        $excludes = $this->runtime->getEnvParam('exclude', []);
         $excludes = array_merge(['.git'], $excludes);
 
         foreach ($excludes as &$exclude) {

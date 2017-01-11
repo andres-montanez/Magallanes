@@ -32,7 +32,7 @@ class PrepareTask extends AbstractTask
 
     public function execute()
     {
-        $hostPath = rtrim($this->runtime->getEnvironmentConfig('host_path'), '/');
+        $hostPath = rtrim($this->runtime->getEnvParam('host_path'), '/');
 
         $cmdMakeDir = sprintf('mkdir -p %s/releases/%s', $hostPath, $this->runtime->getReleaseId());
 

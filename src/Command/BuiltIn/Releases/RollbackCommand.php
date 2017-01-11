@@ -61,7 +61,7 @@ class RollbackCommand extends DeployCommand
             $strategy = $this->runtime->guessStrategy();
             $this->taskFactory = new TaskFactory($this->runtime);
 
-            if (!$this->runtime->getEnvironmentConfig('releases', false)) {
+            if (!$this->runtime->getEnvParam('releases', false)) {
                 throw new RuntimeException('Releases are not enabled', 70);
             }
 
@@ -104,8 +104,8 @@ class RollbackCommand extends DeployCommand
      */
     protected function checkReleaseAvailability($releaseToRollback)
     {
-        $hosts = $this->runtime->getEnvironmentConfig('hosts');
-        $hostPath = rtrim($this->runtime->getEnvironmentConfig('host_path'), '/');
+        $hosts = $this->runtime->getEnvParam('hosts');
+        $hostPath = rtrim($this->runtime->getEnvParam('host_path'), '/');
 
         $availableInHosts = 0;
         foreach ($hosts as $host) {
