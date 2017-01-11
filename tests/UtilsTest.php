@@ -48,31 +48,31 @@ class UtilsTest extends TestCase
 
         $dateTime = new DateTime();
         $dateTime->modify('-45 seconds');
-        $this->assertEquals('45 seconds ago', $utils->getTimeDiff($dateTime));
+        $this->assertEquals('just now', $utils->getTimeDiff($dateTime));
 
         $dateTime = new DateTime();
         $dateTime->modify('-90 seconds');
-        $this->assertEquals('one minute ago', $utils->getTimeDiff($dateTime));
+        $this->assertEquals('1 minute(s) ago', $utils->getTimeDiff($dateTime));
 
         $dateTime = new DateTime();
         $dateTime->modify('-30 minutes');
-        $this->assertEquals('30 minutes ago', $utils->getTimeDiff($dateTime));
+        $this->assertEquals('30 minute(s) ago', $utils->getTimeDiff($dateTime));
 
         $dateTime = new DateTime();
         $dateTime->modify('-1 hour');
-        $this->assertEquals('one hour ago', $utils->getTimeDiff($dateTime));
+        $this->assertEquals('1 hour(s) ago', $utils->getTimeDiff($dateTime));
 
         $dateTime = new DateTime();
         $dateTime->modify('-10 hours');
-        $this->assertEquals('10 hours ago', $utils->getTimeDiff($dateTime));
+        $this->assertEquals('10 hour(s) ago', $utils->getTimeDiff($dateTime));
 
         $dateTime = new DateTime();
         $dateTime->modify('-1 day');
-        $this->assertEquals('one day ago', $utils->getTimeDiff($dateTime));
+        $this->assertEquals('1 day(s) ago', $utils->getTimeDiff($dateTime));
 
         $dateTime = new DateTime();
         $dateTime->modify('-3 days');
-        $this->assertEquals('3 days ago', $utils->getTimeDiff($dateTime));
+        $this->assertEquals('3 day(s) ago', $utils->getTimeDiff($dateTime));
 
         $dateTime = new DateTime();
         $dateTime->modify('-7 days');

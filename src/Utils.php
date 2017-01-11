@@ -95,32 +95,16 @@ class Utils
             return 'a week ago';
         }
 
-        if ($diff->days > 1) {
-            return sprintf('%d days ago', $diff->days);
+        if ($diff->days >= 1) {
+            return sprintf('%d day(s) ago', $diff->days);
         }
 
-        if ($diff->days == 1) {
-            return 'one day ago';
+        if ($diff->h >= 1) {
+            return sprintf('%d hour(s) ago', $diff->h);
         }
 
-        if ($diff->h > 1) {
-            return sprintf('%d hours ago', $diff->h);
-        }
-
-        if ($diff->h == 1) {
-            return 'one hour ago';
-        }
-
-        if ($diff->i > 1) {
-            return sprintf('%d minutes ago', $diff->i);
-        }
-
-        if ($diff->i == 1) {
-            return 'one minute ago';
-        }
-
-        if ($diff->s >= 10) {
-            return sprintf('%d seconds ago', $diff->s);
+        if ($diff->i >= 1) {
+            return sprintf('%d minute(s) ago', $diff->i);
         }
 
         return 'just now';
