@@ -116,7 +116,7 @@ class DeployCommand extends AbstractCommand
         // Run "Pre Deploy" Tasks
         $this->runtime->setStage(Runtime::PRE_DEPLOY);
         if (!$this->runTasks($output, $strategy->getPreDeployTasks())) {
-            $this->halt();
+            throw $this->getException();
         }
 
         // Run "On Deploy" Tasks
@@ -134,7 +134,7 @@ class DeployCommand extends AbstractCommand
         // Run "Post Deploy" Tasks
         $this->runtime->setStage(Runtime::POST_DEPLOY);
         if (!$this->runTasks($output, $strategy->getPostDeployTasks())) {
-            $this->halt();
+            throw $this->getException();
         }
     }
 
@@ -149,7 +149,7 @@ class DeployCommand extends AbstractCommand
                 $this->runtime->setWorkingHost($host);
                 if (!$this->runTasks($output, $tasks)) {
                     $this->runtime->setWorkingHost(null);
-                    $this->halt();
+                    throw $this->getException();
                 }
                 $this->runtime->setWorkingHost(null);
             }
@@ -231,12 +231,10 @@ class DeployCommand extends AbstractCommand
     }
 
     /**
-     * Halts the current process
-     *
-     * @throws RuntimeException
+     * Exception for halting the the current process
      */
-    protected function halt()
+    protected function getException()
     {
-        throw new RuntimeException(sprintf('Stage "%s" did not finished successfully, halting command.', $this->getStageName()), 50);
+        return new RuntimeException(sprintf('Stage "%s" did not finished successfully, halting command.', $this->getStageName()), 50);
     }
 }
