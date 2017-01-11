@@ -11,5 +11,5 @@ magephp:
                 - ./web/app_dev.php
             hosts:
                 - host2
-            on-release:
+            on-deploy:
                 - deploy/release

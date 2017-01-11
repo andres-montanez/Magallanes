@@ -10,6 +10,9 @@
 
 namespace Mage\Runtime;
 
+use Mage\Deploy\Strategy\ReleasesStrategy;
+use Mage\Deploy\Strategy\RsyncStrategy;
+use Mage\Deploy\Strategy\StrategyInterface;
 use Psr\Log\LoggerInterface;
 use Psr\Log\LogLevel;
 use Symfony\Component\Process\Process;
@@ -471,5 +474,32 @@ class Runtime
     {
         $userData = posix_getpwuid(posix_geteuid());
         return $userData['name'];
+    }
+
+    /**
+     * Shortcut for getting Branch information
+     *
+     * @return boolean|string
+     */
+    public function getBranch()
+    {
+        return $this->getEnvironmentConfig('branch', false);
+    }
+
+    /**
+     * Guesses the Deploy Strategy to use
+     *
+     * @return StrategyInterface
+     */
+    public function guessStrategy()
+    {
+        $strategy = new RsyncStrategy();
+
+        if ($this->getEnvironmentConfig('releases', false)) {
+            $strategy = new ReleasesStrategy();
+        }
+
+        $strategy->setRuntime($this);
+        return $strategy;
     }
 }

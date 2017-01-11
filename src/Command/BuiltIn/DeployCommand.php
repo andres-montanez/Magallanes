@@ -10,6 +10,7 @@
 
 namespace Mage\Command\BuiltIn;
 
+use Mage\Deploy\Strategy\StrategyInterface;
 use Mage\Runtime\Exception\RuntimeException;
 use Mage\Runtime\Runtime;
 use Mage\Task\ExecuteOnRollbackInterface;
@@ -63,6 +64,9 @@ class DeployCommand extends AbstractCommand
         try {
             $this->runtime->setEnvironment($input->getArgument('environment'));
 
+            $strategy = $this->runtime->guessStrategy();
+            $this->taskFactory = new TaskFactory($this->runtime);
+
             $output->writeln(sprintf('    Environment: <fg=green>%s</>', $this->runtime->getEnvironment()));
             $this->log(sprintf('Environment: %s', $this->runtime->getEnvironment()));
 
@@ -76,6 +80,8 @@ class DeployCommand extends AbstractCommand
                 $output->writeln(sprintf('    Logfile: <fg=green>%s</>', $this->runtime->getConfigOptions('log_file')));
             }
 
+            $output->writeln(sprintf('    Strategy: <fg=green>%s</>', $strategy->getName()));
+
             if ($input->getOption('branch') !== false) {
                 $this->runtime->setEnvironmentConfig('branch', $input->getOption('branch'));
             }
@@ -85,9 +91,7 @@ class DeployCommand extends AbstractCommand
             }
 
             $output->writeln('');
-
-            $this->taskFactory = new TaskFactory($this->runtime);
-            $this->runDeployment($output);
+            $this->runDeployment($output, $strategy);
         } catch (RuntimeException $exception) {
             $output->writeln('');
             $output->writeln(sprintf('<error>%s</error>', $exception->getMessage()));
@@ -104,130 +108,51 @@ class DeployCommand extends AbstractCommand
      * Run the Deployment Process
      *
      * @param OutputInterface $output
+     * @param StrategyInterface $strategy
      * @throws RuntimeException
      */
-    protected function runDeployment(OutputInterface $output)
+    protected function runDeployment(OutputInterface $output, StrategyInterface $strategy)
     {
         // Run "Pre Deploy" Tasks
         $this->runtime->setStage(Runtime::PRE_DEPLOY);
-        $preDeployTasks = $this->runtime->getTasks();
-
-        if ($this->runtime->getEnvironmentConfig('branch', false) && !$this->runtime->inRollback()) {
-            if (!in_array('git/change-branch', $preDeployTasks)) {
-                array_unshift($preDeployTasks, 'git/change-branch');
-            }
-        }
-
-        if ($this->runtime->getEnvironmentConfig('releases', false) && !$this->runtime->inRollback()) {
-            if (!in_array('deploy/targz/prepare', $preDeployTasks)) {
-                array_push($preDeployTasks, 'deploy/targz/prepare');
-            }
-        }
-
-        if (!$this->runTasks($output, $preDeployTasks)) {
-            throw new RuntimeException(sprintf('Stage "%s" did not finished successfully, halting command.', $this->getStageName()), 50);
+        if (!$this->runTasks($output, $strategy->getPreDeployTasks())) {
+            $this->halt();
         }
 
         // Run "On Deploy" Tasks
-        $hosts = $this->runtime->getEnvironmentConfig('hosts');
-        if (count($hosts) == 0) {
-            $output->writeln('    No hosts defined, skipping On Deploy tasks');
-            $output->writeln('');
-        } else {
-            $this->runtime->setStage(Runtime::ON_DEPLOY);
-            $onDeployTasks = $this->runtime->getTasks();
-
-            if ($this->runtime->getEnvironmentConfig('releases', false)) {
-                if (!in_array('deploy/targz/copy', $onDeployTasks) && !$this->runtime->inRollback()) {
-                    array_unshift($onDeployTasks, 'deploy/targz/copy');
-                }
-
-                if (!in_array('deploy/release/prepare', $onDeployTasks) && !$this->runtime->inRollback()) {
-                    array_unshift($onDeployTasks, 'deploy/release/prepare');
-                }
-            } else {
-                if (!in_array('deploy/rsync', $onDeployTasks) && !$this->runtime->inRollback()) {
-                    array_unshift($onDeployTasks, 'deploy/rsync');
-                }
-            }
-
-            foreach ($hosts as $host) {
-                $this->runtime->setWorkingHost($host);
-                if (!$this->runTasks($output, $onDeployTasks)) {
-                    $this->runtime->setWorkingHost(null);
-                    throw new RuntimeException(sprintf('Stage "%s" did not finished successfully, halting command.', $this->getStageName()), 50);
-                }
-                $this->runtime->setWorkingHost(null);
-            }
-        }
+        $this->runtime->setStage(Runtime::ON_DEPLOY);
+        $this->runOnHosts($output, $strategy->getOnDeployTasks());
 
         // Run "On Release" Tasks
-        $hosts = $this->runtime->getEnvironmentConfig('hosts');
-        if (count($hosts) == 0) {
-            $output->writeln('    No hosts defined, skipping On Release tasks');
-            $output->writeln('');
-        } else {
-            $this->runtime->setStage(Runtime::ON_RELEASE);
-            $onReleaseTasks = $this->runtime->getTasks();
-
-            if ($this->runtime->getEnvironmentConfig('releases', false)) {
-                if (!in_array('deploy/release', $onReleaseTasks)) {
-                    array_unshift($onReleaseTasks, 'deploy/release');
-                }
-            }
-
-            foreach ($hosts as $host) {
-                $this->runtime->setWorkingHost($host);
-                if (!$this->runTasks($output, $onReleaseTasks)) {
-                    $this->runtime->setWorkingHost(null);
-                    throw new RuntimeException(sprintf('Stage "%s" did not finished successfully, halting command.', $this->getStageName()), 50);
-                }
-                $this->runtime->setWorkingHost(null);
-            }
-        }
+        $this->runtime->setStage(Runtime::ON_RELEASE);
+        $this->runOnHosts($output, $strategy->getOnReleaseTasks());
 
         // Run "Post Release" Tasks
-        $hosts = $this->runtime->getEnvironmentConfig('hosts');
-        if (count($hosts) == 0) {
-            $output->writeln('    No hosts defined, skipping Post Release tasks');
-            $output->writeln('');
-        } else {
-            $this->runtime->setStage(Runtime::POST_RELEASE);
-            $postReleaseTasks = $this->runtime->getTasks();
-
-            if ($this->runtime->getEnvironmentConfig('releases', false) && !$this->runtime->inRollback()) {
-                if (!in_array('deploy/release/cleanup', $postReleaseTasks)) {
-                    array_unshift($postReleaseTasks, 'deploy/release/cleanup');
-                }
-            }
-
-            foreach ($hosts as $host) {
-                $this->runtime->setWorkingHost($host);
-                if (!$this->runTasks($output, $postReleaseTasks)) {
-                    $this->runtime->setWorkingHost(null);
-                    throw new RuntimeException(sprintf('Stage "%s" did not finished successfully, halting command.', $this->getStageName()), 50);
-                }
-                $this->runtime->setWorkingHost(null);
-            }
-        }
+        $this->runtime->setStage(Runtime::POST_RELEASE);
+        $this->runOnHosts($output, $strategy->getPostReleaseTasks());
 
         // Run "Post Deploy" Tasks
         $this->runtime->setStage(Runtime::POST_DEPLOY);
-        $postDeployTasks = $this->runtime->getTasks();
-        if ($this->runtime->getEnvironmentConfig('releases', false) && !$this->runtime->inRollback()) {
-            if (!in_array('deploy/targz/cleanup', $postDeployTasks)) {
-                array_unshift($postDeployTasks, 'deploy/targz/cleanup');
-            }
+        if (!$this->runTasks($output, $strategy->getPostDeployTasks())) {
+            $this->halt();
         }
+    }
 
-        if ($this->runtime->getEnvironmentConfig('branch', false) && !$this->runtime->inRollback()) {
-            if (!in_array('git/change-branch', $postDeployTasks)) {
-                array_push($postDeployTasks, 'git/change-branch');
+    protected function runOnHosts(OutputInterface $output, $tasks)
+    {
+        $hosts = $this->runtime->getEnvironmentConfig('hosts');
+        if (count($hosts) == 0) {
+            $output->writeln(sprintf('    No hosts defined, skipping %s tasks', $this->getStageName()));
+            $output->writeln('');
+        } else {
+            foreach ($hosts as $host) {
+                $this->runtime->setWorkingHost($host);
+                if (!$this->runTasks($output, $tasks)) {
+                    $this->runtime->setWorkingHost(null);
+                    $this->halt();
+                }
+                $this->runtime->setWorkingHost(null);
             }
-        }
-
-        if (!$this->runTasks($output, $postDeployTasks)) {
-            throw new RuntimeException(sprintf('Stage "%s" did not finished successfully, halting command.', $this->getStageName()), 50);
         }
     }
 
@@ -303,5 +228,15 @@ class DeployCommand extends AbstractCommand
         $output->writeln('');
 
         return ($succeededTasks == $totalTasks);
+    }
+
+    /**
+     * Halts the current process
+     *
+     * @throws RuntimeException
+     */
+    protected function halt()
+    {
+        throw new RuntimeException(sprintf('Stage "%s" did not finished successfully, halting command.', $this->getStageName()), 50);
     }
 }

@@ -58,6 +58,9 @@ class RollbackCommand extends DeployCommand
         try {
             $this->runtime->setEnvironment($input->getArgument('environment'));
 
+            $strategy = $this->runtime->guessStrategy();
+            $this->taskFactory = new TaskFactory($this->runtime);
+
             if (!$this->runtime->getEnvironmentConfig('releases', false)) {
                 throw new RuntimeException('Releases are not enabled', 70);
             }
@@ -79,10 +82,10 @@ class RollbackCommand extends DeployCommand
                 $output->writeln(sprintf('    Logfile: <fg=green>%s</>', $this->runtime->getConfigOptions('log_file')));
             }
 
-            $output->writeln('');
+            $output->writeln(sprintf('    Strategy: <fg=green>%s</>', $strategy->getName()));
 
-            $this->taskFactory = new TaskFactory($this->runtime);
-            $this->runDeployment($output);
+            $output->writeln('');
+            $this->runDeployment($output, $strategy);
         } catch (RuntimeException $exception) {
             $output->writeln(sprintf('<error>%s</error>', $exception->getMessage()));
             $this->statusCode = $exception->getCode();
