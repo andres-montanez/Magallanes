@@ -144,15 +144,16 @@ class DeployCommand extends AbstractCommand
         if (count($hosts) == 0) {
             $output->writeln(sprintf('    No hosts defined, skipping %s tasks', $this->getStageName()));
             $output->writeln('');
-        } else {
-            foreach ($hosts as $host) {
-                $this->runtime->setWorkingHost($host);
-                if (!$this->runTasks($output, $tasks)) {
-                    $this->runtime->setWorkingHost(null);
-                    throw $this->getException();
-                }
+            return true;
+        }
+
+        foreach ($hosts as $host) {
+            $this->runtime->setWorkingHost($host);
+            if (!$this->runTasks($output, $tasks)) {
                 $this->runtime->setWorkingHost(null);
+                throw $this->getException();
             }
+            $this->runtime->setWorkingHost(null);
         }
     }
 

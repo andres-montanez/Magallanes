@@ -414,10 +414,9 @@ class Runtime
         $host = $this->getWorkingHost();
         $sshConfig = $this->getSSHConfig();
 
+        $cmdDelegate = $cmd;
         if ($sudo === true) {
             $cmdDelegate = sprintf('sudo %s', $cmd);
-        } else {
-            $cmdDelegate = $cmd;
         }
 
         if ($jail) {
