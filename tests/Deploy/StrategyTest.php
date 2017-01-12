@@ -10,8 +10,8 @@
 
 namespace Mage\Tests\Deploy;
 
-use Mage\Deploy\Strategy\ReleasesStrategy;
-use Mage\Deploy\Strategy\RsyncStrategy;
+use Mage\Deploy\Strategy\Releases\ReleasesStrategy;
+use Mage\Deploy\Strategy\Rsync\RsyncStrategy;
 use Mage\Runtime\Exception\RuntimeException;
 use Mage\Runtime\Runtime;
 use Exception;

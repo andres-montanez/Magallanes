@@ -8,10 +8,11 @@
  * file that was distributed with this source code.
  */
 
-namespace Mage\Deploy\Strategy;
+namespace Mage\Deploy\Strategy\Releases;
 
 use Mage\Runtime\Exception\RuntimeException;
 use Mage\Runtime\Runtime;
+use Mage\Deploy\Strategy\StrategyInterface;
 
 /**
  * Strategy for Deployment with Releases, using TarGz and SCP

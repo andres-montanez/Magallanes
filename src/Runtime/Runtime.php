@@ -10,8 +10,8 @@
 
 namespace Mage\Runtime;
 
-use Mage\Deploy\Strategy\ReleasesStrategy;
-use Mage\Deploy\Strategy\RsyncStrategy;
+use Mage\Deploy\Strategy\Releases\ReleasesStrategy;
+use Mage\Deploy\Strategy\Rsync\RsyncStrategy;
 use Mage\Deploy\Strategy\StrategyInterface;
 use Psr\Log\LoggerInterface;
 use Psr\Log\LogLevel;
