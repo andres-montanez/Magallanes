@@ -418,7 +418,7 @@ class Runtime
      * @param int $timeout Seconds to wait
      * @return Process
      */
-    public function runRemoteCommand($cmd, $jail = true, $timeout = 120)
+    public function runRemoteCommand($cmd, $jail, $timeout = 120)
     {
         $user = $this->getEnvParam('user');
         $sudo = $this->getEnvParam('sudo', false);
@@ -430,13 +430,11 @@ class Runtime
             $cmdDelegate = sprintf('sudo %s', $cmd);
         }
 
-        if ($jail) {
-            $hostPath = rtrim($this->getEnvParam('host_path'), '/');
-            if ($this->getReleaseId()) {
-                $cmdDelegate = sprintf('cd %s/releases/%s && %s', $hostPath, $this->getReleaseId(), $cmdDelegate);
-            } else {
-                $cmdDelegate = sprintf('cd %s && %s', $hostPath, $cmdDelegate);
-            }
+        $hostPath = rtrim($this->getEnvParam('host_path'), '/');
+        if ($jail && $this->getReleaseId()) {
+            $cmdDelegate = sprintf('cd %s/releases/%s && %s', $hostPath, $this->getReleaseId(), $cmdDelegate);
+        } elseif ($jail) {
+            $cmdDelegate = sprintf('cd %s && %s', $hostPath, $cmdDelegate);
         }
 
         $cmdRemote = str_replace(['"', '&', ';', '|'], ['\"', '\&', '\;', '\|'], $cmdDelegate);
