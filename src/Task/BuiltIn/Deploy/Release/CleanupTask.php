@@ -32,9 +32,9 @@ class CleanupTask extends AbstractTask
 
     public function execute()
     {
-        $hostPath = rtrim($this->runtime->getEnvParam('host_path'), '/');
+        $hostPath = rtrim($this->runtime->getEnvOption('host_path'), '/');
         $currentReleaseId = $this->runtime->getReleaseId();
-        $maxReleases = $this->runtime->getEnvParam('releases');
+        $maxReleases = $this->runtime->getEnvOption('releases');
 
         $cmdListReleases = sprintf('ls -1 %s/releases', $hostPath);
 

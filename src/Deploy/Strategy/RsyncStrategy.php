@@ -8,11 +8,10 @@
  * file that was distributed with this source code.
  */
 
-namespace Mage\Deploy\Strategy\Rsync;
+namespace Mage\Deploy\Strategy;
 
 use Mage\Runtime\Exception\RuntimeException;
 use Mage\Runtime\Runtime;
-use Mage\Deploy\Strategy\StrategyInterface;
 
 /**
  * Strategy for Deployment with Rsync

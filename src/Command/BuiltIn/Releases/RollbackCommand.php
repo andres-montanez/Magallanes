@@ -61,7 +61,7 @@ class RollbackCommand extends DeployCommand
             $strategy = $this->runtime->guessStrategy();
             $this->taskFactory = new TaskFactory($this->runtime);
 
-            if (!$this->runtime->getEnvParam('releases', false)) {
+            if (!$this->runtime->getEnvOption('releases', false)) {
                 throw new RuntimeException('Releases are not enabled', 70);
             }
 
@@ -78,8 +78,8 @@ class RollbackCommand extends DeployCommand
             $output->writeln(sprintf('    Rollback to Release Id: <fg=green>%s</>', $this->runtime->getReleaseId()));
             $this->log(sprintf('Release ID: %s', $this->runtime->getReleaseId()));
 
-            if ($this->runtime->getConfigOptions('log_file', false)) {
-                $output->writeln(sprintf('    Logfile: <fg=green>%s</>', $this->runtime->getConfigOptions('log_file')));
+            if ($this->runtime->getConfigOption('log_file', false)) {
+                $output->writeln(sprintf('    Logfile: <fg=green>%s</>', $this->runtime->getConfigOption('log_file')));
             }
 
             $output->writeln(sprintf('    Strategy: <fg=green>%s</>', $strategy->getName()));
@@ -104,8 +104,8 @@ class RollbackCommand extends DeployCommand
      */
     protected function checkReleaseAvailability($releaseToRollback)
     {
-        $hosts = $this->runtime->getEnvParam('hosts');
-        $hostPath = rtrim($this->runtime->getEnvParam('host_path'), '/');
+        $hosts = $this->runtime->getEnvOption('hosts');
+        $hostPath = rtrim($this->runtime->getEnvOption('host_path'), '/');
 
         $availableInHosts = 0;
         foreach ($hosts as $host) {

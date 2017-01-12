@@ -70,7 +70,7 @@ class ChangeBranchTask extends AbstractTask
 
     protected function getOptions()
     {
-        $branch = $this->runtime->getEnvParam('branch', 'master');
+        $branch = $this->runtime->getEnvOption('branch', 'master');
         $options = array_merge(
             ['path' => 'git', 'branch' => $branch],
             $this->options

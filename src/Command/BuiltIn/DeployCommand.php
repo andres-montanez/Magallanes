@@ -70,24 +70,24 @@ class DeployCommand extends AbstractCommand
             $output->writeln(sprintf('    Environment: <fg=green>%s</>', $this->runtime->getEnvironment()));
             $this->log(sprintf('Environment: %s', $this->runtime->getEnvironment()));
 
-            if ($this->runtime->getEnvParam('releases', false)) {
+            if ($this->runtime->getEnvOption('releases', false)) {
                 $this->runtime->generateReleaseId();
                 $output->writeln(sprintf('    Release ID: <fg=green>%s</>', $this->runtime->getReleaseId()));
                 $this->log(sprintf('Release ID: %s', $this->runtime->getReleaseId()));
             }
 
-            if ($this->runtime->getConfigOptions('log_file', false)) {
-                $output->writeln(sprintf('    Logfile: <fg=green>%s</>', $this->runtime->getConfigOptions('log_file')));
+            if ($this->runtime->getConfigOption('log_file', false)) {
+                $output->writeln(sprintf('    Logfile: <fg=green>%s</>', $this->runtime->getConfigOption('log_file')));
             }
 
             $output->writeln(sprintf('    Strategy: <fg=green>%s</>', $strategy->getName()));
 
             if ($input->getOption('branch') !== false) {
-                $this->runtime->setEnvironmentConfig('branch', $input->getOption('branch'));
+                $this->runtime->setEnvOption('branch', $input->getOption('branch'));
             }
 
-            if ($this->runtime->getEnvParam('branch', false)) {
-                $output->writeln(sprintf('    Branch: <fg=green>%s</>', $this->runtime->getEnvParam('branch')));
+            if ($this->runtime->getEnvOption('branch', false)) {
+                $output->writeln(sprintf('    Branch: <fg=green>%s</>', $this->runtime->getEnvOption('branch')));
             }
 
             $output->writeln('');
@@ -140,7 +140,7 @@ class DeployCommand extends AbstractCommand
 
     protected function runOnHosts(OutputInterface $output, $tasks)
     {
-        $hosts = $this->runtime->getEnvParam('hosts');
+        $hosts = $this->runtime->getEnvOption('hosts');
         if (count($hosts) == 0) {
             $output->writeln(sprintf('    No hosts defined, skipping %s tasks', $this->getStageName()));
             $output->writeln('');

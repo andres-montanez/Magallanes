@@ -58,25 +58,25 @@ class ListCommand extends AbstractCommand
         try {
             $this->runtime->setEnvironment($input->getArgument('environment'));
 
-            if (!$this->runtime->getEnvParam('releases', false)) {
+            if (!$this->runtime->getEnvOption('releases', false)) {
                 throw new RuntimeException('Releases are not enabled', 70);
             }
 
             $output->writeln(sprintf('    Environment: <fg=green>%s</>', $this->runtime->getEnvironment()));
             $this->log(sprintf('Environment: %s', $this->runtime->getEnvironment()));
 
-            if ($this->runtime->getConfigOptions('log_file', false)) {
-                $output->writeln(sprintf('    Logfile: <fg=green>%s</>', $this->runtime->getConfigOptions('log_file')));
+            if ($this->runtime->getConfigOption('log_file', false)) {
+                $output->writeln(sprintf('    Logfile: <fg=green>%s</>', $this->runtime->getConfigOption('log_file')));
             }
 
             $output->writeln('');
 
-            $hosts = $this->runtime->getEnvParam('hosts');
+            $hosts = $this->runtime->getEnvOption('hosts');
             if (count($hosts) == 0) {
                 $output->writeln('No hosts defined');
                 $output->writeln('');
             } else {
-                $hostPath = rtrim($this->runtime->getEnvParam('host_path'), '/');
+                $hostPath = rtrim($this->runtime->getEnvOption('host_path'), '/');
 
                 foreach ($hosts as $host) {
                     $this->runtime->setWorkingHost($host);
