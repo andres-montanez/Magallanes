@@ -90,11 +90,10 @@ class ListCommand extends AbstractCommand
                         throw new RuntimeException(sprintf('Unable to retrieve releases from host "%s"', $host), 80);
                     }
 
+                    $releases = [];
                     if (trim($process->getOutput()) != '') {
                         $releases = explode(PHP_EOL, trim($process->getOutput()));
                         rsort($releases);
-                    } else {
-                        $releases = [];
                     }
 
                     if (count($releases) == 0) {
