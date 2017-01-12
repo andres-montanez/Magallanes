@@ -40,6 +40,41 @@ class RuntimeTest extends TestCase
         $this->assertLessThanOrEqual(2, $dateDiff->s);
     }
 
+    public function testEnvOptionWithInvalidEnvironment()
+    {
+        $runtime = new Runtime();
+        $runtime->setConfiguration(['environments' => ['invalid' => []]]);
+        $runtime->setEnvironment('invalid');
+        $runtime->setConfiguration(['environments' => []]);
+
+        $controlValue = time();
+        $returnedValue = $runtime->getEnvOption('test', $controlValue);
+
+        $this->assertEquals($controlValue, $returnedValue);
+    }
+
+    public function testNoConfigWithEmptyTasks()
+    {
+        $runtime = new Runtime();
+        $tasks = $runtime->getTasks();
+
+        $this->assertTrue(is_array($tasks));
+        $this->assertEquals(0, count($tasks));
+    }
+
+    public function testInvalidEnvironmentEmptyTasks()
+    {
+        $runtime = new Runtime();
+        $runtime->setConfiguration(['environments' => ['invalid' => []]]);
+        $runtime->setEnvironment('invalid');
+        $runtime->setConfiguration(['environments' => []]);
+
+        $tasks = $runtime->getTasks();
+
+        $this->assertTrue(is_array($tasks));
+        $this->assertEquals(0, count($tasks));
+    }
+
     public function testInvalidEnvironments()
     {
         try {
