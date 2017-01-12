@@ -219,9 +219,8 @@ class DeployCommand extends AbstractCommand
             }
         }
 
-        if ($succeededTasks != $totalTasks) {
-            $alertColor = 'red';
-        } else {
+        $alertColor = 'red';
+        if ($succeededTasks == $totalTasks) {
             $alertColor = 'green';
         }
 
