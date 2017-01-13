@@ -41,7 +41,7 @@ class PrepareTask extends AbstractTask
         $this->runtime->setVar('targz_local', $tarGzLocal);
 
         $excludes = $this->getExcludes();
-        $cmdTarGz = sprintf('tar cfz %s %s ./', $tarGzLocal, $excludes);
+        $cmdTarGz = sprintf('tar cfzop %s %s ./', $tarGzLocal, $excludes);
 
         /** @var Process $process */
         $process = $this->runtime->runLocalCommand($cmdTarGz, 300);
