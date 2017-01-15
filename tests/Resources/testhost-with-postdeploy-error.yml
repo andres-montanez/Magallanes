@@ -20,4 +20,4 @@ magephp:
             on-release:
             post-release:
             post-deploy:
-                - deploy/targz/cleanup
+                - deploy/tar/cleanup

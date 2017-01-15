@@ -129,7 +129,7 @@ class DeployCommandWithReleasesTest extends TestCase
         $tester = new CommandTester($command);
         $tester->execute(['command' => $command->getName(), 'environment' => 'test']);
 
-        $this->assertContains('Copying files with TarGZ ... FAIL', $tester->getDisplay());
+        $this->assertContains('Copying files with Tar ... FAIL', $tester->getDisplay());
         $this->assertNotEquals(0, $tester->getStatusCode());
     }
 
@@ -187,7 +187,7 @@ class DeployCommandWithReleasesTest extends TestCase
             $this->assertEquals($command, $ranCommands[$index]);
         }
 
-        $this->assertContains('Running [Deploy] Copying files with TarGZ ... FAIL', $tester->getDisplay());
+        $this->assertContains('Running [Deploy] Copying files with Tar ... FAIL', $tester->getDisplay());
         $this->assertContains('Stage "On Deploy" did not finished successfully, halting command.', $tester->getDisplay());
         $this->assertNotEquals(0, $tester->getStatusCode());
     }
@@ -229,7 +229,7 @@ class DeployCommandWithReleasesTest extends TestCase
             $this->assertEquals($command, $ranCommands[$index]);
         }
 
-        $this->assertContains('Running [Deploy] Copying files with TarGZ ... FAIL', $tester->getDisplay());
+        $this->assertContains('Running [Deploy] Copying files with Tar ... FAIL', $tester->getDisplay());
         $this->assertContains('Stage "On Deploy" did not finished successfully, halting command.', $tester->getDisplay());
         $this->assertNotEquals(0, $tester->getStatusCode());
     }
@@ -283,7 +283,7 @@ class DeployCommandWithReleasesTest extends TestCase
             $this->assertEquals($command, $ranCommands[$index]);
         }
 
-        $this->assertContains('Running [Deploy] Cleanup TarGZ file ... FAIL', $tester->getDisplay());
+        $this->assertContains('Running [Deploy] Cleanup Tar file ... FAIL', $tester->getDisplay());
         $this->assertContains('Stage "Post Deploy" did not finished successfully, halting command.', $tester->getDisplay());
         $this->assertNotEquals(0, $tester->getStatusCode());
     }

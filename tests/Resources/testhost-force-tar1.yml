@@ -12,4 +12,4 @@ magephp:
             hosts:
                 - host2
             pre-deploy:
-                - deploy/targz/prepare
+                - deploy/tar/prepare

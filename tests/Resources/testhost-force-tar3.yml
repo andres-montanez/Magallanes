@@ -12,4 +12,4 @@ magephp:
             hosts:
                 - host2
             post-deploy:
-                - deploy/targz/cleanup
+                - deploy/tar/cleanup

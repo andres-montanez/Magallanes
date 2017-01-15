@@ -12,4 +12,4 @@ magephp:
             hosts:
                 - host2
             on-deploy:
-                - deploy/targz/copy
+                - deploy/tar/copy

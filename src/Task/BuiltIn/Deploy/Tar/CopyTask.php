@@ -8,14 +8,14 @@
  * file that was distributed with this source code.
  */
 
-namespace Mage\Task\BuiltIn\Deploy\TarGz;
+namespace Mage\Task\BuiltIn\Deploy\Tar;
 
 use Mage\Task\Exception\ErrorException;
 use Symfony\Component\Process\Process;
 use Mage\Task\AbstractTask;
 
 /**
- * TarGz Task - Copy Tar
+ * Tar Task - Copy Tar
  *
  * @author Andrés Montañez <andresmontanez@gmail.com>
  */
@@ -23,12 +23,12 @@ class CopyTask extends AbstractTask
 {
     public function getName()
     {
-        return 'deploy/targz/copy';
+        return 'deploy/tar/copy';
     }
 
     public function getDescription()
     {
-        return '[Deploy] Copying files with TarGZ';
+        return '[Deploy] Copying files with Tar';
     }
 
     public function execute()
@@ -46,18 +46,18 @@ class CopyTask extends AbstractTask
         $flags = $this->runtime->getEnvOption('tar_extract', 'xfzop');
         $targetDir = sprintf('%s/releases/%s', $hostPath, $currentReleaseId);
 
-        $tarGzLocal = $this->runtime->getVar('targz_local');
-        $tarGzRemote = basename($tarGzLocal);
+        $tarLocal = $this->runtime->getVar('tar_local');
+        $tarRemote = basename($tarLocal);
 
-        $cmdCopy = sprintf('scp -P %d %s %s %s@%s:%s/%s', $sshConfig['port'], $sshConfig['flags'], $tarGzLocal, $user, $host, $targetDir, $tarGzRemote);
+        $cmdCopy = sprintf('scp -P %d %s %s %s@%s:%s/%s', $sshConfig['port'], $sshConfig['flags'], $tarLocal, $user, $host, $targetDir, $tarRemote);
 
         /** @var Process $process */
         $process = $this->runtime->runLocalCommand($cmdCopy, 300);
         if ($process->isSuccessful()) {
-            $cmdUnTar = sprintf('cd %s && tar %s %s', $targetDir, $flags, $tarGzRemote);
+            $cmdUnTar = sprintf('cd %s && tar %s %s', $targetDir, $flags, $tarRemote);
             $process = $this->runtime->runRemoteCommand($cmdUnTar, false, 600);
             if ($process->isSuccessful()) {
-                $cmdDelete = sprintf('rm %s/%s', $targetDir, $tarGzRemote);
+                $cmdDelete = sprintf('rm %s/%s', $targetDir, $tarRemote);
                 $process = $this->runtime->runRemoteCommand($cmdDelete, false);
                 return $process->isSuccessful();
             }

@@ -8,14 +8,14 @@
  * file that was distributed with this source code.
  */
 
-namespace Mage\Task\BuiltIn\Deploy\TarGz;
+namespace Mage\Task\BuiltIn\Deploy\Tar;
 
 use Mage\Task\Exception\ErrorException;
 use Symfony\Component\Process\Process;
 use Mage\Task\AbstractTask;
 
 /**
- * TarGz Task - Create temporal Tar
+ * Tar Task - Create temporal Tar
  *
  * @author Andrés Montañez <andresmontanez@gmail.com>
  */
@@ -23,12 +23,12 @@ class PrepareTask extends AbstractTask
 {
     public function getName()
     {
-        return 'deploy/targz/prepare';
+        return 'deploy/tar/prepare';
     }
 
     public function getDescription()
     {
-        return '[Deploy] Preparing TarGz file';
+        return '[Deploy] Preparing Tar file';
     }
 
     public function execute()
@@ -37,15 +37,15 @@ class PrepareTask extends AbstractTask
             throw new ErrorException('This task is only available with releases enabled', 40);
         }
 
-        $tarGzLocal = $this->runtime->getTempFile();
-        $this->runtime->setVar('targz_local', $tarGzLocal);
+        $tarLocal = $this->runtime->getTempFile();
+        $this->runtime->setVar('tar_local', $tarLocal);
 
         $excludes = $this->getExcludes();
         $flags = $this->runtime->getEnvOption('tar_create', 'cfzop');
-        $cmdTarGz = sprintf('tar %s %s %s ./', $flags, $tarGzLocal, $excludes);
+        $cmdTar = sprintf('tar %s %s %s ./', $flags, $tarLocal, $excludes);
 
         /** @var Process $process */
-        $process = $this->runtime->runLocalCommand($cmdTarGz, 300);
+        $process = $this->runtime->runLocalCommand($cmdTar, 300);
         return $process->isSuccessful();
     }
 

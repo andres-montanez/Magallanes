@@ -8,14 +8,14 @@
  * file that was distributed with this source code.
  */
 
-namespace Mage\Task\BuiltIn\Deploy\TarGz;
+namespace Mage\Task\BuiltIn\Deploy\Tar;
 
 use Mage\Task\Exception\ErrorException;
 use Symfony\Component\Process\Process;
 use Mage\Task\AbstractTask;
 
 /**
- * TarGz Task - Delete temporal Tar
+ * Tar Task - Delete temporal Tar
  *
  * @author Andrés Montañez <andresmontanez@gmail.com>
  */
@@ -23,12 +23,12 @@ class CleanupTask extends AbstractTask
 {
     public function getName()
     {
-        return 'deploy/targz/cleanup';
+        return 'deploy/tar/cleanup';
     }
 
     public function getDescription()
     {
-        return '[Deploy] Cleanup TarGZ file';
+        return '[Deploy] Cleanup Tar file';
     }
 
     public function execute()
@@ -37,12 +37,12 @@ class CleanupTask extends AbstractTask
             throw new ErrorException('This task is only available with releases enabled', 40);
         }
 
-        $tarGzLocal = $this->runtime->getVar('targz_local');
+        $tarLocal = $this->runtime->getVar('tar_local');
 
-        $cmdDeleteTarGz = sprintf('rm %s', $tarGzLocal);
+        $cmdDeleteTar = sprintf('rm %s', $tarLocal);
 
         /** @var Process $process */
-        $process = $this->runtime->runLocalCommand($cmdDeleteTarGz);
+        $process = $this->runtime->runLocalCommand($cmdDeleteTar);
         return $process->isSuccessful();
     }
 }

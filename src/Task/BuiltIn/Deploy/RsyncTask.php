@@ -41,7 +41,7 @@ class RsyncTask extends AbstractTask
         $targetDir = rtrim($hostPath, '/');
 
         if ($this->runtime->getEnvOption('releases', false)) {
-            throw new ErrorException('Can\'t be used with Releases, use "deploy/targz/copy"');
+            throw new ErrorException('Can\'t be used with Releases, use "deploy/tar/copy"');
         }
 
         $excludes = $this->getExcludes();

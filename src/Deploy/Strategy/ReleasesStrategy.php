@@ -14,7 +14,7 @@ use Mage\Runtime\Exception\RuntimeException;
 use Mage\Runtime\Runtime;
 
 /**
- * Strategy for Deployment with Releases, using TarGz and SCP
+ * Strategy for Deployment with Releases, using Tar and SCP
  *
  * @author Andrés Montañez <andresmontanez@gmail.com>
  */
@@ -44,8 +44,8 @@ class ReleasesStrategy implements StrategyInterface
             array_unshift($tasks, 'git/change-branch');
         }
 
-        if (!$this->runtime->inRollback() && !in_array('deploy/targz/prepare', $tasks)) {
-            array_push($tasks, 'deploy/targz/prepare');
+        if (!$this->runtime->inRollback() && !in_array('deploy/tar/prepare', $tasks)) {
+            array_push($tasks, 'deploy/tar/prepare');
         }
 
         return $tasks;
@@ -56,8 +56,8 @@ class ReleasesStrategy implements StrategyInterface
         $this->checkStage(Runtime::ON_DEPLOY);
         $tasks = $this->runtime->getTasks();
 
-        if (!$this->runtime->inRollback() && !in_array('deploy/targz/copy', $tasks)) {
-            array_unshift($tasks, 'deploy/targz/copy');
+        if (!$this->runtime->inRollback() && !in_array('deploy/tar/copy', $tasks)) {
+            array_unshift($tasks, 'deploy/tar/copy');
         }
 
         if (!$this->runtime->inRollback() && !in_array('deploy/release/prepare', $tasks)) {
@@ -96,8 +96,8 @@ class ReleasesStrategy implements StrategyInterface
         $this->checkStage(Runtime::POST_DEPLOY);
         $tasks = $this->runtime->getTasks();
 
-        if (!$this->runtime->inRollback() && !in_array('deploy/targz/cleanup', $tasks)) {
-            array_unshift($tasks, 'deploy/targz/cleanup');
+        if (!$this->runtime->inRollback() && !in_array('deploy/tar/cleanup', $tasks)) {
+            array_unshift($tasks, 'deploy/tar/cleanup');
         }
 
         if ($this->runtime->getBranch() && !$this->runtime->inRollback() && !in_array('git/change-branch', $tasks)) {
