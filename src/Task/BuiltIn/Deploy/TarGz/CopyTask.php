@@ -43,6 +43,7 @@ class CopyTask extends AbstractTask
         $hostPath = rtrim($this->runtime->getEnvOption('host_path'), '/');
         $currentReleaseId = $this->runtime->getReleaseId();
 
+        $flags = $this->runtime->getEnvOption('tar_extract', 'xfzop');
         $targetDir = sprintf('%s/releases/%s', $hostPath, $currentReleaseId);
 
         $tarGzLocal = $this->runtime->getVar('targz_local');
@@ -53,7 +54,7 @@ class CopyTask extends AbstractTask
         /** @var Process $process */
         $process = $this->runtime->runLocalCommand($cmdCopy, 300);
         if ($process->isSuccessful()) {
-            $cmdUnTar = sprintf('cd %s && tar xfzop %s', $targetDir, $tarGzRemote);
+            $cmdUnTar = sprintf('cd %s && tar %s %s', $targetDir, $flags, $tarGzRemote);
             $process = $this->runtime->runRemoteCommand($cmdUnTar, false, 600);
             if ($process->isSuccessful()) {
                 $cmdDelete = sprintf('rm %s/%s', $targetDir, $tarGzRemote);

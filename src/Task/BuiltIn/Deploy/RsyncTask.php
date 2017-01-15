@@ -33,7 +33,7 @@ class RsyncTask extends AbstractTask
 
     public function execute()
     {
-        $flags = $this->runtime->getConfigOption('rsync', '-avz');
+        $flags = $this->runtime->getEnvOption('rsync', '-avz');
         $sshConfig = $this->runtime->getSSHConfig();
         $user = $this->runtime->getEnvOption('user', $this->runtime->getCurrentUser());
         $host = $this->runtime->getWorkingHost();
