@@ -67,3 +67,4 @@ Tests structure follow almost the same structure as production code with `Test` 
 
 # Last Words
 Thank you for using Magallanes, and special thanks for making it better. When adding features always have in mind the main goal *Deploy code from A to B, and run some tasks*, and think if the feature is aiming at that.
+
