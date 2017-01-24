@@ -49,7 +49,7 @@ class Runtime
     /**
      * @var string|null The host being deployed to
      */
-    protected $workingHost;
+    protected $workingHost = null;
 
     /**
      * @var string|null The Release ID
@@ -420,7 +420,7 @@ class Runtime
         }
 
         $hostPath = rtrim($this->getEnvOption('host_path'), '/');
-        if ($jail && $this->getReleaseId()) {
+        if ($jail && $this->getReleaseId() !== null) {
             $cmdDelegate = sprintf('cd %s/releases/%s && %s', $hostPath, $this->getReleaseId(), $cmdDelegate);
         } elseif ($jail) {
             $cmdDelegate = sprintf('cd %s && %s', $hostPath, $cmdDelegate);
