@@ -32,23 +32,18 @@ class Utils
         switch ($stage) {
             case Runtime::PRE_DEPLOY:
                 return 'Pre Deploy';
-                break;
 
             case Runtime::ON_DEPLOY:
                 return 'On Deploy';
-                break;
 
             case Runtime::POST_DEPLOY:
                 return 'Post Deploy';
-                break;
 
             case Runtime::ON_RELEASE:
                 return 'On Release';
-                break;
 
             case Runtime::POST_RELEASE:
                 return 'Post Release';
-                break;
         }
 
         return $stage;

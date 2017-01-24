@@ -143,7 +143,7 @@ class Runtime
      * Retrieve a value from the Vars bag
      *
      * @param string $key Variable name
-     * @param string $default Variable default value, returned if not found
+     * @param mixed $default Variable default value, returned if not found
      * @return string
      */
     public function getVar($key, $default = null)
@@ -369,10 +369,8 @@ class Runtime
             case self::ON_RELEASE:
             case self::POST_RELEASE:
                 return $this->runRemoteCommand($cmd, true, $timeout);
-                break;
             default:
                 return $this->runLocalCommand($cmd, $timeout);
-                break;
         }
     }
 
