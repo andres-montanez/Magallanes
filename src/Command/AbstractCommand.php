@@ -10,6 +10,7 @@
 
 namespace Mage\Command;
 
+use Mage\MageApplication;
 use Mage\Utils;
 use Mage\Runtime\Runtime;
 use Psr\Log\LogLevel;
@@ -72,6 +73,9 @@ abstract class AbstractCommand extends Command
      */
     protected function requireConfig()
     {
-        $this->getApplication()->configure();
+        $app = $this->getApplication();
+        if ($app instanceof MageApplication) {
+            $app->configure();
+        }
     }
 }
