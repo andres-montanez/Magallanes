@@ -71,7 +71,7 @@ class MageApplication extends Application
         }
 
         if (array_key_exists('magephp', $config)) {
-            $config = $config['magephp'];
+            $config = is_null($config['magephp']) ? [] : $config['magephp'];
 
             $logger = null;
             if (array_key_exists('log_dir', $config) && file_exists($config['log_dir']) && is_dir($config['log_dir'])) {
