@@ -28,6 +28,8 @@ class MageApplicationTest extends TestCase
     {
         try {
             $application = new MageApplication(__DIR__ . '/Resources/invalid.yml');
+            $application->configure();
+            $this->assertTrue(false, 'Application did not throw exception.');
         } catch (Exception $exception) {
             $this->assertTrue($exception instanceof RuntimeException);
             $this->assertEquals(sprintf('The file "%s" does not have a valid Magallanes configuration.', __DIR__ . '/Resources/invalid.yml'), $exception->getMessage());
@@ -38,6 +40,8 @@ class MageApplicationTest extends TestCase
     {
         try {
             $application = new MageApplication(__DIR__ . '/Resources/invalid-yaml.yml');
+            $application->configure();
+            $this->assertTrue(false, 'Application did not throw exception.');
         } catch (Exception $exception) {
             $this->assertTrue($exception instanceof RuntimeException);
             $this->assertEquals(sprintf('Error parsing the file "%s".', __DIR__ . '/Resources/invalid-yaml.yml'), $exception->getMessage());
@@ -48,6 +52,8 @@ class MageApplicationTest extends TestCase
     {
         try {
             $application = new MageApplication(__DIR__ . '/Resources/this-does-not-exists.yml');
+            $application->configure();
+            $this->assertTrue(false, 'Application did not throw exception.');
         } catch (Exception $exception) {
             $this->assertTrue($exception instanceof RuntimeException);
             $this->assertEquals(sprintf('The file "%s" does not exists or is not readable.', __DIR__ . '/Resources/this-does-not-exists.yml'), $exception->getMessage());
