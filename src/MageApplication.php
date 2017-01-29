@@ -70,20 +70,19 @@ class MageApplication extends Application
             throw new RuntimeException(sprintf('Error parsing the file "%s".', $file));
         }
 
-        if (array_key_exists('magephp', $config)) {
-            $config = is_null($config['magephp']) ? [] : $config['magephp'];
+        if (array_key_exists('magephp', $config) && is_array($config['magephp'])) {
 
             $logger = null;
-            if (array_key_exists('log_dir', $config) && file_exists($config['log_dir']) && is_dir($config['log_dir'])) {
-                $logfile = sprintf('%s/%s.log', $config['log_dir'], date('Ymd_His'));
-                $config['log_file'] = $logfile;
+            if (array_key_exists('log_dir', $config['magephp']) && file_exists($config['magephp']['log_dir']) && is_dir($config['magephp']['log_dir'])) {
+                $logfile = sprintf('%s/%s.log', $config['magephp']['log_dir'], date('Ymd_His'));
+                $config['magephp']['log_file'] = $logfile;
 
                 $logger = new Logger('magephp');
                 $logger->pushHandler(new StreamHandler($logfile));
             }
 
             $this->runtime = $this->instantiateRuntime();
-            $this->runtime->setConfiguration($config);
+            $this->runtime->setConfiguration($config['magephp']);
             $this->runtime->setLogger($logger);
 
             $this->loadBuiltInCommands();
