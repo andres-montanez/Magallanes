@@ -20,8 +20,8 @@ class DeployCommandWithReleasesTest extends TestCase
 {
     public function testDeploymentWithReleasesCommands()
     {
-        $application = new MageApplicationMockup();
-        $application->configure(__DIR__ . '/../../Resources/testhost.yml');
+        $application = new MageApplicationMockup(__DIR__ . '/../../Resources/testhost.yml');
+        $application->configure();
 
         $application->getRuntime()->setReleaseId('20170101015120');
 
@@ -71,8 +71,8 @@ class DeployCommandWithReleasesTest extends TestCase
 
     public function testDeploymentWithoutReleasesTarPrepare()
     {
-        $application = new MageApplicationMockup();
-        $application->configure(__DIR__ . '/../../Resources/testhost-force-tar1.yml');
+        $application = new MageApplicationMockup(__DIR__ . '/../../Resources/testhost-force-tar1.yml');
+        $application->configure();
 
         /** @var AbstractCommand $command */
         $command = $application->find('deploy');
@@ -87,8 +87,8 @@ class DeployCommandWithReleasesTest extends TestCase
 
     public function testDeploymentWithoutReleasesTarCopy()
     {
-        $application = new MageApplicationMockup();
-        $application->configure(__DIR__ . '/../../Resources/testhost-force-tar2.yml');
+        $application = new MageApplicationMockup(__DIR__ . '/../../Resources/testhost-force-tar2.yml');
+        $application->configure();
 
         /** @var AbstractCommand $command */
         $command = $application->find('deploy');
@@ -103,8 +103,8 @@ class DeployCommandWithReleasesTest extends TestCase
 
     public function testDeploymentWithoutReleasesTarCleanup()
     {
-        $application = new MageApplicationMockup();
-        $application->configure(__DIR__ . '/../../Resources/testhost-force-tar3.yml');
+        $application = new MageApplicationMockup(__DIR__ . '/../../Resources/testhost-force-tar3.yml');
+        $application->configure();
 
         /** @var AbstractCommand $command */
         $command = $application->find('deploy');
@@ -119,8 +119,8 @@ class DeployCommandWithReleasesTest extends TestCase
 
     public function testDeploymentFailCopyCommands()
     {
-        $application = new MageApplicationMockup();
-        $application->configure(__DIR__ . '/../../Resources/testhost-fail-copy-tar.yml');
+        $application = new MageApplicationMockup(__DIR__ . '/../../Resources/testhost-fail-copy-tar.yml');
+        $application->configure();
 
         /** @var AbstractCommand $command */
         $command = $application->find('deploy');
@@ -135,8 +135,8 @@ class DeployCommandWithReleasesTest extends TestCase
 
     public function testDeploymentWithoutReleasesForceRelease()
     {
-        $application = new MageApplicationMockup();
-        $application->configure(__DIR__ . '/../../Resources/testhost-force-release.yml');
+        $application = new MageApplicationMockup(__DIR__ . '/../../Resources/testhost-force-release.yml');
+        $application->configure();
 
         /** @var AbstractCommand $command */
         $command = $application->find('deploy');
@@ -151,8 +151,8 @@ class DeployCommandWithReleasesTest extends TestCase
 
     public function testDeploymentFailToExtract()
     {
-        $application = new MageApplicationMockup();
-        $application->configure(__DIR__ . '/../../Resources/testhost.yml');
+        $application = new MageApplicationMockup(__DIR__ . '/../../Resources/testhost.yml');
+        $application->configure();
 
         $application->getRuntime()->setReleaseId('20170101015120');
 
@@ -194,8 +194,8 @@ class DeployCommandWithReleasesTest extends TestCase
 
     public function testDeploymentFailToCopy()
     {
-        $application = new MageApplicationMockup();
-        $application->configure(__DIR__ . '/../../Resources/testhost.yml');
+        $application = new MageApplicationMockup(__DIR__ . '/../../Resources/testhost.yml');
+        $application->configure();
 
         $application->getRuntime()->setReleaseId('20170101015120');
 
@@ -236,8 +236,8 @@ class DeployCommandWithReleasesTest extends TestCase
 
     public function testDeploymentFailCleanup()
     {
-        $application = new MageApplicationMockup();
-        $application->configure(__DIR__ . '/../../Resources/testhost.yml');
+        $application = new MageApplicationMockup(__DIR__ . '/../../Resources/testhost.yml');
+        $application->configure();
 
         $application->getRuntime()->setReleaseId('20170101015120');
 
@@ -290,8 +290,8 @@ class DeployCommandWithReleasesTest extends TestCase
 
     public function testDeploymentFailMidway()
     {
-        $application = new MageApplicationMockup();
-        $application->configure(__DIR__ . '/../../Resources/testhost.yml');
+        $application = new MageApplicationMockup(__DIR__ . '/../../Resources/testhost.yml');
+        $application->configure();
 
         $application->getRuntime()->setReleaseId('20170101015120');
 

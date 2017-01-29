@@ -33,9 +33,15 @@ use Mage\Runtime\Exception\RuntimeException;
 class MageApplication extends Application
 {
     protected $runtime;
+    protected $file;
 
-    public function __construct()
+    /**
+     * @param string $file The YAML file from which to read the configuration
+     */
+    public function __construct($file)
     {
+        $this->file = $file;
+
         $dispatcher = new EventDispatcher();
 
         $dispatcher->addListener(ConsoleEvents::EXCEPTION, function (ConsoleExceptionEvent $event) {
@@ -53,21 +59,19 @@ class MageApplication extends Application
     /**
      * Configure the Magallanes Application
      *
-     * @param string $file The YAML file from which to read the configuration
-     *
      * @throws RuntimeException
      */
-    public function configure($file)
+    public function configure()
     {
-        if (!file_exists($file) || !is_readable($file)) {
-            throw new RuntimeException(sprintf('The file "%s" does not exists or is not readable.', $file));
+        if (!file_exists($this->file) || !is_readable($this->file)) {
+            throw new RuntimeException(sprintf('The file "%s" does not exists or is not readable.', $this->file));
         }
 
         try {
             $parser = new Parser();
-            $config = $parser->parse(file_get_contents($file));
+            $config = $parser->parse(file_get_contents($this->file));
         } catch (ParseException $exception) {
-            throw new RuntimeException(sprintf('Error parsing the file "%s".', $file));
+            throw new RuntimeException(sprintf('Error parsing the file "%s".', $this->file));
         }
 
         if (array_key_exists('magephp', $config) && is_array($config['magephp'])) {
@@ -89,7 +93,7 @@ class MageApplication extends Application
             return true;
         }
 
-        throw new RuntimeException(sprintf('The file "%s" does not have a valid Magallanes configuration.', $file));
+        throw new RuntimeException(sprintf('The file "%s" does not have a valid Magallanes configuration.', $this->file));
     }
 
     /**
