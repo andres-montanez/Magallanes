@@ -33,10 +33,18 @@ use Mage\Runtime\Exception\RuntimeException;
 class MageApplication extends Application
 {
     protected $runtime;
+    protected $file;
 
-    public function __construct()
+    /**
+     * @param string $file The YAML file from which to read the configuration
+     */
+    public function __construct($file)
     {
+        parent::__construct('Magallanes', Mage::VERSION);
+
+        $this->file = $file;
         $dispatcher = new EventDispatcher();
+        $this->setDispatcher($dispatcher);
 
         $dispatcher->addListener(ConsoleEvents::EXCEPTION, function (ConsoleExceptionEvent $event) {
             $output = $event->getOutput();
@@ -46,51 +54,45 @@ class MageApplication extends Application
             $event->setException(new \LogicException('Caught exception', $exitCode, $event->getException()));
         });
 
-        $this->setDispatcher($dispatcher);
-        parent::__construct('Magallanes', Mage::VERSION);
+        $this->runtime = $this->instantiateRuntime();
+        $this->loadBuiltInCommands();
     }
 
     /**
      * Configure the Magallanes Application
      *
-     * @param $file string The YAML file from which to read the configuration
-     *
      * @throws RuntimeException
      */
-    public function configure($file)
+    public function configure()
     {
-        if (!file_exists($file) || !is_readable($file)) {
-            throw new RuntimeException(sprintf('The file "%s" does not exists or is not readable.', $file));
+        if (!file_exists($this->file) || !is_readable($this->file)) {
+            throw new RuntimeException(sprintf('The file "%s" does not exists or is not readable.', $this->file));
         }
 
         try {
             $parser = new Parser();
-            $config = $parser->parse(file_get_contents($file));
+            $config = $parser->parse(file_get_contents($this->file));
         } catch (ParseException $exception) {
-            throw new RuntimeException(sprintf('Error parsing the file "%s".', $file));
+            throw new RuntimeException(sprintf('Error parsing the file "%s".', $this->file));
         }
 
-        if (array_key_exists('magephp', $config)) {
-            $config = $config['magephp'];
+        if (array_key_exists('magephp', $config) && is_array($config['magephp'])) {
 
             $logger = null;
-            if (array_key_exists('log_dir', $config) && file_exists($config['log_dir']) && is_dir($config['log_dir'])) {
-                $logfile = sprintf('%s/%s.log', $config['log_dir'], date('Ymd_His'));
-                $config['log_file'] = $logfile;
+            if (array_key_exists('log_dir', $config['magephp']) && file_exists($config['magephp']['log_dir']) && is_dir($config['magephp']['log_dir'])) {
+                $logfile = sprintf('%s/%s.log', $config['magephp']['log_dir'], date('Ymd_His'));
+                $config['magephp']['log_file'] = $logfile;
 
                 $logger = new Logger('magephp');
                 $logger->pushHandler(new StreamHandler($logfile));
             }
 
-            $this->runtime = $this->instantiateRuntime();
-            $this->runtime->setConfiguration($config);
+            $this->runtime->setConfiguration($config['magephp']);
             $this->runtime->setLogger($logger);
-
-            $this->loadBuiltInCommands();
-            return true;
+            return;
         }
 
-        throw new RuntimeException(sprintf('The file "%s" does not have a valid Magallanes configuration.', $file));
+        throw new RuntimeException(sprintf('The file "%s" does not have a valid Magallanes configuration.', $this->file));
     }
 
     /**

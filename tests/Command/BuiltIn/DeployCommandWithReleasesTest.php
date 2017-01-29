@@ -20,8 +20,7 @@ class DeployCommandWithReleasesTest extends TestCase
 {
     public function testDeploymentWithReleasesCommands()
     {
-        $application = new MageApplicationMockup();
-        $application->configure(__DIR__ . '/../../Resources/testhost.yml');
+        $application = new MageApplicationMockup(__DIR__ . '/../../Resources/testhost.yml');
 
         $application->getRuntime()->setReleaseId('20170101015120');
 
@@ -40,7 +39,7 @@ class DeployCommandWithReleasesTest extends TestCase
             2 => 'git pull',
             3 => 'composer install --optimize-autoloader',
             4 => 'composer dump-autoload --optimize',
-            5 => 'tar cfzop /tmp/mageXYZ --exclude=".git" --exclude="./var/cache/*" --exclude="./var/log/*" --exclude="./web/app_dev.php" ./',
+            5 => 'tar cfzp /tmp/mageXYZ --exclude=".git" --exclude="./var/cache/*" --exclude="./var/log/*" --exclude="./web/app_dev.php" ./',
             6 => 'ssh -p 22 -q -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no tester@testhost sh -c \\"mkdir -p /var/www/test/releases/1234567890\\"',
             7 => 'scp -P 22 -q -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no /tmp/mageXYZ tester@testhost:/var/www/test/releases/1234567890/mageXYZ',
             8 => 'ssh -p 22 -q -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no tester@testhost sh -c \\"cd /var/www/test/releases/1234567890 \\&\\& tar xfzop mageXYZ\\"',
@@ -71,8 +70,7 @@ class DeployCommandWithReleasesTest extends TestCase
 
     public function testDeploymentWithoutReleasesTarPrepare()
     {
-        $application = new MageApplicationMockup();
-        $application->configure(__DIR__ . '/../../Resources/testhost-force-tar1.yml');
+        $application = new MageApplicationMockup(__DIR__ . '/../../Resources/testhost-force-tar1.yml');
 
         /** @var AbstractCommand $command */
         $command = $application->find('deploy');
@@ -87,8 +85,7 @@ class DeployCommandWithReleasesTest extends TestCase
 
     public function testDeploymentWithoutReleasesTarCopy()
     {
-        $application = new MageApplicationMockup();
-        $application->configure(__DIR__ . '/../../Resources/testhost-force-tar2.yml');
+        $application = new MageApplicationMockup(__DIR__ . '/../../Resources/testhost-force-tar2.yml');
 
         /** @var AbstractCommand $command */
         $command = $application->find('deploy');
@@ -103,8 +100,7 @@ class DeployCommandWithReleasesTest extends TestCase
 
     public function testDeploymentWithoutReleasesTarCleanup()
     {
-        $application = new MageApplicationMockup();
-        $application->configure(__DIR__ . '/../../Resources/testhost-force-tar3.yml');
+        $application = new MageApplicationMockup(__DIR__ . '/../../Resources/testhost-force-tar3.yml');
 
         /** @var AbstractCommand $command */
         $command = $application->find('deploy');
@@ -119,8 +115,7 @@ class DeployCommandWithReleasesTest extends TestCase
 
     public function testDeploymentFailCopyCommands()
     {
-        $application = new MageApplicationMockup();
-        $application->configure(__DIR__ . '/../../Resources/testhost-fail-copy-tar.yml');
+        $application = new MageApplicationMockup(__DIR__ . '/../../Resources/testhost-fail-copy-tar.yml');
 
         /** @var AbstractCommand $command */
         $command = $application->find('deploy');
@@ -135,8 +130,7 @@ class DeployCommandWithReleasesTest extends TestCase
 
     public function testDeploymentWithoutReleasesForceRelease()
     {
-        $application = new MageApplicationMockup();
-        $application->configure(__DIR__ . '/../../Resources/testhost-force-release.yml');
+        $application = new MageApplicationMockup(__DIR__ . '/../../Resources/testhost-force-release.yml');
 
         /** @var AbstractCommand $command */
         $command = $application->find('deploy');
@@ -151,8 +145,7 @@ class DeployCommandWithReleasesTest extends TestCase
 
     public function testDeploymentFailToExtract()
     {
-        $application = new MageApplicationMockup();
-        $application->configure(__DIR__ . '/../../Resources/testhost.yml');
+        $application = new MageApplicationMockup(__DIR__ . '/../../Resources/testhost.yml');
 
         $application->getRuntime()->setReleaseId('20170101015120');
 
@@ -173,7 +166,7 @@ class DeployCommandWithReleasesTest extends TestCase
             2 => 'git pull',
             3 => 'composer install --optimize-autoloader',
             4 => 'composer dump-autoload --optimize',
-            5 => 'tar cfzop /tmp/mageXYZ --exclude=".git" --exclude="./var/cache/*" --exclude="./var/log/*" --exclude="./web/app_dev.php" ./',
+            5 => 'tar cfzp /tmp/mageXYZ --exclude=".git" --exclude="./var/cache/*" --exclude="./var/log/*" --exclude="./web/app_dev.php" ./',
             6 => 'ssh -p 22 -q -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no tester@testhost sh -c \\"mkdir -p /var/www/test/releases/1234567890\\"',
             7 => 'scp -P 22 -q -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no /tmp/mageXYZ tester@testhost:/var/www/test/releases/1234567890/mageXYZ',
             8 => 'ssh -p 22 -q -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no tester@testhost sh -c \\"cd /var/www/test/releases/1234567890 \\&\\& tar xfzop mageXYZ\\"',
@@ -194,8 +187,7 @@ class DeployCommandWithReleasesTest extends TestCase
 
     public function testDeploymentFailToCopy()
     {
-        $application = new MageApplicationMockup();
-        $application->configure(__DIR__ . '/../../Resources/testhost.yml');
+        $application = new MageApplicationMockup(__DIR__ . '/../../Resources/testhost.yml');
 
         $application->getRuntime()->setReleaseId('20170101015120');
 
@@ -216,7 +208,7 @@ class DeployCommandWithReleasesTest extends TestCase
             2 => 'git pull',
             3 => 'composer install --optimize-autoloader',
             4 => 'composer dump-autoload --optimize',
-            5 => 'tar cfzop /tmp/mageXYZ --exclude=".git" --exclude="./var/cache/*" --exclude="./var/log/*" --exclude="./web/app_dev.php" ./',
+            5 => 'tar cfzp /tmp/mageXYZ --exclude=".git" --exclude="./var/cache/*" --exclude="./var/log/*" --exclude="./web/app_dev.php" ./',
             6 => 'ssh -p 22 -q -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no tester@testhost sh -c \\"mkdir -p /var/www/test/releases/1234567890\\"',
             7 => 'scp -P 22 -q -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no /tmp/mageXYZ tester@testhost:/var/www/test/releases/1234567890/mageXYZ',
         );
@@ -236,8 +228,7 @@ class DeployCommandWithReleasesTest extends TestCase
 
     public function testDeploymentFailCleanup()
     {
-        $application = new MageApplicationMockup();
-        $application->configure(__DIR__ . '/../../Resources/testhost.yml');
+        $application = new MageApplicationMockup(__DIR__ . '/../../Resources/testhost.yml');
 
         $application->getRuntime()->setReleaseId('20170101015120');
 
@@ -258,7 +249,7 @@ class DeployCommandWithReleasesTest extends TestCase
             2 => 'git pull',
             3 => 'composer install --optimize-autoloader',
             4 => 'composer dump-autoload --optimize',
-            5 => 'tar cfzop /tmp/mageXYZ --exclude=".git" --exclude="./var/cache/*" --exclude="./var/log/*" --exclude="./web/app_dev.php" ./',
+            5 => 'tar cfzp /tmp/mageXYZ --exclude=".git" --exclude="./var/cache/*" --exclude="./var/log/*" --exclude="./web/app_dev.php" ./',
             6 => 'ssh -p 22 -q -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no tester@testhost sh -c \\"mkdir -p /var/www/test/releases/1234567890\\"',
             7 => 'scp -P 22 -q -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no /tmp/mageXYZ tester@testhost:/var/www/test/releases/1234567890/mageXYZ',
             8 => 'ssh -p 22 -q -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no tester@testhost sh -c \\"cd /var/www/test/releases/1234567890 \\&\\& tar xfzop mageXYZ\\"',
@@ -290,8 +281,7 @@ class DeployCommandWithReleasesTest extends TestCase
 
     public function testDeploymentFailMidway()
     {
-        $application = new MageApplicationMockup();
-        $application->configure(__DIR__ . '/../../Resources/testhost.yml');
+        $application = new MageApplicationMockup(__DIR__ . '/../../Resources/testhost.yml');
 
         $application->getRuntime()->setReleaseId('20170101015120');
 
@@ -312,7 +302,7 @@ class DeployCommandWithReleasesTest extends TestCase
             2 => 'git pull',
             3 => 'composer install --optimize-autoloader',
             4 => 'composer dump-autoload --optimize',
-            5 => 'tar cfzop /tmp/mageXYZ --exclude=".git" --exclude="./var/cache/*" --exclude="./var/log/*" --exclude="./web/app_dev.php" ./',
+            5 => 'tar cfzp /tmp/mageXYZ --exclude=".git" --exclude="./var/cache/*" --exclude="./var/log/*" --exclude="./web/app_dev.php" ./',
             6 => 'ssh -p 22 -q -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no tester@testhost sh -c \\"mkdir -p /var/www/test/releases/1234567890\\"',
             7 => 'scp -P 22 -q -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no /tmp/mageXYZ tester@testhost:/var/www/test/releases/1234567890/mageXYZ',
             8 => 'ssh -p 22 -q -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no tester@testhost sh -c \\"cd /var/www/test/releases/1234567890 \\&\\& tar xfzop mageXYZ\\"',

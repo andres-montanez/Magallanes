@@ -41,6 +41,8 @@ class DumpCommand extends AbstractCommand
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
+        $this->requireConfig();
+
         $output->writeln('Starting <fg=blue>Magallanes</>');
         $output->writeln('');
 

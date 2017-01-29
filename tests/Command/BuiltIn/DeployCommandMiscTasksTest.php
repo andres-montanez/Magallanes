@@ -20,8 +20,7 @@ class DeployCommandMiscTasksTest extends TestCase
 {
     public function testSymfonyEnvironmentConfiguration()
     {
-        $application = new MageApplicationMockup();
-        $application->configure(__DIR__ . '/../../Resources/symfony-envconf.yml');
+        $application = new MageApplicationMockup(__DIR__ . '/../../Resources/symfony-envconf.yml');
 
         /** @var AbstractCommand $command */
         $command = $application->find('deploy');
@@ -53,8 +52,7 @@ class DeployCommandMiscTasksTest extends TestCase
 
     public function testComposerFlags()
     {
-        $application = new MageApplicationMockup();
-        $application->configure(__DIR__ . '/../../Resources/composer.yml');
+        $application = new MageApplicationMockup(__DIR__ . '/../../Resources/composer.yml');
 
         /** @var AbstractCommand $command */
         $command = $application->find('deploy');
@@ -84,8 +82,7 @@ class DeployCommandMiscTasksTest extends TestCase
 
     public function testInvalidTaskName()
     {
-        $application = new MageApplicationMockup();
-        $application->configure(__DIR__ . '/../../Resources/invalid-task.yml');
+        $application = new MageApplicationMockup(__DIR__ . '/../../Resources/invalid-task.yml');
 
         /** @var AbstractCommand $command */
         $command = $application->find('deploy');
@@ -100,8 +97,7 @@ class DeployCommandMiscTasksTest extends TestCase
 
     public function testBrokenGitBranch()
     {
-        $application = new MageApplicationMockup();
-        $application->configure(__DIR__ . '/../../Resources/broken-git-branch.yml');
+        $application = new MageApplicationMockup(__DIR__ . '/../../Resources/broken-git-branch.yml');
 
         /** @var AbstractCommand $command */
         $command = $application->find('deploy');
@@ -119,8 +115,7 @@ class DeployCommandMiscTasksTest extends TestCase
 
     public function testBrokenGitCheckout()
     {
-        $application = new MageApplicationMockup();
-        $application->configure(__DIR__ . '/../../Resources/broken-git-branch.yml');
+        $application = new MageApplicationMockup(__DIR__ . '/../../Resources/broken-git-branch.yml');
 
         /** @var AbstractCommand $command */
         $command = $application->find('deploy');
@@ -138,8 +133,7 @@ class DeployCommandMiscTasksTest extends TestCase
 
     public function testBrokenGitUpdate()
     {
-        $application = new MageApplicationMockup();
-        $application->configure(__DIR__ . '/../../Resources/broken-git-branch.yml');
+        $application = new MageApplicationMockup(__DIR__ . '/../../Resources/broken-git-branch.yml');
 
         /** @var AbstractCommand $command */
         $command = $application->find('deploy');

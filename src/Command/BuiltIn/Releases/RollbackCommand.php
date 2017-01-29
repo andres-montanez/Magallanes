@@ -52,6 +52,8 @@ class RollbackCommand extends DeployCommand
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
+        $this->requireConfig();
+
         $output->writeln('Starting <fg=blue>Magallanes</>');
         $output->writeln('');
 

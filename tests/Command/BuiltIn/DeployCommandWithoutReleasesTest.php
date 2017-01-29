@@ -20,8 +20,7 @@ class DeployCommandWithoutReleasesTest extends TestCase
 {
     public function testDeploymentWithoutReleasesCommands()
     {
-        $application = new MageApplicationMockup();
-        $application->configure(__DIR__ . '/../../Resources/testhost-without-releases.yml');
+        $application = new MageApplicationMockup(__DIR__ . '/../../Resources/testhost-without-releases.yml');
 
         /** @var AbstractCommand $command */
         $command = $application->find('deploy');
@@ -58,8 +57,7 @@ class DeployCommandWithoutReleasesTest extends TestCase
 
     public function testDeploymentFailMidway()
     {
-        $application = new MageApplicationMockup();
-        $application->configure(__DIR__ . '/../../Resources/testhost-without-releases.yml');
+        $application = new MageApplicationMockup(__DIR__ . '/../../Resources/testhost-without-releases.yml');
 
         /** @var AbstractCommand $command */
         $command = $application->find('deploy');

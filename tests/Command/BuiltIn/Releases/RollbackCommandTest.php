@@ -20,8 +20,7 @@ class RollbackCommandTest extends TestCase
 {
     public function testRollbackReleaseCommands()
     {
-        $application = new MageApplicationMockup();
-        $application->configure(__DIR__ . '/../../../Resources/testhost.yml');
+        $application = new MageApplicationMockup(__DIR__ . '/../../../Resources/testhost.yml');
 
         /** @var AbstractCommand $command */
         $command = $application->find('releases:rollback');
@@ -48,8 +47,7 @@ class RollbackCommandTest extends TestCase
 
     public function testRollbackReleaseWithInvalidEnvironment()
     {
-        $application = new MageApplicationMockup();
-        $application->configure(__DIR__ . '/../../../Resources/testhost.yml');
+        $application = new MageApplicationMockup(__DIR__ . '/../../../Resources/testhost.yml');
 
         /** @var AbstractCommand $command */
         $command = $application->find('releases:rollback');
@@ -64,8 +62,7 @@ class RollbackCommandTest extends TestCase
 
     public function testRollbackReleaseWithoutReleases()
     {
-        $application = new MageApplicationMockup();
-        $application->configure(__DIR__ . '/../../../Resources/testhost-without-releases.yml');
+        $application = new MageApplicationMockup(__DIR__ . '/../../../Resources/testhost-without-releases.yml');
 
         /** @var AbstractCommand $command */
         $command = $application->find('releases:rollback');
@@ -80,8 +77,7 @@ class RollbackCommandTest extends TestCase
 
     public function testRollbackReleaseNotAvailable()
     {
-        $application = new MageApplicationMockup();
-        $application->configure(__DIR__ . '/../../../Resources/testhost-not-have-release.yml');
+        $application = new MageApplicationMockup(__DIR__ . '/../../../Resources/testhost-not-have-release.yml');
 
         /** @var AbstractCommand $command */
         $command = $application->find('releases:rollback');

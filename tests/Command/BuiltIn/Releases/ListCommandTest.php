@@ -20,8 +20,7 @@ class ListCommandTest extends TestCase
 {
     public function testListReleasesCommands()
     {
-        $application = new MageApplicationMockup();
-        $application->configure(__DIR__ . '/../../../Resources/testhost.yml');
+        $application = new MageApplicationMockup(__DIR__ . '/../../../Resources/testhost.yml');
 
         /** @var AbstractCommand $command */
         $command = $application->find('releases:list');
@@ -48,8 +47,7 @@ class ListCommandTest extends TestCase
 
     public function testListReleasesWithInvalidEnvironment()
     {
-        $application = new MageApplicationMockup();
-        $application->configure(__DIR__ . '/../../../Resources/testhost.yml');
+        $application = new MageApplicationMockup(__DIR__ . '/../../../Resources/testhost.yml');
 
         /** @var AbstractCommand $command */
         $command = $application->find('releases:list');
@@ -64,8 +62,7 @@ class ListCommandTest extends TestCase
 
     public function testListReleasesWithoutReleases()
     {
-        $application = new MageApplicationMockup();
-        $application->configure(__DIR__ . '/../../../Resources/testhost-without-releases.yml');
+        $application = new MageApplicationMockup(__DIR__ . '/../../../Resources/testhost-without-releases.yml');
 
         /** @var AbstractCommand $command */
         $command = $application->find('releases:list');
@@ -80,8 +77,7 @@ class ListCommandTest extends TestCase
 
     public function testFailToGetCurrentRelease()
     {
-        $application = new MageApplicationMockup();
-        $application->configure(__DIR__ . '/../../../Resources/testhost-fail-get-current.yml');
+        $application = new MageApplicationMockup(__DIR__ . '/../../../Resources/testhost-fail-get-current.yml');
 
         /** @var AbstractCommand $command */
         $command = $application->find('releases:list');
@@ -96,8 +92,7 @@ class ListCommandTest extends TestCase
 
     public function testNoReleasesAvailable()
     {
-        $application = new MageApplicationMockup();
-        $application->configure(__DIR__ . '/../../../Resources/testhost-no-releases.yml');
+        $application = new MageApplicationMockup(__DIR__ . '/../../../Resources/testhost-no-releases.yml');
 
         /** @var AbstractCommand $command */
         $command = $application->find('releases:list');
@@ -111,8 +106,7 @@ class ListCommandTest extends TestCase
 
     public function testFailGetReleases()
     {
-        $application = new MageApplicationMockup();
-        $application->configure(__DIR__ . '/../../../Resources/testhost-fail-get-releases.yml');
+        $application = new MageApplicationMockup(__DIR__ . '/../../../Resources/testhost-fail-get-releases.yml');
 
         /** @var AbstractCommand $command */
         $command = $application->find('releases:list');
@@ -127,8 +121,7 @@ class ListCommandTest extends TestCase
 
     public function testNoHosts()
     {
-        $application = new MageApplicationMockup();
-        $application->configure(__DIR__ . '/../../../Resources/testhost-no-hosts.yml');
+        $application = new MageApplicationMockup(__DIR__ . '/../../../Resources/testhost-no-hosts.yml');
 
         /** @var AbstractCommand $command */
         $command = $application->find('releases:list');

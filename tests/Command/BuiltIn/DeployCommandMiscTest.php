@@ -20,8 +20,7 @@ class DeployCommandMiscTest extends TestCase
 {
     public function testDeploymentWithNoHosts()
     {
-        $application = new MageApplicationMockup();
-        $application->configure(__DIR__ . '/../../Resources/no-hosts.yml');
+        $application = new MageApplicationMockup(__DIR__ . '/../../Resources/no-hosts.yml');
 
         /** @var AbstractCommand $command */
         $command = $application->find('deploy');
@@ -39,8 +38,7 @@ class DeployCommandMiscTest extends TestCase
 
     public function testDeploymentWithSudo()
     {
-        $application = new MageApplicationMockup();
-        $application->configure(__DIR__ . '/../../Resources/testhost-sudo.yml');
+        $application = new MageApplicationMockup(__DIR__ . '/../../Resources/testhost-sudo.yml');
 
         /** @var AbstractCommand $command */
         $command = $application->find('deploy');
@@ -78,8 +76,7 @@ class DeployCommandMiscTest extends TestCase
 
     public function testDeploymentWithBranchOverwrite()
     {
-        $application = new MageApplicationMockup();
-        $application->configure(__DIR__ . '/../../Resources/testhost-without-releases.yml');
+        $application = new MageApplicationMockup(__DIR__ . '/../../Resources/testhost-without-releases.yml');
 
         /** @var AbstractCommand $command */
         $command = $application->find('deploy');
@@ -116,9 +113,7 @@ class DeployCommandMiscTest extends TestCase
 
     public function testDeploymentWithCustomTask()
     {
-        $application = new MageApplicationMockup();
-        $application->configure(__DIR__ . '/../../Resources/testhost-custom-task.yml');
-
+        $application = new MageApplicationMockup(__DIR__ . '/../../Resources/testhost-custom-task.yml');
 
         /** @var AbstractCommand $command */
         $command = $application->find('deploy');
@@ -150,8 +145,7 @@ class DeployCommandMiscTest extends TestCase
 
     public function testDeploymentWithErrorTaskCommands()
     {
-        $application = new MageApplicationMockup();
-        $application->configure(__DIR__ . '/../../Resources/testhost-with-error.yml');
+        $application = new MageApplicationMockup(__DIR__ . '/../../Resources/testhost-with-error.yml');
 
         $application->getRuntime()->setReleaseId('20170101015120');
 
@@ -170,7 +164,7 @@ class DeployCommandMiscTest extends TestCase
             2 => 'git pull',
             3 => 'composer install --optimize-autoloader',
             4 => 'composer dump-autoload --optimize',
-            5 => 'tar cfzop /tmp/mageXYZ --exclude=".git" --exclude="./var/cache/*" --exclude="./var/log/*" --exclude="./web/app_dev.php" ./',
+            5 => 'tar cfzp /tmp/mageXYZ --exclude=".git" --exclude="./var/cache/*" --exclude="./var/log/*" --exclude="./web/app_dev.php" ./',
             6 => 'ssh -p 22 -q -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no tester@testhost sh -c \\"mkdir -p /var/www/test/releases/1234567890\\"',
             7 => 'scp -P 22 -q -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no /tmp/mageXYZ tester@testhost:/var/www/test/releases/1234567890/mageXYZ',
             8 => 'ssh -p 22 -q -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no tester@testhost sh -c \\"cd /var/www/test/releases/1234567890 \\&\\& tar xfzop mageXYZ\\"',
@@ -192,8 +186,7 @@ class DeployCommandMiscTest extends TestCase
 
     public function testDeploymentWithFailingPostDeployTaskCommands()
     {
-        $application = new MageApplicationMockup();
-        $application->configure(__DIR__ . '/../../Resources/testhost-with-postdeploy-error.yml');
+        $application = new MageApplicationMockup(__DIR__ . '/../../Resources/testhost-with-postdeploy-error.yml');
 
         /** @var AbstractCommand $command */
         $command = $application->find('deploy');
@@ -228,8 +221,7 @@ class DeployCommandMiscTest extends TestCase
 
     public function testDeploymentWithSkippingTask()
     {
-        $application = new MageApplicationMockup();
-        $application->configure(__DIR__ . '/../../Resources/testhost-skipping.yml');
+        $application = new MageApplicationMockup(__DIR__ . '/../../Resources/testhost-skipping.yml');
 
         /** @var AbstractCommand $command */
         $command = $application->find('deploy');

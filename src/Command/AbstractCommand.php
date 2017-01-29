@@ -10,6 +10,7 @@
 
 namespace Mage\Command;
 
+use Mage\MageApplication;
 use Mage\Utils;
 use Mage\Runtime\Runtime;
 use Psr\Log\LogLevel;
@@ -65,5 +66,16 @@ abstract class AbstractCommand extends Command
     {
         $utils = new Utils();
         return $utils->getStageName($this->runtime->getStage());
+    }
+
+    /**
+     * Requires the configuration to be loaded
+     */
+    protected function requireConfig()
+    {
+        $app = $this->getApplication();
+        if ($app instanceof MageApplication) {
+            $app->configure();
+        }
     }
 }
