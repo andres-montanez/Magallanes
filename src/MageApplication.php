@@ -53,7 +53,7 @@ class MageApplication extends Application
     /**
      * Configure the Magallanes Application
      *
-     * @param $file string The YAML file from which to read the configuration
+     * @param string $file The YAML file from which to read the configuration
      *
      * @throws RuntimeException
      */
