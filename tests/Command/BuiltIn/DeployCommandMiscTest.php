@@ -164,7 +164,7 @@ class DeployCommandMiscTest extends TestCase
             2 => 'git pull',
             3 => 'composer install --optimize-autoloader',
             4 => 'composer dump-autoload --optimize',
-            5 => 'tar cfzop /tmp/mageXYZ --exclude=".git" --exclude="./var/cache/*" --exclude="./var/log/*" --exclude="./web/app_dev.php" ./',
+            5 => 'tar cfzp /tmp/mageXYZ --exclude=".git" --exclude="./var/cache/*" --exclude="./var/log/*" --exclude="./web/app_dev.php" ./',
             6 => 'ssh -p 22 -q -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no tester@testhost sh -c \\"mkdir -p /var/www/test/releases/1234567890\\"',
             7 => 'scp -P 22 -q -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no /tmp/mageXYZ tester@testhost:/var/www/test/releases/1234567890/mageXYZ',
             8 => 'ssh -p 22 -q -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no tester@testhost sh -c \\"cd /var/www/test/releases/1234567890 \\&\\& tar xfzop mageXYZ\\"',
