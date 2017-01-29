@@ -21,7 +21,6 @@ class MageApplicationTest extends TestCase
     public function testValidConfiguration()
     {
         $application = new MageApplication(__DIR__ . '/Resources/basic.yml');
-        $application->configure();
         $this->assertTrue($application instanceof MageApplication);
     }
 
@@ -29,7 +28,6 @@ class MageApplicationTest extends TestCase
     {
         try {
             $application = new MageApplication(__DIR__ . '/Resources/invalid.yml');
-            $application->configure();
         } catch (Exception $exception) {
             $this->assertTrue($exception instanceof RuntimeException);
             $this->assertEquals(sprintf('The file "%s" does not have a valid Magallanes configuration.', __DIR__ . '/Resources/invalid.yml'), $exception->getMessage());
@@ -40,7 +38,6 @@ class MageApplicationTest extends TestCase
     {
         try {
             $application = new MageApplication(__DIR__ . '/Resources/invalid-yaml.yml');
-            $application->configure();
         } catch (Exception $exception) {
             $this->assertTrue($exception instanceof RuntimeException);
             $this->assertEquals(sprintf('Error parsing the file "%s".', __DIR__ . '/Resources/invalid-yaml.yml'), $exception->getMessage());
@@ -51,7 +48,6 @@ class MageApplicationTest extends TestCase
     {
         try {
             $application = new MageApplication(__DIR__ . '/Resources/this-does-not-exists.yml');
-            $application->configure();
         } catch (Exception $exception) {
             $this->assertTrue($exception instanceof RuntimeException);
             $this->assertEquals(sprintf('The file "%s" does not exists or is not readable.', __DIR__ . '/Resources/this-does-not-exists.yml'), $exception->getMessage());
@@ -62,7 +58,6 @@ class MageApplicationTest extends TestCase
     {
         $application = new MageApplication(__DIR__ . '/Resources/basic.yml');
         $application->setAutoExit(false);
-        $application->configure();
         $this->assertTrue($application instanceof MageApplication);
 
         $application->register('foo')->setCode(function () {

@@ -22,7 +22,6 @@ class VersionCommandTest extends TestCase
     public function testVersionOutput()
     {
         $application = new MageApplicationMockup(__DIR__ . '/../../Resources/basic.yml');
-        $application->configure();
         
         /** @var AbstractCommand $command */
         $command = $application->find('version');

@@ -12,7 +12,6 @@ use Mage\MageApplication;
 
 try {
     $mage = new MageApplication('.mage.yml');
-    $mage->configure();
     $mage->run();
 } catch (Exception $exception) {
     printf('Error: %s' . PHP_EOL, $exception->getMessage());

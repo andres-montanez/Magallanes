@@ -66,4 +66,12 @@ abstract class AbstractCommand extends Command
         $utils = new Utils();
         return $utils->getStageName($this->runtime->getStage());
     }
+
+    /**
+     * Requires the configuration to be loaded
+     */
+    protected function requireConfig()
+    {
+        $this->getApplication()->configure();
+    }
 }

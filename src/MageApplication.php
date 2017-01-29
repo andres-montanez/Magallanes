@@ -40,9 +40,11 @@ class MageApplication extends Application
      */
     public function __construct($file)
     {
-        $this->file = $file;
+        parent::__construct('Magallanes', Mage::VERSION);
 
+        $this->file = $file;
         $dispatcher = new EventDispatcher();
+        $this->setDispatcher($dispatcher);
 
         $dispatcher->addListener(ConsoleEvents::EXCEPTION, function (ConsoleExceptionEvent $event) {
             $output = $event->getOutput();
@@ -52,8 +54,8 @@ class MageApplication extends Application
             $event->setException(new \LogicException('Caught exception', $exitCode, $event->getException()));
         });
 
-        $this->setDispatcher($dispatcher);
-        parent::__construct('Magallanes', Mage::VERSION);
+        $this->runtime = $this->instantiateRuntime();
+        $this->loadBuiltInCommands();
     }
 
     /**
@@ -85,12 +87,9 @@ class MageApplication extends Application
                 $logger->pushHandler(new StreamHandler($logfile));
             }
 
-            $this->runtime = $this->instantiateRuntime();
             $this->runtime->setConfiguration($config['magephp']);
             $this->runtime->setLogger($logger);
-
-            $this->loadBuiltInCommands();
-            return true;
+            return;
         }
 
         throw new RuntimeException(sprintf('The file "%s" does not have a valid Magallanes configuration.', $this->file));

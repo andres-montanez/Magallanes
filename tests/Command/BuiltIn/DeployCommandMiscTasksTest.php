@@ -21,7 +21,6 @@ class DeployCommandMiscTasksTest extends TestCase
     public function testSymfonyEnvironmentConfiguration()
     {
         $application = new MageApplicationMockup(__DIR__ . '/../../Resources/symfony-envconf.yml');
-        $application->configure();
 
         /** @var AbstractCommand $command */
         $command = $application->find('deploy');
@@ -54,7 +53,6 @@ class DeployCommandMiscTasksTest extends TestCase
     public function testComposerFlags()
     {
         $application = new MageApplicationMockup(__DIR__ . '/../../Resources/composer.yml');
-        $application->configure();
 
         /** @var AbstractCommand $command */
         $command = $application->find('deploy');
@@ -85,7 +83,6 @@ class DeployCommandMiscTasksTest extends TestCase
     public function testInvalidTaskName()
     {
         $application = new MageApplicationMockup(__DIR__ . '/../../Resources/invalid-task.yml');
-        $application->configure();
 
         /** @var AbstractCommand $command */
         $command = $application->find('deploy');
@@ -101,7 +98,6 @@ class DeployCommandMiscTasksTest extends TestCase
     public function testBrokenGitBranch()
     {
         $application = new MageApplicationMockup(__DIR__ . '/../../Resources/broken-git-branch.yml');
-        $application->configure();
 
         /** @var AbstractCommand $command */
         $command = $application->find('deploy');
@@ -120,7 +116,6 @@ class DeployCommandMiscTasksTest extends TestCase
     public function testBrokenGitCheckout()
     {
         $application = new MageApplicationMockup(__DIR__ . '/../../Resources/broken-git-branch.yml');
-        $application->configure();
 
         /** @var AbstractCommand $command */
         $command = $application->find('deploy');
@@ -139,7 +134,6 @@ class DeployCommandMiscTasksTest extends TestCase
     public function testBrokenGitUpdate()
     {
         $application = new MageApplicationMockup(__DIR__ . '/../../Resources/broken-git-branch.yml');
-        $application->configure();
 
         /** @var AbstractCommand $command */
         $command = $application->find('deploy');

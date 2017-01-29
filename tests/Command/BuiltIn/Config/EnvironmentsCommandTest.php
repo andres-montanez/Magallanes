@@ -21,7 +21,6 @@ class EnvironmentsCommandTest extends TestCase
     public function testConfigDumpTermination()
     {
         $application = new MageApplicationMockup(__DIR__ . '/../../../Resources/basic.yml');
-        $application->configure();
         
         /** @var AbstractCommand $command */
         $command = $application->find('config:environments');

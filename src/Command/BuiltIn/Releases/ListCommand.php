@@ -51,6 +51,8 @@ class ListCommand extends AbstractCommand
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
+        $this->requireConfig();
+
         $utils = new Utils();
         $output->writeln('Starting <fg=blue>Magallanes</>');
         $output->writeln('');

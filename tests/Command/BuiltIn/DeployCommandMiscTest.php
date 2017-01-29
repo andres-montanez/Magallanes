@@ -21,7 +21,6 @@ class DeployCommandMiscTest extends TestCase
     public function testDeploymentWithNoHosts()
     {
         $application = new MageApplicationMockup(__DIR__ . '/../../Resources/no-hosts.yml');
-        $application->configure();
 
         /** @var AbstractCommand $command */
         $command = $application->find('deploy');
@@ -40,7 +39,6 @@ class DeployCommandMiscTest extends TestCase
     public function testDeploymentWithSudo()
     {
         $application = new MageApplicationMockup(__DIR__ . '/../../Resources/testhost-sudo.yml');
-        $application->configure();
 
         /** @var AbstractCommand $command */
         $command = $application->find('deploy');
@@ -79,7 +77,6 @@ class DeployCommandMiscTest extends TestCase
     public function testDeploymentWithBranchOverwrite()
     {
         $application = new MageApplicationMockup(__DIR__ . '/../../Resources/testhost-without-releases.yml');
-        $application->configure();
 
         /** @var AbstractCommand $command */
         $command = $application->find('deploy');
@@ -117,8 +114,6 @@ class DeployCommandMiscTest extends TestCase
     public function testDeploymentWithCustomTask()
     {
         $application = new MageApplicationMockup(__DIR__ . '/../../Resources/testhost-custom-task.yml');
-        $application->configure();
-
 
         /** @var AbstractCommand $command */
         $command = $application->find('deploy');
@@ -151,7 +146,6 @@ class DeployCommandMiscTest extends TestCase
     public function testDeploymentWithErrorTaskCommands()
     {
         $application = new MageApplicationMockup(__DIR__ . '/../../Resources/testhost-with-error.yml');
-        $application->configure();
 
         $application->getRuntime()->setReleaseId('20170101015120');
 
@@ -193,7 +187,6 @@ class DeployCommandMiscTest extends TestCase
     public function testDeploymentWithFailingPostDeployTaskCommands()
     {
         $application = new MageApplicationMockup(__DIR__ . '/../../Resources/testhost-with-postdeploy-error.yml');
-        $application->configure();
 
         /** @var AbstractCommand $command */
         $command = $application->find('deploy');
@@ -229,7 +222,6 @@ class DeployCommandMiscTest extends TestCase
     public function testDeploymentWithSkippingTask()
     {
         $application = new MageApplicationMockup(__DIR__ . '/../../Resources/testhost-skipping.yml');
-        $application->configure();
 
         /** @var AbstractCommand $command */
         $command = $application->find('deploy');
