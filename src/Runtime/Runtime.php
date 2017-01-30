@@ -407,7 +407,7 @@ class Runtime
      */
     public function runRemoteCommand($cmd, $jail, $timeout = 120)
     {
-        $user = $this->getEnvOption('user');
+        $user = $this->getEnvOption('user', $this->getCurrentUser());
         $sudo = $this->getEnvOption('sudo', false);
         $host = $this->getWorkingHost();
         $sshConfig = $this->getSSHConfig();
