@@ -1,6 +1,6 @@
 {
   "name": "andres-montanez/magallanes",
-  "description": "A Deployment Tool for PHP Applications",
+  "description": "The Deployment Tool for PHP Applications",
   "homepage": "http://magephp.com",
   "license": "MIT",
   "type": "library",
