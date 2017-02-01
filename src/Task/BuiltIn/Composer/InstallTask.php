@@ -43,10 +43,9 @@ class InstallTask extends AbstractTask
 
     protected function getOptions()
     {
-        $userOptions = $this->runtime->getConfigOption('composer', []);
         $options = array_merge(
             ['path' => 'composer', 'flags' => '--optimize-autoloader'],
-            (is_array($userOptions) ? $userOptions : []),
+            $this->runtime->getMergedEnvAndConfigOption('composer', [], []),
             $this->options
         );
 
