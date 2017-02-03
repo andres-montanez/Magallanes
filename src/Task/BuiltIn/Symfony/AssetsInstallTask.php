@@ -45,7 +45,7 @@ class AssetsInstallTask extends AbstractTask
     {
         $options = array_merge(
             ['console' => 'bin/console', 'env' => 'dev', 'target' => 'web', 'flags' => '--symlink --relative'],
-            $this->runtime->getMergedEnvAndConfigOption('symfony', [], []),
+            $this->runtime->getMergedOption('symfony'),
             $this->options
         );
 

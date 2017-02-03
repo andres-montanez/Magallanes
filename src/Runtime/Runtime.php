@@ -233,15 +233,14 @@ class Runtime
      * Shortcut to get the the configuration option for a specific environment and merge it with
      * the global one (environment specific overrides the global one if present).
      *
-     * @param      $key
-     * @param null $defaultEnv
-     * @param null $defaultConfig
+     * @param       $key
+     * @param array $defaultEnv
      *
      * @return array
      */
-    public function getMergedEnvAndConfigOption($key, $defaultEnv = null, $defaultConfig = null)
+    public function getMergedOption($key, $defaultEnv = [])
     {
-        $userGlobalOptions = $this->getConfigOption($key, $defaultConfig);
+        $userGlobalOptions = $this->getConfigOption($key, $defaultEnv);
         $userEnvOptions = $this->getEnvOption($key, $defaultEnv);
 
         return array_merge(

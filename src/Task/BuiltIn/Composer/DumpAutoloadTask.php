@@ -45,7 +45,7 @@ class DumpAutoloadTask extends AbstractTask
     {
         $options = array_merge(
             ['path' => 'composer', 'flags' => '--optimize'],
-            $this->runtime->getMergedEnvAndConfigOption('composer', [], []),
+            $this->runtime->getMergedOption('composer'),
             $this->options
         );
 

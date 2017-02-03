@@ -45,7 +45,7 @@ class CacheClearTask extends AbstractTask
     {
         $options = array_merge(
             ['console' => 'bin/console', 'env' => 'dev', 'flags' => ''],
-            $this->runtime->getMergedEnvAndConfigOption('symfony', [], []),
+            $this->runtime->getMergedOption('symfony'),
             $this->options
         );
 

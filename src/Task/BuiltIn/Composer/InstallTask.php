@@ -45,7 +45,7 @@ class InstallTask extends AbstractTask
     {
         $options = array_merge(
             ['path' => 'composer', 'flags' => '--optimize-autoloader'],
-            $this->runtime->getMergedEnvAndConfigOption('composer', [], []),
+            $this->runtime->getMergedOption('composer'),
             $this->options
         );
 
