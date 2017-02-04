@@ -43,12 +43,9 @@ class CacheClearTask extends AbstractTask
 
     protected function getOptions()
     {
-        $userGlobalOptions = $this->runtime->getConfigOption('symfony', []);
-        $userEnvOptions = $this->runtime->getEnvOption('symfony', []);
         $options = array_merge(
             ['console' => 'bin/console', 'env' => 'dev', 'flags' => ''],
-            (is_array($userGlobalOptions) ? $userGlobalOptions : []),
-            (is_array($userEnvOptions) ? $userEnvOptions : []),
+            $this->runtime->getMergedOption('symfony'),
             $this->options
         );
 

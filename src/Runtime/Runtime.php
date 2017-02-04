@@ -230,6 +230,26 @@ class Runtime
     }
 
     /**
+     * Shortcut to get the the configuration option for a specific environment and merge it with
+     * the global one (environment specific overrides the global one if present).
+     *
+     * @param       $key
+     * @param array $defaultEnv
+     *
+     * @return array
+     */
+    public function getMergedOption($key, $defaultEnv = [])
+    {
+        $userGlobalOptions = $this->getConfigOption($key, $defaultEnv);
+        $userEnvOptions = $this->getEnvOption($key, $defaultEnv);
+
+        return array_merge(
+            (is_array($userGlobalOptions) ? $userGlobalOptions : []),
+            (is_array($userEnvOptions) ? $userEnvOptions : [])
+        );
+    }
+
+    /**
      * Overwrites an Environment Configuration Option
      *
      * @param string $key
