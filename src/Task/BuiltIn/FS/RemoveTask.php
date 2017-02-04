@@ -28,7 +28,7 @@ class RemoveTask extends AbstractFileTask
     public function getDescription()
     {
         try {
-            return sprintf('[FS] Remove "%s"', $this->getFile('file'));
+            return sprintf('[FS] Remove %s"%s"', $this->getRecursive(), $this->getFile('file'));
         } catch (Exception $exception) {
             return '[FS] Remove [missing parameters]';
         }
@@ -38,7 +38,7 @@ class RemoveTask extends AbstractFileTask
     {
         $file = $this->getFile('file');
 
-        $cmd = sprintf('rm %s', $file);
+        $cmd = sprintf('rm %s%s', $this->getRecursive(), $file);
 
         /** @var Process $process */
         $process = $this->runtime->runCommand($cmd);
@@ -49,5 +49,15 @@ class RemoveTask extends AbstractFileTask
     protected function getParameters()
     {
         return ['file'];
+    }
+
+    protected function getRecursive()
+    {
+        $options = $this->getOptions();
+        if (isset($options['recursive']) && boolval($options['recursive'])) {
+            return '-fr ';
+        }
+
+        return '';
     }
 }
