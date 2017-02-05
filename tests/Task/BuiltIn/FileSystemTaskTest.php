@@ -236,6 +236,35 @@ class FileSystemTaskTest extends TestCase
         }
     }
 
+    public function testRemoveRecursiveTask()
+    {
+        $runtime = new RuntimeMockup();
+        $runtime->setConfiguration(['environments' => ['test' => []]]);
+        $runtime->setEnvironment('test');
+
+        $task = new RemoveTask();
+        $task->setOptions(['file' => 'a.txt', 'recursive' => 'true']);
+        $task->setRuntime($runtime);
+
+        $this->assertContains('a.txt', $task->getDescription());
+        $this->assertContains('-fr', $task->getDescription());
+        $task->execute();
+
+        $ranCommands = $runtime->getRanCommands();
+
+        $testCase = array(
+            0 => 'rm -fr a.txt',
+        );
+
+        // Check total of Executed Commands
+        $this->assertEquals(count($testCase), count($ranCommands));
+
+        // Check Generated Commands
+        foreach ($testCase as $index => $command) {
+            $this->assertEquals($command, $ranCommands[$index]);
+        }
+    }
+
     public function testRemoveReplaceTask()
     {
         $runtime = new RuntimeMockup();
