@@ -75,32 +75,4 @@ abstract class AbstractSystemTask extends AbstractTask
         );
     }
 
-    /**
-     * Returns a file with the placeholders replaced
-     *
-     * @param string $file
-     * @return string
-     * @throws ErrorException
-     */
-    protected function getFile($file)
-    {
-        $mapping = [
-            '%environment%' => $this->runtime->getEnvironment(),
-        ];
-
-        if ($this->runtime->getWorkingHost() !== null) {
-            $mapping['%host%'] = $this->runtime->getWorkingHost();
-        }
-
-        if ($this->runtime->getReleaseId() !== null) {
-            $mapping['%release%'] = $this->runtime->getReleaseId();
-        }
-
-        $options = $this->getOptions();
-        return str_replace(
-            array_keys($mapping),
-            array_values($mapping),
-            $options[$file]
-        );
-    }
 }
