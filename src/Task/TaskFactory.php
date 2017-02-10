@@ -89,6 +89,13 @@ class TaskFactory
      */
     public function get($name, array $options = null)
     {
+        // TODO: backwards compatibility, remove in 4.0
+        if (is_array($name)) {
+            $options = $name;
+            $name    = key($options);
+            $options = $options[$name];
+        }
+
         if (array_key_exists($name, $this->tasks)) {
             $task = $this->tasks[$name];
         } else {
