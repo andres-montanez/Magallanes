@@ -122,7 +122,7 @@ class DeployCommandMiscTasksTest extends TestCase
 
         $tester->execute(['command' => $command->getName(), 'environment' => 'test']);
         $this->assertEquals(7, $tester->getStatusCode());
-        $this->assertContains('Invalid task name "invalid/task"', $tester->getDisplay());
+        $this->assertContains('The class "invalid/task" does not exist', $tester->getDisplay());
     }
 
     public function testBrokenGitBranch()

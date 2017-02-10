@@ -20,18 +20,21 @@ use ReflectionClass;
  * Task Factory
  *
  * @author Andrés Montañez <andresmontanez@gmail.com>
+ * @author Kamil Kuzminski <https://github.com/qzminski>
  */
 class TaskFactory
 {
     /**
+     * Runtime
      * @var Runtime
      */
-    protected $runtime;
+    private $runtime;
 
     /**
-     * @var array Registered Tasks
+     * Registered tasks
+     * @var TaskInterface[]
      */
-    protected $registeredTasks = [];
+    private $tasks = [];
 
     /**
      * Constructor
@@ -48,11 +51,29 @@ class TaskFactory
      * Add a Task
      *
      * @param AbstractTask $task
+     *
+     * @deprecated Deprecated since 3.0, to be removed in 4.0.
+     *             Use the TaskFactory::addTask() instead.
      */
     public function add(AbstractTask $task)
     {
+        @trigger_error(
+            'Using TaskFactory::add() has been deprecated and will no longer work in 4.0. Use the TaskFactory::addTask() instead.',
+            E_USER_DEPRECATED
+        );
+
         $task->setRuntime($this->runtime);
-        $this->registeredTasks[$task->getName()] = $task;
+        $this->tasks[$task->getName()] = $task;
+    }
+
+    /**
+     * Add a task
+     *
+     * @param TaskInterface $task
+     */
+    public function addTask(TaskInterface $task)
+    {
+        $this->tasks[$task->getName()] = $task;
     }
 
     /**
@@ -60,58 +81,94 @@ class TaskFactory
      * in that case the class will be instantiated
      *
      * @param string $name Name/Code or Class of the Task
-     * @return AbstractTask
+     * @param array  $options
+     *
+     * @return TaskInterface
+     *
      * @throws RuntimeException
      */
-    public function get($name)
+    public function get($name, array $options = null)
     {
-        $options = [];
-        if (is_array($name)) {
-            $options = $name;
-            list($name) = array_keys($name);
-            $options = $options[$name];
+        if (array_key_exists($name, $this->tasks)) {
+            $task = $this->tasks[$name];
+        } else {
+            $task = $this->createTask($name);
         }
 
-        if (array_key_exists($name, $this->registeredTasks)) {
-            /** @var AbstractTask $task */
-            $task = $this->registeredTasks[$name];
+        $task->setRuntime($this->runtime);
+
+        if ($options !== null) {
             $task->setOptions($options);
-            return $task;
-        } elseif (class_exists($name)) {
-            $reflex = new ReflectionClass($name);
-            if ($reflex->isInstantiable()) {
-                $task = new $name();
-                if ($task instanceof AbstractTask) {
-                    $task->setOptions($options);
-                    $this->add($task);
-                    return $task;
-                }
-            }
         }
 
-        throw new RuntimeException(sprintf('Invalid task name "%s"', $name));
+        return $task;
     }
 
     /**
-     * Load BuiltIn Tasks
+     * Load the built-in tasks
+     *
+     * @throws RuntimeException
      */
-    protected function loadBuiltInTasks()
+    private function loadBuiltInTasks()
     {
         $finder = new Finder();
-        $finder->files()->in(__DIR__ . '/BuiltIn')->name('*Task.php');
+        $finder->files()->in(__DIR__.'/BuiltIn')->name('*Task.php');
 
         /** @var SplFileInfo $file */
         foreach ($finder as $file) {
-            $class = substr('\\Mage\\Task\\BuiltIn\\' . str_replace('/', '\\', $file->getRelativePathname()), 0, -4);
-            if (class_exists($class)) {
-                $reflex = new ReflectionClass($class);
-                if ($reflex->isInstantiable()) {
-                    $task = new $class();
-                    if ($task instanceof AbstractTask) {
-                        $this->add($task);
-                    }
-                }
+            $class = substr('\\Mage\\Task\\BuiltIn\\'.str_replace('/', '\\', $file->getRelativePathname()), 0, -4);
+            $reflex = new ReflectionClass($class);
+
+            // Some classes found in the folder can be abstract
+            if (!$reflex->isInstantiable()) {
+                continue;
             }
+
+            $this->createTask($class);
+        }
+    }
+
+    /**
+     * Create the task
+     *
+     * @param string $class
+     *
+     * @return TaskInterface
+     *
+     * @throws RuntimeException
+     */
+    private function createTask($class)
+    {
+        $this->validateTask($class);
+
+        /** @var TaskInterface $task */
+        $task = new $class();
+
+        // Register the task
+        $this->addTask($task);
+
+        return $task;
+    }
+
+    /**
+     * Validate the task
+     *
+     * @param string $class
+     *
+     * @throws RuntimeException
+     */
+    private function validateTask($class)
+    {
+        if (!class_exists($class)) {
+            throw new RuntimeException(sprintf('The class "%s" does not exist', $class));
+        }
+
+        $reflex = new ReflectionClass($class);
+
+        if (!$reflex->implementsInterface(TaskInterface::class)) {
+            throw new RuntimeException(
+                sprintf('The class "%s" must implement the "%s" interface', $class, TaskInterface::class)
+            );
         }
     }
 }

@@ -18,29 +18,31 @@ use PHPUnit_Framework_TestCase as TestCase;
 
 class TaskFactoryTest extends TestCase
 {
-    public function testNonInstantiable()
+    public function testClassNotExists()
     {
-        $runtime = new Runtime();
-        $factory = new TaskFactory($runtime);
-
         try {
-            $factory->get('Traversable');
+            $this->getFactory()->get('Foobar');
         } catch (Exception $exception) {
             $this->assertTrue($exception instanceof RuntimeException);
-            $this->assertEquals('Invalid task name "Traversable"', $exception->getMessage());
+            $this->assertEquals('The class "Foobar" does not exist', $exception->getMessage());
         }
     }
 
-    public function testNotExtendingAbstractTask()
+    public function testNotImplementingInterface()
     {
-        $runtime = new Runtime();
-        $factory = new TaskFactory($runtime);
-
         try {
-            $factory->get('stdClass');
+            $this->getFactory()->get('stdClass');
         } catch (Exception $exception) {
             $this->assertTrue($exception instanceof RuntimeException);
-            $this->assertEquals('Invalid task name "stdClass"', $exception->getMessage());
+            $this->assertEquals(
+                'The class "stdClass" must implement the "Mage\Task\TaskInterface" interface',
+                $exception->getMessage()
+            );
         }
+    }
+
+    private function getFactory()
+    {
+        return new TaskFactory(new Runtime());
     }
 }
