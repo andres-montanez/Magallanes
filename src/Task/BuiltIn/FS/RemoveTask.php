@@ -28,7 +28,7 @@ class RemoveTask extends AbstractFileTask
     public function getDescription()
     {
         try {
-            return sprintf('[FS] Remove "%s"', $this->getFile('file'));
+            return sprintf('[FS] Remove %s"%s"', $this->getFlags(), $this->getFile('file'));
         } catch (Exception $exception) {
             return '[FS] Remove [missing parameters]';
         }
@@ -37,8 +37,9 @@ class RemoveTask extends AbstractFileTask
     public function execute()
     {
         $file = $this->getFile('file');
+        $flags = $this->getFlags();
 
-        $cmd = sprintf('rm %s', $file);
+        $cmd = sprintf('rm %s"%s"', $flags, $file);
 
         /** @var Process $process */
         $process = $this->runtime->runCommand($cmd);

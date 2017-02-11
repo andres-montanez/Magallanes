@@ -49,6 +49,33 @@ abstract class AbstractFileTask extends AbstractTask
     abstract protected function getParameters();
 
     /**
+     * Returns the default "flags".
+     *
+     * @return null|string
+     */
+    protected function getDefaultFlags()
+    {
+        return null;
+    }
+
+    /**
+     * Returns the flags for the current command.
+     *
+     * @return string
+     */
+    protected function getFlags()
+    {
+        $options = $this->getOptions();
+        $flags = $this->getDefaultFlags();
+
+        if (array_key_exists('flags', $options) && !empty($options['flags'])) {
+            $flags = trim($options['flags']);
+        }
+
+        return empty($flags) ? '' : $flags.' ';
+    }
+
+    /**
      * Returns a file with the placeholders replaced
      *
      * @param string $file

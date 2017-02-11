@@ -38,7 +38,7 @@ class FileSystemTaskTest extends TestCase
         $ranCommands = $runtime->getRanCommands();
 
         $testCase = array(
-            0 => 'cp -p a.txt b.txt',
+            0 => 'cp -p "a.txt" "b.txt"',
         );
 
         // Check total of Executed Commands
@@ -67,7 +67,7 @@ class FileSystemTaskTest extends TestCase
         $ranCommands = $runtime->getRanCommands();
 
         $testCase = array(
-            0 => 'cp -p test.txt b.txt',
+            0 => 'cp -p "test.txt" "b.txt"',
         );
 
         // Check total of Executed Commands
@@ -98,7 +98,7 @@ class FileSystemTaskTest extends TestCase
         $ranCommands = $runtime->getRanCommands();
 
         $testCase = array(
-            0 => 'cp -p localhost.txt 1234.yml',
+            0 => 'cp -p "localhost.txt" "1234.yml"',
         );
 
         // Check total of Executed Commands
@@ -147,7 +147,7 @@ class FileSystemTaskTest extends TestCase
         $ranCommands = $runtime->getRanCommands();
 
         $testCase = array(
-            0 => 'mv a.txt b.txt',
+            0 => 'mv "a.txt" "b.txt"',
         );
 
         // Check total of Executed Commands
@@ -176,7 +176,7 @@ class FileSystemTaskTest extends TestCase
         $ranCommands = $runtime->getRanCommands();
 
         $testCase = array(
-            0 => 'mv test.txt b.txt',
+            0 => 'mv "test.txt" "b.txt"',
         );
 
         // Check total of Executed Commands
@@ -224,7 +224,35 @@ class FileSystemTaskTest extends TestCase
         $ranCommands = $runtime->getRanCommands();
 
         $testCase = array(
-            0 => 'rm a.txt',
+            0 => 'rm "a.txt"',
+        );
+
+        // Check total of Executed Commands
+        $this->assertEquals(count($testCase), count($ranCommands));
+
+        // Check Generated Commands
+        foreach ($testCase as $index => $command) {
+            $this->assertEquals($command, $ranCommands[$index]);
+        }
+    }
+
+    public function testRemoveWithFlagsTask()
+    {
+        $runtime = new RuntimeMockup();
+        $runtime->setConfiguration(['environments' => ['test' => []]]);
+        $runtime->setEnvironment('test');
+
+        $task = new RemoveTask();
+        $task->setOptions(['file' => 'a.txt', 'flags' => '-fr']);
+        $task->setRuntime($runtime);
+
+        $this->assertContains('a.txt', $task->getDescription());
+        $task->execute();
+
+        $ranCommands = $runtime->getRanCommands();
+
+        $testCase = array(
+            0 => 'rm -fr "a.txt"',
         );
 
         // Check total of Executed Commands
@@ -252,7 +280,7 @@ class FileSystemTaskTest extends TestCase
         $ranCommands = $runtime->getRanCommands();
 
         $testCase = array(
-            0 => 'rm test.txt',
+            0 => 'rm "test.txt"',
         );
 
         // Check total of Executed Commands
@@ -301,7 +329,7 @@ class FileSystemTaskTest extends TestCase
         $ranCommands = $runtime->getRanCommands();
 
         $testCase = array(
-            0 => 'ln -snf a.txt b.txt',
+            0 => 'ln -snf "a.txt" "b.txt"',
         );
 
         // Check total of Executed Commands
@@ -330,7 +358,7 @@ class FileSystemTaskTest extends TestCase
         $ranCommands = $runtime->getRanCommands();
 
         $testCase = array(
-            0 => 'ln -snf test.txt b.txt',
+            0 => 'ln -snf "test.txt" "b.txt"',
         );
 
         // Check total of Executed Commands
