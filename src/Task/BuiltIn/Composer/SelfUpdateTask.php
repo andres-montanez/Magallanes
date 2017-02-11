@@ -52,7 +52,7 @@ class SelfUpdateTask extends AbstractTask
             throw new SkipException();
         }
 
-        $cmdUpdate = sprintf('%s self-update %s', $options['path'], $options['release']);
+        $cmdUpdate = sprintf('%s self-update %s', $options['path'], $options['version']);
         /** @var Process $process */
         $process = $this->runtime->runCommand(trim($cmdUpdate));
 
@@ -83,7 +83,7 @@ class SelfUpdateTask extends AbstractTask
     protected function getOptions()
     {
         $options = array_merge(
-            ['path' => 'composer', 'release' => '', 'days' => 60],
+            ['path' => 'composer', 'version' => '', 'days' => 60],
             $this->runtime->getMergedOption('composer'),
             $this->options
         );
