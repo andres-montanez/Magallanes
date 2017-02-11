@@ -62,7 +62,7 @@ abstract class AbstractTask
             $options = [];
         }
 
-        $this->options = array_merge($options, $this->getDefaults());
+        $this->options = array_merge($this->getDefaults(), $options);
         return $this;
     }
 
