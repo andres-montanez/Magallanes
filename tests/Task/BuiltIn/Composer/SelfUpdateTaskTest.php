@@ -19,6 +19,7 @@ class SelfUpdateTaskTest extends TestCase
         $task = new SelfUpdateTask();
         $task->setOptions(['path' => 'composer']);
         $task->setRuntime($runtime);
+        $this->assertEquals('[Composer] Self Update', $task->getDescription());
 
         try {
             $task->execute();
