@@ -50,6 +50,35 @@ class FileSystemTaskTest extends TestCase
         }
     }
 
+    public function testCopyTaskWithFlags()
+    {
+        $runtime = new RuntimeMockup();
+        $runtime->setConfiguration(['environments' => ['test' => []]]);
+        $runtime->setEnvironment('test');
+
+        $task = new CopyTask();
+        $task->setOptions(['from' => 'a.txt', 'to' => 'b.txt', 'flags' => '-rp']);
+        $task->setRuntime($runtime);
+
+        $this->assertContains('a.txt', $task->getDescription());
+        $this->assertContains('b.txt', $task->getDescription());
+        $task->execute();
+
+        $ranCommands = $runtime->getRanCommands();
+
+        $testCase = array(
+            0 => 'cp -rp "a.txt" "b.txt"',
+        );
+
+        // Check total of Executed Commands
+        $this->assertEquals(count($testCase), count($ranCommands));
+
+        // Check Generated Commands
+        foreach ($testCase as $index => $command) {
+            $this->assertEquals($command, $ranCommands[$index]);
+        }
+    }
+
     public function testCopyReplaceTask()
     {
         $runtime = new RuntimeMockup();
@@ -147,7 +176,36 @@ class FileSystemTaskTest extends TestCase
         $ranCommands = $runtime->getRanCommands();
 
         $testCase = array(
-            0 => 'mv "a.txt" "b.txt"',
+            0 => 'mv  "a.txt" "b.txt"',
+        );
+
+        // Check total of Executed Commands
+        $this->assertEquals(count($testCase), count($ranCommands));
+
+        // Check Generated Commands
+        foreach ($testCase as $index => $command) {
+            $this->assertEquals($command, $ranCommands[$index]);
+        }
+    }
+
+    public function testMoveWithFlagsTask()
+    {
+        $runtime = new RuntimeMockup();
+        $runtime->setConfiguration(['environments' => ['test' => []]]);
+        $runtime->setEnvironment('test');
+
+        $task = new MoveTask();
+        $task->setOptions(['from' => 'a.txt', 'to' => 'b.txt', 'flags' => '-n']);
+        $task->setRuntime($runtime);
+
+        $this->assertContains('a.txt', $task->getDescription());
+        $this->assertContains('b.txt', $task->getDescription());
+        $task->execute();
+
+        $ranCommands = $runtime->getRanCommands();
+
+        $testCase = array(
+            0 => 'mv -n "a.txt" "b.txt"',
         );
 
         // Check total of Executed Commands
@@ -176,7 +234,7 @@ class FileSystemTaskTest extends TestCase
         $ranCommands = $runtime->getRanCommands();
 
         $testCase = array(
-            0 => 'mv "test.txt" "b.txt"',
+            0 => 'mv  "test.txt" "b.txt"',
         );
 
         // Check total of Executed Commands
@@ -224,7 +282,7 @@ class FileSystemTaskTest extends TestCase
         $ranCommands = $runtime->getRanCommands();
 
         $testCase = array(
-            0 => 'rm "a.txt"',
+            0 => 'rm  "a.txt"',
         );
 
         // Check total of Executed Commands
@@ -280,7 +338,7 @@ class FileSystemTaskTest extends TestCase
         $ranCommands = $runtime->getRanCommands();
 
         $testCase = array(
-            0 => 'rm "test.txt"',
+            0 => 'rm  "test.txt"',
         );
 
         // Check total of Executed Commands
@@ -330,6 +388,35 @@ class FileSystemTaskTest extends TestCase
 
         $testCase = array(
             0 => 'ln -snf "a.txt" "b.txt"',
+        );
+
+        // Check total of Executed Commands
+        $this->assertEquals(count($testCase), count($ranCommands));
+
+        // Check Generated Commands
+        foreach ($testCase as $index => $command) {
+            $this->assertEquals($command, $ranCommands[$index]);
+        }
+    }
+
+    public function testLinkTaskWithFlags()
+    {
+        $runtime = new RuntimeMockup();
+        $runtime->setConfiguration(['environments' => ['test' => []]]);
+        $runtime->setEnvironment('test');
+
+        $task = new LinkTask();
+        $task->setOptions(['from' => 'a.txt', 'to' => 'b.txt', 'flags' => '-P']);
+        $task->setRuntime($runtime);
+
+        $this->assertContains('a.txt', $task->getDescription());
+        $this->assertContains('b.txt', $task->getDescription());
+        $task->execute();
+
+        $ranCommands = $runtime->getRanCommands();
+
+        $testCase = array(
+            0 => 'ln -P "a.txt" "b.txt"',
         );
 
         // Check total of Executed Commands

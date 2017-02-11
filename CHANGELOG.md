@@ -2,6 +2,7 @@ CHANGELOG for 3.x
 =================
 
 * 3.0.X (2017-XX-XX)
+ * [#344] Allow to flag Filesystem tasks
  * [PR#346] Add new File System task, to change file's modes (fs/chmod)
  * [BUGFIX] [PR#342] Ignore empty exclude lines
  * [PR#330] Allow Composer task options to be overwritten at environment level

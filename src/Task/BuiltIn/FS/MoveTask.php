@@ -28,7 +28,7 @@ class MoveTask extends AbstractFileTask
     public function getDescription()
     {
         try {
-            return sprintf('[FS] Move %s"%s" to "%s"', $this->getFlags(), $this->getFile('from'), $this->getFile('to'));
+            return sprintf('[FS] Move "%s" to "%s"', $this->getFile('from'), $this->getFile('to'));
         } catch (Exception $exception) {
             return '[FS] Move [missing parameters]';
         }
@@ -38,9 +38,9 @@ class MoveTask extends AbstractFileTask
     {
         $moveFrom = $this->getFile('from');
         $moveTo = $this->getFile('to');
-        $flags = $this->getFlags();
+        $flags = $this->options['flags'];
 
-        $cmd = sprintf('mv %s"%s" "%s"', $flags, $moveFrom, $moveTo);
+        $cmd = sprintf('mv %s "%s" "%s"', $flags, $moveFrom, $moveTo);
 
         /** @var Process $process */
         $process = $this->runtime->runCommand($cmd);
@@ -50,6 +50,11 @@ class MoveTask extends AbstractFileTask
 
     protected function getParameters()
     {
-        return ['from', 'to'];
+        return ['from', 'to', 'flags'];
+    }
+
+    public function getDefaults()
+    {
+        return ['flags' => null];
     }
 }

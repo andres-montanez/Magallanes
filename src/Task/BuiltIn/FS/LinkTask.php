@@ -28,7 +28,7 @@ class LinkTask extends AbstractFileTask
     public function getDescription()
     {
         try {
-            return sprintf('[FS] Link %s"%s" to "%s"', $this->getFlags(), $this->getFile('from'), $this->getFile('to'));
+            return sprintf('[FS] Link "%s" to "%s"', $this->getFile('from'), $this->getFile('to'));
         } catch (Exception $exception) {
             return '[FS] Link [missing parameters]';
         }
@@ -38,10 +38,9 @@ class LinkTask extends AbstractFileTask
     {
         $linkFrom = $this->getFile('from');
         $linkTo = $this->getFile('to');
+        $flags = $this->options['flags'];
 
-        $flags = $this->getFlags();
-
-        $cmd = sprintf('ln %s"%s" "%s"', $flags, $linkFrom, $linkTo);
+        $cmd = sprintf('ln %s "%s" "%s"', $flags, $linkFrom, $linkTo);
 
         /** @var Process $process */
         $process = $this->runtime->runCommand($cmd);
@@ -51,11 +50,11 @@ class LinkTask extends AbstractFileTask
 
     protected function getParameters()
     {
-        return ['from', 'to'];
+        return ['from', 'to', 'flags'];
     }
 
-    protected function getDefaultFlags()
+    public function getDefaults()
     {
-        return '-snf';
+        return ['flags' => '-snf'];
     }
 }

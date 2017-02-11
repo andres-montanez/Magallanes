@@ -29,14 +29,13 @@ class ChangeModeTest extends TestCase
         $task->setRuntime($runtime);
 
         $this->assertContains('a.txt', $task->getDescription());
-        $this->assertContains('-R', $task->getDescription());
         $this->assertContains('o+w', $task->getDescription());
         $task->execute();
 
         $ranCommands = $runtime->getRanCommands();
 
         $testCase = array(
-            0 => 'chmod -R o+w a.txt',
+            0 => 'chmod -R o+w "a.txt"',
         );
 
         // Check total of Executed Commands
@@ -59,14 +58,13 @@ class ChangeModeTest extends TestCase
         $task->setRuntime($runtime);
 
         $this->assertContains('a.txt', $task->getDescription());
-        $this->assertNotContains('-R', $task->getDescription());
         $this->assertContains('o+w', $task->getDescription());
         $task->execute();
 
         $ranCommands = $runtime->getRanCommands();
 
         $testCase = array(
-            0 => 'chmod  o+w a.txt',
+            0 => 'chmod  o+w "a.txt"',
         );
 
         // Check total of Executed Commands
@@ -89,14 +87,13 @@ class ChangeModeTest extends TestCase
         $task->setRuntime($runtime);
 
         $this->assertContains('test.txt', $task->getDescription());
-        $this->assertContains('-R', $task->getDescription());
         $this->assertContains('o+w', $task->getDescription());
         $task->execute();
 
         $ranCommands = $runtime->getRanCommands();
 
         $testCase = array(
-            0 => 'chmod -R o+w test.txt',
+            0 => 'chmod -R o+w "test.txt"',
         );
 
         // Check total of Executed Commands
