@@ -424,8 +424,8 @@ class Runtime
             $cmdDelegate = sprintf('cd %s && %s', $hostPath, $cmdDelegate);
         }
 
-        $cmdRemote = str_replace(['"', '&', ';', '|'], ['\"', '\&', '\;', '\|'], $cmdDelegate);
-        $cmdLocal = sprintf('ssh -p %d %s %s@%s sh -c \"%s\"', $sshConfig['port'], $sshConfig['flags'], $user, $host, $cmdRemote);
+        $cmdRemote = str_replace('"', '\"', $cmdDelegate);
+        $cmdLocal = sprintf('ssh -p %d %s %s@%s "%s"', $sshConfig['port'], $sshConfig['flags'], $user, $host, $cmdRemote);
 
         return $this->runLocalCommand($cmdLocal, $timeout);
     }
