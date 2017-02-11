@@ -2,6 +2,7 @@ CHANGELOG for 3.x
 =================
 
 * 3.0.X (2017-XX-XX)
+ * [PR#346] Add new File System task, to change file's modes (fs/chmod)
  * [BUGFIX] [PR#342] Ignore empty exclude lines
  * [PR#330] Allow Composer task options to be overwritten at environment level
  * [PR#330] Add new method Runtime::getMergedOption to merge ConfigOption and EnvOption
