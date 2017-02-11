@@ -28,7 +28,11 @@ class ChangeModeTask extends AbstractFileTask
     public function getDescription()
     {
         try {
-            return sprintf('[FS] Change mode of "%s" to "%s" with flags "%s"', $this->getFile('file'), $this->options['mode'], $this->options['flags']);
+            $description = sprintf('[FS] Change mode of "%s" to "%s"', $this->getFile('file'), $this->options['mode']);
+            if ($this->options['flags'] != null) {
+                $description = sprintf('[FS] Change mode of "%s" to "%s" with flags "%s"', $this->getFile('file'), $this->options['mode'], $this->options['flags']);
+            }
+            return $description;
         } catch (Exception $exception) {
             return '[FS] Chmod [missing parameters]';
         }
@@ -36,9 +40,7 @@ class ChangeModeTask extends AbstractFileTask
 
     public function execute()
     {
-        $file = $this->getFile('file');
-
-        $cmd = sprintf('chmod %s %s %s', $this->options['flags'], $this->options['mode'], $file);
+        $cmd = sprintf('chmod %s %s %s', $this->options['flags'], $this->options['mode'], $this->getFile('file'));
 
         /** @var Process $process */
         $process = $this->runtime->runCommand($cmd);
