@@ -32,8 +32,8 @@ class ListCommandTest extends TestCase
         $ranCommands = $application->getRuntime()->getRanCommands();
 
         $testCase = array(
-            0 => 'ssh -p 22 -q -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no tester@testhost sh -c \\"ls -1 /var/www/test/releases\\"',
-            1 => 'ssh -p 22 -q -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no tester@testhost sh -c \\"readlink -f /var/www/test/current\\"',
+            0 => 'ssh -p 22 -q -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no tester@testhost "ls -1 /var/www/test/releases"',
+            1 => 'ssh -p 22 -q -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no tester@testhost "readlink -f /var/www/test/current"',
         );
 
         // Check total of Executed Commands
