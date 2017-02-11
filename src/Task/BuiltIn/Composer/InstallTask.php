@@ -33,10 +33,10 @@ class InstallTask extends AbstractTask
     public function execute()
     {
         $options = $this->getOptions();
-        $command = sprintf('%s install %s', $options['path'], $options['flags']);
+        $cmd = sprintf('%s install %s', $options['path'], $options['flags']);
 
         /** @var Process $process */
-        $process = $this->runtime->runCommand(trim($command));
+        $process = $this->runtime->runCommand(trim($cmd));
 
         return $process->isSuccessful();
     }

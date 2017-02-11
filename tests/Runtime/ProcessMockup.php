@@ -68,6 +68,29 @@ class ProcessMockup extends Process
             return '* master';
         }
 
+        // Make composer build 20 days old
+        if ($this->commandline == 'composer --version') {
+            $date = date('Y-m-d H:i:s', strtotime('now -20 days'));
+            return 'Composer version 1.3.0 ' . $date;
+        }
+
+        // Make ./composer build 20 days old
+        if ($this->commandline == './composer --version') {
+            $date = date('Y-m-d H:i:s', strtotime('now -20 days'));
+            return 'Do not run Composer as root/super user! See https://getcomposer.org/root for details' . PHP_EOL . 'Composer version 1.3.0 ' . $date;
+        }
+
+        // Make composer.phar build 90 days old
+        if ($this->commandline == 'composer.phar --version') {
+            $date = date('Y-m-d H:i:s', strtotime('now -90 days'));
+            return 'Composer version 1.3.0 ' . $date;
+        }
+
+        // Make php composer has wrong output
+        if ($this->commandline == 'php composer --version') {
+            return 'Composer version 1.3.0 no build';
+        }
+
         if ($this->commandline == 'ssh -p 22 -q -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no tester@testhost "ls -1 /var/www/test/releases"') {
             return implode(PHP_EOL, ['20170101015110', '20170101015111', '20170101015112', '20170101015113', '20170101015114', '20170101015115', '20170101015116', '20170101015117']);
         }

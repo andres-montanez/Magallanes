@@ -10,8 +10,10 @@
 
 namespace Mage\Task\BuiltIn\Composer;
 
+use Mage\Task\Exception\SkipException;
 use Symfony\Component\Process\Process;
 use Mage\Task\AbstractTask;
+use DateTime;
 
 /**
  * Composer Task - Self update
@@ -20,123 +22,68 @@ use Mage\Task\AbstractTask;
  */
 class SelfUpdateTask extends AbstractTask
 {
-    /**
-     * Only used for unit tests.
-     *
-     * @var \DateTime
-     */
-    private $dateToCompare;
-
-    /**
-     * @return string
-     */
     public function getName()
     {
-        return 'composer/selfupdate';
+        return 'composer/self-update';
     }
 
-    /**
-     * @return string
-     */
     public function getDescription()
     {
-        return '[Composer] Selfupdate';
+        return '[Composer] Self Update';
     }
 
-    /**
-     * @return bool
-     */
     public function execute()
     {
         $options = $this->getOptions();
-        $days = $options['days'];
-        $versionCommand = sprintf('%s --version', $options['path']);
-
+        $cmdVersion = sprintf('%s --version', $options['path']);
         /** @var Process $process */
-        $process = $this->runtime->runCommand(trim($versionCommand));
-
+        $process = $this->runtime->runCommand(trim($cmdVersion));
         if (!$process->isSuccessful()) {
             return false;
         }
 
-        $dt = $this->extractDate($process->getOutput());
-
-        // Date could not be extracted, always run update
-        if (false === $dt) {
-            return $this->selfUpdate($options);
+        $buildDate = $this->getBuildDate($process->getOutput());
+        if (!$buildDate instanceof DateTime) {
+            return false;
         }
 
-        // Check age
-        if (!$this->isOlderThan($dt, $days)) {
-            return true;
+        $compareDate = $this->getCompareDate();
+        if ($buildDate >= $compareDate) {
+            throw new SkipException();
         }
 
-        return $this->selfUpdate($options);
-    }
-
-    /**
-     * This tasks obviously always takes the current date to compare the age
-     * of the composer.phar. This method is used for unit test purposes
-     * only.
-     *
-     * @param \DateTime $dateToCompare
-     */
-    public function setDateToCompare(\DateTime $dateToCompare)
-    {
-        $this->dateToCompare = $dateToCompare;
-    }
-
-    /**
-     * @param \DateTime $dt
-     * @param int       $days
-     *
-     * @return bool
-     */
-    protected function isOlderThan(\DateTime $dt, $days)
-    {
-        $dtComp = new \DateTime($days . ' days ago');
-
-        if (null !== $this->dateToCompare) {
-            $dtComp = $this->dateToCompare;
-        }
-
-        return $dt < $dtComp;
-    }
-
-    /**
-     * @param array $options
-     *
-     * @return bool
-     */
-    protected function selfUpdate(array $options)
-    {
-        $selfupdateCommand = sprintf('%s selfupdate %s', $options['path'], $options['release']);
-
+        $cmdUpdate = sprintf('%s self-update %s', $options['path'], $options['release']);
         /** @var Process $process */
-        $process = $this->runtime->runCommand(trim($selfupdateCommand));
+        $process = $this->runtime->runCommand(trim($cmdUpdate));
 
         return $process->isSuccessful();
     }
 
-    /**
-     * @param string $output
-     *
-     * @return \DateTime|false
-     */
-    protected function extractDate($output)
+    protected function getBuildDate($output)
     {
-        $date = substr($output, -19);
+        $buildDate = null;
+        $output = explode(PHP_EOL, $output);
+        foreach ($output as $row) {
+            if (strpos($row, 'Composer version ') === 0) {
+                $buildDate = DateTime::createFromFormat('Y-m-d H:i:s', substr(trim($row), -19));
+            }
+        }
 
-        return \DateTime::createFromFormat('Y-m-d H:i:s', $date);
+        return $buildDate;
     }
 
-    /**
-     * @return array
-     */
+    protected function getCompareDate()
+    {
+        $options = $this->getOptions();
+        $compareDate = new DateTime();
+        $compareDate->modify(sprintf('now -%d days', $options['days']));
+        return $compareDate;
+    }
+
     protected function getOptions()
     {
         $options = array_merge(
-            ['path' => 'composer', 'release' => '', 'days' => 30],
+            ['path' => 'composer', 'release' => '', 'days' => 60],
             $this->runtime->getMergedOption('composer'),
             $this->options
         );

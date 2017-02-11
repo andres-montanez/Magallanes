@@ -8,34 +8,34 @@
  * file that was distributed with this source code.
  */
 
-namespace Mage\Tests\Task\BuiltIn;
+namespace Mage\Tests\Task\BuiltIn\FileSystem;
 
 use Mage\Task\Exception\ErrorException;
-use Mage\Task\BuiltIn\FS\ChangeModeTask;
+use Mage\Task\BuiltIn\FS\CopyTask;
 use Exception;
 use Mage\Tests\Runtime\RuntimeMockup;
 use PHPUnit_Framework_TestCase as TestCase;
 
-class ChangeModeTest extends TestCase
+class CopyTaskTest extends TestCase
 {
-    public function testChangeModeTask()
+    public function testCopyTask()
     {
         $runtime = new RuntimeMockup();
         $runtime->setConfiguration(['environments' => ['test' => []]]);
         $runtime->setEnvironment('test');
 
-        $task = new ChangeModeTask();
-        $task->setOptions(['file' => 'a.txt', 'flags' => '-R', 'mode' => 'o+w']);
+        $task = new CopyTask();
+        $task->setOptions(['from' => 'a.txt', 'to' => 'b.txt']);
         $task->setRuntime($runtime);
 
         $this->assertContains('a.txt', $task->getDescription());
-        $this->assertContains('o+w', $task->getDescription());
+        $this->assertContains('b.txt', $task->getDescription());
         $task->execute();
 
         $ranCommands = $runtime->getRanCommands();
 
         $testCase = array(
-            0 => 'chmod -R o+w "a.txt"',
+            0 => 'cp -p "a.txt" "b.txt"',
         );
 
         // Check total of Executed Commands
@@ -47,24 +47,24 @@ class ChangeModeTest extends TestCase
         }
     }
 
-    public function testChangeModeTaskWithoutFlags()
+    public function testCopyTaskWithFlags()
     {
         $runtime = new RuntimeMockup();
         $runtime->setConfiguration(['environments' => ['test' => []]]);
         $runtime->setEnvironment('test');
 
-        $task = new ChangeModeTask();
-        $task->setOptions(['file' => 'a.txt', 'mode' => 'o+w']);
+        $task = new CopyTask();
+        $task->setOptions(['from' => 'a.txt', 'to' => 'b.txt', 'flags' => '-rp']);
         $task->setRuntime($runtime);
 
         $this->assertContains('a.txt', $task->getDescription());
-        $this->assertContains('o+w', $task->getDescription());
+        $this->assertContains('b.txt', $task->getDescription());
         $task->execute();
 
         $ranCommands = $runtime->getRanCommands();
 
         $testCase = array(
-            0 => 'chmod  o+w "a.txt"',
+            0 => 'cp -rp "a.txt" "b.txt"',
         );
 
         // Check total of Executed Commands
@@ -76,24 +76,24 @@ class ChangeModeTest extends TestCase
         }
     }
 
-    public function testChangeModeReplaceTask()
+    public function testCopyReplaceTask()
     {
         $runtime = new RuntimeMockup();
         $runtime->setConfiguration(['environments' => ['test' => []]]);
         $runtime->setEnvironment('test');
 
-        $task = new ChangeModeTask();
-        $task->setOptions(['file' => '%environment%.txt', 'flags' => '-R', 'mode' => 'o+w']);
+        $task = new CopyTask();
+        $task->setOptions(['from' => '%environment%.txt', 'to' => 'b.txt']);
         $task->setRuntime($runtime);
 
         $this->assertContains('test.txt', $task->getDescription());
-        $this->assertContains('o+w', $task->getDescription());
+        $this->assertContains('b.txt', $task->getDescription());
         $task->execute();
 
         $ranCommands = $runtime->getRanCommands();
 
         $testCase = array(
-            0 => 'chmod -R o+w "test.txt"',
+            0 => 'cp -p "test.txt" "b.txt"',
         );
 
         // Check total of Executed Commands
@@ -105,23 +105,54 @@ class ChangeModeTest extends TestCase
         }
     }
 
-    public function testChangeModeBadOptionsTask()
+    public function testCopyMultipleReplaceTask()
+    {
+        $runtime = new RuntimeMockup();
+        $runtime->setConfiguration(['environments' => ['test' => []]]);
+        $runtime->setEnvironment('test');
+        $runtime->setReleaseId('1234');
+        $runtime->setWorkingHost('localhost');
+
+        $task = new CopyTask();
+        $task->setOptions(['from' => '%host%.txt', 'to' => '%release%.yml']);
+        $task->setRuntime($runtime);
+
+        $this->assertContains('localhost.txt', $task->getDescription());
+        $this->assertContains('1234.yml', $task->getDescription());
+        $task->execute();
+
+        $ranCommands = $runtime->getRanCommands();
+
+        $testCase = array(
+            0 => 'cp -p "localhost.txt" "1234.yml"',
+        );
+
+        // Check total of Executed Commands
+        $this->assertEquals(count($testCase), count($ranCommands));
+
+        // Check Generated Commands
+        foreach ($testCase as $index => $command) {
+            $this->assertEquals($command, $ranCommands[$index]);
+        }
+    }
+
+    public function testCopyBadOptionsTask()
     {
         $runtime = new RuntimeMockup();
         $runtime->setConfiguration(['environments' => ['test' => []]]);
         $runtime->setEnvironment('test');
 
-        $task = new ChangeModeTask();
-        $task->setOptions(['from' => 'a.txt', 'flags' => '-R', 'mode' => 'o+w']);
+        $task = new CopyTask();
+        $task->setOptions(['form' => 'a.txt', 'to' => 'b.txt']);
         $task->setRuntime($runtime);
 
         try {
             $this->assertContains('[missing parameters]', $task->getDescription());
             $task->execute();
-            $this->assertTrue(false, 'Task should have raised an exception');
+            $this->assertTrue(false, 'Task did not failed');
         } catch (Exception $exception) {
             $this->assertTrue($exception instanceof ErrorException);
-            $this->assertEquals('Parameter "file" is not defined', $exception->getMessage());
+            $this->assertEquals('Parameter "from" is not defined', $exception->getMessage());
         }
     }
 }

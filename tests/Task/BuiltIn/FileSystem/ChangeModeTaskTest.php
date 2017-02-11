@@ -1,0 +1,127 @@
+<?php
+/*
+ * This file is part of the Magallanes package.
+ *
+ * (c) Andrés Montañez <andres@andresmontanez.com>
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
+
+namespace Mage\Tests\Task\BuiltIn\FileSystem;
+
+use Mage\Task\Exception\ErrorException;
+use Mage\Task\BuiltIn\FS\ChangeModeTask;
+use Exception;
+use Mage\Tests\Runtime\RuntimeMockup;
+use PHPUnit_Framework_TestCase as TestCase;
+
+class ChangeModeTest extends TestCase
+{
+    public function testChangeModeTask()
+    {
+        $runtime = new RuntimeMockup();
+        $runtime->setConfiguration(['environments' => ['test' => []]]);
+        $runtime->setEnvironment('test');
+
+        $task = new ChangeModeTask();
+        $task->setOptions(['file' => 'a.txt', 'flags' => '-R', 'mode' => 'o+w']);
+        $task->setRuntime($runtime);
+
+        $this->assertContains('a.txt', $task->getDescription());
+        $this->assertContains('o+w', $task->getDescription());
+        $task->execute();
+
+        $ranCommands = $runtime->getRanCommands();
+
+        $testCase = array(
+            0 => 'chmod -R o+w "a.txt"',
+        );
+
+        // Check total of Executed Commands
+        $this->assertEquals(count($testCase), count($ranCommands));
+
+        // Check Generated Commands
+        foreach ($testCase as $index => $command) {
+            $this->assertEquals($command, $ranCommands[$index]);
+        }
+    }
+
+    public function testChangeModeTaskWithoutFlags()
+    {
+        $runtime = new RuntimeMockup();
+        $runtime->setConfiguration(['environments' => ['test' => []]]);
+        $runtime->setEnvironment('test');
+
+        $task = new ChangeModeTask();
+        $task->setOptions(['file' => 'a.txt', 'mode' => 'o+w']);
+        $task->setRuntime($runtime);
+
+        $this->assertContains('a.txt', $task->getDescription());
+        $this->assertContains('o+w', $task->getDescription());
+        $task->execute();
+
+        $ranCommands = $runtime->getRanCommands();
+
+        $testCase = array(
+            0 => 'chmod  o+w "a.txt"',
+        );
+
+        // Check total of Executed Commands
+        $this->assertEquals(count($testCase), count($ranCommands));
+
+        // Check Generated Commands
+        foreach ($testCase as $index => $command) {
+            $this->assertEquals($command, $ranCommands[$index]);
+        }
+    }
+
+    public function testChangeModeReplaceTask()
+    {
+        $runtime = new RuntimeMockup();
+        $runtime->setConfiguration(['environments' => ['test' => []]]);
+        $runtime->setEnvironment('test');
+
+        $task = new ChangeModeTask();
+        $task->setOptions(['file' => '%environment%.txt', 'flags' => '-R', 'mode' => 'o+w']);
+        $task->setRuntime($runtime);
+
+        $this->assertContains('test.txt', $task->getDescription());
+        $this->assertContains('o+w', $task->getDescription());
+        $task->execute();
+
+        $ranCommands = $runtime->getRanCommands();
+
+        $testCase = array(
+            0 => 'chmod -R o+w "test.txt"',
+        );
+
+        // Check total of Executed Commands
+        $this->assertEquals(count($testCase), count($ranCommands));
+
+        // Check Generated Commands
+        foreach ($testCase as $index => $command) {
+            $this->assertEquals($command, $ranCommands[$index]);
+        }
+    }
+
+    public function testChangeModeBadOptionsTask()
+    {
+        $runtime = new RuntimeMockup();
+        $runtime->setConfiguration(['environments' => ['test' => []]]);
+        $runtime->setEnvironment('test');
+
+        $task = new ChangeModeTask();
+        $task->setOptions(['from' => 'a.txt', 'flags' => '-R', 'mode' => 'o+w']);
+        $task->setRuntime($runtime);
+
+        try {
+            $this->assertContains('[missing parameters]', $task->getDescription());
+            $task->execute();
+            $this->assertTrue(false, 'Task should have raised an exception');
+        } catch (Exception $exception) {
+            $this->assertTrue($exception instanceof ErrorException);
+            $this->assertEquals('Parameter "file" is not defined', $exception->getMessage());
+        }
+    }
+}
