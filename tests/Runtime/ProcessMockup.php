@@ -35,11 +35,11 @@ class ProcessMockup extends Process
             $this->success = false;
         }
 
-        if ($this->commandline == 'ssh -p 22 -q -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no tester@host1 sh -c \"readlink -f /var/www/test/current\"') {
+        if ($this->commandline == 'ssh -p 22 -q -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no tester@host1 "readlink -f /var/www/test/current"') {
             $this->success = false;
         }
 
-        if ($this->commandline == 'ssh -p 22 -q -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no tester@host3 sh -c \"ls -1 /var/www/test/releases\"') {
+        if ($this->commandline == 'ssh -p 22 -q -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no tester@host3 "ls -1 /var/www/test/releases"') {
             $this->success = false;
         }
 
@@ -47,7 +47,7 @@ class ProcessMockup extends Process
             $this->success = false;
         }
 
-        if ($this->commandline == 'ssh -p 22 -q -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no tester@hostdemo2 sh -c \"ls -1 /var/www/test/releases\"') {
+        if ($this->commandline == 'ssh -p 22 -q -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no tester@hostdemo2 "ls -1 /var/www/test/releases"') {
             $this->success = false;
         }
     }
@@ -68,27 +68,27 @@ class ProcessMockup extends Process
             return '* master';
         }
 
-        if ($this->commandline == 'ssh -p 22 -q -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no tester@testhost sh -c \"ls -1 /var/www/test/releases\"') {
+        if ($this->commandline == 'ssh -p 22 -q -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no tester@testhost "ls -1 /var/www/test/releases"') {
             return implode(PHP_EOL, ['20170101015110', '20170101015111', '20170101015112', '20170101015113', '20170101015114', '20170101015115', '20170101015116', '20170101015117']);
         }
 
-        if ($this->commandline == 'ssh -p 22 -q -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no tester@testhost sh -c \"readlink -f /var/www/test/current\"') {
+        if ($this->commandline == 'ssh -p 22 -q -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no tester@testhost "readlink -f /var/www/test/current"') {
             return '/var/www/test/releases/20170101015117';
         }
 
-        if ($this->commandline == 'ssh -p 22 -q -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no tester@host1 sh -c \"ls -1 /var/www/test/releases\"') {
+        if ($this->commandline == 'ssh -p 22 -q -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no tester@host1 "ls -1 /var/www/test/releases"') {
             return implode(PHP_EOL, ['20170101015110', '20170101015111', '20170101015112', '20170101015113', '20170101015114', '20170101015115', '20170101015116', '20170101015117']);
         }
 
-        if ($this->commandline == 'ssh -p 22 -q -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no tester@hostdemo1 sh -c \"ls -1 /var/www/test/releases\"') {
+        if ($this->commandline == 'ssh -p 22 -q -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no tester@hostdemo1 "ls -1 /var/www/test/releases"') {
             return implode(PHP_EOL, ['20170101015110', '20170101015111', '20170101015112', '20170101015113', '20170101015114', '20170101015115', '20170101015116', '20170101015117']);
         }
 
-        if ($this->commandline == 'ssh -p 22 -q -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no tester@hostdemo3 sh -c \"ls -1 /var/www/test/releases\"') {
+        if ($this->commandline == 'ssh -p 22 -q -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no tester@hostdemo3 "ls -1 /var/www/test/releases"') {
             return implode(PHP_EOL, ['20170101015110', '20170101015111', '20170101015112', '20170101015113', '20170101015114', '20170101015116', '20170101015117']);
         }
 
-        if ($this->commandline == 'ssh -p 22 -q -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no tester@host2 sh -c \"ls -1 /var/www/test/releases\"') {
+        if ($this->commandline == 'ssh -p 22 -q -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no tester@host2 "ls -1 /var/www/test/releases"') {
             return '';
         }
 
