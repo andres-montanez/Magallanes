@@ -61,7 +61,8 @@ abstract class AbstractTask
         if (!is_array($options)) {
             $options = [];
         }
-        $this->options = $options;
+
+        $this->options = array_merge($options, $this->getDefaults());
         return $this;
     }
 
@@ -75,5 +76,14 @@ abstract class AbstractTask
     {
         $this->runtime = $runtime;
         return $this;
+    }
+
+    /**
+     * Return Default options
+     * @return array
+     */
+    public function getDefaults()
+    {
+        return [];
     }
 }

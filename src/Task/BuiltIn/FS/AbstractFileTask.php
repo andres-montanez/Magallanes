@@ -29,8 +29,10 @@ abstract class AbstractFileTask extends AbstractTask
     protected function getOptions()
     {
         $mandatory = $this->getParameters();
+        $defaults = array_keys($this->getDefaults());
+        $missing = array_diff($mandatory, $defaults);
 
-        foreach ($mandatory as $parameter) {
+        foreach ($missing as $parameter) {
             if (!array_key_exists($parameter, $this->options)) {
                 throw new ErrorException(sprintf('Parameter "%s" is not defined', $parameter));
             }

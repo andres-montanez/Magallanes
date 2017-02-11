@@ -50,4 +50,9 @@ class ChangeModeTask extends AbstractFileTask
     {
         return ['file', 'mode', 'flags'];
     }
+
+    public function getDefaults()
+    {
+        return ['flags' => null];
+    }
 }
