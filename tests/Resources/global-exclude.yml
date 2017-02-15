@@ -1,0 +1,17 @@
+magephp:
+    log_dir: /tmp
+    composer:
+        path: /usr/bin/composer.phar
+    exclude:
+        - ./var/cache/*
+        - ./var/log/*
+        - ./web/app_dev.php
+    environments:
+        test:
+            user: tester
+            host_path: /var/www/test
+            hosts:
+                - testhost
+            pre-deploy:
+                - composer/install: { flags: '--prefer-source' }
+                - composer/dump-autoload: { flags: '--no-scripts' }
