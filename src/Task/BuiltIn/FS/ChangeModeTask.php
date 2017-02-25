@@ -14,33 +14,33 @@ use Symfony\Component\Process\Process;
 use Exception;
 
 /**
- * File System Task - Symlink a File
+ * File System Task - Copy a File
  *
- * @author Andrés Montañez <andresmontanez@gmail.com>
+ * @author Marian Bäuerle
  */
-class LinkTask extends AbstractFileTask
+class ChangeModeTask extends AbstractFileTask
 {
     public function getName()
     {
-        return 'fs/link';
+        return 'fs/chmod';
     }
 
     public function getDescription()
     {
         try {
-            return sprintf('[FS] Link "%s" to "%s"', $this->getFile('from'), $this->getFile('to'));
+            return sprintf('[FS] Change mode of "%s" to "%s"', $this->getFile('file'), $this->options['mode']);
         } catch (Exception $exception) {
-            return '[FS] Link [missing parameters]';
+            return '[FS] Chmod [missing parameters]';
         }
     }
 
     public function execute()
     {
-        $linkFrom = $this->getFile('from');
-        $linkTo = $this->getFile('to');
+        $file = $this->getFile('file');
+        $mode = $this->options['mode'];
         $flags = $this->options['flags'];
 
-        $cmd = sprintf('ln %s "%s" "%s"', $flags, $linkFrom, $linkTo);
+        $cmd = sprintf('chmod %s %s "%s"', $flags, $mode, $file);
 
         /** @var Process $process */
         $process = $this->runtime->runCommand($cmd);
@@ -50,11 +50,11 @@ class LinkTask extends AbstractFileTask
 
     protected function getParameters()
     {
-        return ['from', 'to', 'flags'];
+        return ['file', 'mode', 'flags'];
     }
 
     public function getDefaults()
     {
-        return ['flags' => '-snf'];
+        return ['flags' => null];
     }
 }

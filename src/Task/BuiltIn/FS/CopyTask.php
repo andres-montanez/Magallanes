@@ -38,8 +38,9 @@ class CopyTask extends AbstractFileTask
     {
         $copyFrom = $this->getFile('from');
         $copyTo = $this->getFile('to');
+        $flags = $this->options['flags'];
 
-        $cmd = sprintf('cp -p %s %s', $copyFrom, $copyTo);
+        $cmd = sprintf('cp %s "%s" "%s"', $flags, $copyFrom, $copyTo);
 
         /** @var Process $process */
         $process = $this->runtime->runCommand($cmd);
@@ -49,6 +50,11 @@ class CopyTask extends AbstractFileTask
 
     protected function getParameters()
     {
-        return ['from', 'to'];
+        return ['from', 'to', 'flags'];
+    }
+
+    public function getDefaults()
+    {
+        return ['flags' => '-p'];
     }
 }

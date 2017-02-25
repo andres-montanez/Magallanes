@@ -33,20 +33,19 @@ class DumpAutoloadTask extends AbstractTask
     public function execute()
     {
         $options = $this->getOptions();
-        $command = sprintf('%s dump-autoload %s', $options['path'], $options['flags']);
+        $cmd = sprintf('%s dump-autoload %s', $options['path'], $options['flags']);
 
         /** @var Process $process */
-        $process = $this->runtime->runCommand(trim($command));
+        $process = $this->runtime->runCommand(trim($cmd));
 
         return $process->isSuccessful();
     }
 
     protected function getOptions()
     {
-        $userOptions = $this->runtime->getConfigOption('composer', []);
         $options = array_merge(
             ['path' => 'composer', 'flags' => '--optimize'],
-            (is_array($userOptions) ? $userOptions : []),
+            $this->runtime->getMergedOption('composer'),
             $this->options
         );
 

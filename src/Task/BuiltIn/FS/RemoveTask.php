@@ -37,8 +37,9 @@ class RemoveTask extends AbstractFileTask
     public function execute()
     {
         $file = $this->getFile('file');
+        $flags = $this->options['flags'];
 
-        $cmd = sprintf('rm %s', $file);
+        $cmd = sprintf('rm %s "%s"', $flags, $file);
 
         /** @var Process $process */
         $process = $this->runtime->runCommand($cmd);
@@ -48,6 +49,11 @@ class RemoveTask extends AbstractFileTask
 
     protected function getParameters()
     {
-        return ['file'];
+        return ['file', 'flags'];
+    }
+
+    public function getDefaults()
+    {
+        return ['flags' => null];
     }
 }
