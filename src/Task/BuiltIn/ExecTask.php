@@ -12,6 +12,7 @@ namespace Mage\Task\BuiltIn;
 
 use Mage\Task\Exception\ErrorException;
 use Mage\Task\AbstractTask;
+use Symfony\Component\Process\Process;
 
 /**
  * Exec task. Allows you to execute arbitrary commands.
@@ -35,11 +36,11 @@ class ExecTask extends AbstractTask
     {
         $options = $this->getOptions();
 
-        if ('' !== $options['descr']) {
-            return (string) $options['descr'];
+        if ($options['desc']) {
+            return '[Exec] ' . $options['desc'];
         }
 
-        return '[Exec] Executing custom command';
+        return '[Exec] Custom command';
     }
 
     /**
@@ -51,16 +52,11 @@ class ExecTask extends AbstractTask
     {
         $options = $this->getOptions();
 
-        if ('' === $options['cmd']) {
-            throw new ErrorException('What about if you gave me a command to execute?');
+        if (!$options['cmd']) {
+            throw new ErrorException('Parameter "cmd" is not defined');
         }
 
-        // If not jailed, it must run as remote command
-        if (false === $options['jail']) {
-            $process = $this->runtime->runRemoteCommand($options['cmd'], false, $options['timeout']);
-            return $process->isSuccessful();
-        }
-
+        /** @var Process $process */
         $process = $this->runtime->runCommand($options['cmd'], $options['timeout']);
         return $process->isSuccessful();
     }
@@ -70,12 +66,8 @@ class ExecTask extends AbstractTask
      */
     protected function getOptions()
     {
-        $options = array_merge([
-                'cmd' => '',
-                'descr' => '',
-                'jail' => true,
-                'timeout' => 120
-            ],
+        $options = array_merge(
+            ['cmd' => '', 'desc' => '', 'timeout' => 120],
             $this->options
         );
 

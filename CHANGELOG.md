@@ -2,6 +2,7 @@ CHANGELOG for 3.X
 =================
 
 * 3.X (2017-XX-XX)
+ * Add new Exec task to execute arbitrary shell commands
  * Add new Composer task, to update phar (composer/self-update)
  * [#344] Allow to flag Filesystem tasks
  * [PR#346] Add new File System task, to change file's modes (fs/chmod)
