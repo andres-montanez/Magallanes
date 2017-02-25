@@ -1,7 +1,7 @@
 CHANGELOG for 3.X
 =================
 
-* 3.X (2017-XX-XX)
+* 3.1.0 (2017-02-25)
  * Add new Exec task to execute arbitrary shell commands
  * Add new Composer task, to update phar (composer/self-update)
  * [#344] Allow to flag Filesystem tasks
