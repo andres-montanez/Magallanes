@@ -1,5 +1,5 @@
 # Magallanes #
-[![SensioLabs Insight](https://img.shields.io/sensiolabs/i/ed0de53a-a12e-459b-9464-34def5907b56.svg?label=insight)](https://insight.sensiolabs.com/projects/ed0de53a-a12e-459b-9464-34def5907b56)
+[![SensioLabsInsight](https://insight.sensiolabs.com/projects/ed0de53a-a12e-459b-9464-34def5907b56/mini.png)](https://insight.sensiolabs.com/projects/ed0de53a-a12e-459b-9464-34def5907b56)
 [![Build Status](https://img.shields.io/travis/andres-montanez/Magallanes/master.svg)](https://travis-ci.org/andres-montanez/Magallanes)
 [![Coverage Status](https://img.shields.io/coveralls/andres-montanez/Magallanes/master.svg)](https://coveralls.io/github/andres-montanez/Magallanes?branch=master)
 [![Code Quality](https://img.shields.io/scrutinizer/g/andres-montanez/Magallanes.svg)](https://scrutinizer-ci.com/g/andres-montanez/Magallanes/)
