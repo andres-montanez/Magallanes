@@ -42,6 +42,7 @@ class TaskFactory
     {
         $this->runtime = $runtime;
         $this->loadBuiltInTasks();
+        $this->loadCustomTasks($runtime->getConfigOption('custom_tasks', []));
     }
 
     /**
@@ -102,16 +103,43 @@ class TaskFactory
 
         /** @var SplFileInfo $file */
         foreach ($finder as $file) {
-            $class = substr('\\Mage\\Task\\BuiltIn\\' . str_replace('/', '\\', $file->getRelativePathname()), 0, -4);
-            if (class_exists($class)) {
-                $reflex = new ReflectionClass($class);
+            $taskClass = substr('\\Mage\\Task\\BuiltIn\\' . str_replace('/', '\\', $file->getRelativePathname()), 0, -4);
+            if (class_exists($taskClass)) {
+                $reflex = new ReflectionClass($taskClass);
                 if ($reflex->isInstantiable()) {
-                    $task = new $class();
+                    $task = new $taskClass();
                     if ($task instanceof AbstractTask) {
                         $this->add($task);
                     }
                 }
             }
+        }
+    }
+
+    /**
+     * Load Custom Tasks
+     * @param array $tasksToLoad PreRegistered Tasks
+     * @throws RuntimeException
+     */
+    protected function loadCustomTasks($tasksToLoad)
+    {
+        foreach ($tasksToLoad as $taskClass) {
+            if (!class_exists($taskClass)) {
+                throw new RuntimeException(sprintf('Custom Task "%s" does not exists.', $taskClass));
+            }
+
+            $reflex = new ReflectionClass($taskClass);
+            if (!$reflex->isInstantiable()) {
+                throw new RuntimeException(sprintf('Custom Task "%s" can not be instantiated.', $taskClass));
+            }
+
+            $task = new $taskClass();
+            if (!$task instanceof AbstractTask) {
+                throw new RuntimeException(sprintf('Custom Task "%s" must inherit "Mage\\Task\\AbstractTask".', $taskClass));
+            }
+
+            // Add Task
+            $this->add($task);
         }
     }
 }

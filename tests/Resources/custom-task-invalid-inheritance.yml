@@ -1,0 +1,13 @@
+magephp:
+    environments:
+        production:
+            user: app
+            host_path: /var/www/myapp
+            hosts:
+                - webserver
+            pre-deploy:
+            on-deploy:
+                - custom-invalid-inheritance
+            post-deploy:
+    custom_tasks:
+        - Mage\Tests\Task\Custom\InvalidInheritanceTask

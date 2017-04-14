@@ -26,3 +26,6 @@ magephp:
             on-release:
             post-release:
             post-deploy:
+                - magic
+    custom_tasks:
+        - App\Deployment\MagicTask
