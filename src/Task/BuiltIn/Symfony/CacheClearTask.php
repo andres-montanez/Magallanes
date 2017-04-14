@@ -11,7 +11,6 @@
 namespace Mage\Task\BuiltIn\Symfony;
 
 use Symfony\Component\Process\Process;
-use Mage\Task\AbstractTask;
 
 /**
  * Symfony Task - Clear Cache
