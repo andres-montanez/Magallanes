@@ -3,6 +3,7 @@ magephp:
         production:
             user: app
             branch: test
+            from: ./
             host_path: /var/www/test
             releases: 4
             exclude:
