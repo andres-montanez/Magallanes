@@ -51,7 +51,7 @@ class PrepareTask extends AbstractTask
 
     protected function getExcludes()
     {
-        $excludes = $this->runtime->getMergedOption('exclude', []);
+        $excludes = $this->runtime->getEnvOption('exclude', []);
         $excludes = array_merge(['.git'], array_filter($excludes));
 
         foreach ($excludes as &$exclude) {
