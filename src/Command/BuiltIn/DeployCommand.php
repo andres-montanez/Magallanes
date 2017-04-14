@@ -14,10 +14,10 @@ use Mage\Deploy\Strategy\StrategyInterface;
 use Mage\Runtime\Exception\RuntimeException;
 use Mage\Runtime\Runtime;
 use Mage\Task\ExecuteOnRollbackInterface;
-use Mage\Task\AbstractTask;
 use Mage\Task\Exception\ErrorException;
 use Mage\Task\Exception\SkipException;
 use Mage\Task\TaskFactory;
+use Mage\Task\TaskInterface;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputOption;
@@ -185,8 +185,17 @@ class DeployCommand extends AbstractCommand
         $succeededTasks = 0;
 
         foreach ($tasks as $taskName) {
-            /** @var AbstractTask $task */
-            $task = $this->taskFactory->get($taskName);
+            $options = null;
+
+            // Handle the options
+            if (is_array($taskName)) {
+                $options  = $taskName;
+                $taskName = key($options);
+                $options  = $options[$taskName];
+            }
+
+            /** @var TaskInterface $task */
+            $task = $this->taskFactory->get($taskName, $options);
             $output->write(sprintf('        Running <fg=magenta>%s</> ... ', $task->getDescription()));
             $this->log(sprintf('Running task %s (%s)', $task->getDescription(), $task->getName()));
 

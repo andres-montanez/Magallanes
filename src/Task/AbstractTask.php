@@ -17,7 +17,7 @@ use Mage\Runtime\Runtime;
  *
  * @author Andrés Montañez <andresmontanez@gmail.com>
  */
-abstract class AbstractTask
+abstract class AbstractTask implements TaskInterface
 {
     /**
      * @var array Task custom options
@@ -28,27 +28,6 @@ abstract class AbstractTask
      * @var Runtime
      */
     protected $runtime;
-
-    /**
-     * Get the Name/Code of the Task
-     *
-     * @return string
-     */
-    abstract public function getName();
-
-    /**
-     * Get a short Description of the Task
-     *
-     * @return string
-     */
-    abstract public function getDescription();
-
-    /**
-     * Executes the Command
-     *
-     * @return bool
-     */
-    abstract public function execute();
 
     /**
      * Set additional Options for the Task
