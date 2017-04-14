@@ -42,6 +42,7 @@ class TaskFactory
     {
         $this->runtime = $runtime;
         $this->loadBuiltInTasks();
+        $this->loadCustomTasks();
     }
 
     /**
@@ -103,6 +104,36 @@ class TaskFactory
         /** @var SplFileInfo $file */
         foreach ($finder as $file) {
             $class = substr('\\Mage\\Task\\BuiltIn\\' . str_replace('/', '\\', $file->getRelativePathname()), 0, -4);
+            if (class_exists($class)) {
+                $reflex = new ReflectionClass($class);
+                if ($reflex->isInstantiable()) {
+                    $task = new $class();
+                    if ($task instanceof AbstractTask) {
+                        $this->add($task);
+                    }
+                }
+            }
+        }
+    }
+
+    /**
+     * Load the custom tasks
+     *
+     * @throws \RuntimeException
+     */
+    protected function loadCustomTasks()
+    {
+        $config = $this->runtime->getConfiguration();
+
+        if (!isset($config['custom_tasks'])) {
+            return;
+        }
+
+        if (!is_array($config['custom_tasks'])) {
+            throw new \RuntimeException('The "custom_tasks" configuration must be an array');
+        }
+
+        foreach ($config['custom_tasks'] as $class) {
             if (class_exists($class)) {
                 $reflex = new ReflectionClass($class);
                 if ($reflex->isInstantiable()) {

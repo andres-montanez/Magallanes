@@ -14,7 +14,9 @@ magephp:
                 - composer/install
                 - composer/dump-autoload
             on-deploy:
-                - Mage\Tests\Task\CustomTask
+                - custom
             on-release:
             post-release:
             post-deploy:
+    custom_tasks:
+        - Mage\Tests\Task\CustomTask
