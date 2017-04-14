@@ -2,6 +2,7 @@ CHANGELOG for 3.X
 =================
 
 * 3.2.0 (2017-04-xx)
+ * [PR#365] New option "from" to define deployment start point
  * Allow to define excludes in the global scope.
  * Improve code quality, remove duplications on Symfony Tasks.
  * Improve code quality, remove duplications on Composer Tasks.
