@@ -12,7 +12,6 @@ namespace Mage\Task\BuiltIn\Composer;
 
 use Mage\Task\Exception\SkipException;
 use Symfony\Component\Process\Process;
-use Mage\Task\AbstractTask;
 use DateTime;
 
 /**
@@ -20,7 +19,7 @@ use DateTime;
  *
  * @author Yanick Witschi <https://github.com/Toflar>
  */
-class SelfUpdateTask extends AbstractTask
+class SelfUpdateTask extends AbstractComposerTask
 {
     public function getName()
     {
@@ -80,14 +79,8 @@ class SelfUpdateTask extends AbstractTask
         return $compareDate;
     }
 
-    protected function getOptions()
+    protected function getComposerOptions()
     {
-        $options = array_merge(
-            ['path' => 'composer', 'days' => 60],
-            $this->runtime->getMergedOption('composer'),
-            $this->options
-        );
-
-        return $options;
+        return ['days' => 60];
     }
 }

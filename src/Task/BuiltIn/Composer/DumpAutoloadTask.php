@@ -11,14 +11,13 @@
 namespace Mage\Task\BuiltIn\Composer;
 
 use Symfony\Component\Process\Process;
-use Mage\Task\AbstractTask;
 
 /**
  * Composer Task - Generate Autoload
  *
  * @author Andrés Montañez <andresmontanez@gmail.com>
  */
-class DumpAutoloadTask extends AbstractTask
+class DumpAutoloadTask extends AbstractComposerTask
 {
     public function getName()
     {
@@ -41,14 +40,8 @@ class DumpAutoloadTask extends AbstractTask
         return $process->isSuccessful();
     }
 
-    protected function getOptions()
+    protected function getComposerOptions()
     {
-        $options = array_merge(
-            ['path' => 'composer', 'flags' => '--optimize'],
-            $this->runtime->getMergedOption('composer'),
-            $this->options
-        );
-
-        return $options;
+        return ['flags' => '--optimize'];
     }
 }
