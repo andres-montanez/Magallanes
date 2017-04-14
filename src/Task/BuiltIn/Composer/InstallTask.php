@@ -36,7 +36,7 @@ class InstallTask extends AbstractTask
         $cmd = sprintf('%s install %s', $options['path'], $options['flags']);
 
         /** @var Process $process */
-        $process = $this->runtime->runCommand(trim($cmd));
+        $process = $this->runtime->runCommand(trim($cmd), $options['timeout']);
 
         return $process->isSuccessful();
     }
@@ -44,7 +44,7 @@ class InstallTask extends AbstractTask
     protected function getOptions()
     {
         $options = array_merge(
-            ['path' => 'composer', 'flags' => '--optimize-autoloader'],
+            ['path' => 'composer', 'flags' => '--optimize-autoloader', 'timeout' => 120],
             $this->runtime->getMergedOption('composer'),
             $this->options
         );
