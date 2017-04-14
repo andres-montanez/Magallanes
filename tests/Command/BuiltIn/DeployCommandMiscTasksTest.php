@@ -50,27 +50,9 @@ class DeployCommandMiscTasksTest extends TestCase
         $this->assertEquals(0, $tester->getStatusCode());
     }
 
-    public function composerFlagsDataProvider() {
-        return [
-            'default' => [
-                'yml' => __DIR__ . '/../../Resources/composer.yml'
-            ],
-            'global exclude' => [
-                'yml' => __DIR__ . '/../../Resources/global-exclude.yml'
-            ],
-        ];
-    }
-
-    /**
-     * testComposerFlags
-     *
-     * @dataProvider composerFlagsDataProvider
-     * @param string $yml
-     * @return void
-     */
-    public function testComposerFlags($yml)
+    public function testComposerFlags()
     {
-        $application = new MageApplicationMockup($yml);
+        $application = new MageApplicationMockup(__DIR__ . '/../../Resources/composer.yml');
 
         /** @var AbstractCommand $command */
         $command = $application->find('deploy');
