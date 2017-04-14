@@ -18,7 +18,7 @@ use Mage\Task\AbstractTask;
  *
  * @author Andrés Montañez <andresmontanez@gmail.com>
  */
-class CacheClearTask extends AbstractTask
+class CacheClearTask extends AbstractSymfonyTask
 {
     public function getName()
     {
@@ -39,16 +39,5 @@ class CacheClearTask extends AbstractTask
         $process = $this->runtime->runCommand(trim($command));
 
         return $process->isSuccessful();
-    }
-
-    protected function getOptions()
-    {
-        $options = array_merge(
-            ['console' => 'bin/console', 'env' => 'dev', 'flags' => ''],
-            $this->runtime->getMergedOption('symfony'),
-            $this->options
-        );
-
-        return $options;
     }
 }

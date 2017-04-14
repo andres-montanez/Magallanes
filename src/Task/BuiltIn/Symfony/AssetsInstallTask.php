@@ -18,7 +18,7 @@ use Mage\Task\AbstractTask;
  *
  * @author Andrés Montañez <andresmontanez@gmail.com>
  */
-class AssetsInstallTask extends AbstractTask
+class AssetsInstallTask extends AbstractSymfonyTask
 {
     public function getName()
     {
@@ -41,14 +41,8 @@ class AssetsInstallTask extends AbstractTask
         return $process->isSuccessful();
     }
 
-    protected function getOptions()
+    protected function getSymfonyOptions()
     {
-        $options = array_merge(
-            ['console' => 'bin/console', 'env' => 'dev', 'target' => 'web', 'flags' => '--symlink --relative'],
-            $this->runtime->getMergedOption('symfony'),
-            $this->options
-        );
-
-        return $options;
+        return ['target' => 'web', 'flags' => '--symlink --relative'];
     }
 }

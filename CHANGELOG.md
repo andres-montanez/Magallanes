@@ -2,6 +2,7 @@ CHANGELOG for 3.X
 =================
 
 * 3.2.0 (2017-04-xx)
+ * Improve code quality, remove duplications on Symfony Tasks.
  * Improve code quality, remove duplications on Composer Tasks.
  * [PR#364] Allow to define custom timeout to Composer:Install
 
