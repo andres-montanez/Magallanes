@@ -3,6 +3,7 @@ magephp:
         production:
             user: app
             branch: test
+            from: ./
             host_path: /var/www/test
             releases: 4
             exclude:
@@ -25,3 +26,6 @@ magephp:
             on-release:
             post-release:
             post-deploy:
+                - magic
+    custom_tasks:
+        - App\Deployment\MagicTask

@@ -55,6 +55,43 @@ class DeployCommandWithoutReleasesTest extends TestCase
         $this->assertEquals(0, $tester->getStatusCode());
     }
 
+    public function testDeploymentWithoutReleasesWithFromCommands()
+    {
+        $application = new MageApplicationMockup(__DIR__ . '/../../Resources/testhost-without-releases-with-from.yml');
+
+        /** @var AbstractCommand $command */
+        $command = $application->find('deploy');
+        $this->assertTrue($command instanceof DeployCommand);
+
+        $tester = new CommandTester($command);
+        $tester->execute(['command' => $command->getName(), 'environment' => 'test']);
+
+        $ranCommands = $application->getRuntime()->getRanCommands();
+
+        $testCase = array(
+            0 => 'git branch | grep "*"',
+            1 => 'git checkout test',
+            2 => 'git pull',
+            3 => 'composer install --optimize-autoloader',
+            4 => 'composer dump-autoload --optimize',
+            5 => 'rsync -e "ssh -p 22 -q -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no" -avz --exclude=.git --exclude=./var/cache/* --exclude=./var/log/* --exclude=./web/app_dev.php ./dist tester@testhost:/var/www/test',
+            6 => 'ssh -p 22 -q -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no tester@testhost "cd /var/www/test && bin/console cache:warmup --env=dev"',
+            7 => 'ssh -p 22 -q -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no tester@testhost "cd /var/www/test && bin/console assets:install web --env=dev --symlink --relative"',
+            8 => 'ssh -p 22 -q -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no tester@testhost "cd /var/www/test && bin/console assetic:dump --env=dev"',
+            9 => 'git checkout master',
+        );
+
+        // Check total of Executed Commands
+        $this->assertEquals(count($testCase), count($ranCommands));
+
+        // Check Generated Commands
+        foreach ($testCase as $index => $command) {
+            $this->assertEquals($command, $ranCommands[$index]);
+        }
+
+        $this->assertEquals(0, $tester->getStatusCode());
+    }
+
     public function testDeploymentFailMidway()
     {
         $application = new MageApplicationMockup(__DIR__ . '/../../Resources/testhost-without-releases.yml');

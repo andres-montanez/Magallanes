@@ -11,14 +11,13 @@
 namespace Mage\Task\BuiltIn\Symfony;
 
 use Symfony\Component\Process\Process;
-use Mage\Task\AbstractTask;
 
 /**
  * Symfony Task - Cache Warmup
  *
  * @author Andrés Montañez <andresmontanez@gmail.com>
  */
-class CacheWarmupTask extends AbstractTask
+class CacheWarmupTask extends AbstractSymfonyTask
 {
     public function getName()
     {
@@ -39,16 +38,5 @@ class CacheWarmupTask extends AbstractTask
         $process = $this->runtime->runCommand(trim($command));
 
         return $process->isSuccessful();
-    }
-
-    protected function getOptions()
-    {
-        $options = array_merge(
-            ['console' => 'bin/console', 'env' => 'dev', 'flags' => ''],
-            $this->runtime->getMergedOption('symfony'),
-            $this->options
-        );
-
-        return $options;
     }
 }

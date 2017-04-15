@@ -80,6 +80,36 @@ class DeployCommandMiscTasksTest extends TestCase
         $this->assertEquals(0, $tester->getStatusCode());
     }
 
+    public function testGlobalExcludeFlags()
+    {
+        $application = new MageApplicationMockup(__DIR__ . '/../../Resources/global-exclude.yml');
+
+        /** @var AbstractCommand $command */
+        $command = $application->find('deploy');
+        $this->assertTrue($command instanceof DeployCommand);
+
+        $tester = new CommandTester($command);
+        $tester->execute(['command' => $command->getName(), 'environment' => 'test']);
+
+        $ranCommands = $application->getRuntime()->getRanCommands();
+
+        $testCase = array(
+            0 => '/usr/bin/composer.phar install --prefer-source',
+            1 => '/usr/bin/composer.phar dump-autoload --no-scripts',
+            2 => 'rsync -e "ssh -p 22 -q -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no" -avz --exclude=.git --exclude=./var/cache/* --exclude=./var/log/* --exclude=./web/app_dev.php ./ tester@testhost:/var/www/test',
+        );
+
+        // Check total of Executed Commands
+        $this->assertEquals(count($testCase), count($ranCommands));
+
+        // Check Generated Commands
+        foreach ($testCase as $index => $command) {
+            $this->assertEquals($command, $ranCommands[$index]);
+        }
+
+        $this->assertEquals(0, $tester->getStatusCode());
+    }
+
     public function testComposerEnvFlags()
     {
         $application = new MageApplicationMockup(__DIR__ . '/../../Resources/composer-env.yml');

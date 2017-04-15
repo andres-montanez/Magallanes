@@ -8,40 +8,41 @@
  * file that was distributed with this source code.
  */
 
-namespace Mage\Task\BuiltIn\Composer;
+namespace Mage\Tests\Task\Custom;
 
+use Mage\Task\AbstractTask;
 use Symfony\Component\Process\Process;
 
 /**
- * Composer Task - Generate Autoload
+ * Custom PreRegistered Task for Testing
  *
  * @author Andrés Montañez <andresmontanez@gmail.com>
  */
-class DumpAutoloadTask extends AbstractComposerTask
+class ValidTask extends AbstractTask
 {
+    /**
+     * @return string
+     */
     public function getName()
     {
-        return 'composer/dump-autoload';
+        return 'custom-valid';
     }
 
+    /**
+     * @return string
+     */
     public function getDescription()
     {
-        return '[Composer] Dump Autoload';
+        return '[Custom] Valid*';
     }
 
+    /**
+     * @return bool
+     */
     public function execute()
     {
-        $options = $this->getOptions();
-        $cmd = sprintf('%s dump-autoload %s', $options['path'], $options['flags']);
-
         /** @var Process $process */
-        $process = $this->runtime->runCommand(trim($cmd));
-
+        $process = $this->runtime->runCommand('echo "custom-valid"');
         return $process->isSuccessful();
-    }
-
-    protected function getComposerOptions()
-    {
-        return ['flags' => '--optimize'];
     }
 }

@@ -8,40 +8,36 @@
  * file that was distributed with this source code.
  */
 
-namespace Mage\Task\BuiltIn\Composer;
+namespace Mage\Tests\Task\BuiltIn\Composer;
 
+use Mage\Task\BuiltIn\Composer\AbstractComposerTask;
 use Symfony\Component\Process\Process;
 
 /**
- * Composer Task - Generate Autoload
+ * Basic Composer Task
  *
  * @author Andrés Montañez <andresmontanez@gmail.com>
  */
-class DumpAutoloadTask extends AbstractComposerTask
+class BasicComposerTask extends AbstractComposerTask
 {
     public function getName()
     {
-        return 'composer/dump-autoload';
+        return 'composer/help';
     }
 
     public function getDescription()
     {
-        return '[Composer] Dump Autoload';
+        return '[Composer] Help';
     }
 
     public function execute()
     {
         $options = $this->getOptions();
-        $cmd = sprintf('%s dump-autoload %s', $options['path'], $options['flags']);
+        $cmd = sprintf('%s help', $options['path']);
 
         /** @var Process $process */
         $process = $this->runtime->runCommand(trim($cmd));
 
         return $process->isSuccessful();
-    }
-
-    protected function getComposerOptions()
-    {
-        return ['flags' => '--optimize'];
     }
 }
