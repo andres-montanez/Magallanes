@@ -1,7 +1,7 @@
 CHANGELOG for 3.X
 =================
 
-* 3.2.0 (2017-04-xx)
+* 3.2.0 (2017-04-14)
  * Allow to pre-register Custom Tasks
  * [PR#365] New option "from" to define deployment start point
  * Allow to define excludes in the global scope.
