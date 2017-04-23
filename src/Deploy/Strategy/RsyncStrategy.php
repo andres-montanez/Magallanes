@@ -10,7 +10,6 @@
 
 namespace Mage\Deploy\Strategy;
 
-use Mage\Runtime\Exception\RuntimeException;
 use Mage\Runtime\Runtime;
 
 /**
@@ -18,21 +17,11 @@ use Mage\Runtime\Runtime;
  *
  * @author Andrés Montañez <andresmontanez@gmail.com>
  */
-class RsyncStrategy implements StrategyInterface
+class RsyncStrategy extends AbstractStrategy
 {
-    /**
-     * @var Runtime
-     */
-    protected $runtime;
-
     public function getName()
     {
         return 'Rsync';
-    }
-
-    public function setRuntime(Runtime $runtime)
-    {
-        $this->runtime = $runtime;
     }
 
     public function getPreDeployTasks()
@@ -79,18 +68,5 @@ class RsyncStrategy implements StrategyInterface
         }
 
         return $tasks;
-    }
-
-    /**
-     * Check the runtime stage is correct
-     *
-     * @param $stage
-     * @throws RuntimeException
-     */
-    private function checkStage($stage)
-    {
-        if ($this->runtime->getStage() !== $stage) {
-            throw new RuntimeException(sprintf('Invalid stage, got "%s" but expected "%"', $this->runtime->getStage(), $stage));
-        }
     }
 }
