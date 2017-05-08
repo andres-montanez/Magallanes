@@ -407,7 +407,9 @@ class Runtime
 
         $process = new Process($cmd);
         $process->setTimeout($timeout);
-        $process->run();
+        $process->run(function($type, $buffer) {
+            $this->runLocalCommandCallback($type, $buffer);
+        });
 
         $this->log($process->getOutput(), LogLevel::DEBUG);
         if (!$process->isSuccessful()) {
@@ -415,6 +417,21 @@ class Runtime
         }
 
         return $process;
+    }
+
+    /**
+     * Log the output produced by the Process execution
+     *
+     * @param string $type
+     * @param string $buffer
+     */
+    protected function runLocalCommandCallback($type, $buffer)
+    {
+        if (Process::OUT === $type) {
+            $this->log($buffer, LogLevel::DEBUG);
+        } else {
+            $this->log($buffer, LogLevel::ERROR);
+        }
     }
 
     /**
