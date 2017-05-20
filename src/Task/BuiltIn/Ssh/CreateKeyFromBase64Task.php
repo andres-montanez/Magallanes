@@ -11,7 +11,6 @@
 namespace Mage\Task\BuiltIn\Ssh;
 
 use Mage\Task\Exception\ErrorException;
-use Symfony\Component\Process\Process;
 use Mage\Task\AbstractTask;
 
 /**
