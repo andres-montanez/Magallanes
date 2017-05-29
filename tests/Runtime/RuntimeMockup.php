@@ -26,7 +26,7 @@ class RuntimeMockup extends Runtime
 
     public function getRanCommandTimeoutFor($cmd)
     {
-        return $this->ranCommandTimeouts[$cmd] ?? null;
+        return isset($this->ranCommandTimeouts[$cmd]) ? $this->ranCommandTimeouts[$cmd] : null;
     }
 
     /**
