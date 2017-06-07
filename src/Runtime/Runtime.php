@@ -156,6 +156,26 @@ class Runtime
     }
 
     /**
+     * Retrieve a binary and check if it was changed in the "binary-map" configuration.
+     * This allows e.g. to override "tar" by "gnutar" etc.
+     *
+     * @param string $binary
+     *
+     * @return string
+     */
+    public function getBinary($binary)
+    {
+        $map = $this->getConfigOption('binary-map', []);
+
+        if (!array_key_exists($binary, $map)) {
+
+            return $binary;
+        }
+
+        return $map[$binary];
+    }
+
+    /**
      * Sets the Logger instance
      *
      * @param LoggerInterface $logger Logger instance
