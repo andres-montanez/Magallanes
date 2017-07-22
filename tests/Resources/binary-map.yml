@@ -1,0 +1,18 @@
+magephp:
+    binary-map:
+        tar: gnutar
+    environments:
+        test:
+            user: tester
+            from: ./dist
+            host_path: /var/www/test
+            releases: 4
+            exclude:
+                - ./var/cache/*
+                - ./var/log/*
+                - ./web/app_dev.php
+                -
+                -
+            hosts:
+                - testhost
+

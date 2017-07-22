@@ -46,7 +46,18 @@ class RsyncTask extends AbstractTask
 
         $excludes = $this->getExcludes();
         $from = $this->runtime->getEnvOption('from', './');
-        $cmdRsync = sprintf('rsync -e "ssh -p %d %s" %s %s %s %s@%s:%s', $sshConfig['port'], $sshConfig['flags'], $flags, $excludes, $from, $user, $host, $targetDir);
+        $cmdRsync = sprintf('%s -e "%s -p %d %s" %s %s %s %s@%s:%s',
+            $this->runtime->getBinary('rsync'),
+            $this->runtime->getBinary('ssh'),
+            $sshConfig['port'],
+            $sshConfig['flags'],
+            $flags,
+            $excludes,
+            $from,
+            $user,
+            $host,
+            $targetDir
+        );
 
         /** @var Process $process */
         $process = $this->runtime->runLocalCommand($cmdRsync, 600);
