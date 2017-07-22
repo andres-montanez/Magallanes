@@ -39,24 +39,31 @@ class PrepareTask extends AbstractTask
 
         $tarLocal = $this->runtime->getTempFile();
         $this->runtime->setVar('tar_local', $tarLocal);
+        $tarDir = $this->runtime->getEnvOption('tar_dir', '');
+        $tarDir = rtrim($tarDir, '/');
 
-        $excludes = $this->getExcludes();
         $flags = $this->runtime->getEnvOption('tar_create', 'cfzp');
+        $excludes = $this->getExcludes($tarDir);
         $from = $this->runtime->getEnvOption('from', './');
-        $cmdTar = sprintf('tar %s %s %s %s', $flags, $tarLocal, $excludes, $from);
+
+        if ($tarDir !== '') {
+            $cmdTar = sprintf('tar %s %s %s %s %s', $flags, $tarLocal, "-C {$tarDir}", $excludes, $from);
+        } else {
+            $cmdTar = sprintf('tar %s %s %s %s', $flags, $tarLocal, $excludes, $from);
+        }
 
         /** @var Process $process */
         $process = $this->runtime->runLocalCommand($cmdTar, 300);
         return $process->isSuccessful();
     }
 
-    protected function getExcludes()
+    protected function getExcludes($tarDir = '')
     {
         $excludes = $this->runtime->getMergedOption('exclude', []);
         $excludes = array_merge(['.git'], array_filter($excludes));
 
         foreach ($excludes as &$exclude) {
-            $exclude = '--exclude="' . $exclude . '"';
+            $exclude = '--exclude="' . str_replace($tarDir, '.', $exclude) . '"';
         }
 
         return implode(' ', $excludes);
