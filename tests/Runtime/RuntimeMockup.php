@@ -16,11 +16,17 @@ use Symfony\Component\Process\Process;
 class RuntimeMockup extends Runtime
 {
     protected $ranCommands = [];
+    protected $ranCommandTimeouts = [];
     protected $forceFail = [];
 
     public function getRanCommands()
     {
         return $this->ranCommands;
+    }
+
+    public function getRanCommandTimeoutFor($cmd)
+    {
+        return isset($this->ranCommandTimeouts[$cmd]) ? $this->ranCommandTimeouts[$cmd] : null;
     }
 
     /**
@@ -44,6 +50,7 @@ class RuntimeMockup extends Runtime
     public function runLocalCommand($cmd, $timeout = 120)
     {
         $this->ranCommands[] = $cmd;
+        $this->ranCommandTimeouts[$cmd] = $timeout;
 
         $process = new ProcessMockup($cmd);
         $process->forceFail = $this->forceFail;
