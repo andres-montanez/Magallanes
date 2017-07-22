@@ -119,6 +119,20 @@ class RuntimeTest extends TestCase
         $this->assertEquals('-q -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no', $sshConfig['flags']);
     }
 
+    public function testSSHConfigPortDefinedInHostNotation()
+    {
+        $runtime = new Runtime();
+        $runtime->setWorkingHost('223.12.24.64:1056');
+        $sshConfig = $runtime->getSSHConfig();
+
+        $this->assertEquals('1056', $sshConfig['port']);
+
+        $runtime->setWorkingHost('223.12.24.64');
+        $sshConfig = $runtime->getSSHConfig();
+
+        $this->assertEquals('22', $sshConfig['port']);
+    }
+
     public function testSSHConfigEmptyOptions()
     {
         $runtime = new Runtime();

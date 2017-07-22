@@ -457,7 +457,11 @@ class Runtime
      */
     public function getSSHConfig()
     {
-        $sshConfig = $this->getEnvOption('ssh', ['port' => '22', 'flags' => '-q -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no']);
+        $sshConfig = $this->getEnvOption('ssh', ['port' => 22, 'flags' => '-q -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no']);
+
+        if ($this->getHostPort() !== null) {
+            $sshConfig['port'] = $this->getHostPort();
+        }
 
         if (!array_key_exists('port', $sshConfig)) {
             $sshConfig['port'] = '22';
@@ -468,6 +472,17 @@ class Runtime
         }
 
         return $sshConfig;
+    }
+
+    /**
+     * Get the current Host Port or default ssh port
+     *
+     * @return integer
+     */
+    public function getHostPort()
+    {
+        $info = explode(':', $this->getWorkingHost());
+        return isset($info[1]) ? $info[1] : null;
     }
 
     /**

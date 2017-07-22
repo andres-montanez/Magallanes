@@ -17,6 +17,6 @@ namespace Mage;
  */
 class Mage
 {
-    const VERSION = '3.2';
+    const VERSION = '3.3.0';
     const CODENAME = 'Nostromo';
 }

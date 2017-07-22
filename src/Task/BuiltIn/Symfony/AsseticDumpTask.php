@@ -36,7 +36,7 @@ class AsseticDumpTask extends AbstractTask
         $command = sprintf('%s assetic:dump --env=%s %s', $options['console'], $options['env'], $options['flags']);
 
         /** @var Process $process */
-        $process = $this->runtime->runCommand(trim($command));
+        $process = $this->runtime->runCommand(trim($command), $options['timeout']);
 
         return $process->isSuccessful();
     }
@@ -44,7 +44,7 @@ class AsseticDumpTask extends AbstractTask
     protected function getOptions()
     {
         $options = array_merge(
-            ['console' => 'bin/console', 'env' => 'dev', 'flags' => ''],
+            ['console' => 'bin/console', 'env' => 'dev', 'flags' => '', 'timeout' => 120],
             $this->runtime->getMergedOption('symfony'),
             $this->options
         );
