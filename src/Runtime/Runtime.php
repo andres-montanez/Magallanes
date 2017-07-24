@@ -52,6 +52,11 @@ class Runtime
     protected $workingHost = null;
 
     /**
+     * @var string|null The port being deployed to
+     */
+    protected $workingPort = null;
+
+    /**
      * @var string|null The Release ID
      */
     protected $releaseId = null;
@@ -348,7 +353,11 @@ class Runtime
      */
     public function setWorkingHost($host)
     {
-        $this->workingHost = $host;
+        //in case port notation is used take only 1st part
+        $this->workingHost = explode(':', $host)[0];
+
+        $port =  explode(':', $host);
+        $this->workingPort = isset($port[1]) ? $port[1] : null;
         return $this;
     }
 
@@ -360,6 +369,16 @@ class Runtime
     public function getWorkingHost()
     {
         return $this->workingHost;
+    }
+
+    /**
+     * Get the current Host Port or default ssh port
+     *
+     * @return integer
+     */
+    public function getWorkingPort()
+    {
+        return $this->workingPort;
     }
 
     /**
@@ -459,8 +478,8 @@ class Runtime
     {
         $sshConfig = $this->getEnvOption('ssh', ['port' => 22, 'flags' => '-q -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no']);
 
-        if ($this->getHostPort() !== null) {
-            $sshConfig['port'] = $this->getHostPort();
+        if ($this->getWorkingPort() !== null) {
+            $sshConfig['port'] = $this->getWorkingPort();
         }
 
         if (!array_key_exists('port', $sshConfig)) {
@@ -472,17 +491,6 @@ class Runtime
         }
 
         return $sshConfig;
-    }
-
-    /**
-     * Get the current Host Port or default ssh port
-     *
-     * @return integer
-     */
-    public function getHostPort()
-    {
-        $info = explode(':', $this->getWorkingHost());
-        return isset($info[1]) ? $info[1] : null;
     }
 
     /**
