@@ -45,7 +45,7 @@ class CopyTask extends AbstractTask
 
         $tarPath = $this->runtime->getEnvOption('tar_extract_path', 'tar');
         $flags = $this->runtime->getEnvOption('tar_extract', 'xfzop');
-        $timeout = $this->runtime->getEnvOption('tar_timeout', 600);
+        $timeout = $this->runtime->getEnvOption('tar_timeout', 300);
         $targetDir = sprintf('%s/releases/%s', $hostPath, $currentReleaseId);
 
         $tarLocal = $this->runtime->getVar('tar_local');
@@ -54,10 +54,10 @@ class CopyTask extends AbstractTask
         $cmdCopy = sprintf('scp -P %d %s %s %s@%s:%s/%s', $sshConfig['port'], $sshConfig['flags'], $tarLocal, $user, $host, $targetDir, $tarRemote);
 
         /** @var Process $process */
-        $process = $this->runtime->runLocalCommand($cmdCopy, 300);
+        $process = $this->runtime->runLocalCommand($cmdCopy, $timeout);
         if ($process->isSuccessful()) {
             $cmdUnTar = sprintf('cd %s && %s %s %s', $targetDir, $tarPath, $flags, $tarRemote);
-            $process = $this->runtime->runRemoteCommand($cmdUnTar, false, $timeout);
+            $process = $this->runtime->runRemoteCommand($cmdUnTar, false, $timeout + 300);
             if ($process->isSuccessful()) {
                 $cmdDelete = sprintf('rm %s/%s', $targetDir, $tarRemote);
                 $process = $this->runtime->runRemoteCommand($cmdDelete, false);
