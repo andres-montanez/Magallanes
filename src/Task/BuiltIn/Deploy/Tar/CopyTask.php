@@ -57,7 +57,7 @@ class CopyTask extends AbstractTask
         $process = $this->runtime->runLocalCommand($cmdCopy, $timeout);
         if ($process->isSuccessful()) {
             $cmdUnTar = sprintf('cd %s && %s %s %s', $targetDir, $tarPath, $flags, $tarRemote);
-            $process = $this->runtime->runRemoteCommand($cmdUnTar, false, $timeout + 300);
+            $process = $this->runtime->runRemoteCommand($cmdUnTar, false, $timeout * 2);
             if ($process->isSuccessful()) {
                 $cmdDelete = sprintf('rm %s/%s', $targetDir, $tarRemote);
                 $process = $this->runtime->runRemoteCommand($cmdDelete, false);
