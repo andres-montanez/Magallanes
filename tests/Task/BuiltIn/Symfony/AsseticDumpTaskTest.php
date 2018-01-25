@@ -5,8 +5,9 @@ namespace Mage\tests\Task\BuiltIn\Symfony;
 
 use Mage\Task\BuiltIn\Symfony\AsseticDumpTask;
 use Mage\Tests\Runtime\RuntimeMockup;
+use PHPUnit\Framework\TestCase;
 
-class AsseticDumpTaskTest extends \PHPUnit_Framework_TestCase
+class AsseticDumpTaskTest extends TestCase
 {
     /**
      * @var RuntimeMockup

@@ -14,7 +14,7 @@ use Mage\Command\BuiltIn\Config\DumpCommand;
 use Mage\Command\AbstractCommand;
 use Mage\Tests\MageApplicationMockup;
 use Symfony\Component\Console\Tester\CommandTester;
-use PHPUnit_Framework_TestCase as TestCase;
+use PHPUnit\Framework\TestCase;
 
 class DumpCommandTest extends TestCase
 {

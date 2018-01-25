@@ -15,7 +15,7 @@ use Mage\Runtime\Runtime;
 use Exception;
 use Monolog\Logger;
 use Monolog\Handler\TestHandler;
-use PHPUnit_Framework_TestCase as TestCase;
+use PHPUnit\Framework\TestCase;
 use Psr\Log\LogLevel;
 use Symfony\Component\Process\Process;
 use DateTime;

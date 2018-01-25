@@ -6,7 +6,7 @@ use Mage\Tests\Runtime\RuntimeMockup;
 use Mage\Task\BuiltIn\Composer\SelfUpdateTask;
 use Mage\Task\Exception\SkipException;
 use Exception;
-use PHPUnit_Framework_TestCase as TestCase;
+use PHPUnit\Framework\TestCase;
 
 class SelfUpdateTaskTest extends TestCase
 {

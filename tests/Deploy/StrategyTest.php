@@ -15,7 +15,7 @@ use Mage\Deploy\Strategy\RsyncStrategy;
 use Mage\Runtime\Exception\RuntimeException;
 use Mage\Runtime\Runtime;
 use Exception;
-use PHPUnit_Framework_TestCase as TestCase;
+use PHPUnit\Framework\TestCase;
 
 class StrategyTest extends TestCase
 {
