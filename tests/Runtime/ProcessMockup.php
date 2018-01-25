@@ -19,7 +19,7 @@ class ProcessMockup extends Process
     protected $timeout;
     protected $success = true;
 
-    public function __construct($commandline, $cwd = null, array $env = null, $input = null, $timeout = 60, array $options = array())
+    public function __construct($commandline, string $cwd = null, array $env = null, $input = null, ?float $timeout = 60)
     {
         $this->commandline = $commandline;
     }
@@ -29,27 +29,18 @@ class ProcessMockup extends Process
         $this->timeout = $timeout;
     }
 
-    public function run($callback = null)
+    public function run(callable $callback = null, array $env = array()): int
     {
-        if (in_array($this->commandline, $this->forceFail)) {
+        if (in_array($this->commandline, $this->forceFail)
+            || $this->commandline == 'ssh -p 22 -q -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no tester@host1 "readlink -f /var/www/test/current"'
+            || $this->commandline == 'ssh -p 22 -q -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no tester@host3 "ls -1 /var/www/test/releases"'
+            || $this->commandline == 'scp -P 22 -q -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no /tmp/mageXYZ tester@host4:/var/www/test/releases/1234567890/mageXYZ'
+            || $this->commandline == 'ssh -p 22 -q -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no tester@hostdemo2 "ls -1 /var/www/test/releases"') {
             $this->success = false;
+            return -1;
         }
 
-        if ($this->commandline == 'ssh -p 22 -q -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no tester@host1 "readlink -f /var/www/test/current"') {
-            $this->success = false;
-        }
-
-        if ($this->commandline == 'ssh -p 22 -q -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no tester@host3 "ls -1 /var/www/test/releases"') {
-            $this->success = false;
-        }
-
-        if ($this->commandline == 'scp -P 22 -q -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no /tmp/mageXYZ tester@host4:/var/www/test/releases/1234567890/mageXYZ') {
-            $this->success = false;
-        }
-
-        if ($this->commandline == 'ssh -p 22 -q -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no tester@hostdemo2 "ls -1 /var/www/test/releases"') {
-            $this->success = false;
-        }
+        return 0;
     }
 
     public function isSuccessful()
