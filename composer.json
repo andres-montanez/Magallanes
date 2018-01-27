@@ -39,7 +39,8 @@
   "extra": {
     "branch-alias": {
       "dev-master": "3.0.x-dev",
-      "dev-nostromo": "3.x-dev"
+      "dev-nostromo": "3.x-dev",
+      "dev-develop": "4.x-dev"
     }
   }
 }
