@@ -444,8 +444,12 @@ class Runtime
             $cmdDelegate = sprintf('cd %s && %s', $hostPath, $cmdDelegate);
         }
 
-        $cmdRemote = str_replace('"', '\"', $cmdDelegate);
-        $cmdLocal = sprintf('ssh -p %d %s %s@%s "%s"', $sshConfig['port'], $sshConfig['flags'], $user, $host, $cmdRemote);
+        if ('localhost' !== $host) {
+            $cmdRemote = str_replace('"', '\"', $cmdDelegate);
+            $cmdLocal = sprintf('ssh -p %d %s %s@%s "%s"', $sshConfig['port'], $sshConfig['flags'], $user, $host, $cmdRemote);
+        } else {
+            $cmdLocal = $cmdDelegate;
+        }
 
         return $this->runLocalCommand($cmdLocal, $timeout);
     }
