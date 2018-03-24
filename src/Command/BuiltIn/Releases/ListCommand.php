@@ -73,7 +73,7 @@ class ListCommand extends AbstractCommand
 
             $output->writeln('');
 
-            $hosts = $this->runtime->getEnvOption('hosts');
+            $hosts = $this->runtime->getEnvOption('hosts', []);
             if (count($hosts) == 0) {
                 $output->writeln('No hosts defined');
                 $output->writeln('');
