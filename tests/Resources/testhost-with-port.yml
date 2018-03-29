@@ -19,9 +19,9 @@ magephp:
                 - composer/install
                 - composer/dump-autoload
             on-deploy:
-                - symfony/cache-warmup: { env: 'dev' }
-                - symfony/assets-install: { env: 'dev' }
-                - symfony/assetic-dump: { env: 'dev' }
+                - symfony/cache-warmup: { env: 'prod' }
+                - symfony/assets-install: { env: 'prod' }
+                - symfony/assetic-dump: { env: 'prod' }
             on-release:
             post-release:
             post-deploy:
