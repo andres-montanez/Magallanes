@@ -1,7 +1,7 @@
 {
   "name": "andres-montanez/magallanes",
   "description": "The Deployment Tool for PHP Applications",
-  "homepage": "http://magephp.com",
+  "homepage": "https://magephp.com",
   "license": "MIT",
   "type": "library",
   "keywords": ["deployment"],
@@ -12,17 +12,17 @@
     }
   ],
   "require": {
-    "php": ">=5.5.9",
-    "monolog/monolog": "^1.0",
-    "symfony/console": "^3.0",
-    "symfony/filesystem": "^3.0",
-    "symfony/event-dispatcher": "^3.0",
-    "symfony/finder": "^3.0",
-    "symfony/yaml": "^3.0",
-    "symfony/process": "^3.0"
+    "php": "^7.1.3",
+    "monolog/monolog": "~1.11",
+    "symfony/console": "^4.0",
+    "symfony/filesystem": "^4.0",
+    "symfony/event-dispatcher": "^4.0",
+    "symfony/finder": "^4.0",
+    "symfony/yaml": "^4.0",
+    "symfony/process": "^4.0"
   },
   "require-dev": {
-    "phpunit/phpunit": "4.8.*",
+    "phpunit/phpunit": "^7.0",
     "satooshi/php-coveralls": "~1.0"
   },
   "autoload": {
@@ -38,8 +38,8 @@
   "bin": ["bin/mage"],
   "extra": {
     "branch-alias": {
-      "dev-master": "3.0.x-dev",
-      "dev-nostromo": "3.x-dev"
+      "dev-master": "4.0.x-dev",
+      "dev-discovery-one": "4.x-dev"
     }
   }
 }

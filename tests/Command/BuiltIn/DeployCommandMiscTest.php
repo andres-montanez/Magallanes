@@ -15,7 +15,7 @@ use Mage\Runtime\Exception\RuntimeException;
 use Mage\Tests\MageApplicationMockup;
 use Mage\Command\AbstractCommand;
 use Symfony\Component\Console\Tester\CommandTester;
-use PHPUnit_Framework_TestCase as TestCase;
+use PHPUnit\Framework\TestCase;
 
 class DeployCommandMiscTest extends TestCase
 {
