@@ -49,7 +49,7 @@ class RsyncTask extends AbstractTask
         $cmdRsync = sprintf('rsync -e "ssh -p %d %s" %s %s %s %s@%s:%s', $sshConfig['port'], $sshConfig['flags'], $flags, $excludes, $from, $user, $host, $targetDir);
 
         /** @var Process $process */
-        $process = $this->runtime->runLocalCommand($cmdRsync, 600);
+        $process = $this->runtime->runLocalCommand($cmdRsync, null);
         return $process->isSuccessful();
     }
 
