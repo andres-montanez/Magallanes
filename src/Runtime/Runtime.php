@@ -429,7 +429,7 @@ class Runtime
     {
         $user = $this->getEnvOption('user', $this->getCurrentUser());
         $sudo = $this->getEnvOption('sudo', false);
-        $host = $this->getWorkingHost();
+        $host = $this->getHostName();
         $sshConfig = $this->getSSHConfig();
 
         $cmdDelegate = $cmd;
@@ -483,6 +483,17 @@ class Runtime
     {
         $info = explode(':', $this->getWorkingHost());
         return isset($info[1]) ? $info[1] : null;
+    }
+
+    /**
+     * Get the current Host Name
+     *
+     * @return string
+     */
+    public function getHostName()
+    {
+        $info = explode(':', $this->getWorkingHost());
+        return $info[0];
     }
 
     /**

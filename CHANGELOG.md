@@ -3,6 +3,7 @@ CHANGELOG for 3.X
 
 * 3.4.0 (2018-03-29)
  * [Issue#380] Throw exception if log_dir is defined but directory doesn't exists
+ * [Issue#405] Malformed ssh command when defining host:port notation
  
 
 * 3.3.0 (2017-07-22)
