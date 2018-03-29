@@ -9,7 +9,7 @@
 [![License](https://img.shields.io/packagist/l/andres-montanez/magallanes.svg)](https://packagist.org/packages/andres-montanez/magallanes)
 
 ### What's Magallanes?
-**Magallanes** is a deployment tool for made with PHP for PHP applications; it's quite simple to use and manage. For more information and documentation please visit http://magephp.com
+**Magallanes** is a deployment tool for made with PHP for PHP applications; it's quite simple to use and manage. For more information and documentation please visit https://magephp.com
 
 ### Installing
 Simply add the following dependency to your project’s composer.json file:
