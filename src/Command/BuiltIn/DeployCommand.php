@@ -143,6 +143,9 @@ class DeployCommand extends AbstractCommand
     protected function runOnHosts(OutputInterface $output, $tasks)
     {
         $hosts = $this->runtime->getEnvOption('hosts');
+        if (!is_array($hosts) && !$hosts instanceof \Countable) {
+            $hosts = [];
+        }
         if (count($hosts) == 0) {
             $output->writeln(sprintf('    No hosts defined, skipping %s tasks', $this->getStageName()));
             $output->writeln('');
