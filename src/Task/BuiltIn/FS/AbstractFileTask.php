@@ -61,8 +61,8 @@ abstract class AbstractFileTask extends AbstractTask
             '%environment%' => $this->runtime->getEnvironment(),
         ];
 
-        if ($this->runtime->getWorkingHost() !== null) {
-            $mapping['%host%'] = $this->runtime->getWorkingHost();
+        if ($this->runtime->getHostName() !== null) {
+            $mapping['%host%'] = $this->runtime->getHostName();
         }
 
         if ($this->runtime->getReleaseId() !== null) {

@@ -38,7 +38,7 @@ class CopyTask extends AbstractTask
         }
 
         $user = $this->runtime->getEnvOption('user', $this->runtime->getCurrentUser());
-        $host = $this->runtime->getWorkingHost();
+        $host = $this->runtime->getHostName();
         $sshConfig = $sshConfig = $this->runtime->getSSHConfig();
         $hostPath = rtrim($this->runtime->getEnvOption('host_path'), '/');
         $currentReleaseId = $this->runtime->getReleaseId();

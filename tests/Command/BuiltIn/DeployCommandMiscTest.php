@@ -11,6 +11,7 @@
 namespace Mage\Tests\Command\BuiltIn;
 
 use Mage\Command\BuiltIn\DeployCommand;
+use Mage\Runtime\Exception\RuntimeException;
 use Mage\Tests\MageApplicationMockup;
 use Mage\Command\AbstractCommand;
 use Symfony\Component\Console\Tester\CommandTester;
@@ -34,6 +35,24 @@ class DeployCommandMiscTest extends TestCase
         $this->assertContains('No hosts defined, skipping Post Release tasks', $tester->getDisplay());
 
         $this->assertEquals(0, $tester->getStatusCode());
+    }
+
+    public function testInvalidLog()
+    {
+        $application = new MageApplicationMockup(__DIR__ . '/../../Resources/invalid-log.yml');
+
+        /** @var AbstractCommand $command */
+        $command = $application->find('deploy');
+        $this->assertTrue($command instanceof DeployCommand);
+
+        try {
+            $tester = new CommandTester($command);
+            $tester->execute(['command' => $command->getName(), 'environment' => 'test']);
+        } catch (RuntimeException $exception) {
+            $this->assertEquals('The configured log_dir "/no-temp" does not exists or is not a directory.', $exception->getMessage());
+        } catch (\Exception $exception) {
+            $this->assertFalse(true, sprintf('Exception "%s" catched, message: "%s"', get_class($exception), $exception->getMessage()));
+        }
     }
 
     public function testDeploymentWithSudo()

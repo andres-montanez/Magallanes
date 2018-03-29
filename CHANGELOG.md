@@ -1,6 +1,12 @@
 CHANGELOG for 3.X
 =================
 
+* 3.4.0 (2018-03-29)
+ * [Issue#380] Throw exception if log_dir is defined but directory doesn't exists
+ * [BUGFIX] [Issue#405] Malformed ssh command when defining host:port notation
+ * [Issue#415] Remove timeout on Deploy with Tar or Rsync tasks
+ 
+
 * 3.3.0 (2017-07-22)
  * [PR#386] Allow to define timeout (default 120s) for symfony/assetic-dump task.
  * [PR#392] Allow to define Host Port in Host configuration.

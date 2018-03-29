@@ -1,0 +1,19 @@
+version: '2'
+services:
+    php5:
+        container_name: mage-php5
+        build: ./php5
+        volumes:
+            - ../../:/home/magephp
+
+    php7.0:
+        container_name: mage-php7.0
+        build: ./php7.0
+        volumes:
+            - ../../:/home/magephp
+
+    php7.1:
+        container_name: mage-php7.1
+        build: ./php7.1
+        volumes:
+            - ../../:/home/magephp
