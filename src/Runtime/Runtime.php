@@ -492,6 +492,10 @@ class Runtime
      */
     public function getHostName()
     {
+        if (strpos($this->getWorkingHost(), ':') === false) {
+            return $this->getWorkingHost();
+        }
+
         $info = explode(':', $this->getWorkingHost());
         return $info[0];
     }
