@@ -17,7 +17,7 @@ use Symfony\Component\Finder\SplFileInfo;
 use Monolog\Logger;
 use Monolog\Handler\StreamHandler;
 use Symfony\Component\EventDispatcher\EventDispatcher;
-use Symfony\Component\Console\Event\ConsoleExceptionEvent;
+use Symfony\Component\Console\Event\ConsoleErrorEvent;
 use Symfony\Component\Console\ConsoleEvents;
 use Symfony\Component\Console\Application;
 use Symfony\Component\Yaml\Parser;
@@ -46,12 +46,12 @@ class MageApplication extends Application
         $dispatcher = new EventDispatcher();
         $this->setDispatcher($dispatcher);
 
-        $dispatcher->addListener(ConsoleEvents::EXCEPTION, function (ConsoleExceptionEvent $event) {
+        $dispatcher->addListener(ConsoleEvents::ERROR, function (ConsoleErrorEvent $event) {
             $output = $event->getOutput();
             $command = $event->getCommand();
             $output->writeln(sprintf('Oops, exception thrown while running command <info>%s</info>', $command->getName()));
             $exitCode = $event->getExitCode();
-            $event->setException(new \LogicException('Caught exception', $exitCode, $event->getException()));
+            $event->setError(new \LogicException('Caught exception', $exitCode, $event->getError()));
         });
 
         $this->runtime = $this->instantiateRuntime();

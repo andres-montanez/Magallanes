@@ -15,7 +15,7 @@ use Mage\Command\BuiltIn\VersionCommand;
 use Mage\Tests\MageApplicationMockup;
 use Mage\Mage;
 use Symfony\Component\Console\Tester\CommandTester;
-use PHPUnit_Framework_TestCase as TestCase;
+use PHPUnit\Framework\TestCase;
 
 class VersionCommandTest extends TestCase
 {

@@ -14,7 +14,7 @@ use Mage\Task\Exception\ErrorException;
 use Mage\Task\BuiltIn\FS\ChangeModeTask;
 use Exception;
 use Mage\Tests\Runtime\RuntimeMockup;
-use PHPUnit_Framework_TestCase as TestCase;
+use PHPUnit\Framework\TestCase;
 
 class ChangeModeTest extends TestCase
 {

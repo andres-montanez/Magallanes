@@ -14,7 +14,7 @@ use Mage\MageApplication;
 use Mage\Runtime\Exception\RuntimeException;
 use Symfony\Component\Console\Tester\ApplicationTester;
 use Exception;
-use PHPUnit_Framework_TestCase as TestCase;
+use PHPUnit\Framework\TestCase;
 
 class MageApplicationTest extends TestCase
 {

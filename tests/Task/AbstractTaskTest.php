@@ -12,7 +12,7 @@ namespace Mage\Tests\Task;
 
 use Mage\Task\Exception\ErrorException;
 use Exception;
-use PHPUnit_Framework_TestCase as TestCase;
+use PHPUnit\Framework\TestCase;
 
 class AbstractTaskTest extends TestCase
 {
