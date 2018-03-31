@@ -16,3 +16,5 @@ magephp:
                 - symfony/assets-install
                 - symfony/cache-pool-prune
                 - symfony/cache-pool-prune: { env: 'prod' }
+                - symfony/cache-pool-clear: { pools: 'main' }
+                - symfony/cache-pool-clear: { env: 'prod', pools: 'main' }

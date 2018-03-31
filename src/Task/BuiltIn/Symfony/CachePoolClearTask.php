@@ -38,7 +38,7 @@ class CachePoolClearTask extends AbstractSymfonyTask
             throw new ErrorException('Parameter "pools" is not defined');
         }
 
-        $command = $options['console'] . ' cache:pool:clear --env=' . $options['env'] . ' ' . $options['flags'] . ' ' . $options['pools'];
+        $command = $options['console'] . ' cache:pool:clear ' . $options['pools'] . ' --env=' . $options['env'] . ' ' . $options['flags'];
 
         /** @var Process $process */
         $process = $this->runtime->runCommand(trim($command));

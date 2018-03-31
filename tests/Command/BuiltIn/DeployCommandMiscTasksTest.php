@@ -37,6 +37,8 @@ class DeployCommandMiscTasksTest extends TestCase
             2 => 'ssh -p 22 -q -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no tester@testhost "cd /var/www/test && bin/console assets:install web --env=testenv --symlink --relative"',
             3 => 'ssh -p 22 -q -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no tester@testhost "cd /var/www/test && bin/console cache:pool:prune --env=testenv"',
             4 => 'ssh -p 22 -q -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no tester@testhost "cd /var/www/test && bin/console cache:pool:prune --env=prod"',
+            5 => 'ssh -p 22 -q -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no tester@testhost "cd /var/www/test && bin/console cache:pool:clear main --env=testenv"',
+            6 => 'ssh -p 22 -q -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no tester@testhost "cd /var/www/test && bin/console cache:pool:clear main --env=prod"',
         );
 
         // Check total of Executed Commands
