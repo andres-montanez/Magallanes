@@ -17,6 +17,6 @@ namespace Mage;
  */
 class Mage
 {
-    const VERSION = '4.x';
+    const VERSION = '4.0.0';
     const CODENAME = 'Discovery One';
 }
