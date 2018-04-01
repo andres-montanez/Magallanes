@@ -10,45 +10,44 @@
 
 namespace Mage\Task\BuiltIn\Symfony;
 
+use Mage\Task\Exception\ErrorException;
 use Symfony\Component\Process\Process;
-use Mage\Task\AbstractTask;
 
 /**
- * Symfony Task - Dump Assetics
+ * Symfony Task - Cache Pool Clear
  *
  * @author Andrés Montañez <andresmontanez@gmail.com>
  */
-class AsseticDumpTask extends AbstractTask
+class CachePoolClearTask extends AbstractSymfonyTask
 {
     public function getName()
     {
-        return 'symfony/assetic-dump';
+        return 'symfony/cache-pool-clear';
     }
 
     public function getDescription()
     {
-        return '[Symfony] Assetic Dump';
+        return '[Symfony] Cache Pool Clear';
     }
 
     public function execute()
     {
         $options = $this->getOptions();
-        $command = sprintf('%s assetic:dump --env=%s %s', $options['console'], $options['env'], $options['flags']);
+
+        if (!$options['pools']) {
+            throw new ErrorException('Parameter "pools" is not defined');
+        }
+
+        $command = $options['console'] . ' cache:pool:clear ' . $options['pools'] . ' --env=' . $options['env'] . ' ' . $options['flags'];
 
         /** @var Process $process */
-        $process = $this->runtime->runCommand(trim($command), $options['timeout']);
+        $process = $this->runtime->runCommand(trim($command));
 
         return $process->isSuccessful();
     }
 
-    protected function getOptions()
+    protected function getSymfonyOptions()
     {
-        $options = array_merge(
-            ['console' => 'bin/console', 'env' => 'dev', 'flags' => '', 'timeout' => 120],
-            $this->runtime->getMergedOption('symfony'),
-            $this->options
-        );
-
-        return $options;
+        return ['pools' => null];
     }
 }

@@ -19,7 +19,7 @@ class ProcessMockup extends Process
     protected $timeout;
     protected $success = true;
 
-    public function __construct($commandline, $cwd = null, array $env = null, $input = null, $timeout = 60, array $options = array())
+    public function __construct($commandline, string $cwd = null, array $env = null, $input = null, ?float $timeout = 60)
     {
         $this->commandline = $commandline;
     }
@@ -29,7 +29,7 @@ class ProcessMockup extends Process
         $this->timeout = $timeout;
     }
 
-    public function run($callback = null)
+    public function run(callable $callback = null, array $env = array()): int
     {
         if (in_array($this->commandline, $this->forceFail)) {
             $this->success = false;
@@ -50,6 +50,12 @@ class ProcessMockup extends Process
         if ($this->commandline == 'ssh -p 22 -q -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no tester@hostdemo2 "ls -1 /var/www/test/releases"') {
             $this->success = false;
         }
+
+        if (!$this->success) {
+            return 10;
+        }
+
+        return 0;
     }
 
     public function isSuccessful()

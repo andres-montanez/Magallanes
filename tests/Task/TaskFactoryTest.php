@@ -17,7 +17,7 @@ use Mage\Runtime\Runtime;
 use Mage\Runtime\Exception\RuntimeException;
 use Exception;
 use Mage\Tests\MageApplicationMockup;
-use PHPUnit_Framework_TestCase as TestCase;
+use PHPUnit\Framework\TestCase;
 use Symfony\Component\Console\Tester\CommandTester;
 
 class TaskFactoryTest extends TestCase

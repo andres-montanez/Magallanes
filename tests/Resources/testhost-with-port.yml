@@ -21,7 +21,7 @@ magephp:
             on-deploy:
                 - symfony/cache-warmup: { env: 'prod' }
                 - symfony/assets-install: { env: 'prod' }
-                - symfony/assetic-dump: { env: 'prod' }
+                - symfony/cache-pool-prune: { env: 'prod' }
             on-release:
             post-release:
             post-deploy:
