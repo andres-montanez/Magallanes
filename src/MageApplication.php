@@ -11,6 +11,7 @@
 namespace Mage;
 
 use Mage\Command\AbstractCommand;
+use Mage\Event\RegisterCommandsEvent;
 use Mage\Runtime\Runtime;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\Finder\Finder;
@@ -58,6 +59,13 @@ class MageApplication extends Application
         $this->runtime = $this->instantiateRuntime();
         $this->runtime->setEventDispatcher($dispatcher);
         $this->loadBuiltInCommands();
+
+        $event = new RegisterCommandsEvent();
+        $dispatcher->dispatch(RegisterCommandsEvent::EVENT_NAME, $event);
+
+        foreach ($event->getCommands() as $command) {
+            $this->add($command);
+        }
     }
 
     /**
