@@ -15,6 +15,7 @@ use Mage\Deploy\Strategy\RsyncStrategy;
 use Mage\Deploy\Strategy\StrategyInterface;
 use Psr\Log\LoggerInterface;
 use Psr\Log\LogLevel;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\Process\Process;
 use Mage\Runtime\Exception\RuntimeException;
 
@@ -45,6 +46,11 @@ class Runtime
      * @var string Stage of Deployment
      */
     protected $stage;
+
+    /**
+     * @var EventDispatcherInterface
+     */
+    protected $eventDispatcher;
 
     /**
      * @var string|null The host being deployed to
@@ -316,6 +322,21 @@ class Runtime
         return $this->stage;
     }
 
+    /**
+     * @return EventDispatcherInterface
+     */
+    public function getEventDispatcher()
+    {
+        return $this->eventDispatcher;
+    }
+
+    /**
+     * @param EventDispatcherInterface $eventDispatcher
+     */
+    public function setEventDispatcher(EventDispatcherInterface $eventDispatcher)
+    {
+        $this->eventDispatcher = $eventDispatcher;
+    }
     /**
      * Retrieve the defined Tasks for the current Environment and Stage
      *
