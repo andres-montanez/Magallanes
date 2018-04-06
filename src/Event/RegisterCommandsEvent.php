@@ -20,7 +20,7 @@ class RegisterCommandsEvent extends Event
     /**
      * @var Command[]
      */
-    private $commands;
+    private $commands = [];
 
     /**
      * @return Command[]
