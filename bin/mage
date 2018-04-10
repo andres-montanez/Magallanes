@@ -11,7 +11,8 @@ if (file_exists(__DIR__ . '/../../../autoload.php')) {
 use Mage\MageApplication;
 
 try {
-    $mage = new MageApplication('.mage.yml');
+    $file = sprintf("%s/.mage.yml", getcwd());
+    $mage = new MageApplication($file);
     $mage->run();
 } catch (Exception $exception) {
     printf('Error: %s' . PHP_EOL, $exception->getMessage());
