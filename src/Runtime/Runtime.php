@@ -517,6 +517,11 @@ class Runtime
      */
     public function getCurrentUser()
     {
+        // Windows fallback
+        if (!function_exists('posix_getpwuid')) {
+            return getenv('USERNAME') ?: '';
+        }
+
         $userData = posix_getpwuid(posix_geteuid());
         return $userData['name'];
     }
