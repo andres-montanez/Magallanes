@@ -42,7 +42,7 @@ class CleanupTask extends AbstractTask
         $process = $this->runtime->runRemoteCommand($cmdListReleases, false);
         if ($process->isSuccessful()) {
             $releases = $process->getOutput();
-            $releases = explode(PHP_EOL, trim($releases));
+            $releases = explode("\n", trim($releases));
 
             if (count($releases) > $maxReleases) {
                 sort($releases);

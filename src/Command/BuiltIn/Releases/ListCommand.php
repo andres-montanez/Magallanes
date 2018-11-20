@@ -97,7 +97,7 @@ class ListCommand extends AbstractCommand
 
                     $releases = [];
                     if (trim($process->getOutput()) != '') {
-                        $releases = explode(PHP_EOL, trim($process->getOutput()));
+                        $releases = explode("\n", trim($process->getOutput()));
                         rsort($releases);
                     }
 
