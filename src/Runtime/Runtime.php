@@ -471,6 +471,10 @@ class Runtime
             $sshConfig['flags'] = '-q -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no';
         }
 
+        if (!array_key_exists('timeout', $sshConfig)) {
+            $sshConfig['timeout'] = 300;
+        }
+
         return $sshConfig;
     }
 
