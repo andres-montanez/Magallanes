@@ -154,7 +154,7 @@ class DeployCommandMiscTasksTest extends TestCase
 
         $tester->execute(['command' => $command->getName(), 'environment' => 'test']);
         $this->assertEquals(7, $tester->getStatusCode());
-        $this->assertContains('Invalid task name "invalid/task"', $tester->getDisplay());
+        $this->assertStringContainsString('Invalid task name "invalid/task"', $tester->getDisplay());
     }
 
     public function testBrokenGitBranch()
@@ -171,7 +171,7 @@ class DeployCommandMiscTasksTest extends TestCase
 
         $tester->execute(['command' => $command->getName(), 'environment' => 'test']);
 
-        $this->assertContains('Running [Git] Change Branch (broken-test) ... FAIL', $tester->getDisplay());
+        $this->assertStringContainsString('Running [Git] Change Branch (broken-test) ... FAIL', $tester->getDisplay());
         $this->assertNotEquals(0, $tester->getStatusCode());
     }
 
@@ -189,7 +189,7 @@ class DeployCommandMiscTasksTest extends TestCase
 
         $tester->execute(['command' => $command->getName(), 'environment' => 'test']);
 
-        $this->assertContains('Running [Git] Change Branch (broken-test) ... FAIL', $tester->getDisplay());
+        $this->assertStringContainsString('Running [Git] Change Branch (broken-test) ... FAIL', $tester->getDisplay());
         $this->assertNotEquals(0, $tester->getStatusCode());
     }
 
@@ -207,7 +207,7 @@ class DeployCommandMiscTasksTest extends TestCase
 
         $tester->execute(['command' => $command->getName(), 'environment' => 'test']);
 
-        $this->assertContains('Running [Git] Update ... FAIL', $tester->getDisplay());
+        $this->assertStringContainsString('Running [Git] Update ... FAIL', $tester->getDisplay());
         $this->assertNotEquals(0, $tester->getStatusCode());
     }
 }

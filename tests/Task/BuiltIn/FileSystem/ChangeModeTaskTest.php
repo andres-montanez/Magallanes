@@ -28,8 +28,8 @@ class ChangeModeTest extends TestCase
         $task->setOptions(['file' => 'a.txt', 'flags' => '-R', 'mode' => 'o+w']);
         $task->setRuntime($runtime);
 
-        $this->assertContains('a.txt', $task->getDescription());
-        $this->assertContains('o+w', $task->getDescription());
+        $this->assertStringContainsString('a.txt', $task->getDescription());
+        $this->assertStringContainsString('o+w', $task->getDescription());
         $task->execute();
 
         $ranCommands = $runtime->getRanCommands();
@@ -57,8 +57,8 @@ class ChangeModeTest extends TestCase
         $task->setOptions(['file' => 'a.txt', 'mode' => 'o+w']);
         $task->setRuntime($runtime);
 
-        $this->assertContains('a.txt', $task->getDescription());
-        $this->assertContains('o+w', $task->getDescription());
+        $this->assertStringContainsString('a.txt', $task->getDescription());
+        $this->assertStringContainsString('o+w', $task->getDescription());
         $task->execute();
 
         $ranCommands = $runtime->getRanCommands();
@@ -86,8 +86,8 @@ class ChangeModeTest extends TestCase
         $task->setOptions(['file' => '%environment%.txt', 'flags' => '-R', 'mode' => 'o+w']);
         $task->setRuntime($runtime);
 
-        $this->assertContains('test.txt', $task->getDescription());
-        $this->assertContains('o+w', $task->getDescription());
+        $this->assertStringContainsString('test.txt', $task->getDescription());
+        $this->assertStringContainsString('o+w', $task->getDescription());
         $task->execute();
 
         $ranCommands = $runtime->getRanCommands();
@@ -116,7 +116,7 @@ class ChangeModeTest extends TestCase
         $task->setRuntime($runtime);
 
         try {
-            $this->assertContains('[missing parameters]', $task->getDescription());
+            $this->assertStringContainsString('[missing parameters]', $task->getDescription());
             $task->execute();
             $this->assertTrue(false, 'Task should have raised an exception');
         } catch (Exception $exception) {

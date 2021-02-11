@@ -30,9 +30,9 @@ class DeployCommandMiscTest extends TestCase
         $tester = new CommandTester($command);
         $tester->execute(['command' => $command->getName(), 'environment' => 'test']);
 
-        $this->assertContains('No hosts defined, skipping On Deploy tasks', $tester->getDisplay());
-        $this->assertContains('No hosts defined, skipping On Release tasks', $tester->getDisplay());
-        $this->assertContains('No hosts defined, skipping Post Release tasks', $tester->getDisplay());
+        $this->assertStringContainsString('No hosts defined, skipping On Deploy tasks', $tester->getDisplay());
+        $this->assertStringContainsString('No hosts defined, skipping On Release tasks', $tester->getDisplay());
+        $this->assertStringContainsString('No hosts defined, skipping Post Release tasks', $tester->getDisplay());
 
         $this->assertEquals(0, $tester->getStatusCode());
     }

@@ -90,7 +90,7 @@ class RsyncStrategy implements StrategyInterface
     private function checkStage($stage)
     {
         if ($this->runtime->getStage() !== $stage) {
-            throw new RuntimeException(sprintf('Invalid stage, got "%s" but expected "%"', $this->runtime->getStage(), $stage));
+            throw new RuntimeException(sprintf('Invalid stage, got "%s" but expected "%s"', $this->runtime->getStage(), $stage));
         }
     }
 }

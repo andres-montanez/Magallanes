@@ -31,7 +31,7 @@ class StrategyTest extends TestCase
             $rsync->getPreDeployTasks();
         } catch (Exception $exception) {
             $this->assertTrue($exception instanceof RuntimeException);
-            $this->assertEquals(sprintf('Invalid stage, got "%s" but expected "%"', Runtime::ON_DEPLOY, Runtime::PRE_DEPLOY), $exception->getMessage());
+            $this->assertEquals(sprintf('Invalid stage, got "%s" but expected "%s"', Runtime::ON_DEPLOY, Runtime::PRE_DEPLOY), $exception->getMessage());
         }
 
         try {
@@ -39,7 +39,7 @@ class StrategyTest extends TestCase
             $rsync->getOnDeployTasks();
         } catch (Exception $exception) {
             $this->assertTrue($exception instanceof RuntimeException);
-            $this->assertEquals(sprintf('Invalid stage, got "%s" but expected "%"', Runtime::PRE_DEPLOY, Runtime::ON_DEPLOY), $exception->getMessage());
+            $this->assertEquals(sprintf('Invalid stage, got "%s" but expected "%s"', Runtime::PRE_DEPLOY, Runtime::ON_DEPLOY), $exception->getMessage());
         }
 
         try {
@@ -47,7 +47,7 @@ class StrategyTest extends TestCase
             $rsync->getOnReleaseTasks();
         } catch (Exception $exception) {
             $this->assertTrue($exception instanceof RuntimeException);
-            $this->assertEquals(sprintf('Invalid stage, got "%s" but expected "%"', Runtime::PRE_DEPLOY, Runtime::ON_RELEASE), $exception->getMessage());
+            $this->assertEquals(sprintf('Invalid stage, got "%s" but expected "%s"', Runtime::PRE_DEPLOY, Runtime::ON_RELEASE), $exception->getMessage());
         }
 
         try {
@@ -55,7 +55,7 @@ class StrategyTest extends TestCase
             $rsync->getPostReleaseTasks();
         } catch (Exception $exception) {
             $this->assertTrue($exception instanceof RuntimeException);
-            $this->assertEquals(sprintf('Invalid stage, got "%s" but expected "%"', Runtime::PRE_DEPLOY, Runtime::POST_RELEASE), $exception->getMessage());
+            $this->assertEquals(sprintf('Invalid stage, got "%s" but expected "%s"', Runtime::PRE_DEPLOY, Runtime::POST_RELEASE), $exception->getMessage());
         }
 
         try {
@@ -63,7 +63,7 @@ class StrategyTest extends TestCase
             $rsync->getPostDeployTasks();
         } catch (Exception $exception) {
             $this->assertTrue($exception instanceof RuntimeException);
-            $this->assertEquals(sprintf('Invalid stage, got "%s" but expected "%"', Runtime::PRE_DEPLOY, Runtime::POST_DEPLOY), $exception->getMessage());
+            $this->assertEquals(sprintf('Invalid stage, got "%s" but expected "%s"', Runtime::PRE_DEPLOY, Runtime::POST_DEPLOY), $exception->getMessage());
         }
     }
 
@@ -79,7 +79,7 @@ class StrategyTest extends TestCase
             $releases->getPreDeployTasks();
         } catch (Exception $exception) {
             $this->assertTrue($exception instanceof RuntimeException);
-            $this->assertEquals(sprintf('Invalid stage, got "%s" but expected "%"', Runtime::ON_DEPLOY, Runtime::PRE_DEPLOY), $exception->getMessage());
+            $this->assertEquals(sprintf('Invalid stage, got "%s" but expected "%s"', Runtime::ON_DEPLOY, Runtime::PRE_DEPLOY), $exception->getMessage());
         }
 
         try {
@@ -87,7 +87,7 @@ class StrategyTest extends TestCase
             $releases->getOnDeployTasks();
         } catch (Exception $exception) {
             $this->assertTrue($exception instanceof RuntimeException);
-            $this->assertEquals(sprintf('Invalid stage, got "%s" but expected "%"', Runtime::PRE_DEPLOY, Runtime::ON_DEPLOY), $exception->getMessage());
+            $this->assertEquals(sprintf('Invalid stage, got "%s" but expected "%s"', Runtime::PRE_DEPLOY, Runtime::ON_DEPLOY), $exception->getMessage());
         }
 
         try {
@@ -95,7 +95,7 @@ class StrategyTest extends TestCase
             $releases->getOnReleaseTasks();
         } catch (Exception $exception) {
             $this->assertTrue($exception instanceof RuntimeException);
-            $this->assertEquals(sprintf('Invalid stage, got "%s" but expected "%"', Runtime::PRE_DEPLOY, Runtime::ON_RELEASE), $exception->getMessage());
+            $this->assertEquals(sprintf('Invalid stage, got "%s" but expected "%s"', Runtime::PRE_DEPLOY, Runtime::ON_RELEASE), $exception->getMessage());
         }
 
         try {
@@ -103,7 +103,7 @@ class StrategyTest extends TestCase
             $releases->getPostReleaseTasks();
         } catch (Exception $exception) {
             $this->assertTrue($exception instanceof RuntimeException);
-            $this->assertEquals(sprintf('Invalid stage, got "%s" but expected "%"', Runtime::PRE_DEPLOY, Runtime::POST_RELEASE), $exception->getMessage());
+            $this->assertEquals(sprintf('Invalid stage, got "%s" but expected "%s"', Runtime::PRE_DEPLOY, Runtime::POST_RELEASE), $exception->getMessage());
         }
 
         try {
@@ -111,7 +111,7 @@ class StrategyTest extends TestCase
             $releases->getPostDeployTasks();
         } catch (Exception $exception) {
             $this->assertTrue($exception instanceof RuntimeException);
-            $this->assertEquals(sprintf('Invalid stage, got "%s" but expected "%"', Runtime::PRE_DEPLOY, Runtime::POST_DEPLOY), $exception->getMessage());
+            $this->assertEquals(sprintf('Invalid stage, got "%s" but expected "%s"', Runtime::PRE_DEPLOY, Runtime::POST_DEPLOY), $exception->getMessage());
         }
     }
 

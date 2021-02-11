@@ -59,7 +59,7 @@ class TaskFactoryTest extends TestCase
         $tester = new CommandTester($command);
         $tester->execute(['command' => $command->getName(), 'environment' => 'production']);
 
-        $this->assertContains('[Custom] Valid*', $tester->getDisplay());
+        $this->assertStringContainsString('[Custom] Valid*', $tester->getDisplay());
 
         $ranCommands = $application->getRuntime()->getRanCommands();
 
@@ -90,7 +90,7 @@ class TaskFactoryTest extends TestCase
         $tester = new CommandTester($command);
         $tester->execute(['command' => $command->getName(), 'environment' => 'production']);
 
-        $this->assertContains('Custom Task "Mage\Tests\Task\Custom\InvalidClass" does not exists.', $tester->getDisplay());
+        $this->assertStringContainsString('Custom Task "Mage\Tests\Task\Custom\InvalidClass" does not exists.', $tester->getDisplay());
 
         $this->assertNotEquals(0, $tester->getStatusCode());
     }
@@ -106,7 +106,7 @@ class TaskFactoryTest extends TestCase
         $tester = new CommandTester($command);
         $tester->execute(['command' => $command->getName(), 'environment' => 'production']);
 
-        $this->assertContains('Custom Task "Mage\Tests\Task\Custom\NotInstantiableTask" can not be instantiated.', $tester->getDisplay());
+        $this->assertStringContainsString('Custom Task "Mage\Tests\Task\Custom\NotInstantiableTask" can not be instantiated.', $tester->getDisplay());
 
         $this->assertNotEquals(0, $tester->getStatusCode());
     }
@@ -122,7 +122,7 @@ class TaskFactoryTest extends TestCase
         $tester = new CommandTester($command);
         $tester->execute(['command' => $command->getName(), 'environment' => 'production']);
 
-        $this->assertContains('Custom Task "Mage\Tests\Task\Custom\InvalidInheritanceTask" must inherit "Mage\Task\AbstractTask".', $tester->getDisplay());
+        $this->assertStringContainsString('Custom Task "Mage\Tests\Task\Custom\InvalidInheritanceTask" must inherit "Mage\Task\AbstractTask".', $tester->getDisplay());
 
         $this->assertNotEquals(0, $tester->getStatusCode());
     }

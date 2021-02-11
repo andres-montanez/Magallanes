@@ -57,7 +57,7 @@ class RollbackCommandTest extends TestCase
         $tester->execute(['command' => $command->getName(), 'environment' => 'developers', 'release' => '20170101015115']);
 
         $this->assertNotEquals(0, $tester->getStatusCode());
-        $this->assertContains('The environment "developers" does not exists.', $tester->getDisplay());
+        $this->assertStringContainsString('The environment "developers" does not exists.', $tester->getDisplay());
     }
 
     public function testRollbackReleaseWithoutReleases()
@@ -72,7 +72,7 @@ class RollbackCommandTest extends TestCase
 
         $tester->execute(['command' => $command->getName(), 'environment' => 'test', 'release' => '20170101015115']);
         $this->assertNotEquals(0, $tester->getStatusCode());
-        $this->assertContains('Releases are not enabled', $tester->getDisplay());
+        $this->assertStringContainsString('Releases are not enabled', $tester->getDisplay());
     }
 
     public function testRollbackReleaseNotAvailable()
@@ -87,6 +87,6 @@ class RollbackCommandTest extends TestCase
 
         $tester->execute(['command' => $command->getName(), 'environment' => 'test', 'release' => '20170101015115']);
         $this->assertNotEquals(0, $tester->getStatusCode());
-        $this->assertContains('Release "20170101015115" is not available on all hosts', $tester->getDisplay());
+        $this->assertStringContainsString('Release "20170101015115" is not available on all hosts', $tester->getDisplay());
     }
 }

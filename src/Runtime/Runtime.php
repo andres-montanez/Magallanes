@@ -405,7 +405,7 @@ class Runtime
     {
         $this->log($cmd, LogLevel::INFO);
 
-        $process = new Process($cmd);
+        $process = Process::fromShellCommandline($cmd);
         $process->setTimeout($timeout);
         $process->run();
 

@@ -28,7 +28,7 @@ class ExecTest extends TestCase
         $task->setOptions(['cmd' => 'ls -l', 'desc' => 'Loading docker']);
         $task->setRuntime($runtime);
 
-        $this->assertContains('[Exec] Loading docker', $task->getDescription());
+        $this->assertStringContainsString('[Exec] Loading docker', $task->getDescription());
         $task->execute();
 
         $ranCommands = $runtime->getRanCommands();
@@ -56,7 +56,7 @@ class ExecTest extends TestCase
         $task->setOptions(['cmd' => 'ls -la']);
         $task->setRuntime($runtime);
 
-        $this->assertContains('[Exec] Custom command', $task->getDescription());
+        $this->assertStringContainsString('[Exec] Custom command', $task->getDescription());
         $task->execute();
 
         $ranCommands = $runtime->getRanCommands();
@@ -84,7 +84,7 @@ class ExecTest extends TestCase
         $task->setOptions(['desc' => 'Loading docker']);
         $task->setRuntime($runtime);
 
-        $this->assertContains('[Exec] Loading docker', $task->getDescription());
+        $this->assertStringContainsString('[Exec] Loading docker', $task->getDescription());
 
         try {
             $task->execute();
