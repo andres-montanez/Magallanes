@@ -15,7 +15,7 @@
 Simply add the following dependency to your project’s composer.json file:
 
 ```json
-    "require": {
+    "require-dev": {
         "andres-montanez/magallanes": "^4.0"
     }
 ```
