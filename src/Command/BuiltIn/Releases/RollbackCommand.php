@@ -120,7 +120,7 @@ class RollbackCommand extends DeployCommand
             /** @var Process $process */
             $process = $this->runtime->runRemoteCommand($cmdListReleases, false);
             if ($process->isSuccessful()) {
-                $releases = explode(PHP_EOL, trim($process->getOutput()));
+                $releases = explode("\n", trim($process->getOutput()));
                 rsort($releases);
             }
 

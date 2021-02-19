@@ -61,7 +61,7 @@ class SelfUpdateTask extends AbstractComposerTask
     protected function getBuildDate($output)
     {
         $buildDate = null;
-        $output = explode(PHP_EOL, $output);
+        $output = explode("\n", $output);
         foreach ($output as $row) {
             if (strpos($row, 'Composer version ') === 0) {
                 $buildDate = DateTime::createFromFormat('Y-m-d H:i:s', substr(trim($row), -19));
