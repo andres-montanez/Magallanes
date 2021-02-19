@@ -42,7 +42,7 @@ class PrepareTask extends AbstractTask
 
         $excludes = $this->getExcludes();
         $tarPath = $this->runtime->getEnvOption('tar_create_path', 'tar');
-        $flags = $this->runtime->getEnvOption('tar_create', 'cfzp');
+        $flags = $this->runtime->getEnvOption('tar_create', stripos(PHP_OS, 'WIN') === 0 ? '--force-local -c -z -p -f' : 'cfzp');
         $from = $this->runtime->getEnvOption('from', './');
         $cmdTar = sprintf('%s %s %s %s %s', $tarPath, $flags, $tarLocal, $excludes, $from);
 
