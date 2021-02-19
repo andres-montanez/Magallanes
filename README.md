@@ -22,7 +22,7 @@ Simply add the following dependency to your project’s composer.json file:
 Finally you can use **Magallanes** from the vendor's bin:
 
 ```bash
-$ vendor/bin/mage version
+vendor/bin/mage version
 ```
 
 ### Codename Discovery One
