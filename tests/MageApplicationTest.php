@@ -73,6 +73,6 @@ class MageApplicationTest extends TestCase
         $tester = new ApplicationTester($application);
         $tester->run(['command' => 'foo']);
 
-        $this->assertContains('Oops, exception thrown while running command foo', $tester->getDisplay());
+        $this->assertStringContainsString('Oops, exception thrown while running command foo', $tester->getDisplay());
     }
 }

@@ -2,3 +2,5 @@
 /build
 composer.lock
 .mage.yml
+.idea
+.phpunit.result.cache

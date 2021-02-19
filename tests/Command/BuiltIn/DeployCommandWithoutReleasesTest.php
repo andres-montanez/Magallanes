@@ -161,7 +161,7 @@ class DeployCommandWithoutReleasesTest extends TestCase
             $this->assertEquals($command, $ranCommands[$index]);
         }
 
-        $this->assertContains('Stage "On Deploy" did not finished successfully, halting command.', $tester->getDisplay());
+        $this->assertStringContainsString('Stage "On Deploy" did not finished successfully, halting command.', $tester->getDisplay());
         $this->assertNotEquals(0, $tester->getStatusCode());
     }
 }

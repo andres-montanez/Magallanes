@@ -110,13 +110,13 @@ class ReleasesStrategy implements StrategyInterface
     /**
      * Check the runtime stage is correct
      *
-     * @param $stage
+     * @param string $stage
      * @throws RuntimeException
      */
     private function checkStage($stage)
     {
         if ($this->runtime->getStage() !== $stage) {
-            throw new RuntimeException(sprintf('Invalid stage, got "%s" but expected "%"', $this->runtime->getStage(), $stage));
+            throw new RuntimeException(sprintf('Invalid stage, got "%s" but expected "%s"', $this->runtime->getStage(), $stage));
         }
     }
 }

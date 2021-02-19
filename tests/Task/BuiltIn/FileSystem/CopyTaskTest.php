@@ -28,8 +28,8 @@ class CopyTaskTest extends TestCase
         $task->setOptions(['from' => 'a.txt', 'to' => 'b.txt']);
         $task->setRuntime($runtime);
 
-        $this->assertContains('a.txt', $task->getDescription());
-        $this->assertContains('b.txt', $task->getDescription());
+        $this->assertStringContainsString('a.txt', $task->getDescription());
+        $this->assertStringContainsString('b.txt', $task->getDescription());
         $task->execute();
 
         $ranCommands = $runtime->getRanCommands();
@@ -57,8 +57,8 @@ class CopyTaskTest extends TestCase
         $task->setOptions(['from' => 'a.txt', 'to' => 'b.txt', 'flags' => '-rp']);
         $task->setRuntime($runtime);
 
-        $this->assertContains('a.txt', $task->getDescription());
-        $this->assertContains('b.txt', $task->getDescription());
+        $this->assertStringContainsString('a.txt', $task->getDescription());
+        $this->assertStringContainsString('b.txt', $task->getDescription());
         $task->execute();
 
         $ranCommands = $runtime->getRanCommands();
@@ -86,8 +86,8 @@ class CopyTaskTest extends TestCase
         $task->setOptions(['from' => '%environment%.txt', 'to' => 'b.txt']);
         $task->setRuntime($runtime);
 
-        $this->assertContains('test.txt', $task->getDescription());
-        $this->assertContains('b.txt', $task->getDescription());
+        $this->assertStringContainsString('test.txt', $task->getDescription());
+        $this->assertStringContainsString('b.txt', $task->getDescription());
         $task->execute();
 
         $ranCommands = $runtime->getRanCommands();
@@ -117,8 +117,8 @@ class CopyTaskTest extends TestCase
         $task->setOptions(['from' => '%host%.txt', 'to' => '%release%.yml']);
         $task->setRuntime($runtime);
 
-        $this->assertContains('localhost.txt', $task->getDescription());
-        $this->assertContains('1234.yml', $task->getDescription());
+        $this->assertStringContainsString('localhost.txt', $task->getDescription());
+        $this->assertStringContainsString('1234.yml', $task->getDescription());
         $task->execute();
 
         $ranCommands = $runtime->getRanCommands();
@@ -147,7 +147,7 @@ class CopyTaskTest extends TestCase
         $task->setRuntime($runtime);
 
         try {
-            $this->assertContains('[missing parameters]', $task->getDescription());
+            $this->assertStringContainsString('[missing parameters]', $task->getDescription());
             $task->execute();
             $this->assertTrue(false, 'Task did not failed');
         } catch (Exception $exception) {

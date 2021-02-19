@@ -15,7 +15,7 @@ class CachePoolClearTaskTest extends TestCase
      */
     private $runtime;
 
-    public function setUp()
+    public function setUp(): void
     {
         $this->runtime = new RuntimeMockup();
         $this->runtime->setConfiguration(['environments' => ['test' => []]]);

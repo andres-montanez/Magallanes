@@ -28,7 +28,7 @@ class RemoveTaskTest extends TestCase
         $task->setOptions(['file' => 'a.txt']);
         $task->setRuntime($runtime);
 
-        $this->assertContains('a.txt', $task->getDescription());
+        $this->assertStringContainsString('a.txt', $task->getDescription());
         $task->execute();
 
         $ranCommands = $runtime->getRanCommands();
@@ -56,7 +56,7 @@ class RemoveTaskTest extends TestCase
         $task->setOptions(['file' => 'a.txt', 'flags' => '-fr']);
         $task->setRuntime($runtime);
 
-        $this->assertContains('a.txt', $task->getDescription());
+        $this->assertStringContainsString('a.txt', $task->getDescription());
         $task->execute();
 
         $ranCommands = $runtime->getRanCommands();
@@ -84,7 +84,7 @@ class RemoveTaskTest extends TestCase
         $task->setOptions(['file' => '%environment%.txt']);
         $task->setRuntime($runtime);
 
-        $this->assertContains('test.txt', $task->getDescription());
+        $this->assertStringContainsString('test.txt', $task->getDescription());
         $task->execute();
 
         $ranCommands = $runtime->getRanCommands();
@@ -113,7 +113,7 @@ class RemoveTaskTest extends TestCase
         $task->setRuntime($runtime);
 
         try {
-            $this->assertContains('[missing parameters]', $task->getDescription());
+            $this->assertStringContainsString('[missing parameters]', $task->getDescription());
             $task->execute();
             $this->assertTrue(false, 'Task did not failed');
         } catch (Exception $exception) {

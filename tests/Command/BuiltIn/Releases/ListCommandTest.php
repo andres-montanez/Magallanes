@@ -57,7 +57,7 @@ class ListCommandTest extends TestCase
         $tester->execute(['command' => $command->getName(), 'environment' => 'developers']);
 
         $this->assertNotEquals(0, $tester->getStatusCode());
-        $this->assertContains('The environment "developers" does not exists.', $tester->getDisplay());
+        $this->assertStringContainsString('The environment "developers" does not exists.', $tester->getDisplay());
     }
 
     public function testListReleasesWithoutReleases()
@@ -72,7 +72,7 @@ class ListCommandTest extends TestCase
 
         $tester->execute(['command' => $command->getName(), 'environment' => 'test']);
         $this->assertNotEquals(0, $tester->getStatusCode());
-        $this->assertContains('Releases are not enabled', $tester->getDisplay());
+        $this->assertStringContainsString('Releases are not enabled', $tester->getDisplay());
     }
 
     public function testFailToGetCurrentRelease()
@@ -87,7 +87,7 @@ class ListCommandTest extends TestCase
 
         $tester->execute(['command' => $command->getName(), 'environment' => 'test']);
         $this->assertNotEquals(0, $tester->getStatusCode());
-        $this->assertContains('Unable to retrieve current release from host "host1"', $tester->getDisplay());
+        $this->assertStringContainsString('Unable to retrieve current release from host "host1"', $tester->getDisplay());
     }
 
     public function testNoReleasesAvailable()
@@ -101,7 +101,7 @@ class ListCommandTest extends TestCase
         $tester = new CommandTester($command);
 
         $tester->execute(['command' => $command->getName(), 'environment' => 'test']);
-        $this->assertContains('No releases available on host host2', $tester->getDisplay());
+        $this->assertStringContainsString('No releases available on host host2', $tester->getDisplay());
     }
 
     public function testFailGetReleases()
@@ -116,7 +116,7 @@ class ListCommandTest extends TestCase
 
         $tester->execute(['command' => $command->getName(), 'environment' => 'test']);
         $this->assertNotEquals(0, $tester->getStatusCode());
-        $this->assertContains('Unable to retrieve releases from host "host3"', $tester->getDisplay());
+        $this->assertStringContainsString('Unable to retrieve releases from host "host3"', $tester->getDisplay());
     }
 
     public function testNoHosts()
@@ -130,6 +130,6 @@ class ListCommandTest extends TestCase
         $tester = new CommandTester($command);
 
         $tester->execute(['command' => $command->getName(), 'environment' => 'test']);
-        $this->assertContains('No hosts defined', $tester->getDisplay());
+        $this->assertStringContainsString('No hosts defined', $tester->getDisplay());
     }
 }
