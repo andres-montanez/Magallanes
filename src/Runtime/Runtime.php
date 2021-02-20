@@ -71,6 +71,11 @@ class Runtime
      */
     protected $rollback = false;
 
+    public function isWindows()
+    {
+        return stripos(PHP_OS, 'WIN') === 0;
+    }
+
     /**
      * Generate the Release ID
      *
