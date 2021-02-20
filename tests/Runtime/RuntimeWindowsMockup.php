@@ -8,15 +8,12 @@
  * file that was distributed with this source code.
  */
 
-namespace Mage;
+namespace Mage\Tests\Runtime;
 
-/**
- * Mallaganes base class
- *
- * @author Andrés Montañez <andresmontanez@gmail.com>
- */
-class Mage
+class RuntimeWindowsMockup extends RuntimeMockup
 {
-    const VERSION = '4.1.1';
-    const CODENAME = 'Discovery One';
+    public function isWindows()
+    {
+        return true;
+    }
 }

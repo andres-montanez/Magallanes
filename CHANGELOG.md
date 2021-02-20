@@ -1,6 +1,12 @@
 CHANGELOG for 4.X
 =================
 
+* 4.1.1 (2021-02-20)
+  * Add `copyDirectory` option
+  * Bug fixes
+  * Improve testing and coverage
+
+
 * 4.1.0 (2021-02-19)
   * PHP 8 and Symfony 5 compatibility [PR#448]
   * Timeout option for SSH [PR#436]
