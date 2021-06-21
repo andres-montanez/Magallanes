@@ -11,7 +11,9 @@
 namespace Mage;
 
 use Mage\Command\AbstractCommand;
+use Mage\Event\RegisterCommandsEvent;
 use Mage\Runtime\Runtime;
+use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\Finder\Finder;
 use Symfony\Component\Finder\SplFileInfo;
 use Monolog\Logger;
@@ -55,7 +57,15 @@ class MageApplication extends Application
         });
 
         $this->runtime = $this->instantiateRuntime();
+        $this->runtime->setEventDispatcher($dispatcher);
         $this->loadBuiltInCommands();
+
+        $event = new RegisterCommandsEvent();
+        $dispatcher->dispatch(RegisterCommandsEvent::EVENT_NAME, $event);
+
+        foreach ($event->getCommands() as $command) {
+            $this->add($command);
+        }
     }
 
     /**
@@ -87,6 +97,15 @@ class MageApplication extends Application
 
             } elseif (array_key_exists('log_dir', $config['magephp']) && !is_dir($config['magephp']['log_dir'])) {
                 throw new RuntimeException(sprintf('The configured log_dir "%s" does not exists or is not a directory.', $config['magephp']['log_dir']));
+            }
+
+            // Subscribers
+            if (array_key_exists('subscribers', $config['magephp'])) {
+                foreach ((array) $config['magephp']['subscribers'] as $subscriber) {
+                    if ($subscriber instanceof EventSubscriberInterface) {
+                        $this->runtime->getEventDispatcher()->addSubscriber($subscriber);
+                    }
+                }
             }
 
             $this->runtime->setConfiguration($config['magephp']);
