@@ -41,7 +41,7 @@ class ReleaseTask extends AbstractTask implements ExecuteOnRollbackInterface
 
         $hostPath = rtrim($this->runtime->getEnvOption('host_path'), '/');
         $releaseId = $this->runtime->getReleaseId();
-        
+
         $symlink = $this->runtime->getEnvOption('symlink', 'current');
 
         $cmdLinkRelease = sprintf('cd %s && ln -snf releases/%s %s', $hostPath, $releaseId, $symlink);
