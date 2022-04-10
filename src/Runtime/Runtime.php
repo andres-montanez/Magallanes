@@ -441,7 +441,7 @@ class Runtime
      */
     public function getHostPort(): ?int
     {
-        $info = explode(':', $this->getWorkingHost());
+        $info = explode(':', strval($this->getWorkingHost()));
         return isset($info[1]) ? intval($info[1]) : null;
     }
 
@@ -450,7 +450,7 @@ class Runtime
      */
     public function getHostName(): ?string
     {
-        if (strpos($this->getWorkingHost(), ':') === false) {
+        if (strpos(strval($this->getWorkingHost()), ':') === false) {
             return $this->getWorkingHost();
         }
 
