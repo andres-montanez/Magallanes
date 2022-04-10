@@ -29,7 +29,9 @@ jobs:
       - name: Run tests
         env:
           XDEBUG_MODE: coverage
-        run: ./vendor/bin/phpunit --coverage-clover build/logs/coverage.xml
+        run:
+          mkdir .logs
+          ./vendor/bin/phpunit --coverage-clover build/logs/coverage.xml
       - name: Run Coveralls
         env:
           COVERALLS_REPO_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -53,4 +55,6 @@ jobs:
       - name: Run tests
         env:
           XDEBUG_MODE: coverage
-        run: ./vendor/bin/phpunit --coverage-clover build/logs/coverage.xml
+        run:
+          mkdir .logs
+          ./vendor/bin/phpunit --coverage-clover build/logs/coverage.xml
