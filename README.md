@@ -1,6 +1,6 @@
 # Magallanes
-[![SymfonyInsight](https://insight.symfony.com/projects/ed0de53a-a12e-459b-9464-34def5907b56/mini.svg)](https://insight.symfony.com/projects/ed0de53a-a12e-459b-9464-34def5907b56)
-[![Build Status](https://img.shields.io/travis/andres-montanez/Magallanes/master.svg)](https://travis-ci.org/andres-montanez/Magallanes)
+![Linters](https://github.com/andres-montanez/Magallanes/actions/workflows/linters.yml/badge.svg?)
+![Tests](https://github.com/andres-montanez/Magallanes/actions/workflows/tests.yml/badge.svg?)
 [![Coverage Status](https://img.shields.io/coveralls/andres-montanez/Magallanes/master.svg)](https://coveralls.io/github/andres-montanez/Magallanes?branch=master)
 [![Code Quality](https://img.shields.io/scrutinizer/g/andres-montanez/Magallanes.svg)](https://scrutinizer-ci.com/g/andres-montanez/Magallanes/)
 [![Latest Stable Version](https://img.shields.io/packagist/v/andres-montanez/magallanes.svg?label=stable)](https://packagist.org/packages/andres-montanez/magallanes)
