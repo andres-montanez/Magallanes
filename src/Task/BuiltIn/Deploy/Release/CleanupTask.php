@@ -1,4 +1,5 @@
 <?php
+
 /*
  * This file is part of the Magallanes package.
  *
@@ -20,17 +21,17 @@ use Mage\Task\AbstractTask;
  */
 class CleanupTask extends AbstractTask
 {
-    public function getName()
+    public function getName(): string
     {
         return 'deploy/release/cleanup';
     }
 
-    public function getDescription()
+    public function getDescription(): string
     {
         return '[Release] Cleaning up old Releases';
     }
 
-    public function execute()
+    public function execute(): bool
     {
         $hostPath = rtrim($this->runtime->getEnvOption('host_path'), '/');
         $currentReleaseId = $this->runtime->getReleaseId();

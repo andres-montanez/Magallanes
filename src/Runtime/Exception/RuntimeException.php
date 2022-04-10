@@ -1,4 +1,5 @@
 <?php
+
 /*
  * This file is part of the Magallanes package.
  *
@@ -10,13 +11,11 @@
 
 namespace Mage\Runtime\Exception;
 
-use Exception;
-
 /**
  * An Error occurred while running
  *
  * @author Andrés Montañez <andresmontanez@gmail.com>
  */
-class RuntimeException extends Exception
+class RuntimeException extends \Exception
 {
 }

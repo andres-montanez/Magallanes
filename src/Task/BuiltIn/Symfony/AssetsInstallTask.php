@@ -1,4 +1,5 @@
 <?php
+
 /*
  * This file is part of the Magallanes package.
  *
@@ -19,28 +20,33 @@ use Symfony\Component\Process\Process;
  */
 class AssetsInstallTask extends AbstractSymfonyTask
 {
-    public function getName()
+    public function getName(): string
     {
         return 'symfony/assets-install';
     }
 
-    public function getDescription()
+    public function getDescription(): string
     {
         return '[Symfony] Assets Install';
     }
 
-    public function execute()
+    public function execute(): bool
     {
         $options = $this->getOptions();
-        $command = sprintf('%s assets:install %s --env=%s %s', $options['console'], $options['target'], $options['env'], $options['flags']);
+        $command = sprintf(
+            '%s assets:install %s --env=%s %s',
+            $options['console'],
+            $options['target'],
+            $options['env'],
+            $options['flags']
+        );
 
-        /** @var Process $process */
         $process = $this->runtime->runCommand(trim($command));
 
         return $process->isSuccessful();
     }
 
-    protected function getSymfonyOptions()
+    protected function getSymfonyOptions(): array
     {
         return ['target' => 'web', 'flags' => '--symlink --relative'];
     }

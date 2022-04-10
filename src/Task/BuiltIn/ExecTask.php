@@ -1,4 +1,5 @@
 <?php
+
 /*
  * This file is part of the Magallanes package.
  *
@@ -24,7 +25,7 @@ class ExecTask extends AbstractTask
     /**
      * @return string
      */
-    public function getName()
+    public function getName(): string
     {
         return 'exec';
     }
@@ -32,7 +33,7 @@ class ExecTask extends AbstractTask
     /**
      * @return string
      */
-    public function getDescription()
+    public function getDescription(): string
     {
         $options = $this->getOptions();
 
@@ -48,7 +49,7 @@ class ExecTask extends AbstractTask
      *
      * @throws ErrorException
      */
-    public function execute()
+    public function execute(): bool
     {
         $options = $this->getOptions();
 
@@ -57,14 +58,14 @@ class ExecTask extends AbstractTask
         }
 
         /** @var Process $process */
-        $process = $this->runtime->runCommand($options['cmd'], $options['timeout']);
+        $process = $this->runtime->runCommand(strval($options['cmd']), intval($options['timeout']));
         return $process->isSuccessful();
     }
 
     /**
-     * @return array
+     * @return array<string, string|int>
      */
-    protected function getOptions()
+    protected function getOptions(): array
     {
         $options = array_merge(
             ['cmd' => '', 'desc' => '', 'timeout' => 120],

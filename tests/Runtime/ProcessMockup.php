@@ -24,9 +24,10 @@ class ProcessMockup extends Process
         $this->commandline = $commandline;
     }
 
-    public function setTimeout($timeout)
+    public function setTimeout(?float $timeout): static
     {
         $this->timeout = $timeout;
+        return $this;
     }
 
     public function run(callable $callback = null, array $env = array()): int
@@ -58,17 +59,17 @@ class ProcessMockup extends Process
         return 0;
     }
 
-    public function isSuccessful()
+    public function isSuccessful(): bool
     {
         return $this->success;
     }
 
-    public function getErrorOutput()
+    public function getErrorOutput(): string
     {
         return '';
     }
 
-    public function getOutput()
+    public function getOutput(): string
     {
         if ($this->commandline == 'git branch | grep "*"') {
             return '* master';

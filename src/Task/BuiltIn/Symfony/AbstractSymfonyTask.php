@@ -1,4 +1,5 @@
 <?php
+
 /*
  * This file is part of the Magallanes package.
  *
@@ -19,7 +20,10 @@ use Mage\Task\AbstractTask;
  */
 abstract class AbstractSymfonyTask extends AbstractTask
 {
-    protected function getOptions()
+    /**
+     * @return array<string, string>
+     */
+    protected function getOptions(): array
     {
         $options = array_merge(
             ['console' => 'bin/console', 'env' => 'dev', 'flags' => ''],
@@ -31,7 +35,10 @@ abstract class AbstractSymfonyTask extends AbstractTask
         return $options;
     }
 
-    protected function getSymfonyOptions()
+    /**
+     * @return array<string, string|null>
+     */
+    protected function getSymfonyOptions(): array
     {
         return [];
     }

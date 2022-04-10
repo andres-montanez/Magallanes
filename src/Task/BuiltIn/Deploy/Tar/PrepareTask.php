@@ -1,4 +1,5 @@
 <?php
+
 /*
  * This file is part of the Magallanes package.
  *
@@ -21,17 +22,17 @@ use Mage\Task\AbstractTask;
  */
 class PrepareTask extends AbstractTask
 {
-    public function getName()
+    public function getName(): string
     {
         return 'deploy/tar/prepare';
     }
 
-    public function getDescription()
+    public function getDescription(): string
     {
         return '[Deploy] Preparing Tar file';
     }
 
-    public function execute()
+    public function execute(): bool
     {
         if (!$this->runtime->getEnvOption('releases', false)) {
             throw new ErrorException('This task is only available with releases enabled', 40);
@@ -42,7 +43,10 @@ class PrepareTask extends AbstractTask
 
         $excludes = $this->getExcludes();
         $tarPath = $this->runtime->getEnvOption('tar_create_path', 'tar');
-        $flags = $this->runtime->getEnvOption('tar_create', $this->runtime->isWindows() ? '--force-local -c -z -p -f' : 'cfzp');
+        $flags = $this->runtime->getEnvOption(
+            'tar_create',
+            $this->runtime->isWindows() ? '--force-local -c -z -p -f' : 'cfzp'
+        );
         $from = $this->runtime->getEnvOption('from', './');
 
         if ($this->runtime->getEnvOption('copyDirectory', false)) {
@@ -56,7 +60,7 @@ class PrepareTask extends AbstractTask
         return $process->isSuccessful();
     }
 
-    protected function getExcludes()
+    protected function getExcludes(): string
     {
         $excludes = $this->runtime->getMergedOption('exclude', []);
         $excludes = array_merge(['.git'], array_filter($excludes));

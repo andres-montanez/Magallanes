@@ -12,7 +12,7 @@ namespace Mage\Tests\Runtime;
 
 class RuntimeWindowsMockup extends RuntimeMockup
 {
-    public function isWindows()
+    public function isWindows(): bool
     {
         return true;
     }

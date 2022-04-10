@@ -1,4 +1,5 @@
 <?php
+
 /*
  * This file is part of the Magallanes package.
  *
@@ -20,22 +21,19 @@ use Mage\Runtime\Runtime;
  */
 class ReleasesStrategy implements StrategyInterface
 {
-    /**
-     * @var Runtime
-     */
-    protected $runtime;
+    protected Runtime $runtime;
 
-    public function getName()
+    public function getName(): string
     {
         return 'Releases';
     }
 
-    public function setRuntime(Runtime $runtime)
+    public function setRuntime(Runtime $runtime): void
     {
         $this->runtime = $runtime;
     }
 
-    public function getPreDeployTasks()
+    public function getPreDeployTasks(): array
     {
         $this->checkStage(Runtime::PRE_DEPLOY);
         $tasks = $this->runtime->getTasks();
@@ -51,7 +49,7 @@ class ReleasesStrategy implements StrategyInterface
         return $tasks;
     }
 
-    public function getOnDeployTasks()
+    public function getOnDeployTasks(): array
     {
         $this->checkStage(Runtime::ON_DEPLOY);
         $tasks = $this->runtime->getTasks();
@@ -67,7 +65,7 @@ class ReleasesStrategy implements StrategyInterface
         return $tasks;
     }
 
-    public function getOnReleaseTasks()
+    public function getOnReleaseTasks(): array
     {
         $this->checkStage(Runtime::ON_RELEASE);
         $tasks = $this->runtime->getTasks();
@@ -79,7 +77,7 @@ class ReleasesStrategy implements StrategyInterface
         return $tasks;
     }
 
-    public function getPostReleaseTasks()
+    public function getPostReleaseTasks(): array
     {
         $this->checkStage(Runtime::POST_RELEASE);
         $tasks = $this->runtime->getTasks();
@@ -91,7 +89,7 @@ class ReleasesStrategy implements StrategyInterface
         return $tasks;
     }
 
-    public function getPostDeployTasks()
+    public function getPostDeployTasks(): array
     {
         $this->checkStage(Runtime::POST_DEPLOY);
         $tasks = $this->runtime->getTasks();
@@ -110,13 +108,14 @@ class ReleasesStrategy implements StrategyInterface
     /**
      * Check the runtime stage is correct
      *
-     * @param string $stage
      * @throws RuntimeException
      */
-    private function checkStage($stage)
+    private function checkStage(string $stage): void
     {
         if ($this->runtime->getStage() !== $stage) {
-            throw new RuntimeException(sprintf('Invalid stage, got "%s" but expected "%s"', $this->runtime->getStage(), $stage));
+            throw new RuntimeException(
+                sprintf('Invalid stage, got "%s" but expected "%s"', $this->runtime->getStage(), $stage)
+            );
         }
     }
 }

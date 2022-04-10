@@ -20,17 +20,17 @@ use Symfony\Component\Process\Process;
  */
 class BasicComposerTask extends AbstractComposerTask
 {
-    public function getName()
+    public function getName(): string
     {
         return 'composer/help';
     }
 
-    public function getDescription()
+    public function getDescription(): string
     {
         return '[Composer] Help';
     }
 
-    public function execute()
+    public function execute(): bool
     {
         $options = $this->getOptions();
         $cmd = sprintf('%s help', $options['path']);

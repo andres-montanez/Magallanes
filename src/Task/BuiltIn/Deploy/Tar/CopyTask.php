@@ -1,4 +1,5 @@
 <?php
+
 /*
  * This file is part of the Magallanes package.
  *
@@ -21,17 +22,17 @@ use Mage\Task\AbstractTask;
  */
 class CopyTask extends AbstractTask
 {
-    public function getName()
+    public function getName(): string
     {
         return 'deploy/tar/copy';
     }
 
-    public function getDescription()
+    public function getDescription(): string
     {
         return '[Deploy] Copying files with Tar';
     }
 
-    public function execute()
+    public function execute(): bool
     {
         if (!$this->runtime->getEnvOption('releases', false)) {
             throw new ErrorException('This task is only available with releases enabled', 40);
@@ -50,10 +51,19 @@ class CopyTask extends AbstractTask
         $tarLocal = $this->runtime->getVar('tar_local');
         $tarRemote = basename($tarLocal);
 
-        $cmdCopy = sprintf('scp -P %d %s %s %s@%s:%s/%s', $sshConfig['port'], $sshConfig['flags'], $tarLocal, $user, $host, $targetDir, $tarRemote);
+        $cmdCopy = sprintf(
+            'scp -P %d %s %s %s@%s:%s/%s',
+            $sshConfig['port'],
+            $sshConfig['flags'],
+            $tarLocal,
+            $user,
+            $host,
+            $targetDir,
+            $tarRemote
+        );
 
         /** @var Process $process */
-        $process = $this->runtime->runLocalCommand($cmdCopy, $sshConfig['timeout']);
+        $process = $this->runtime->runLocalCommand($cmdCopy, intval($sshConfig['timeout']));
         if ($process->isSuccessful()) {
             $cmdUnTar = sprintf('cd %s && %s %s %s', $targetDir, $tarPath, $flags, $tarRemote);
             $process = $this->runtime->runRemoteCommand($cmdUnTar, false, 600);

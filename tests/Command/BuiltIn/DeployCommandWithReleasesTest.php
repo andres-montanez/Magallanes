@@ -530,6 +530,55 @@ class DeployCommandWithReleasesTest extends TestCase
         $this->assertNotEquals(0, $tester->getStatusCode());
     }
 
+    public function testDeploymentFailCleanupReleases()
+    {
+        $application = new MageApplicationMockup(__DIR__ . '/../../Resources/testhost.yml');
+
+        $application->getRuntime()->setReleaseId('20170101015120');
+
+        /** @var AbstractCommand $command */
+        $command = $application->find('deploy');
+        $this->assertTrue($command instanceof DeployCommand);
+
+        $application->getRuntime()->forceFail('ssh -p 22 -q -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no tester@testhost "rm -rf /var/www/test/releases/20170101015110"');
+
+        $tester = new CommandTester($command);
+        $tester->execute(['command' => $command->getName(), 'environment' => 'test']);
+
+        $ranCommands = $application->getRuntime()->getRanCommands();
+
+        $testCase = array(
+            0 => 'git branch | grep "*"',
+            1 => 'git checkout test',
+            2 => 'git pull',
+            3 => 'composer install --optimize-autoloader',
+            4 => 'composer dump-autoload --optimize',
+            5 => 'tar cfzp /tmp/mageXYZ --exclude=".git" --exclude="./var/cache/*" --exclude="./var/log/*" --exclude="./web/app_dev.php" ./',
+            6 => 'ssh -p 22 -q -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no tester@testhost "mkdir -p /var/www/test/releases/1234567890"',
+            7 => 'scp -P 22 -q -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no /tmp/mageXYZ tester@testhost:/var/www/test/releases/1234567890/mageXYZ',
+            8 => 'ssh -p 22 -q -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no tester@testhost "cd /var/www/test/releases/1234567890 && tar xfzop mageXYZ"',
+            9 => 'ssh -p 22 -q -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no tester@testhost "rm /var/www/test/releases/1234567890/mageXYZ"',
+            10 => 'ssh -p 22 -q -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no tester@testhost "cd /var/www/test/releases/1234567890 && bin/console cache:warmup --env=dev"',
+            11 => 'ssh -p 22 -q -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no tester@testhost "cd /var/www/test/releases/1234567890 && bin/console assets:install web --env=dev --symlink --relative"',
+            12 => 'ssh -p 22 -q -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no tester@testhost "cd /var/www/test/releases/1234567890 && bin/console cache:pool:prune --env=dev"',
+            13 => 'ssh -p 22 -q -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no tester@testhost "cd /var/www/test && ln -snf releases/1234567890 current"',
+            14 => 'ssh -p 22 -q -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no tester@testhost "ls -1 /var/www/test/releases"',
+            15 => 'ssh -p 22 -q -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no tester@testhost "rm -rf /var/www/test/releases/20170101015110"',
+        );
+
+        // Check total of Executed Commands
+        $this->assertEquals(count($testCase), count($ranCommands));
+
+        // Check Generated Commands
+        foreach ($testCase as $index => $command) {
+            $this->assertEquals($command, $ranCommands[$index]);
+        }
+
+        $this->assertStringContainsString('Running [Release] Cleaning up old Releases ... FAIL', $tester->getDisplay());
+        $this->assertStringContainsString('Stage "Post Release" did not finished successfully, halting command.', $tester->getDisplay());
+        $this->assertNotEquals(0, $tester->getStatusCode());
+    }
+
     public function testDeploymentFailMidway()
     {
         $application = new MageApplicationMockup(__DIR__ . '/../../Resources/testhost.yml');

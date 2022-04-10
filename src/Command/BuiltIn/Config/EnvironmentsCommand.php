@@ -1,4 +1,5 @@
 <?php
+
 /*
  * This file is part of the Magallanes package.
  *
@@ -25,22 +26,17 @@ class EnvironmentsCommand extends AbstractCommand
     /**
      * Configure the Command
      */
-    protected function configure()
+    protected function configure(): void
     {
         $this
             ->setName('config:environments')
-            ->setDescription('List all Magallanes configured Environments')
-        ;
+            ->setDescription('List all Magallanes configured Environments');
     }
 
     /**
      * Execute the Command
-     *
-     * @param InputInterface $input
-     * @param OutputInterface $output
-     * @return int|mixed
      */
-    protected function execute(InputInterface $input, OutputInterface $output)
+    protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $this->requireConfig();
 
@@ -66,6 +62,6 @@ class EnvironmentsCommand extends AbstractCommand
         $output->writeln('');
         $output->writeln('Finished <fg=blue>Magallanes</>');
 
-        return 0;
+        return self::SUCCESS;
     }
 }

@@ -1,4 +1,5 @@
 <?php
+
 /*
  * This file is part of the Magallanes package.
  *
@@ -19,7 +20,10 @@ use Mage\Task\AbstractTask;
  */
 abstract class AbstractComposerTask extends AbstractTask
 {
-    protected function getOptions()
+    /**
+     * @return string[]
+     */
+    protected function getOptions(): array
     {
         $options = array_merge(
             ['path' => 'composer'],
@@ -31,7 +35,10 @@ abstract class AbstractComposerTask extends AbstractTask
         return $options;
     }
 
-    protected function getComposerOptions()
+    /**
+     * @return array<string, string|int>
+     */
+    protected function getComposerOptions(): array
     {
         return [];
     }

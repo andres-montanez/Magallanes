@@ -1,4 +1,5 @@
 <?php
+
 /*
  * This file is part of the Magallanes package.
  *
@@ -10,13 +11,11 @@
 
 namespace Mage\Task\Exception;
 
-use Exception;
-
 /**
  * The Task will be Skipped
  *
  * @author Andrés Montañez <andresmontanez@gmail.com>
  */
-class SkipException extends Exception
+class SkipException extends \Exception
 {
 }

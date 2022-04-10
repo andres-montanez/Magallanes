@@ -1,4 +1,5 @@
 <?php
+
 /*
  * This file is part of the Magallanes package.
  *
@@ -20,17 +21,17 @@ use Mage\Task\AbstractTask;
  */
 class PrepareTask extends AbstractTask
 {
-    public function getName()
+    public function getName(): string
     {
         return 'deploy/release/prepare';
     }
 
-    public function getDescription()
+    public function getDescription(): string
     {
         return '[Release] Preparing Release';
     }
 
-    public function execute()
+    public function execute(): bool
     {
         $hostPath = rtrim($this->runtime->getEnvOption('host_path'), '/');
 

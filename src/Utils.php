@@ -1,4 +1,5 @@
 <?php
+
 /*
  * This file is part of the Magallanes package.
  *
@@ -11,8 +12,6 @@
 namespace Mage;
 
 use Mage\Runtime\Runtime;
-use DateTime;
-use DateInterval;
 
 /**
  * Utility class for resolving trivial operations
@@ -23,11 +22,8 @@ class Utils
 {
     /**
      * Given a stage code it will resolve a human friendly name
-     *
-     * @param string $stage
-     * @return string
      */
-    public function getStageName($stage)
+    public function getStageName(string $stage): string
     {
         switch ($stage) {
             case Runtime::PRE_DEPLOY:
@@ -51,35 +47,36 @@ class Utils
 
     /**
      * Given a Release ID, convert it to a DateTime instance
-     *
-     * @param string $releaseId The Release ID
-     * @return DateTime
      */
-    public function getReleaseDate($releaseId)
+    public function getReleaseDate(string $releaseId): \DateTime
     {
-        $formatted = sprintf('%d%d%d%d-%d%d-%d%d %d%d:%d%d:%d%d',
-            $releaseId[0], $releaseId[1], $releaseId[2], $releaseId[3],
-            $releaseId[4], $releaseId[5],
-            $releaseId[6], $releaseId[7],
-            $releaseId[8], $releaseId[9],
-            $releaseId[10], $releaseId[11],
-            $releaseId[12], $releaseId[13]
+        $formatted = sprintf(
+            '%d%d%d%d-%d%d-%d%d %d%d:%d%d:%d%d',
+            $releaseId[0],
+            $releaseId[1],
+            $releaseId[2],
+            $releaseId[3],
+            $releaseId[4],
+            $releaseId[5],
+            $releaseId[6],
+            $releaseId[7],
+            $releaseId[8],
+            $releaseId[9],
+            $releaseId[10],
+            $releaseId[11],
+            $releaseId[12],
+            $releaseId[13]
         );
 
-        return new DateTime($formatted);
+        return new \DateTime($formatted);
     }
 
     /**
      * Given a Date, calculate friendly how much time has passed
-     *
-     * @param DateTime $releaseDate
-     * @return string
      */
-    public function getTimeDiff(DateTime $releaseDate)
+    public function getTimeDiff(\DateTime $releaseDate): string
     {
-        $now = new DateTime();
-
-        /** @var DateInterval $diff */
+        $now = new \DateTime();
         $diff = $now->diff($releaseDate);
 
         if ($diff->days > 7) {

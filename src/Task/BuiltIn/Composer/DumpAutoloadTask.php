@@ -1,4 +1,5 @@
 <?php
+
 /*
  * This file is part of the Magallanes package.
  *
@@ -19,17 +20,17 @@ use Symfony\Component\Process\Process;
  */
 class DumpAutoloadTask extends AbstractComposerTask
 {
-    public function getName()
+    public function getName(): string
     {
         return 'composer/dump-autoload';
     }
 
-    public function getDescription()
+    public function getDescription(): string
     {
         return '[Composer] Dump Autoload';
     }
 
-    public function execute()
+    public function execute(): bool
     {
         $options = $this->getOptions();
         $cmd = sprintf('%s dump-autoload %s', $options['path'], $options['flags']);
@@ -40,7 +41,7 @@ class DumpAutoloadTask extends AbstractComposerTask
         return $process->isSuccessful();
     }
 
-    protected function getComposerOptions()
+    protected function getComposerOptions(): array
     {
         return ['flags' => '--optimize'];
     }

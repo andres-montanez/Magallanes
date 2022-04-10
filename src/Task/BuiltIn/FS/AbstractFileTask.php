@@ -1,4 +1,5 @@
 <?php
+
 /*
  * This file is part of the Magallanes package.
  *
@@ -23,10 +24,10 @@ abstract class AbstractFileTask extends AbstractTask
     /**
      * Returns the Task options
      *
-     * @return array
+     * @return array<string, string|int|null>
      * @throws ErrorException
      */
-    protected function getOptions()
+    protected function getOptions(): array
     {
         $mandatory = $this->getParameters();
         $defaults = array_keys($this->getDefaults());
@@ -44,18 +45,16 @@ abstract class AbstractFileTask extends AbstractTask
     /**
      * Returns the mandatory parameters
      *
-     * @return array
+     * @return string[]
      */
-    abstract protected function getParameters();
+    abstract protected function getParameters(): array;
 
     /**
      * Returns a file with the placeholders replaced
      *
-     * @param string $file
-     * @return string
      * @throws ErrorException
      */
-    protected function getFile($file)
+    protected function getFile(string $file): string
     {
         $mapping = [
             '%environment%' => $this->runtime->getEnvironment(),
@@ -73,7 +72,7 @@ abstract class AbstractFileTask extends AbstractTask
         return str_replace(
             array_keys($mapping),
             array_values($mapping),
-            $options[$file]
+            strval($options[$file])
         );
     }
 }

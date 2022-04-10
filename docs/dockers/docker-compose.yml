@@ -1,7 +1,7 @@
 version: '2'
 services:
-    php7.4:
-        container_name: mage-php7.4
-        build: ./php7.4
+    php8.0:
+        container_name: mage-php8.0
+        build: ./php8.0
         volumes:
             - ../../:/home/magephp

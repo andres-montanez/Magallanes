@@ -1,4 +1,5 @@
 <?php
+
 /*
  * This file is part of the Magallanes package.
  *
@@ -20,28 +21,30 @@ use Mage\Task\AbstractTask;
  */
 class UpdateTask extends AbstractTask
 {
-    public function getName()
+    public function getName(): string
     {
         return 'git/update';
     }
 
-    public function getDescription()
+    public function getDescription(): string
     {
         return '[Git] Update';
     }
 
-    public function execute()
+    public function execute(): bool
     {
         $options = $this->getOptions();
         $command = $options['path'] . ' pull';
 
-        /** @var Process $process */
         $process = $this->runtime->runLocalCommand($command);
 
         return $process->isSuccessful();
     }
 
-    protected function getOptions()
+    /**
+     * @return array<string, string>
+     */
+    protected function getOptions(): array
     {
         $branch = $this->runtime->getEnvOption('branch', 'master');
         $options = array_merge(

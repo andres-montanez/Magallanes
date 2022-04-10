@@ -1,4 +1,5 @@
 <?php
+
 /*
  * This file is part of the Magallanes package.
  *
@@ -21,29 +22,30 @@ use Mage\Task\AbstractTask;
  */
 class ChangeBranchTask extends AbstractTask
 {
-    public function getName()
+    public function getName(): string
     {
         return 'git/change-branch';
     }
 
-    public function getDescription()
+    public function getDescription(): string
     {
         $options = $this->getOptions();
         $branch = $options['branch'];
 
-        if ($this->runtime->getVar('git_revert_branch', false)) {
+        if ($this->runtime->getVar('git_revert_branch', null)) {
             $branch = $this->runtime->getVar('git_revert_branch');
         }
 
         return sprintf('[Git] Change Branch (%s)', $branch);
     }
 
-    public function execute()
+    public function execute(): bool
     {
         $options = $this->getOptions();
-        $branch = $this->runtime->getVar('git_revert_branch', false);
+        /** @var string|bool */
+        $branch = $this->runtime->getVar('git_revert_branch', null);
 
-        if ($branch === false) {
+        if (!$branch) {
             $cmdGetCurrent = sprintf('%s branch | grep "*"', $options['path']);
 
             /** @var Process $process */
@@ -68,7 +70,10 @@ class ChangeBranchTask extends AbstractTask
         return $process->isSuccessful();
     }
 
-    protected function getOptions()
+    /**
+     * @return array<string, string>
+     */
+    protected function getOptions(): array
     {
         $branch = $this->runtime->getEnvOption('branch', 'master');
         $options = array_merge(

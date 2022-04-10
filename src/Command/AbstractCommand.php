@@ -1,4 +1,5 @@
 <?php
+
 /*
  * This file is part of the Magallanes package.
  *
@@ -23,46 +24,30 @@ use Symfony\Component\Console\Command\Command;
  */
 abstract class AbstractCommand extends Command
 {
-    /**
-     * @var int
-     */
-    protected $statusCode = 0;
-
-    /**
-     * @var Runtime Current Runtime instance
-     */
-    protected $runtime;
+    protected int $statusCode = 0;
+    protected Runtime $runtime;
 
     /**
      * Set the Runtime configuration
-     *
-     * @param Runtime $runtime Runtime container
-     * @return AbstractCommand
      */
-    public function setRuntime(Runtime $runtime)
+    public function setRuntime(Runtime $runtime): self
     {
         $this->runtime = $runtime;
-
         return $this;
     }
 
     /**
      * Logs a message
-     *
-     * @param string $message
-     * @param string $level
      */
-    public function log($message, $level = LogLevel::DEBUG)
+    public function log(string $message, string $level = LogLevel::DEBUG): void
     {
         $this->runtime->log($message, $level);
     }
 
     /**
      * Get the Human friendly Stage name
-     *
-     * @return string
      */
-    protected function getStageName()
+    protected function getStageName(): string
     {
         $utils = new Utils();
         return $utils->getStageName($this->runtime->getStage());
@@ -71,7 +56,7 @@ abstract class AbstractCommand extends Command
     /**
      * Requires the configuration to be loaded
      */
-    protected function requireConfig()
+    protected function requireConfig(): void
     {
         $app = $this->getApplication();
         if ($app instanceof MageApplication) {

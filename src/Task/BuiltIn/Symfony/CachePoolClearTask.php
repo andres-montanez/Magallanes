@@ -1,4 +1,5 @@
 <?php
+
 /*
  * This file is part of the Magallanes package.
  *
@@ -20,17 +21,17 @@ use Symfony\Component\Process\Process;
  */
 class CachePoolClearTask extends AbstractSymfonyTask
 {
-    public function getName()
+    public function getName(): string
     {
         return 'symfony/cache-pool-clear';
     }
 
-    public function getDescription()
+    public function getDescription(): string
     {
         return '[Symfony] Cache Pool Clear';
     }
 
-    public function execute()
+    public function execute(): bool
     {
         $options = $this->getOptions();
 
@@ -38,7 +39,13 @@ class CachePoolClearTask extends AbstractSymfonyTask
             throw new ErrorException('Parameter "pools" is not defined');
         }
 
-        $command = $options['console'] . ' cache:pool:clear ' . $options['pools'] . ' --env=' . $options['env'] . ' ' . $options['flags'];
+        $command = sprintf(
+            '%s cache:pool:clear %s --env=%s %s',
+            $options['console'],
+            $options['pools'],
+            $options['env'],
+            $options['flags']
+        );
 
         /** @var Process $process */
         $process = $this->runtime->runCommand(trim($command));
@@ -46,7 +53,7 @@ class CachePoolClearTask extends AbstractSymfonyTask
         return $process->isSuccessful();
     }
 
-    protected function getSymfonyOptions()
+    protected function getSymfonyOptions(): array
     {
         return ['pools' => null];
     }

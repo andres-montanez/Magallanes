@@ -23,7 +23,7 @@ class ValidTask extends AbstractTask
     /**
      * @return string
      */
-    public function getName()
+    public function getName(): string
     {
         return 'custom-valid';
     }
@@ -31,7 +31,7 @@ class ValidTask extends AbstractTask
     /**
      * @return string
      */
-    public function getDescription()
+    public function getDescription(): string
     {
         return '[Custom] Valid*';
     }
@@ -39,7 +39,7 @@ class ValidTask extends AbstractTask
     /**
      * @return bool
      */
-    public function execute()
+    public function execute(): bool
     {
         /** @var Process $process */
         $process = $this->runtime->runCommand('echo "custom-valid"');

@@ -1,4 +1,5 @@
 <?php
+
 /*
  * This file is part of the Magallanes package.
  *
@@ -11,7 +12,6 @@
 namespace Mage\Task\BuiltIn\FS;
 
 use Symfony\Component\Process\Process;
-use Exception;
 
 /**
  * File System Task - Remove a File
@@ -20,21 +20,21 @@ use Exception;
  */
 class RemoveTask extends AbstractFileTask
 {
-    public function getName()
+    public function getName(): string
     {
         return 'fs/remove';
     }
 
-    public function getDescription()
+    public function getDescription(): string
     {
         try {
             return sprintf('[FS] Remove "%s"', $this->getFile('file'));
-        } catch (Exception $exception) {
+        } catch (\Exception $exception) {
             return '[FS] Remove [missing parameters]';
         }
     }
 
-    public function execute()
+    public function execute(): bool
     {
         $file = $this->getFile('file');
         $flags = $this->options['flags'];
@@ -47,12 +47,12 @@ class RemoveTask extends AbstractFileTask
         return $process->isSuccessful();
     }
 
-    protected function getParameters()
+    protected function getParameters(): array
     {
         return ['file', 'flags'];
     }
 
-    public function getDefaults()
+    public function getDefaults(): array
     {
         return ['flags' => null];
     }

@@ -16,7 +16,7 @@ Simply add the following dependency to your project’s composer.json file:
 
 ```json
     "require-dev": {
-        "andres-montanez/magallanes": "^4.0"
+        "andres-montanez/magallanes": "^5.0"
     }
 ```
 Finally you can use **Magallanes** from the vendor's bin:
@@ -26,4 +26,4 @@ vendor/bin/mage version
 ```
 
 ### Codename Discovery One
-Each new mayor version of **Magallanes** will have a codename (like Ubuntu), version 3 was _Nostromo_, and in the current version it is **_Discovery One_**, in homage to the spaceship from the ground breaking film *2001: A Space Odyssey (1968)*.
+Each new mayor version of **Magallanes** will have a codename (like Ubuntu), version 3 was _Nostromo_, version 4 was _Discovery One_, and in the current version it is **_Galactica_**, in homage to the space battleship from the TV series Battlestar Galactica, both the '70s and the mind blowing revision of 2005.

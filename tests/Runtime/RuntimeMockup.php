@@ -31,10 +31,8 @@ class RuntimeMockup extends Runtime
 
     /**
      * Generate the Release ID
-     *
-     * @return Runtime
      */
-    public function generateReleaseId()
+    public function generateReleaseId(): Runtime
     {
         $this->setReleaseId('1234567890');
         return $this;
@@ -42,12 +40,8 @@ class RuntimeMockup extends Runtime
 
     /**
      * Execute a command locally
-     *
-     * @param string $cmd Command to execute
-     * @param int $timeout Seconds to wait
-     * @return Process
      */
-    public function runLocalCommand($cmd, $timeout = 120)
+    public function runLocalCommand(string $cmd, int $timeout = 120): Process
     {
         $this->ranCommands[] = $cmd;
         $this->ranCommandTimeouts[$cmd] = $timeout;
@@ -62,10 +56,8 @@ class RuntimeMockup extends Runtime
 
     /**
      * Gets a Temporal File name
-     *
-     * @return string
      */
-    public function getTempFile()
+    public function getTempFile(): string
     {
         return '/tmp/mageXYZ';
     }
@@ -76,13 +68,13 @@ class RuntimeMockup extends Runtime
      * @param string $environment
      * @return Runtime
      */
-    public function setInvalidEnvironment($environment)
+    public function setInvalidEnvironment($environment): Runtime
     {
         $this->environment = $environment;
         return $this;
     }
 
-    public function forceFail($cmd)
+    public function forceFail($cmd): void
     {
         $this->forceFail[] = $cmd;
     }

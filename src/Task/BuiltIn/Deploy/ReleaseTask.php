@@ -1,4 +1,5 @@
 <?php
+
 /*
  * This file is part of the Magallanes package.
  *
@@ -22,17 +23,17 @@ use Mage\Task\AbstractTask;
  */
 class ReleaseTask extends AbstractTask implements ExecuteOnRollbackInterface
 {
-    public function getName()
+    public function getName(): string
     {
         return 'deploy/release';
     }
 
-    public function getDescription()
+    public function getDescription(): string
     {
         return '[Release] Creating Symlink';
     }
 
-    public function execute()
+    public function execute(): bool
     {
         if (!$this->runtime->getEnvOption('releases', false)) {
             throw new ErrorException('This task is only available with releases enabled', 40);
@@ -44,7 +45,7 @@ class ReleaseTask extends AbstractTask implements ExecuteOnRollbackInterface
         $cmdLinkRelease = sprintf('cd %s && ln -snf releases/%s current', $hostPath, $releaseId);
 
         /** @var Process $process */
-        $process = $this->runtime->runRemoteCommand($cmdLinkRelease, false, null);
+        $process = $this->runtime->runRemoteCommand($cmdLinkRelease, false, 0);
         return $process->isSuccessful();
     }
 }

@@ -1,4 +1,5 @@
 <?php
+
 /*
  * This file is part of the Magallanes package.
  *
@@ -24,22 +25,17 @@ class DumpCommand extends AbstractCommand
     /**
      * Configure the Command
      */
-    protected function configure()
+    protected function configure(): void
     {
         $this
             ->setName('config:dump')
-            ->setDescription('Dumps the Magallanes configuration')
-        ;
+            ->setDescription('Dumps the Magallanes configuration');
     }
 
     /**
      * Execute the Command
-     *
-     * @param InputInterface $input
-     * @param OutputInterface $output
-     * @return int|mixed
      */
-    protected function execute(InputInterface $input, OutputInterface $output)
+    protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $this->requireConfig();
 
@@ -51,6 +47,6 @@ class DumpCommand extends AbstractCommand
         $output->writeln('');
         $output->writeln('Finished <fg=blue>Magallanes</>');
 
-        return 0;
+        return self::SUCCESS;
     }
 }

@@ -1,4 +1,5 @@
 <?php
+
 /*
  * This file is part of the Magallanes package.
  *
@@ -19,28 +20,28 @@ use Symfony\Component\Process\Process;
  */
 class InstallTask extends AbstractComposerTask
 {
-    public function getName()
+    public function getName(): string
     {
         return 'composer/install';
     }
 
-    public function getDescription()
+    public function getDescription(): string
     {
         return '[Composer] Install';
     }
 
-    public function execute()
+    public function execute(): bool
     {
         $options = $this->getOptions();
         $cmd = sprintf('%s install %s', $options['path'], $options['flags']);
 
         /** @var Process $process */
-        $process = $this->runtime->runCommand(trim($cmd), $options['timeout']);
+        $process = $this->runtime->runCommand(trim($cmd), intval($options['timeout']));
 
         return $process->isSuccessful();
     }
 
-    protected function getComposerOptions()
+    protected function getComposerOptions(): array
     {
         return ['flags' => '--optimize-autoloader', 'timeout' => 120];
     }

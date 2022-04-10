@@ -1,4 +1,5 @@
 <?php
+
 /*
  * This file is part of the Magallanes package.
  *
@@ -19,60 +20,41 @@ use Mage\Runtime\Runtime;
  */
 abstract class AbstractTask
 {
-    /**
-     * @var array Task custom options
-     */
-    protected $options = [];
+    /** @var array<string, string|int|null> */
+    protected array $options = [];
 
-    /**
-     * @var Runtime
-     */
-    protected $runtime;
+    protected Runtime $runtime;
 
     /**
      * Get the Name/Code of the Task
-     *
-     * @return string
      */
-    abstract public function getName();
+    abstract public function getName(): string;
 
     /**
      * Get a short Description of the Task
-     *
-     * @return string
      */
-    abstract public function getDescription();
+    abstract public function getDescription(): string;
 
     /**
      * Executes the Command
-     *
-     * @return bool
      */
-    abstract public function execute();
+    abstract public function execute(): bool;
 
     /**
      * Set additional Options for the Task
      *
-     * @param array $options Options
-     * @return AbstractTask
+     * @param array<string, string|int|null> $options
      */
-    public function setOptions($options = [])
+    public function setOptions(array $options = []): self
     {
-        if (!is_array($options)) {
-            $options = [];
-        }
-
         $this->options = array_merge($this->getDefaults(), $options);
         return $this;
     }
 
     /**
      * Set the Runtime instance
-     *
-     * @param Runtime $runtime
-     * @return AbstractTask
      */
-    public function setRuntime(Runtime $runtime)
+    public function setRuntime(Runtime $runtime): self
     {
         $this->runtime = $runtime;
         return $this;
@@ -80,9 +62,10 @@ abstract class AbstractTask
 
     /**
      * Return Default options
-     * @return array
+     *
+     * @return array<string, string|int|null>
      */
-    public function getDefaults()
+    public function getDefaults(): array
     {
         return [];
     }
