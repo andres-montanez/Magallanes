@@ -49,7 +49,7 @@ class CleanupTask extends AbstractTask
                 sort($releases);
                 $releasesToDelete = array_slice($releases, 0, count($releases) - $maxReleases);
                 foreach ($releasesToDelete as $releaseId) {
-                    if ($releaseId != $currentReleaseId) {
+                    if ($releaseId !== $currentReleaseId) {
                         $cmdDeleteRelease = sprintf('rm -rf %s/releases/%s', $hostPath, $releaseId);
                         /** @var Process $process */
                         $process = $this->runtime->runRemoteCommand($cmdDeleteRelease, false);

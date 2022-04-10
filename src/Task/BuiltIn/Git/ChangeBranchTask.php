@@ -55,7 +55,7 @@ class ChangeBranchTask extends AbstractTask
             }
 
             $currentBranch = str_replace('* ', '', trim($process->getOutput()));
-            if ($currentBranch == $options['branch']) {
+            if ($currentBranch === $options['branch']) {
                 throw new SkipException();
             }
 
