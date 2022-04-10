@@ -1,5 +1,5 @@
 magephp:
-    log_dir: /tmp
+    log_dir: .logs/
     environments:
         test:
             symfony: { env: 'testenv' }

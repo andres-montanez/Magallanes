@@ -1,5 +1,5 @@
 magephp:
-    log_dir: /tmp
+    log_dir: .logs/
     composer:
         path: /usr/bin/composer.phar
     exclude:
