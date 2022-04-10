@@ -114,5 +114,4 @@ class StrategyTest extends TestCase
             $this->assertEquals(sprintf('Invalid stage, got "%s" but expected "%s"', Runtime::PRE_DEPLOY, Runtime::POST_DEPLOY), $exception->getMessage());
         }
     }
-
 }
