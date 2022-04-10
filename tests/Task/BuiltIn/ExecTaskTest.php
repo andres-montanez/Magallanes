@@ -12,7 +12,6 @@ namespace Mage\Tests\Task\BuiltIn;
 
 use Mage\Task\Exception\ErrorException;
 use Mage\Task\BuiltIn\ExecTask;
-use Exception;
 use Mage\Tests\Runtime\RuntimeMockup;
 use PHPUnit\Framework\TestCase;
 
@@ -118,7 +117,7 @@ class ExecTest extends TestCase
         try {
             $task->execute();
             $this->assertTrue(false, 'Task did not failed');
-        } catch (Exception $exception) {
+        } catch (\Exception $exception) {
             $this->assertTrue($exception instanceof ErrorException);
             $this->assertEquals('Parameter "cmd" is not defined', $exception->getMessage());
         }

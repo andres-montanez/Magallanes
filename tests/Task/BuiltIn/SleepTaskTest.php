@@ -12,11 +12,11 @@ namespace Mage\Tests\Task\BuiltIn;
 
 use Mage\Task\BuiltIn\SleepTask;
 use Mage\Tests\Runtime\RuntimeMockup;
-use PHPUnit_Framework_TestCase as TestCase;
+use PHPUnit\Framework\TestCase;
 
 class SleepTaskTest extends TestCase
 {
-    public function testCommand()
+    public function testTaskWithDefault()
     {
         $runtime = new RuntimeMockup();
         $runtime->setConfiguration(['environments' => ['test' => []]]);
@@ -27,5 +27,24 @@ class SleepTaskTest extends TestCase
 
         $this->assertSame('[Sleep] Sleeping for 1 second(s)', $task->getDescription());
         $task->execute();
+    }
+
+    public function testTaskWithValue()
+    {
+        $runtime = new RuntimeMockup();
+        $runtime->setConfiguration(['environments' => ['test' => []]]);
+        $runtime->setEnvironment('test');
+
+        $task = new SleepTask();
+        $task->setOptions(['seconds' => 2]);
+        $task->setRuntime($runtime);
+
+        $this->assertSame('[Sleep] Sleeping for 2 second(s)', $task->getDescription());
+
+        $startedAt = microtime(true);
+        $task->execute();
+        $finishedAt = microtime(true);
+
+        $this->assertGreaterThanOrEqual(2, $finishedAt - $startedAt);
     }
 }

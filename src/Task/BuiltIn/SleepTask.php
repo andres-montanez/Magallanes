@@ -21,42 +21,34 @@ use Mage\Task\AbstractTask;
  */
 class SleepTask extends AbstractTask
 {
-    /**
-     * @return string
-     */
-    public function getName()
+    public function getName(): string
     {
         return 'sleep';
     }
 
-    /**
-     * @return string
-     */
-    public function getDescription()
+    public function getDescription(): string
     {
         $options = $this->getOptions();
 
-        return sprintf('[Sleep] Sleeping for %s second(s)', (int) $options['seconds']);
+        return sprintf('[Sleep] Sleeping for %d second(s)', $options['seconds']);
     }
 
     /**
-     * @return bool
-     *
      * @throws ErrorException
      */
-    public function execute()
+    public function execute(): bool
     {
         $options = $this->getOptions();
 
-        sleep((int) $options['seconds']);
+        sleep(intval($options['seconds']));
 
         return true;
     }
 
     /**
-     * @return array
+     * @return array<string, string|int>
      */
-    protected function getOptions()
+    protected function getOptions(): array
     {
         $options = array_merge(
             ['seconds' => 1],
