@@ -75,6 +75,11 @@ class Runtime
         return stripos(PHP_OS, 'WIN') === 0;
     }
 
+    public function hasPosix(): bool
+    {
+        return function_exists('posix_getpwuid');
+    }
+
     /**
      * Generate the Release ID
      */
@@ -471,13 +476,13 @@ class Runtime
      */
     public function getCurrentUser(): string
     {
-        // Windows fallback
-        if (!function_exists('posix_getpwuid')) {
-            return getenv('USERNAME') ?: '';
+        if ($this->hasPosix()) {
+            $userData = posix_getpwuid(posix_geteuid());
+            return $userData['name'];
         }
 
-        $userData = posix_getpwuid(posix_geteuid());
-        return $userData['name'];
+        // Windows fallback
+        return strval(getenv('USERNAME'));
     }
 
     /**

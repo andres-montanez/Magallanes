@@ -16,4 +16,9 @@ class RuntimeWindowsMockup extends RuntimeMockup
     {
         return true;
     }
+
+    public function hasPosix(): bool
+    {
+        return false;
+    }
 }
