@@ -6,3 +6,4 @@ CHANGELOG for 5.X
   * Refactored for Symfony 6 and PHP 8
   * Added strong types
   * Removed task `composer/self-update`
+  * Allow `exec` task to interpolate `%environment%` and `%release%`

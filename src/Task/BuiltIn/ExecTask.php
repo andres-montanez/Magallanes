@@ -57,8 +57,22 @@ class ExecTask extends AbstractTask
             throw new ErrorException('Parameter "cmd" is not defined');
         }
 
+        $mapping = [
+            '%environment%' => $this->runtime->getEnvironment(),
+        ];
+
+        if ($this->runtime->getReleaseId() !== null) {
+            $mapping['%release%'] = $this->runtime->getReleaseId();
+        }
+
+        $cmd = str_replace(
+            array_keys($mapping),
+            array_values($mapping),
+            strval($options['cmd'])
+        );
+
         /** @var Process $process */
-        $process = $this->runtime->runCommand(strval($options['cmd']), intval($options['timeout']));
+        $process = $this->runtime->runCommand($cmd, intval($options['timeout']));
         return $process->isSuccessful();
     }
 

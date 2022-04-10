@@ -25,16 +25,45 @@ class ExecTest extends TestCase
         $runtime->setEnvironment('test');
 
         $task = new ExecTask();
-        $task->setOptions(['cmd' => 'ls -l', 'desc' => 'Loading docker']);
+        $task->setOptions(['cmd' => 'ls -l', 'desc' => 'Command description']);
         $task->setRuntime($runtime);
 
-        $this->assertStringContainsString('[Exec] Loading docker', $task->getDescription());
+        $this->assertStringContainsString('[Exec] Command description', $task->getDescription());
         $task->execute();
 
         $ranCommands = $runtime->getRanCommands();
 
         $testCase = array(
             0 => 'ls -l',
+        );
+
+        // Check total of Executed Commands
+        $this->assertEquals(count($testCase), count($ranCommands));
+
+        // Check Generated Commands
+        foreach ($testCase as $index => $command) {
+            $this->assertEquals($command, $ranCommands[$index]);
+        }
+    }
+
+    public function testSimpleCommandWithInterpolation()
+    {
+        $runtime = new RuntimeMockup();
+        $runtime->setConfiguration(['environments' => ['test' => []]]);
+        $runtime->setEnvironment('test');
+        $runtime->setReleaseId('1234');
+
+        $task = new ExecTask();
+        $task->setOptions(['cmd' => 'cp %environment%.env /app/%release%/.env', 'desc' => 'Copy config']);
+        $task->setRuntime($runtime);
+
+        $this->assertStringContainsString('[Exec] Copy config', $task->getDescription());
+        $task->execute();
+
+        $ranCommands = $runtime->getRanCommands();
+
+        $testCase = array(
+            0 => 'cp test.env /app/1234/.env',
         );
 
         // Check total of Executed Commands
