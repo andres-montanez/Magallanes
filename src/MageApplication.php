@@ -24,6 +24,7 @@ use Symfony\Component\Console\Application;
 use Symfony\Component\Yaml\Parser;
 use Symfony\Component\Yaml\Exception\ParseException;
 use Mage\Runtime\Exception\RuntimeException;
+use Symfony\Component\Filesystem\Filesystem;
 
 /**
  * The Console Application for launching the Mage command in a standalone instance
@@ -89,6 +90,9 @@ class MageApplication extends Application
 
                 $logger = new Logger('magephp');
                 $logger->pushHandler(new StreamHandler($logfile));
+
+                $logLimit = isset($config['magephp']['log_limit']) ? intval($config['magephp']['log_limit']) : 30;
+                $this->clearOldLogs($config['magephp']['log_dir'], $logLimit);
             } elseif (array_key_exists('log_dir', $config['magephp']) && !is_dir($config['magephp']['log_dir'])) {
                 throw new RuntimeException(
                     sprintf(
@@ -106,6 +110,24 @@ class MageApplication extends Application
         throw new RuntimeException(
             sprintf('The file "%s" does not have a valid Magallanes configuration.', $this->file)
         );
+    }
+
+    protected function clearOldLogs(string $logDir, int $logLimit): void
+    {
+        $filesystem = new Filesystem();
+        $finder = new Finder();
+
+        $finder
+            ->files()
+            ->followLinks()
+            ->in($logDir)
+            ->name('*.log')
+            ->sortByModifiedTime()
+            ->reverseSorting();
+
+        $logs = iterator_to_array($finder);
+        $logsToRemove = array_slice($logs, $logLimit - 1);
+        $filesystem->remove($logsToRemove);
     }
 
     /**
