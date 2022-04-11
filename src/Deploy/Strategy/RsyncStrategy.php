@@ -38,7 +38,11 @@ class RsyncStrategy implements StrategyInterface
         $this->checkStage(Runtime::PRE_DEPLOY);
         $tasks = $this->runtime->getTasks();
 
-        if ($this->runtime->getBranch() && !$this->runtime->inRollback() && !in_array('git/change-branch', $tasks)) {
+        if (
+            ($this->runtime->getBranch() || $this->runtime->getTag()) &&
+            !$this->runtime->inRollback() &&
+            !in_array('git/change-branch', $tasks)
+        ) {
             array_unshift($tasks, 'git/change-branch');
         }
 
@@ -72,7 +76,12 @@ class RsyncStrategy implements StrategyInterface
         $this->checkStage(Runtime::POST_DEPLOY);
         $tasks = $this->runtime->getTasks();
 
-        if ($this->runtime->getBranch() && !$this->runtime->inRollback() && !in_array('git/change-branch', $tasks)) {
+        if (
+            ($this->runtime->getBranch() ||
+            $this->runtime->getTag()) &&
+            !$this->runtime->inRollback() &&
+            !in_array('git/change-branch', $tasks)
+        ) {
             array_push($tasks, 'git/change-branch');
         }
 

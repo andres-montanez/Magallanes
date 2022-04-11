@@ -30,10 +30,15 @@ class ChangeBranchTask extends AbstractTask
     public function getDescription(): string
     {
         $options = $this->getOptions();
+        $tag = $options['tag'];
         $branch = $options['branch'];
 
         if ($this->runtime->getVar('git_revert_branch', null)) {
             $branch = $this->runtime->getVar('git_revert_branch');
+        }
+
+        if ($tag) {
+            return sprintf('[Git] Checkout Tag (%s)', $tag);
         }
 
         return sprintf('[Git] Change Branch (%s)', $branch);
@@ -59,7 +64,7 @@ class ChangeBranchTask extends AbstractTask
                 throw new SkipException();
             }
 
-            $branch = $options['branch'];
+            $branch = $options['tag'] ? $options['tag'] : $options['branch'];
             $this->runtime->setVar('git_revert_branch', $currentBranch);
         }
 
@@ -75,9 +80,10 @@ class ChangeBranchTask extends AbstractTask
      */
     protected function getOptions(): array
     {
+        $tag = $this->runtime->getEnvOption('tag', false);
         $branch = $this->runtime->getEnvOption('branch', 'master');
         $options = array_merge(
-            ['path' => 'git', 'branch' => $branch],
+            ['path' => 'git', 'branch' => $branch, 'tag' => $tag],
             $this->options
         );
 

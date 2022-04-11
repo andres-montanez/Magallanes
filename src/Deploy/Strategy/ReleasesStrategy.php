@@ -38,7 +38,11 @@ class ReleasesStrategy implements StrategyInterface
         $this->checkStage(Runtime::PRE_DEPLOY);
         $tasks = $this->runtime->getTasks();
 
-        if ($this->runtime->getBranch() && !$this->runtime->inRollback() && !in_array('git/change-branch', $tasks)) {
+        if (
+            ($this->runtime->getBranch() || $this->runtime->getTag()) &&
+            !$this->runtime->inRollback() &&
+            !in_array('git/change-branch', $tasks)
+        ) {
             array_unshift($tasks, 'git/change-branch');
         }
 
@@ -94,12 +98,16 @@ class ReleasesStrategy implements StrategyInterface
         $this->checkStage(Runtime::POST_DEPLOY);
         $tasks = $this->runtime->getTasks();
 
-        if (!$this->runtime->inRollback() && !in_array('deploy/tar/cleanup', $tasks)) {
-            array_unshift($tasks, 'deploy/tar/cleanup');
+        if (
+            ($this->runtime->getBranch() || $this->runtime->getTag()) &&
+            !$this->runtime->inRollback() &&
+            !in_array('git/change-branch', $tasks)
+        ) {
+            array_unshift($tasks, 'git/change-branch');
         }
 
-        if ($this->runtime->getBranch() && !$this->runtime->inRollback() && !in_array('git/change-branch', $tasks)) {
-            array_push($tasks, 'git/change-branch');
+        if (!$this->runtime->inRollback() && !in_array('deploy/tar/cleanup', $tasks)) {
+            array_unshift($tasks, 'deploy/tar/cleanup');
         }
 
         return $tasks;

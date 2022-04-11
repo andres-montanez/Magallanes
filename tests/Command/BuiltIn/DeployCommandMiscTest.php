@@ -37,6 +37,26 @@ class DeployCommandMiscTest extends TestCase
         $this->assertEquals(0, $tester->getStatusCode());
     }
 
+    public function testTagAndBranch()
+    {
+        $application = new MageApplicationMockup(__DIR__ . '/../../Resources/no-hosts.yml');
+
+        /** @var AbstractCommand $command */
+        $command = $application->find('deploy');
+        $this->assertTrue($command instanceof DeployCommand);
+
+        $tester = new CommandTester($command);
+        $tester->execute([
+            'command' => $command->getName(),
+            'environment' => 'test',
+            '--branch' => 'branch',
+            '--tag' => 'tag'
+        ]);
+
+        $this->assertTrue(strpos($tester->getDisplay(), 'Branch and Tag options are mutually exclusive.') !== false);
+        $this->assertGreaterThan(0, $tester->getStatusCode());
+    }
+
     public function testInvalidLog()
     {
         $application = new MageApplicationMockup(__DIR__ . '/../../Resources/invalid-log.yml');

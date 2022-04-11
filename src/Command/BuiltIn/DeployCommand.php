@@ -42,12 +42,19 @@ class DeployCommand extends AbstractCommand
         $this
             ->setName('deploy')
             ->setDescription('Deploy code to hosts')
-            ->addArgument('environment', InputArgument::REQUIRED, 'Name of the environment to deploy to')
+            ->addArgument('environment', InputArgument::REQUIRED, 'Name of the environment to deploy to.')
             ->addOption(
                 'branch',
                 null,
                 InputOption::VALUE_REQUIRED,
-                'Force to switch to a branch other than the one defined',
+                'Force to switch to a branch other than the one defined.',
+                false
+            )
+            ->addOption(
+                'tag',
+                null,
+                InputOption::VALUE_REQUIRED,
+                'Deploys a specific tag.',
                 false
             );
     }
@@ -83,13 +90,24 @@ class DeployCommand extends AbstractCommand
 
             $output->writeln(sprintf('    Strategy: <fg=green>%s</>', $strategy->getName()));
 
+            if (($input->getOption('branch') !== false) && ($input->getOption('tag') !== false)) {
+                throw new RuntimeException('Branch and Tag options are mutually exclusive.');
+            }
+
             if ($input->getOption('branch') !== false) {
                 $this->runtime->setEnvOption('branch', $input->getOption('branch'));
+            }
+
+            if ($input->getOption('tag') !== false) {
+                $this->runtime->setEnvOption('branch', false);
+                $this->runtime->setEnvOption('tag', $input->getOption('tag'));
+                $output->writeln(sprintf('    Tag: <fg=green>%s</>', $this->runtime->getEnvOption('tag')));
             }
 
             if ($this->runtime->getEnvOption('branch', false)) {
                 $output->writeln(sprintf('    Branch: <fg=green>%s</>', $this->runtime->getEnvOption('branch')));
             }
+
 
             $output->writeln('');
             $this->runDeployment($output, $strategy);

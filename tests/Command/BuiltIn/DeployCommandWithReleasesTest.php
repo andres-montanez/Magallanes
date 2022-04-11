@@ -69,6 +69,55 @@ class DeployCommandWithReleasesTest extends TestCase
         $this->assertEquals(0, $tester->getStatusCode());
     }
 
+    public function testDeploymentWithReleasesCommandsWithTag()
+    {
+        $application = new MageApplicationMockup(__DIR__ . '/../../Resources/testhost.yml');
+
+        $application->getRuntime()->setReleaseId('20170101015120');
+
+        /** @var AbstractCommand $command */
+        $command = $application->find('deploy');
+        $this->assertTrue($command instanceof DeployCommand);
+
+        $tester = new CommandTester($command);
+        $tester->execute(['command' => $command->getName(), 'environment' => 'test', '--tag' => 'v1.0.0']);
+
+        $ranCommands = $application->getRuntime()->getRanCommands();
+
+        $testCase = array(
+            0 => 'git branch | grep "*"',
+            1 => 'git checkout v1.0.0',
+            2 => 'composer install --optimize-autoloader',
+            3 => 'composer dump-autoload --optimize',
+            4 => 'tar cfzp /tmp/mageXYZ --exclude=".git" --exclude="./var/cache/*" --exclude="./var/log/*" --exclude="./web/app_dev.php" ./',
+            5 => 'ssh -p 22 -q -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no tester@testhost "mkdir -p /var/www/test/releases/1234567890"',
+            6 => 'scp -P 22 -q -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no /tmp/mageXYZ tester@testhost:/var/www/test/releases/1234567890/mageXYZ',
+            7 => 'ssh -p 22 -q -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no tester@testhost "cd /var/www/test/releases/1234567890 && tar xfzop mageXYZ"',
+            8 => 'ssh -p 22 -q -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no tester@testhost "rm /var/www/test/releases/1234567890/mageXYZ"',
+            9 => 'ssh -p 22 -q -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no tester@testhost "cd /var/www/test/releases/1234567890 && bin/console cache:warmup --env=dev"',
+            10 => 'ssh -p 22 -q -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no tester@testhost "cd /var/www/test/releases/1234567890 && bin/console assets:install web --env=dev --symlink --relative"',
+            11 => 'ssh -p 22 -q -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no tester@testhost "cd /var/www/test/releases/1234567890 && bin/console cache:pool:prune --env=dev"',
+            12 => 'ssh -p 22 -q -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no tester@testhost "cd /var/www/test && ln -snf releases/1234567890 current"',
+            13 => 'ssh -p 22 -q -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no tester@testhost "ls -1 /var/www/test/releases"',
+            14 => 'ssh -p 22 -q -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no tester@testhost "rm -rf /var/www/test/releases/20170101015110"',
+            15 => 'ssh -p 22 -q -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no tester@testhost "rm -rf /var/www/test/releases/20170101015111"',
+            16 => 'ssh -p 22 -q -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no tester@testhost "rm -rf /var/www/test/releases/20170101015112"',
+            17 => 'ssh -p 22 -q -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no tester@testhost "rm -rf /var/www/test/releases/20170101015113"',
+            18 => 'rm /tmp/mageXYZ',
+            19 => 'git checkout master',
+        );
+
+        // Check total of Executed Commands
+        $this->assertEquals(count($testCase), count($ranCommands));
+
+        // Check Generated Commands
+        foreach ($testCase as $index => $command) {
+            $this->assertEquals($command, $ranCommands[$index]);
+        }
+
+        $this->assertEquals(0, $tester->getStatusCode());
+    }
+
     public function testDeploymentWithReleasesCommandsCustomSymlink()
     {
         $application = new MageApplicationMockup(__DIR__ . '/../../Resources/testhost-custom-symlink.yml');

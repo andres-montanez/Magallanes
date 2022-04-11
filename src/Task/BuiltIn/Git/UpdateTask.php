@@ -13,6 +13,7 @@ namespace Mage\Task\BuiltIn\Git;
 
 use Symfony\Component\Process\Process;
 use Mage\Task\AbstractTask;
+use Mage\Task\Exception\SkipException;
 
 /**
  * Git Task - Pull
@@ -34,6 +35,10 @@ class UpdateTask extends AbstractTask
     public function execute(): bool
     {
         $options = $this->getOptions();
+        if ($options['tag']) {
+            throw new SkipException();
+        }
+
         $command = $options['path'] . ' pull';
 
         $process = $this->runtime->runLocalCommand($command);
@@ -47,8 +52,10 @@ class UpdateTask extends AbstractTask
     protected function getOptions(): array
     {
         $branch = $this->runtime->getEnvOption('branch', 'master');
+        $tag = $this->runtime->getEnvOption('tag', false);
+
         $options = array_merge(
-            ['path' => 'git', 'branch' => $branch],
+            ['path' => 'git', 'branch' => $branch, 'tag' => $tag],
             $this->options
         );
 

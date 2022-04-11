@@ -496,6 +496,16 @@ class Runtime
     }
 
     /**
+     * Shortcut for getting Tag information
+     *
+     * @return bool|string
+     */
+    public function getTag(): mixed
+    {
+        return $this->getEnvOption('tag', false);
+    }
+
+    /**
      * Guesses the Deploy Strategy to use
      */
     public function guessStrategy(): StrategyInterface
