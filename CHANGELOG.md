@@ -12,4 +12,4 @@ CHANGELOG for 5.X
   * Improved Windows compatibility [PR#427].
   * Added new `log_limit` option to limit how many logs are kept [Issue#403].
   * Add new deploy option `--tag` to specify deploying a specific tag [Issue#192] [Issue#315].
-  * Added new `scp_flags` option for the `scp` command when SSH flags are incompatible with.
+  * Added new `scp_flags` option for the `scp` command when SSH flags are incompatible with [Issue#439].
