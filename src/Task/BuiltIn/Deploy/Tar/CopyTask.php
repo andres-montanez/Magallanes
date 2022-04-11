@@ -54,7 +54,7 @@ class CopyTask extends AbstractTask
         $cmdCopy = sprintf(
             'scp -P %d %s %s %s@%s:%s/%s',
             $sshConfig['port'],
-            $sshConfig['flags'],
+            isset($sshConfig['scp_flags']) ? $sshConfig['scp_flags'] : $sshConfig['flags'],
             $tarLocal,
             $user,
             $host,
