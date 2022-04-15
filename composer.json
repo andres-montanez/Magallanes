@@ -44,7 +44,7 @@
   "extra": {
     "branch-alias": {
       "dev-master": "5.0.x-dev",
-      "dev-discovery-one": "5.x-dev"
+      "dev-galactica": "5.x-dev"
     }
   }
 }
