@@ -1,0 +1,28 @@
+magephp:
+    log_dir: .logs/
+    environments:
+        test:
+            user: tester
+            branch: test
+            host_path: /var/www/test
+            releases: 4
+            symlink: prod
+            exclude:
+                - ./var/cache/*
+                - ./var/log/*
+                - ./web/app_dev.php
+                -
+                -
+            hosts:
+                - testhost
+            pre-deploy:
+                - git/update
+                - composer/install
+                - composer/dump-autoload
+            on-deploy:
+                - symfony/cache-warmup: { env: 'dev' }
+                - symfony/assets-install: { env: 'dev' }
+                - symfony/cache-pool-prune: { env: 'dev' }
+            on-release:
+            post-release:
+            post-deploy:

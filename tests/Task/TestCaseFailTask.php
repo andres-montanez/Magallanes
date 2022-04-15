@@ -15,17 +15,17 @@ use Mage\Task\AbstractTask;
 
 class TestCaseFailTask extends AbstractTask
 {
-    public function getName()
+    public function getName(): string
     {
         return 'test-fail';
     }
 
-    public function getDescription()
+    public function getDescription(): string
     {
         return '[Test] This is a Test Task which Fails';
     }
 
-    public function execute()
+    public function execute(): bool
     {
         throw new ErrorException('This is a text with a lot of characters');
     }

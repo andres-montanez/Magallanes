@@ -14,17 +14,17 @@ use Mage\Task\AbstractTask;
 
 class TestCaseTask extends AbstractTask
 {
-    public function getName()
+    public function getName(): string
     {
         return 'test';
     }
 
-    public function getDescription()
+    public function getDescription(): string
     {
         return '[Test] This is a Test Task';
     }
 
-    public function execute()
+    public function execute(): bool
     {
         return true;
     }

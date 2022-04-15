@@ -12,6 +12,7 @@ namespace Mage\Tests;
 
 use Mage\Tests\Runtime\RuntimeWindowsMockup;
 use Mage\MageApplication;
+use Mage\Runtime\Runtime;
 
 class MageApplicationWindowsMockup extends MageApplication
 {
@@ -20,7 +21,7 @@ class MageApplicationWindowsMockup extends MageApplication
      *
      * @return RuntimeWindowsMockup
      */
-    protected function instantiateRuntime()
+    protected function instantiateRuntime(): Runtime
     {
         return new RuntimeWindowsMockup();
     }

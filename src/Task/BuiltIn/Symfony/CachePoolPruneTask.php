@@ -1,4 +1,5 @@
 <?php
+
 /*
  * This file is part of the Magallanes package.
  *
@@ -19,17 +20,17 @@ use Symfony\Component\Process\Process;
  */
 class CachePoolPruneTask extends AbstractSymfonyTask
 {
-    public function getName()
+    public function getName(): string
     {
         return 'symfony/cache-pool-prune';
     }
 
-    public function getDescription()
+    public function getDescription(): string
     {
         return '[Symfony] Cache Pool Prune';
     }
 
-    public function execute()
+    public function execute(): bool
     {
         $options = $this->getOptions();
         $command = $options['console'] . ' cache:pool:prune --env=' . $options['env'] . ' ' . $options['flags'];

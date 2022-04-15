@@ -1,4 +1,5 @@
 <?php
+
 /*
  * This file is part of the Magallanes package.
  *
@@ -20,12 +21,12 @@ use Exception;
  */
 class MoveTask extends AbstractFileTask
 {
-    public function getName()
+    public function getName(): string
     {
         return 'fs/move';
     }
 
-    public function getDescription()
+    public function getDescription(): string
     {
         try {
             return sprintf('[FS] Move "%s" to "%s"', $this->getFile('from'), $this->getFile('to'));
@@ -34,7 +35,7 @@ class MoveTask extends AbstractFileTask
         }
     }
 
-    public function execute()
+    public function execute(): bool
     {
         $moveFrom = $this->getFile('from');
         $moveTo = $this->getFile('to');
@@ -48,12 +49,12 @@ class MoveTask extends AbstractFileTask
         return $process->isSuccessful();
     }
 
-    protected function getParameters()
+    protected function getParameters(): array
     {
         return ['from', 'to', 'flags'];
     }
 
-    public function getDefaults()
+    public function getDefaults(): array
     {
         return ['flags' => null];
     }

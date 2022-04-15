@@ -1,4 +1,5 @@
 <?php
+
 /*
  * This file is part of the Magallanes package.
  *
@@ -11,7 +12,6 @@
 namespace Mage\Task\BuiltIn\FS;
 
 use Symfony\Component\Process\Process;
-use Exception;
 
 /**
  * File System Task - Copy a File
@@ -20,21 +20,21 @@ use Exception;
  */
 class ChangeModeTask extends AbstractFileTask
 {
-    public function getName()
+    public function getName(): string
     {
         return 'fs/chmod';
     }
 
-    public function getDescription()
+    public function getDescription(): string
     {
         try {
             return sprintf('[FS] Change mode of "%s" to "%s"', $this->getFile('file'), $this->options['mode']);
-        } catch (Exception $exception) {
+        } catch (\Exception $exception) {
             return '[FS] Chmod [missing parameters]';
         }
     }
 
-    public function execute()
+    public function execute(): bool
     {
         $file = $this->getFile('file');
         $mode = $this->options['mode'];
@@ -48,12 +48,12 @@ class ChangeModeTask extends AbstractFileTask
         return $process->isSuccessful();
     }
 
-    protected function getParameters()
+    protected function getParameters(): array
     {
         return ['file', 'mode', 'flags'];
     }
 
-    public function getDefaults()
+    public function getDefaults(): array
     {
         return ['flags' => null];
     }

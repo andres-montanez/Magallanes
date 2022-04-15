@@ -1,4 +1,5 @@
 <?php
+
 /*
  * This file is part of the Magallanes package.
  *
@@ -17,6 +18,6 @@ namespace Mage;
  */
 class Mage
 {
-    const VERSION = '4.1.1';
-    const CODENAME = 'Discovery One';
+    public const VERSION = '5.0.0';
+    public const CODENAME = 'Galactica';
 }

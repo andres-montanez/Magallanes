@@ -1,4 +1,5 @@
 <?php
+
 /*
  * This file is part of the Magallanes package.
  *
@@ -19,17 +20,17 @@ use Symfony\Component\Process\Process;
  */
 class CacheClearTask extends AbstractSymfonyTask
 {
-    public function getName()
+    public function getName(): string
     {
         return 'symfony/cache-clear';
     }
 
-    public function getDescription()
+    public function getDescription(): string
     {
         return '[Symfony] Cache Clear';
     }
 
-    public function execute()
+    public function execute(): bool
     {
         $options = $this->getOptions();
         $command = $options['console'] . ' cache:clear --env=' . $options['env'] . ' ' . $options['flags'];

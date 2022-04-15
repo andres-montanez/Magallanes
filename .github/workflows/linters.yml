@@ -1,0 +1,32 @@
+name: Linters
+
+on:
+  push:
+    branches:
+      - master
+      - galactica
+  pull_request:
+  release:
+    types:
+      - created
+
+jobs:
+  linters:
+    name: Linters
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+      - name: Composer install
+        uses: php-actions/composer@v5
+        with:
+          command: install
+          args: --ignore-platform-reqs --no-scripts
+          version: 2
+          php_version: 8.0
+      - name: PHPStan
+        run: ./vendor/bin/phpstan analyse
+      - name: PHP Code Sniffer
+        run: ./vendor/bin/phpcs

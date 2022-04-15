@@ -20,7 +20,7 @@ class MageApplicationMockup extends MageApplication
      *
      * @return RuntimeMockup
      */
-    protected function instantiateRuntime()
+    protected function instantiateRuntime(): RuntimeMockup
     {
         return new RuntimeMockup();
     }

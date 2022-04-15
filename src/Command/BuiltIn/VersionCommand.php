@@ -1,4 +1,5 @@
 <?php
+
 /*
  * This file is part of the Magallanes package.
  *
@@ -25,25 +26,20 @@ class VersionCommand extends AbstractCommand
     /**
      * Configure the Command
      */
-    protected function configure()
+    protected function configure(): void
     {
         $this
             ->setName('version')
-            ->setDescription('Get the version of Magallanes')
-        ;
+            ->setDescription('Get the version of Magallanes');
     }
 
     /**
      * Executes the Command
-     *
-     * @param InputInterface $input
-     * @param OutputInterface $output
-     * @return int
      */
-    protected function execute(InputInterface $input, OutputInterface $output)
+    protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $output->writeln(sprintf('Magallanes v%s [%s]', Mage::VERSION, Mage::CODENAME));
 
-        return 0;
+        return self::SUCCESS;
     }
 }

@@ -1,4 +1,5 @@
 <?php
+
 /*
  * This file is part of the Magallanes package.
  *
@@ -23,20 +24,15 @@ use ReflectionClass;
  */
 class TaskFactory
 {
-    /**
-     * @var Runtime
-     */
-    protected $runtime;
+    protected Runtime $runtime;
 
     /**
-     * @var array Registered Tasks
+     * @var AbstractTask[] Registered Tasks
      */
-    protected $registeredTasks = [];
+    protected array $registeredTasks = [];
 
     /**
      * Constructor
-     *
-     * @param Runtime $runtime
      */
     public function __construct(Runtime $runtime)
     {
@@ -47,10 +43,8 @@ class TaskFactory
 
     /**
      * Add a Task
-     *
-     * @param AbstractTask $task
      */
-    public function add(AbstractTask $task)
+    public function add(AbstractTask $task): void
     {
         $task->setRuntime($this->runtime);
         $this->registeredTasks[$task->getName()] = $task;
@@ -60,11 +54,10 @@ class TaskFactory
      * Get a Task by it's registered Name/Code, or it can be a Class Name,
      * in that case the class will be instantiated
      *
-     * @param string $name Name/Code or Class of the Task
-     * @return AbstractTask
+     * @param string|mixed[] $name
      * @throws RuntimeException
      */
-    public function get($name)
+    public function get(mixed $name): AbstractTask
     {
         $options = [];
         if (is_array($name)) {
@@ -96,14 +89,22 @@ class TaskFactory
     /**
      * Load BuiltIn Tasks
      */
-    protected function loadBuiltInTasks()
+    protected function loadBuiltInTasks(): void
     {
         $finder = new Finder();
         $finder->files()->in(__DIR__ . '/BuiltIn')->name('*Task.php');
 
         /** @var SplFileInfo $file */
         foreach ($finder as $file) {
-            $taskClass = substr('\\Mage\\Task\\BuiltIn\\' . str_replace('/', '\\', $file->getRelativePathname()), 0, -4);
+            $taskClass = substr(
+                '\\Mage\\Task\\BuiltIn\\' . str_replace(
+                    '/',
+                    '\\',
+                    $file->getRelativePathname()
+                ),
+                0,
+                -4
+            );
             if (class_exists($taskClass)) {
                 $reflex = new ReflectionClass($taskClass);
                 if ($reflex->isInstantiable()) {
@@ -118,10 +119,11 @@ class TaskFactory
 
     /**
      * Load Custom Tasks
-     * @param array $tasksToLoad PreRegistered Tasks
+     *
+     * @param string[] $tasksToLoad
      * @throws RuntimeException
      */
-    protected function loadCustomTasks($tasksToLoad)
+    protected function loadCustomTasks(array $tasksToLoad): void
     {
         foreach ($tasksToLoad as $taskClass) {
             if (!class_exists($taskClass)) {
@@ -135,7 +137,9 @@ class TaskFactory
 
             $task = new $taskClass();
             if (!$task instanceof AbstractTask) {
-                throw new RuntimeException(sprintf('Custom Task "%s" must inherit "Mage\\Task\\AbstractTask".', $taskClass));
+                throw new RuntimeException(
+                    sprintf('Custom Task "%s" must inherit "Mage\\Task\\AbstractTask".', $taskClass)
+                );
             }
 
             // Add Task

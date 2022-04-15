@@ -19,17 +19,17 @@ use Mage\Task\AbstractTask;
  */
 class CustomTask extends AbstractTask
 {
-    public function getName()
+    public function getName(): string
     {
         return 'custom';
     }
 
-    public function getDescription()
+    public function getDescription(): string
     {
         return '[Custom] Dummy Task';
     }
 
-    public function execute()
+    public function execute(): bool
     {
         return true;
     }

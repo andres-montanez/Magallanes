@@ -1,24 +1,15 @@
-CHANGELOG for 4.X
+CHANGELOG for 5.X
 =================
 
-* 4.1.1 (2021-02-20)
-  * Add `copyDirectory` option
-  * Bug fixes
-  * Improve testing and coverage
-
-
-* 4.1.0 (2021-02-19)
-  * PHP 8 and Symfony 5 compatibility [PR#448]
-  * Timeout option for SSH [PR#436]
-  * Improve compatibility with Windows [PR#434] [PR#429]
-  * Improve config load [PR#422] 
-  * Bug fixes [PR#448] [PR#424]
-  * Readme Update [PR#438]
-
-
-* 4.0.0 (2018-04-02)
-  * v4 series release
-  * Refactored for Symfony 4 and PHP 7.1
-  * Symfony Pool Clear task added
-  * Symfony Pool Prune task added
-  * Symfony Assetic task removed
+* 5.0.0 (2022-04-15)
+  * v5 series release.
+  * Refactored for Symfony 6 and PHP 8.
+  * Added strong types.
+  * Removed task `composer/self-update`.
+  * Allow `exec` task to interpolate `%environment%` and `%release%`.
+  * Added new `sleep` task to day execution [PR#414].
+  * Added new `symlink` option to define the name of symbolic link on the Release [PR#425].
+  * Improved Windows compatibility [PR#427].
+  * Added new `log_limit` option to limit how many logs are kept [Issue#403].
+  * Add new deploy option `--tag` to specify deploying a specific tag [Issue#192] [Issue#315].
+  * Added new `scp_flags` option for the `scp` command when SSH flags are incompatible with [Issue#439].

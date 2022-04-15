@@ -1,4 +1,5 @@
 <?php
+
 /*
  * This file is part of the Magallanes package.
  *
@@ -10,16 +11,14 @@
 
 namespace Mage\Task\Exception;
 
-use Exception;
-
 /**
  * The Task Failed, and it has a Custom Message
  *
  * @author Andrés Montañez <andresmontanez@gmail.com>
  */
-class ErrorException extends Exception
+class ErrorException extends \Exception
 {
-    public function getTrimmedMessage($maxLength = 60)
+    public function getTrimmedMessage(int $maxLength = 60): string
     {
         $message = $this->getMessage();
 

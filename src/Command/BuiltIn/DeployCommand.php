@@ -1,4 +1,5 @@
 <?php
+
 /*
  * This file is part of the Magallanes package.
  *
@@ -31,32 +32,37 @@ use Mage\Command\AbstractCommand;
  */
 class DeployCommand extends AbstractCommand
 {
-    /**
-     * @var TaskFactory
-     */
-    protected $taskFactory;
+    protected TaskFactory $taskFactory;
 
     /**
      * Configure the Command
      */
-    protected function configure()
+    protected function configure(): void
     {
         $this
             ->setName('deploy')
             ->setDescription('Deploy code to hosts')
-            ->addArgument('environment', InputArgument::REQUIRED, 'Name of the environment to deploy to')
-            ->addOption('branch', null, InputOption::VALUE_REQUIRED, 'Force to switch to a branch other than the one defined', false)
-        ;
+            ->addArgument('environment', InputArgument::REQUIRED, 'Name of the environment to deploy to.')
+            ->addOption(
+                'branch',
+                null,
+                InputOption::VALUE_REQUIRED,
+                'Force to switch to a branch other than the one defined.',
+                false
+            )
+            ->addOption(
+                'tag',
+                null,
+                InputOption::VALUE_REQUIRED,
+                'Deploys a specific tag.',
+                false
+            );
     }
 
     /**
      * Execute the Command
-     *
-     * @param InputInterface $input
-     * @param OutputInterface $output
-     * @return integer
      */
-    protected function execute(InputInterface $input, OutputInterface $output)
+    protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $this->requireConfig();
 
@@ -84,13 +90,24 @@ class DeployCommand extends AbstractCommand
 
             $output->writeln(sprintf('    Strategy: <fg=green>%s</>', $strategy->getName()));
 
+            if (($input->getOption('branch') !== false) && ($input->getOption('tag') !== false)) {
+                throw new RuntimeException('Branch and Tag options are mutually exclusive.');
+            }
+
             if ($input->getOption('branch') !== false) {
                 $this->runtime->setEnvOption('branch', $input->getOption('branch'));
+            }
+
+            if ($input->getOption('tag') !== false) {
+                $this->runtime->setEnvOption('branch', false);
+                $this->runtime->setEnvOption('tag', $input->getOption('tag'));
+                $output->writeln(sprintf('    Tag: <fg=green>%s</>', $this->runtime->getEnvOption('tag')));
             }
 
             if ($this->runtime->getEnvOption('branch', false)) {
                 $output->writeln(sprintf('    Branch: <fg=green>%s</>', $this->runtime->getEnvOption('branch')));
             }
+
 
             $output->writeln('');
             $this->runDeployment($output, $strategy);
@@ -103,17 +120,15 @@ class DeployCommand extends AbstractCommand
 
         $output->writeln('Finished <fg=blue>Magallanes</>');
 
-        return $this->statusCode;
+        return intval($this->statusCode);
     }
 
     /**
      * Run the Deployment Process
      *
-     * @param OutputInterface $output
-     * @param StrategyInterface $strategy
      * @throws RuntimeException
      */
-    protected function runDeployment(OutputInterface $output, StrategyInterface $strategy)
+    protected function runDeployment(OutputInterface $output, StrategyInterface $strategy): void
     {
         // Run "Pre Deploy" Tasks
         $this->runtime->setStage(Runtime::PRE_DEPLOY);
@@ -140,16 +155,20 @@ class DeployCommand extends AbstractCommand
         }
     }
 
-    protected function runOnHosts(OutputInterface $output, $tasks)
+    /**
+     * @param string[] $tasks
+     */
+    protected function runOnHosts(OutputInterface $output, array $tasks): void
     {
         $hosts = $this->runtime->getEnvOption('hosts');
         if (!is_array($hosts) && !$hosts instanceof \Countable) {
             $hosts = [];
         }
-        if (count($hosts) == 0) {
+
+        if (count($hosts) === 0) {
             $output->writeln(sprintf('    No hosts defined, skipping %s tasks', $this->getStageName()));
             $output->writeln('');
-            return true;
+            return;
         }
 
         foreach ($hosts as $host) {
@@ -165,21 +184,27 @@ class DeployCommand extends AbstractCommand
     /**
      * Runs all the tasks
      *
-     * @param OutputInterface $output
-     * @param $tasks
-     * @return bool
+     * @param string[] $tasks
      * @throws RuntimeException
      */
-    protected function runTasks(OutputInterface $output, $tasks)
+    protected function runTasks(OutputInterface $output, array $tasks): bool
     {
         if (count($tasks) == 0) {
-            $output->writeln(sprintf('    No tasks defined for <fg=black;options=bold>%s</> stage', $this->getStageName()));
+            $output->writeln(
+                sprintf('    No tasks defined for <fg=black;options=bold>%s</> stage', $this->getStageName())
+            );
             $output->writeln('');
             return true;
         }
 
         if ($this->runtime->getHostName() !== null) {
-            $output->writeln(sprintf('    Starting <fg=black;options=bold>%s</> tasks on host <fg=black;options=bold>%s</>:', $this->getStageName(), $this->runtime->getHostName()));
+            $output->writeln(
+                sprintf(
+                    '    Starting <fg=black;options=bold>%s</> tasks on host <fg=black;options=bold>%s</>:',
+                    $this->getStageName(),
+                    $this->runtime->getHostName()
+                )
+            );
         } else {
             $output->writeln(sprintf('    Starting <fg=black;options=bold>%s</> tasks:', $this->getStageName()));
         }
@@ -188,7 +213,6 @@ class DeployCommand extends AbstractCommand
         $succeededTasks = 0;
 
         foreach ($tasks as $taskName) {
-            /** @var AbstractTask $task */
             $task = $this->taskFactory->get($taskName);
             $output->write(sprintf('        Running <fg=magenta>%s</> ... ', $task->getDescription()));
             $this->log(sprintf('Running task %s (%s)', $task->getDescription(), $task->getName()));
@@ -196,25 +220,48 @@ class DeployCommand extends AbstractCommand
             if ($this->runtime->inRollback() && !$task instanceof ExecuteOnRollbackInterface) {
                 $succeededTasks++;
                 $output->writeln('<fg=yellow>SKIPPED</>');
-                $this->log(sprintf('Task %s (%s) finished with SKIPPED, it was in a Rollback', $task->getDescription(), $task->getName()));
+                $this->log(
+                    sprintf(
+                        'Task %s (%s) finished with SKIPPED, it was in a Rollback',
+                        $task->getDescription(),
+                        $task->getName()
+                    )
+                );
             } else {
                 try {
                     if ($task->execute()) {
                         $succeededTasks++;
                         $output->writeln('<fg=green>OK</>');
-                        $this->log(sprintf('Task %s (%s) finished with OK', $task->getDescription(), $task->getName()));
+                        $this->log(
+                            sprintf('Task %s (%s) finished with OK', $task->getDescription(), $task->getName())
+                        );
                     } else {
                         $output->writeln('<fg=red>FAIL</>');
                         $this->statusCode = 180;
-                        $this->log(sprintf('Task %s (%s) finished with FAIL', $task->getDescription(), $task->getName()));
+                        $this->log(
+                            sprintf('Task %s (%s) finished with FAIL', $task->getDescription(), $task->getName())
+                        );
                     }
                 } catch (SkipException $exception) {
                     $succeededTasks++;
                     $output->writeln('<fg=yellow>SKIPPED</>');
-                    $this->log(sprintf('Task %s (%s) finished with SKIPPED, thrown SkipException', $task->getDescription(), $task->getName()));
+                    $this->log(
+                        sprintf(
+                            'Task %s (%s) finished with SKIPPED, thrown SkipException',
+                            $task->getDescription(),
+                            $task->getName()
+                        )
+                    );
                 } catch (ErrorException $exception) {
                     $output->writeln(sprintf('<fg=red>ERROR</> [%s]', $exception->getTrimmedMessage()));
-                    $this->log(sprintf('Task %s (%s) finished with FAIL, with Error "%s"', $task->getDescription(), $task->getName(), $exception->getMessage()));
+                    $this->log(
+                        sprintf(
+                            'Task %s (%s) finished with FAIL, with Error "%s"',
+                            $task->getDescription(),
+                            $task->getName(),
+                            $exception->getMessage()
+                        )
+                    );
                     $this->statusCode = 190;
                 }
             }
@@ -229,7 +276,15 @@ class DeployCommand extends AbstractCommand
             $alertColor = 'green';
         }
 
-        $output->writeln(sprintf('    Finished <fg=%s>%d/%d</> tasks for <fg=black;options=bold>%s</>.', $alertColor, $succeededTasks, $totalTasks, $this->getStageName()));
+        $output->writeln(
+            sprintf(
+                '    Finished <fg=%s>%d/%d</> tasks for <fg=black;options=bold>%s</>.',
+                $alertColor,
+                $succeededTasks,
+                $totalTasks,
+                $this->getStageName()
+            )
+        );
         $output->writeln('');
 
         return ($succeededTasks == $totalTasks);
@@ -238,8 +293,11 @@ class DeployCommand extends AbstractCommand
     /**
      * Exception for halting the the current process
      */
-    protected function getException()
+    protected function getException(): RuntimeException
     {
-        return new RuntimeException(sprintf('Stage "%s" did not finished successfully, halting command.', $this->getStageName()), 50);
+        return new RuntimeException(
+            sprintf('Stage "%s" did not finished successfully, halting command.', $this->getStageName()),
+            50
+        );
     }
 }

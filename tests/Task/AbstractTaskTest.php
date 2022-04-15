@@ -16,14 +16,6 @@ use PHPUnit\Framework\TestCase;
 
 class AbstractTaskTest extends TestCase
 {
-    public function testNotArrayOptions()
-    {
-        $task = new TestCaseTask();
-        $task->setOptions('not an array');
-
-        $this->assertTrue(is_array($task->getOptions()));
-    }
-
     public function testFailingTask()
     {
         $task = new TestCaseFailTask();

@@ -1,4 +1,5 @@
 <?php
+
 /*
  * This file is part of the Magallanes package.
  *
@@ -26,31 +27,21 @@ use Mage\Command\BuiltIn\DeployCommand;
 class RollbackCommand extends DeployCommand
 {
     /**
-     * @var int
-     */
-    protected $statusCode = 0;
-
-    /**
      * Configure the Command
      */
-    protected function configure()
+    protected function configure(): void
     {
         $this
             ->setName('releases:rollback')
             ->setDescription('Rollback to a release on an environment')
             ->addArgument('environment', InputArgument::REQUIRED, 'Name of the environment to deploy to')
-            ->addArgument('release', InputArgument::REQUIRED, 'The ID or the Index of the release to rollback to')
-        ;
+            ->addArgument('release', InputArgument::REQUIRED, 'The ID or the Index of the release to rollback to');
     }
 
     /**
      * Execute the Command
-     *
-     * @param InputInterface $input
-     * @param OutputInterface $output
-     * @return int|mixed
      */
-    protected function execute(InputInterface $input, OutputInterface $output)
+    protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $this->requireConfig();
 
@@ -68,11 +59,14 @@ class RollbackCommand extends DeployCommand
             }
 
             $releaseToRollback = $input->getArgument('release');
-            if (($releaseId = $this->checkReleaseAvailability($releaseToRollback)) === false) {
-                throw new RuntimeException(sprintf('Release "%s" is not available on all hosts', $releaseToRollback), 72);
+            if ($this->checkReleaseAvailability($releaseToRollback) === false) {
+                throw new RuntimeException(
+                    sprintf('Release "%s" is not available on all hosts', $releaseToRollback),
+                    72
+                );
             }
 
-            $this->runtime->setReleaseId($releaseId)->setRollback(true);
+            $this->runtime->setReleaseId($releaseToRollback)->setRollback(true);
 
             $output->writeln(sprintf('    Environment: <fg=green>%s</>', $this->runtime->getEnvironment()));
             $this->log(sprintf('Environment: %s', $this->runtime->getEnvironment()));
@@ -95,16 +89,13 @@ class RollbackCommand extends DeployCommand
 
         $output->writeln('Finished <fg=blue>Magallanes</>');
 
-        return $this->statusCode;
+        return intval($this->statusCode);
     }
 
     /**
      * Check if the provided Release ID is available in all hosts
-     *
-     * @param string $releaseToRollback Release ID
-     * @return bool
      */
-    protected function checkReleaseAvailability($releaseToRollback)
+    protected function checkReleaseAvailability(string $releaseToRollback): bool
     {
         $hosts = $this->runtime->getEnvOption('hosts');
         $hostPath = rtrim($this->runtime->getEnvOption('host_path'), '/');
@@ -132,7 +123,7 @@ class RollbackCommand extends DeployCommand
         }
 
         if ($availableInHosts === count($hosts)) {
-            return $releaseToRollback;
+            return (bool) $releaseToRollback;
         }
 
         return false;

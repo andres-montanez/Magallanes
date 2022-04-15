@@ -1,4 +1,5 @@
 <?php
+
 /*
  * This file is part of the Magallanes package.
  *
@@ -21,17 +22,17 @@ use Mage\Task\AbstractTask;
  */
 class RsyncTask extends AbstractTask
 {
-    public function getName()
+    public function getName(): string
     {
         return 'deploy/rsync';
     }
 
-    public function getDescription()
+    public function getDescription(): string
     {
         return '[Deploy] Copying files with Rsync';
     }
 
-    public function execute()
+    public function execute(): bool
     {
         $flags = $this->runtime->getEnvOption('rsync', '-avz');
         $sshConfig = $this->runtime->getSSHConfig();
@@ -46,14 +47,24 @@ class RsyncTask extends AbstractTask
 
         $excludes = $this->getExcludes();
         $from = $this->runtime->getEnvOption('from', './');
-        $cmdRsync = sprintf('rsync -e "ssh -p %d %s" %s %s %s %s@%s:%s', $sshConfig['port'], $sshConfig['flags'], $flags, $excludes, $from, $user, $host, $targetDir);
+        $cmdRsync = sprintf(
+            'rsync -e "ssh -p %d %s" %s %s %s %s@%s:%s',
+            $sshConfig['port'],
+            $sshConfig['flags'],
+            $flags,
+            $excludes,
+            $from,
+            $user,
+            $host,
+            $targetDir
+        );
 
         /** @var Process $process */
-        $process = $this->runtime->runLocalCommand($cmdRsync, null);
+        $process = $this->runtime->runLocalCommand($cmdRsync, 0);
         return $process->isSuccessful();
     }
 
-    protected function getExcludes()
+    protected function getExcludes(): string
     {
         $excludes = $this->runtime->getMergedOption('exclude', []);
         $excludes = array_merge(['.git'], array_filter($excludes));

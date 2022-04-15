@@ -1,4 +1,5 @@
 <?php
+
 /*
  * This file is part of the Magallanes package.
  *
@@ -19,17 +20,32 @@ use Mage\Runtime\Runtime;
  */
 interface StrategyInterface
 {
-    public function getName();
+    public function getName(): string;
 
-    public function setRuntime(Runtime $runtime);
+    public function setRuntime(Runtime $runtime): void;
 
-    public function getPreDeployTasks();
+    /**
+     * @return string[]
+     */
+    public function getPreDeployTasks(): array;
 
-    public function getOnDeployTasks();
+    /**
+     * @return string[]
+     */
+    public function getOnDeployTasks(): array;
 
-    public function getOnReleaseTasks();
+    /**
+     * @return string[]
+     */
+    public function getOnReleaseTasks(): array;
 
-    public function getPostReleaseTasks();
+    /**
+     * @return string[]
+     */
+    public function getPostReleaseTasks(): array;
 
-    public function getPostDeployTasks();
+    /**
+     * @return string[]
+     */
+    public function getPostDeployTasks(): array;
 }

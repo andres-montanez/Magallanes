@@ -1,4 +1,5 @@
 <?php
+
 /*
  * This file is part of the Magallanes package.
  *
@@ -26,30 +27,20 @@ use Mage\Command\AbstractCommand;
 class ListCommand extends AbstractCommand
 {
     /**
-     * @var int
-     */
-    protected $statusCode = 0;
-
-    /**
      * Configure the Command
      */
-    protected function configure()
+    protected function configure(): void
     {
         $this
             ->setName('releases:list')
             ->setDescription('List the releases on an environment')
-            ->addArgument('environment', InputArgument::REQUIRED, 'Name of the environment to deploy to')
-        ;
+            ->addArgument('environment', InputArgument::REQUIRED, 'Name of the environment to deploy to');
     }
 
     /**
      * Execute the Command
-     *
-     * @param InputInterface $input
-     * @param OutputInterface $output
-     * @return int|mixed
      */
-    protected function execute(InputInterface $input, OutputInterface $output)
+    protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $this->requireConfig();
 
@@ -102,7 +93,9 @@ class ListCommand extends AbstractCommand
                     }
 
                     if (count($releases) == 0) {
-                        $output->writeln(sprintf('    No releases available on host <fg=black;options=bold>%s</>:', $host));
+                        $output->writeln(
+                            sprintf('    No releases available on host <fg=black;options=bold>%s</>:', $host)
+                        );
                     } else {
                         // Get Current Release
                         $cmdCurrentRelease = sprintf('readlink -f %s/current', $hostPath);
@@ -110,7 +103,10 @@ class ListCommand extends AbstractCommand
                         /** @var Process $process */
                         $process = $this->runtime->runRemoteCommand($cmdCurrentRelease, false);
                         if (!$process->isSuccessful()) {
-                            throw new RuntimeException(sprintf('Unable to retrieve current release from host "%s"', $host), 85);
+                            throw new RuntimeException(
+                                sprintf('Unable to retrieve current release from host "%s"', $host),
+                                85
+                            );
                         }
 
                         $currentReleaseId = explode('/', trim($process->getOutput()));
@@ -121,7 +117,8 @@ class ListCommand extends AbstractCommand
                         foreach ($releases as $releaseId) {
                             $releaseDate = $utils->getReleaseDate($releaseId);
 
-                            $output->write(sprintf('        Release ID: <fg=magenta>%s</> - Date: <fg=black;options=bold>%s</> [%s]',
+                            $output->write(sprintf(
+                                '        Release ID: <fg=magenta>%s</> - Date: <fg=black;options=bold>%s</> [%s]',
                                 $releaseId,
                                 $releaseDate->format('Y-m-d H:i:s'),
                                 $utils->getTimeDiff($releaseDate)
@@ -146,6 +143,6 @@ class ListCommand extends AbstractCommand
 
         $output->writeln('Finished <fg=blue>Magallanes</>');
 
-        return $this->statusCode;
+        return intval($this->statusCode);
     }
 }

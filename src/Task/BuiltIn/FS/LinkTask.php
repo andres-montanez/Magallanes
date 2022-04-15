@@ -1,4 +1,5 @@
 <?php
+
 /*
  * This file is part of the Magallanes package.
  *
@@ -11,7 +12,6 @@
 namespace Mage\Task\BuiltIn\FS;
 
 use Symfony\Component\Process\Process;
-use Exception;
 
 /**
  * File System Task - Symlink a File
@@ -20,21 +20,21 @@ use Exception;
  */
 class LinkTask extends AbstractFileTask
 {
-    public function getName()
+    public function getName(): string
     {
         return 'fs/link';
     }
 
-    public function getDescription()
+    public function getDescription(): string
     {
         try {
             return sprintf('[FS] Link "%s" to "%s"', $this->getFile('from'), $this->getFile('to'));
-        } catch (Exception $exception) {
+        } catch (\Exception $exception) {
             return '[FS] Link [missing parameters]';
         }
     }
 
-    public function execute()
+    public function execute(): bool
     {
         $linkFrom = $this->getFile('from');
         $linkTo = $this->getFile('to');
@@ -48,12 +48,12 @@ class LinkTask extends AbstractFileTask
         return $process->isSuccessful();
     }
 
-    protected function getParameters()
+    protected function getParameters(): array
     {
         return ['from', 'to', 'flags'];
     }
 
-    public function getDefaults()
+    public function getDefaults(): array
     {
         return ['flags' => '-snf'];
     }

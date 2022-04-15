@@ -23,7 +23,7 @@ abstract class NotInstantiableTask extends AbstractTask
     /**
      * @return string
      */
-    public function getName()
+    public function getName(): string
     {
         return 'custom-not-instantiable';
     }
@@ -31,7 +31,7 @@ abstract class NotInstantiableTask extends AbstractTask
     /**
      * @return string
      */
-    public function getDescription()
+    public function getDescription(): string
     {
         return '[Custom] Not Instantiable*';
     }
@@ -39,7 +39,7 @@ abstract class NotInstantiableTask extends AbstractTask
     /**
      * @return bool
      */
-    public function execute()
+    public function execute(): bool
     {
         /** @var Process $process */
         $process = $this->runtime->runCommand('echo "custom-not-instantiable"');

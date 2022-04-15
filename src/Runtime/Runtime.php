@@ -1,4 +1,5 @@
 <?php
+
 /*
  * This file is part of the Magallanes package.
  *
@@ -17,6 +18,7 @@ use Psr\Log\LoggerInterface;
 use Psr\Log\LogLevel;
 use Symfony\Component\Process\Process;
 use Mage\Runtime\Exception\RuntimeException;
+use Mage\Task\AbstractTask;
 
 /**
  * Runtime is a container of all run in time configuration, stages of progress, hosts being deployed, etc.
@@ -25,63 +27,63 @@ use Mage\Runtime\Exception\RuntimeException;
  */
 class Runtime
 {
-    const PRE_DEPLOY = 'pre-deploy';
-    const ON_DEPLOY = 'on-deploy';
-    const POST_DEPLOY = 'post-deploy';
-    const ON_RELEASE = 'on-release';
-    const POST_RELEASE = 'post-release';
+    public const PRE_DEPLOY = 'pre-deploy';
+    public const ON_DEPLOY = 'on-deploy';
+    public const POST_DEPLOY = 'post-deploy';
+    public const ON_RELEASE = 'on-release';
+    public const POST_RELEASE = 'post-release';
 
     /**
-     * @var array Magallanes configuration
+     * @var array<string, mixed> Magallanes configuration
      */
-    protected $configuration = [];
+    protected array $configuration = [];
 
     /**
      * @var string|null Environment being deployed
      */
-    protected $environment;
+    protected ?string $environment = null;
 
     /**
-     * @var string Stage of Deployment
+     * @var string|null Stage of Deployment
      */
-    protected $stage;
+    protected ?string $stage = null;
 
     /**
      * @var string|null The host being deployed to
      */
-    protected $workingHost = null;
+    protected ?string $workingHost = null;
 
     /**
      * @var string|null The Release ID
      */
-    protected $releaseId = null;
+    protected ?string $releaseId = null;
 
     /**
-     * @var array Hold a bag of variables for sharing information between tasks, if needed
+     * @var array<string, string> Hold a bag of variables for sharing information between tasks, if needed
      */
     protected $vars = [];
 
-    /**
-     * @var LoggerInterface|null The logger instance
-     */
-    protected $logger;
+    protected ?LoggerInterface $logger = null;
 
     /**
      * @var bool Indicates if a Rollback operation is in progress
      */
-    protected $rollback = false;
+    protected bool $rollback = false;
 
-    public function isWindows()
+    public function isWindows(): bool
     {
         return stripos(PHP_OS, 'WIN') === 0;
     }
 
+    public function hasPosix(): bool
+    {
+        return function_exists('posix_getpwuid');
+    }
+
     /**
      * Generate the Release ID
-     *
-     * @return Runtime
      */
-    public function generateReleaseId()
+    public function generateReleaseId(): self
     {
         $this->setReleaseId(date('YmdHis'));
         return $this;
@@ -89,11 +91,8 @@ class Runtime
 
     /**
      * Sets the Release ID
-     *
-     * @param string $releaseId Release ID
-     * @return Runtime
      */
-    public function setReleaseId($releaseId)
+    public function setReleaseId(string $releaseId): self
     {
         $this->releaseId = $releaseId;
         return $this;
@@ -101,21 +100,16 @@ class Runtime
 
     /**
      * Retrieve the current Release ID
-     *
-     * @return null|string Release ID
      */
-    public function getReleaseId()
+    public function getReleaseId(): ?string
     {
         return $this->releaseId;
     }
 
     /**
      * Sets the Runtime in Rollback mode On or Off
-     *
-     * @param bool $inRollback
-     * @return Runtime
      */
-    public function setRollback($inRollback)
+    public function setRollback(bool $inRollback): self
     {
         $this->rollback = $inRollback;
         return $this;
@@ -123,35 +117,25 @@ class Runtime
 
     /**
      * Indicates if Runtime is in rollback
-     *
-     * @return bool
      */
-    public function inRollback()
+    public function inRollback(): bool
     {
         return $this->rollback;
     }
 
     /**
      * Sets a value in the Vars bag
-     *
-     * @param string $key Variable name
-     * @param string $value Variable value
-     * @return Runtime
      */
-    public function setVar($key, $value)
+    public function setVar(string $key, string $value): self
     {
         $this->vars[$key] = $value;
         return $this;
     }
 
     /**
-     * Retrieve a value from the Vars bag
-     *
-     * @param string $key Variable name
-     * @param mixed $default Variable default value, returned if not found
-     * @return string
+     * Retrieve a value from the Vars bag, or a default (null) if not set
      */
-    public function getVar($key, $default = null)
+    public function getVar(string $key, mixed $default = null): ?string
     {
         if (array_key_exists($key, $this->vars)) {
             return $this->vars[$key];
@@ -162,11 +146,8 @@ class Runtime
 
     /**
      * Sets the Logger instance
-     *
-     * @param LoggerInterface $logger Logger instance
-     * @return Runtime
      */
-    public function setLogger(LoggerInterface $logger = null)
+    public function setLogger(?LoggerInterface $logger = null): self
     {
         $this->logger = $logger;
         return $this;
@@ -175,10 +156,9 @@ class Runtime
     /**
      * Sets the Magallanes Configuration to the Runtime
      *
-     * @param array $configuration Configuration
-     * @return Runtime
+     * @param array<string, mixed> $configuration
      */
-    public function setConfiguration($configuration)
+    public function setConfiguration(array $configuration): self
     {
         $this->configuration = $configuration;
         return $this;
@@ -187,21 +167,17 @@ class Runtime
     /**
      * Retrieve the Configuration
      *
-     * @return array
+     * @return array<string, mixed> $configuration
      */
-    public function getConfiguration()
+    public function getConfiguration(): array
     {
         return $this->configuration;
     }
 
     /**
      * Retrieves the Configuration Option for a specific section in the configuration
-     *
-     * @param string $key Section name
-     * @param mixed $default Default value
-     * @return mixed
      */
-    public function getConfigOption($key, $default = null)
+    public function getConfigOption(string $key, mixed $default = null): mixed
     {
         if (array_key_exists($key, $this->configuration)) {
             return $this->configuration[$key];
@@ -212,14 +188,13 @@ class Runtime
 
     /**
      * Returns the Configuration Option for a specific section the current Environment
-     *
-     * @param string $key Section/Parameter name
-     * @param mixed $default Default value
-     * @return mixed
      */
-    public function getEnvOption($key, $default = null)
+    public function getEnvOption(string $key, mixed $default = null): mixed
     {
-        if (!array_key_exists('environments', $this->configuration) || !is_array($this->configuration['environments'])) {
+        if (
+            !array_key_exists('environments', $this->configuration) ||
+            !is_array($this->configuration['environments'])
+        ) {
             return $default;
         }
 
@@ -238,12 +213,10 @@ class Runtime
      * Shortcut to get the the configuration option for a specific environment and merge it with
      * the global one (environment specific overrides the global one if present).
      *
-     * @param       $key
-     * @param array $defaultEnv
-     *
-     * @return array
+     * @param array<string, mixed> $defaultEnv
+     * @return array<string, mixed>
      */
-    public function getMergedOption($key, $defaultEnv = [])
+    public function getMergedOption(string $key, array $defaultEnv = []): array
     {
         $userGlobalOptions = $this->getConfigOption($key, $defaultEnv);
         $userEnvOptions = $this->getEnvOption($key, $defaultEnv);
@@ -256,12 +229,8 @@ class Runtime
 
     /**
      * Overwrites an Environment Configuration Option
-     *
-     * @param string $key
-     * @param mixed $value
-     * @return Runtime
      */
-    public function setEnvOption($key, $value)
+    public function setEnvOption(string $key, mixed $value): self
     {
         if (array_key_exists('environments', $this->configuration) && is_array($this->configuration['environments'])) {
             if (array_key_exists($this->environment, $this->configuration['environments'])) {
@@ -275,13 +244,14 @@ class Runtime
     /**
      * Sets the working Environment
      *
-     * @param string $environment Environment name
-     * @return Runtime
      * @throws RuntimeException
      */
-    public function setEnvironment($environment)
+    public function setEnvironment(string $environment): self
     {
-        if (array_key_exists('environments', $this->configuration) && array_key_exists($environment, $this->configuration['environments'])) {
+        if (
+            array_key_exists('environments', $this->configuration) &&
+            array_key_exists($environment, $this->configuration['environments'])
+        ) {
             $this->environment = $environment;
             return $this;
         }
@@ -291,21 +261,16 @@ class Runtime
 
     /**
      * Returns the current working Environment
-     *
-     * @return null|string
      */
-    public function getEnvironment()
+    public function getEnvironment(): ?string
     {
         return $this->environment;
     }
 
     /**
      * Sets the working stage
-     *
-     * @param string $stage Stage code
-     * @return Runtime
      */
-    public function setStage($stage)
+    public function setStage(string $stage): self
     {
         $this->stage = $stage;
         return $this;
@@ -313,10 +278,8 @@ class Runtime
 
     /**
      * Retrieve the current working Stage
-     *
-     * @return string
      */
-    public function getStage()
+    public function getStage(): ?string
     {
         return $this->stage;
     }
@@ -324,11 +287,14 @@ class Runtime
     /**
      * Retrieve the defined Tasks for the current Environment and Stage
      *
-     * @return array
+     * @return string[]
      */
-    public function getTasks()
+    public function getTasks(): array
     {
-        if (!array_key_exists('environments', $this->configuration) || !is_array($this->configuration['environments'])) {
+        if (
+            !array_key_exists('environments', $this->configuration) ||
+            !is_array($this->configuration['environments'])
+        ) {
             return [];
         }
 
@@ -347,11 +313,8 @@ class Runtime
 
     /**
      * Sets the working Host
-     *
-     * @param string $host Host name
-     * @return Runtime
      */
-    public function setWorkingHost($host)
+    public function setWorkingHost(?string $host): self
     {
         $this->workingHost = $host;
         return $this;
@@ -359,21 +322,16 @@ class Runtime
 
     /**
      * Retrieve the working Host
-     *
-     * @return null|string
      */
-    public function getWorkingHost()
+    public function getWorkingHost(): ?string
     {
         return $this->workingHost;
     }
 
     /**
      * Logs a Message into the Logger
-     *
-     * @param string $message Log message
-     * @param string $level Log Level
      */
-    public function log($message, $level = LogLevel::DEBUG)
+    public function log(string $message, string $level = LogLevel::DEBUG): void
     {
         if ($this->logger instanceof LoggerInterface) {
             $this->logger->log($level, $message);
@@ -382,12 +340,8 @@ class Runtime
 
     /**
      * Executes a command, it will be run Locally or Remotely based on the working Stage
-     *
-     * @param string $cmd Command to execute
-     * @param int $timeout Seconds to wait
-     * @return Process
      */
-    public function runCommand($cmd, $timeout = 120)
+    public function runCommand(string $cmd, int $timeout = 120): Process
     {
         switch ($this->getStage()) {
             case self::ON_DEPLOY:
@@ -401,12 +355,8 @@ class Runtime
 
     /**
      * Execute a command locally
-     *
-     * @param string $cmd Command to execute
-     * @param int $timeout Seconds to wait
-     * @return Process
      */
-    public function runLocalCommand($cmd, $timeout = 120)
+    public function runLocalCommand(string $cmd, int $timeout = 120): Process
     {
         $this->log($cmd, LogLevel::INFO);
 
@@ -424,13 +374,8 @@ class Runtime
 
     /**
      * Executes a command remotely, if jail is true, it will run inside the Host Path and the Release (if available)
-     *
-     * @param string $cmd Command to execute
-     * @param bool $jail Jail the command
-     * @param int $timeout Seconds to wait
-     * @return Process
      */
-    public function runRemoteCommand($cmd, $jail, $timeout = 120)
+    public function runRemoteCommand(string $cmd, bool $jail, int $timeout = 120): Process
     {
         $user = $this->getEnvOption('user', $this->getCurrentUser());
         $sudo = $this->getEnvOption('sudo', false);
@@ -450,7 +395,14 @@ class Runtime
         }
 
         $cmdRemote = str_replace('"', '\"', $cmdDelegate);
-        $cmdLocal = sprintf('ssh -p %d %s %s@%s "%s"', $sshConfig['port'], $sshConfig['flags'], $user, $host, $cmdRemote);
+        $cmdLocal = sprintf(
+            'ssh -p %d %s %s@%s "%s"',
+            $sshConfig['port'],
+            $sshConfig['flags'],
+            $user,
+            $host,
+            $cmdRemote
+        );
 
         return $this->runLocalCommand($cmdLocal, $timeout);
     }
@@ -458,11 +410,17 @@ class Runtime
     /**
      * Get the SSH configuration based on the environment
      *
-     * @return array
+     * @return array<string, string>
      */
-    public function getSSHConfig()
+    public function getSSHConfig(): array
     {
-        $sshConfig = $this->getEnvOption('ssh', ['port' => 22, 'flags' => '-q -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no']);
+        $sshConfig = $this->getEnvOption(
+            'ssh',
+            [
+                'port' => 22,
+                'flags' => '-q -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no'
+            ]
+        );
 
         if ($this->getHostPort() !== null) {
             $sshConfig['port'] = $this->getHostPort();
@@ -485,67 +443,72 @@ class Runtime
 
     /**
      * Get the current Host Port or default ssh port
-     *
-     * @return integer
      */
-    public function getHostPort()
+    public function getHostPort(): ?int
     {
-        $info = explode(':', $this->getWorkingHost());
-        return isset($info[1]) ? $info[1] : null;
+        $info = explode(':', strval($this->getWorkingHost()));
+        return isset($info[1]) ? intval($info[1]) : null;
     }
 
     /**
      * Get the current Host Name
-     *
-     * @return string
      */
-    public function getHostName()
+    public function getHostName(): ?string
     {
-        if (strpos($this->getWorkingHost(), ':') === false) {
+        if (strpos(strval($this->getWorkingHost()), ':') === false) {
             return $this->getWorkingHost();
         }
 
         $info = explode(':', $this->getWorkingHost());
-        return $info[0];
+        return strval($info[0]);
     }
 
     /**
      * Gets a Temporal File name
-     *
-     * @return string
      */
-    public function getTempFile()
+    public function getTempFile(): string
     {
         return tempnam(sys_get_temp_dir(), 'mage');
     }
 
     /**
      * Get the current user
-     *
-     * @return string
      */
-    public function getCurrentUser()
+    public function getCurrentUser(): string
     {
-        $userData = posix_getpwuid(posix_geteuid());
-        return $userData['name'];
+        if ($this->hasPosix()) {
+            $userData = posix_getpwuid(posix_geteuid());
+            return $userData['name'];
+        }
+
+        // Windows fallback
+        return strval(getenv('USERNAME'));
     }
 
     /**
      * Shortcut for getting Branch information
      *
-     * @return boolean|string
+     * @return bool|string
      */
-    public function getBranch()
+    public function getBranch(): mixed
     {
         return $this->getEnvOption('branch', false);
     }
 
     /**
-     * Guesses the Deploy Strategy to use
+     * Shortcut for getting Tag information
      *
-     * @return StrategyInterface
+     * @return bool|string
      */
-    public function guessStrategy()
+    public function getTag(): mixed
+    {
+        return $this->getEnvOption('tag', false);
+    }
+
+    /**
+     * Guesses the Deploy Strategy to use
+     */
+    public function guessStrategy(): StrategyInterface
     {
         $strategy = new RsyncStrategy();
 

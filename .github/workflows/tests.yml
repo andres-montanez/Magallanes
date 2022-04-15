@@ -1,0 +1,60 @@
+name: PHPUnit
+
+on:
+  push:
+    branches:
+      - master
+      - galactica
+  pull_request:
+  release:
+    types:
+      - created
+
+jobs:
+  unit_tests_80:
+    name: Unit tests with PHP 8.0
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+      - name: Composer install
+        uses: php-actions/composer@v5
+        with:
+          command: install
+          args: --ignore-platform-reqs --no-scripts
+          version: 2
+          php_version: 8.0
+      - name: Run tests
+        env:
+          XDEBUG_MODE: coverage
+        run: |
+          mkdir .logs
+          ./vendor/bin/phpunit --coverage-clover build/logs/coverage.xml
+      - name: Run Coveralls
+        env:
+          COVERALLS_REPO_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: ./vendor/bin/php-coveralls -v --coverage_clover build/logs/coverage.xml
+
+  unit_tests_81:
+    name: Unit tests with PHP 8.1
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+      - name: Composer install
+        uses: php-actions/composer@v5
+        with:
+          command: install
+          args: --ignore-platform-reqs --no-scripts
+          version: 2
+          php_version: 8.1
+      - name: Run tests
+        env:
+          XDEBUG_MODE: coverage
+        run: |
+          mkdir .logs
+          ./vendor/bin/phpunit --coverage-clover build/logs/coverage.xml

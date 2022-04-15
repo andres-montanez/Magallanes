@@ -1,4 +1,5 @@
 <?php
+
 /*
  * This file is part of the Magallanes package.
  *
@@ -12,6 +13,7 @@ namespace Mage\Task\BuiltIn\Git;
 
 use Symfony\Component\Process\Process;
 use Mage\Task\AbstractTask;
+use Mage\Task\Exception\SkipException;
 
 /**
  * Git Task - Pull
@@ -20,32 +22,40 @@ use Mage\Task\AbstractTask;
  */
 class UpdateTask extends AbstractTask
 {
-    public function getName()
+    public function getName(): string
     {
         return 'git/update';
     }
 
-    public function getDescription()
+    public function getDescription(): string
     {
         return '[Git] Update';
     }
 
-    public function execute()
+    public function execute(): bool
     {
         $options = $this->getOptions();
+        if ($options['tag']) {
+            throw new SkipException();
+        }
+
         $command = $options['path'] . ' pull';
 
-        /** @var Process $process */
         $process = $this->runtime->runLocalCommand($command);
 
         return $process->isSuccessful();
     }
 
-    protected function getOptions()
+    /**
+     * @return array<string, string>
+     */
+    protected function getOptions(): array
     {
         $branch = $this->runtime->getEnvOption('branch', 'master');
+        $tag = $this->runtime->getEnvOption('tag', false);
+
         $options = array_merge(
-            ['path' => 'git', 'branch' => $branch],
+            ['path' => 'git', 'branch' => $branch, 'tag' => $tag],
             $this->options
         );
 
